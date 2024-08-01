@@ -1,0 +1,215 @@
+In natural language processing (NLP), Large Language Models (LLMs) are designed to \qquote{understand} and generate human-like text. These models utilize the transformer architecture, which excels in modeling complex language tasks by capturing long-range dependencies and contextual relationships.
+
+At the heart of LLMs lies the concept of tokens, which serve as the elemental units of text. Tokens can be individual words, subword units, or characters. Let $x_{1:n}:=\3{x_1, x_2, \ldots, x_n}$ represent a sequence of tokens. The goal of an LLM is to estimate the probability distribution of the next token $x_{n+1}$ conditioned on the previous tokens $x_{1:n}$
+$$
+\P\2{x_{n+1} \mid \3{x_1, x_2, \ldots, x_n}}
+$$
+An LLM is a neural network architecture designed to learn and approximate this conditional probability distribution over sequences of tokens with a large number of parameters $\Theta$. Namely, we can formulate an LLM as a parameterized function $f_{\Theta}$ that maps a sequence of tokens $\1{x_1, x_2, \ldots, x_n}$ to a probability distribution over the vocabulary
+$$
+f_{\Theta}:\3{x_1, x_2, \ldots, x_n} \rightarrow 
+\P\2{x_{n+1} \mid \3{x_1, x_2, \ldots, x_n} ; \Theta}
+$$
+where the parameters $\Theta$ are learned from a large corpus of text training data.
+
+
+Interacting with an LLM involves specifying a prefix sequence $x_{1:n}$, termed the \qquote{prompt}, and sampling the subsequent tokens $x_{n+1:z}$, known as the \qquote{completion}. This process enables users to guide and control the generation of text according to desired contexts and constraints.
+$$
+\ub{\3{x_1,\ldots,x_n}}{\t{prompt}} \longrightarrow \ub{\3{x_{n+1},\ldots,x_z}}{\t{completion}}
+$$
+
+The transformer architecture, introduced in the seminal work "Attention Is All You Need" (Vaswani et al., 2017), revolutionized LLM development due to its superior handling of long-range dependencies and efficient parallelization of computations.  Subsequent advancements include the encoder-only BERT model (Devlin et al., 2018), showcasing the power of pre-training on large datasets for fine-tuning on specific tasks. Conversely, OpenAI's GPT series (Radford et al., 2018, 2019)  demonstrated the potential of decoder-only models for generative tasks.
+
+The release of GPT-3 (OpenAI, 2020) marked a significant leap in LLM capabilities with its 175 billion parameters and remarkable few-shot learning abilities. This model highlighted the importance of prompt engineering, where carefully crafted prompts can guide model outputs without extensive fine-tuning.  The trend towards open-source models like BLOOM (Ben et al., 2022) and Meta's LLaMA series (Chowdhury et al., 2023) emphasizes accessibility and transparency in LLM development.  The latest models, including OpenAI's GPT-4, Google's Gemini, and Meta's LLaMA 3, continue to push boundaries with improved accuracy, multimodal capabilities, and larger context windows, solidifying the transformer architecture as the cornerstone of LLM development.
+
+%The transformer architecture presented in the seminal paper "Attention Is All You Need" in 2017 became the foundation for most subsequent LLMs due to its superior ability to handle long-range dependencies and parallelize computations.  The introduction of BERT in 2018, an encoder-only model, demonstrated the power of pre-training on large text corpora and fine-tuning for specific tasks. In contrast, OpenAI's GPT series, starting with GPT-1 in 2018 and gaining widespread attention with GPT-2 in 2019, showcased the capabilities of decoder-only models for generative tasks.
+%
+%The release of GPT-3 in 2020 marked a significant leap with 175 billion parameters, demonstrating remarkable few-shot learning capabilities. This model highlighted the potential of prompt engineering to guide model outputs without extensive fine-tuning.
+%
+%From 2022 onwards, source-available models like BLOOM and Meta's LLaMA series have emphasized the importance of accessibility and transparency in LLM development. The latest models, such as OpenAI's GPT-4o, Google's Gemini, and Meta's LLaMA 3, continue to push the boundaries with improved accuracy, multimodal capabilities, and larger context windows, solidifying the transformer architecture as the standard for LLMs.
+
+\subsection{Llama}
+
+In our endeavor we will employ Llama-3, developed by Meta AI.
+This model was released on April 18, 2024 and it comes in two sizes: 8B and 70B parameters. This model has been pre-trained on approximately 15 trillion tokens of text gathered from ``publicly available sources''.
+In this application, we will employ the 70B version, which we will access through an API via GroqCloud.
+
+Moreover, we will employ a \textit{function calling} approach to streamline the process of interacting with the LLM. This implies prespecifying a set of functions to the LLM that will then be passed through our dataset of news articles to obtain a strucutured JSON format. 
+
+
+Each article $i\in\D$ implies a conversation with the LLM. The structure of the conversation implies defining a ``system mesage'', which provides a general context and purpose to the model. In our case:
+
+\begin{quote}
+\textit{
+- You are a function calling LLM that analyses business news in Spanish.  \\
+- For every article, you must identify the firms directly affected by the news. Do not include every firm mentioned in the article, only include those that are directly affected by the shocks narrated therein. 
+\\
+- The identified firms must be Spanish and should be publicly listed in the Spanish exchange (their ticker is of the form 'TICKER.MC'). Do not include non-Spanish foreign firms. Do not include Spanish firms that are not publicly traded. \\
+- For each identified firm, classify the shocks that affect them (type, magnitude, category). The type of shock can be 'demand', 'supply', 'financial', 'policy', or 'technology'. The magnitude can be 'minor' or 'major'. The direction can be 'positive' or 'negative'. \\
+- If a firm is affected neutrally by the news article, don't include it in the analysis.
+}
+\end{quote}
+
+Then, the news article is fed to the LLM, for example
+
+\begin{quote}
+
+{\centering 
+\textbf{Cellnex tendrá más competencia en Europa}.  \par }
+\textit{
+La filial de Telefónica (TEF.MC) Telxius Telecom ha acordado vender su división de torres de telecomunicaciones en Europa y Latinoamérica a American Tower (AMT), lo cual aumentará la presencia de ésta en Europa e incrementará la competencia para el grupo español de telecomunicaciones inalámbricas Cellnex Telecom (CLNX.MC), señala Equita Sim. La transacción "supone la entrada de un nuevo operador independiente de torres en el mercado español y potencialmente más competencia para el crecimiento futuro también en el mercado europeo", sostiene la correduría. Cellnex llegó a un acuerdo en noviembre con CK Hutchison (0001.HK) para comprar el negocio europeo de torres y sus activos del conglomerado cotizado en Hong Kong. La acción de Telefónica sube un 9,6\% a EUR3,94 y la de Cellnex avanza un 0,3\% a EUR47,79.
+}
+\end{quote}
+%\begin{quote}
+%{\centering \textbf{Permanencia de los Benetton en accionariado Cellnex sería positiva}. \par }
+%\textit{
+%En medio de las especulaciones en prensa sobre el interés de varios fondos internacionales por la participación de los Benetton en Cellnex (CLNX.MC), Banco Sabadell cree que la permanencia de la familia italiana en el accionariado del operador español de infraestructuras de telecomunicaciones sería doblemente positiva. Por un lado, el compromiso de los Benetton con el proyecto de Cellnex alejaría el riesgo de una posible presión vendedora en el corto plazo, "algo que tras la ruptura del pacto de accionistas era fuente de incertidumbre", señala el banco. Por otro, el interés de los fondos por esta participación "pondría de manifiesto el apetito que hay por Cellnex", añade. Reitera su recomendación de comprar, con un precio objetivo de 55,80\euro. La acción baja un 0,7\% a 53,44\euro.	
+%}
+%\end{quote}
+Next, we define an umbrella function \qquote{firms}, which identifies the set $\F^i$ for each $i\in\D$. Then, this function is splitted into a set of subfunctions, which iterate over each firm $j\in\F^i$ and asks the LLM to categorize the type, expected magnitude and expected direction of the shock described in the article onto that particular firm.  The structure of such functions is as follows:
+
+%----------------------------------------------------
+\input{tab_GPT_functions_summary.tex}
+%----------------------------------------------------
+
+And the answer provided by the LLM is composed of two outputs, of which we will only keep the structured one.
+
+\begin{quote}
+\textbf{1) Structured Output: }
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+\texttt{firm} & \texttt{ticker} & \texttt{shock\_type} & \texttt{shock\_magnitude} & \texttt{shock\_direction}
+\\ \hline 
+Cellnex Telecom & CLNX.MC & supply & minor & negative
+\\ 
+Telefónica & TEF.MC & financial & minor & positive
+\\ \hline 
+\end{tabular}
+\end{table}
+
+%\begin{verbatim}
+%{'firm': 'Cellnex Telecom', 'ticker': 'CLNX.MC', 'shock\_type': 'supply', 'shock\_magnitude': 'minor', 'shock\_direction': 'negative'},
+%{'firm': 'Telefónica', 'ticker': 'TEF.MC', 'shock\_type': 'financial', 'shock\_magnitude': 'minor', 'shock\_direction': 'positive'}
+%\end{verbatim}
+
+\textbf{2) Unstructured Output (justification)}
+
+\textit{The news about American Tower's expansion in Europe may increase competition for Cellnex, which is why it's classified as a negative supply shock. On the other hand, Telefónica benefits from the sale of its tower division, which is why it's classified as a positive financial shock.}
+
+\end{quote}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%In the domain of natural language processing (NLP), Large Language Models (LLMs) represent a significant leap forward, offering machines the ability to comprehend and generate human-like text at an unprecedented scale. This advancement holds immense relevance due to its transformative potential across various fields, from revolutionizing human-computer interaction to enabling more nuanced analysis of vast textual datasets. LLMs not only signify a breakthrough in computational linguistics but also pave the way for novel applications in fields such as finance, healthcare, and education, where the interpretation and generation of text are crucial.
+
+%In the realm of natural language processing (NLP), Large Language Models (LLMs) stand as pivotal advancements, empowering machines with the ability to comprehend and generate human-like text. 
+%Motivated by the burgeoning volume and complexity of textual data available on the internet and other sources, researchers have sought to develop models capable of navigating the intricate nuances of language. 
+
+%At the heart of these models lies the concept of tokens, which serve as the elemental units of text, analogous to the atoms of matter. Tokens are the building blocks from which linguistic data is constructed, and can manifest as individual words, subword units, or even characters. 
+%, each carrying its own semantic meaning and syntactic role within a given context. 
+%From a mathematical perspective, they are represented as \textit{embeddings}, which are $d$--dimensional vectors $ x_i\in \R^d$ that capture the semantic and syntactic information associated with each token. 
+
+%Let $\mathcal V$ denote the vocabulary of a language consisting of the collection of all possible tokens, then a text snippet can be represented as a sequence of tokens $x_1, x_2, \ldots, x_n$ where each $x_i$ is drawn from $\mathcal V$. 
+%\bx 
+%Let $x_{1:n}:=\1{x_1, x_2, \ldots, x_n}$ represent a sequence of tokens, where each $x_i$ is drawn from $\mathcal V$, the vocabulary of a language consisting of the collection of all possible tokens. The goal of a language model (LM) is to estimate 
+%$
+%\P\1{x_{n+1} \mid x_1, x_2, \ldots, x_n}
+%$,
+%the probability distribution of the next token $x_{n+1}$ conditioned on the previous tokens $x_{1:n}$
+%Let $\mathcal V$ denote the vocabulary of a language, consisting of all possible tokens. Given a sequence of tokens $x_1, x_2, \ldots, x_n$, where $x_i \in \mathcal V$ for $1 \leq i \leq n$, the goal of a language model (LM) is to estimate the probability distribution of the next token $x_{n+1}$ conditioned on the previous tokens
+%$$
+%\P\1{x_{n+1} \mid x_1, x_2, \ldots, x_n}.
+%$$
+
+%A large language model (LLM) is a neural network architecture designed to learn and approximate this conditional probability distribution over sequences of tokens with a large number of parameters $\Theta$. Namely, we can formulate an LLM as a parameterized function $f_{\Theta}$ that maps a sequence of tokens $\1{x_1, x_2, \ldots, x_n}$ to a probability distribution over the vocabulary
+%$$
+%f_{\Theta}:\left(x_1, x_2, \ldots, x_n\right) \rightarrow \P\left(x_{n+1} \mid x_1, x_2, \ldots, x_n ; \Theta\right),
+%$$
+%where the parameters $\Theta$ are learned from a large corpus of text training data.
+
+
+%Interacting with an LLM implies specifying some prefix sequence $x_{1:l}$ (called \textit{prompt}) and sampling the rest $x_{{l+1}:n}$ (called \textit{completion}).
+%$$
+%\ub{\1{x_1,\ldots,x_l}}{\t{prompt}} \longrightarrow \ub{\1{x_{l+1},\ldots,x_n}}{\t{completion}}
+%$$
+
+%\bx 
+%Interacting with an LLM involves specifying a prefix sequence $x_{1:l}$, termed the \qquote{prompt}, and sampling the subsequent tokens $x_{l+1:n}$, known as the \qquote{completion}. This process enables users to guide and control the generation of text according to desired contexts and constraints.
+%$$
+%\ub{\1{x_1,\ldots,x_l}}{\t{prompt}} \longrightarrow \ub{\1{x_{l+1},\ldots,x_n}}{\t{completion}}
+%$$
+
+
+%\subsection{GPT}
+
+%In our endeavor, we will leverage a specific instance of LLMs known as the Generative Pre-trained Transformer (GPT), a pioneering model developed by OpenAI. GPT represents a remarkable instantiation of LLMs, characterized by its transformer architecture and pre-training on vast amounts of text data. 
+%
+%Crucially, we will harness the capabilities of the OpenAI GPT API, a powerful tool for accessing and utilizing GPT models, to process large volumes of requests --in our case, news article readings-- with efficiency and scalability. 
+%An Application Programming Interface (API) essentially serves as a set of rules and protocols that allows software programs to talk to each other, enabling them to exchange data and perform specific tasks. In our case, the OpenAI GPT API enables us to interface with the GPT model seamlessly, sending input data (such as news articles) and receiving output (such as generated text) in return.
+
+%An Application Programming Interface (API) serves as a bridge between different software applications, allowing them to communicate and interact with each other. In our case, the OpenAI GPT API enables us to interface with the GPT model, sending input data (such as news articles) and receiving output (such as generated text) in return.
+
+%Crucially, we will harness the capabilities of the OpenAI GPT API, a powerful tool for accessing and utilizing GPT models, to process large volumes of requests --in our case, news article readings-- with efficiency and scalability. 
+%
+%An Application Programming Interface (API) serves as a bridge between different software applications, allowing them to communicate and interact with each other. In our case, the OpenAI GPT API enables us to interface with the GPT model, sending input data (such as news articles) and receiving output (such as generated text) in return.
+
+
+%
+%In our research, we will exploit a specific type of Large Language Model (LLM) known as the Generative Pre-trained Transformer (GPT), developed by OpenAI, to analyze and process vast amounts of textual data. To accomplish this, we will utilize the OpenAI GPT API, an interface that provides access to the capabilities of the GPT model. 
+%
+%An Application Programming Interface (API) serves as a bridge between different software applications, allowing them to communicate and interact with each other. In our case, the OpenAI GPT API enables us to interface with the GPT model, sending input data (such as news articles) and receiving output (such as generated text) in return.
+
+
+%Our approach will involve interfacing with the OpenAI GPT API through function calling, allowing seamless integration of GPT's language generation capabilities into our workflow.
+
+%Moreover, we will employ \textit{function calling} to streamline the process of interacting with the OpenAI GPT API. 
+%Function calling entails invoking specific functions or methods available through the API to perform desired tasks. For instance, we can use these functions to submit requests for text generation and receive the generated text as a response.
+%Function calling involves invoking specific functions or methods 
+%%through the API to perform desired tasks. For instance, we can use functions provided by the OpenAI GPT API 
+%to submit requests for text generation and receive the generated text as a response.
+%This approach facilitates the integration of GPT's language generation capabilities into our workflow, allowing us to efficiently process large volumes of textual data for our research purposes.
+
+
+%\subsection{GPT news parser}
+
+%Consider a collection of $n$ news articles. Each article $i$ is composed by a list of $m_i$ tokens, which are encoded in a matrix $\mbf X_{1:m_i}^{(i)}$ that contains the sequence of associated embedding vectors 
+%$\mbf X_{1:m_i}^{(i)}:=(\mbf x_{1}^{(i)},\ldots,\mbf x_{m_i}^{(i)})$.
+
+%Consider a collection of $n$ news articles. Each article $i$ is composed by a list of words, which are encoded as a sequence of $m_i$ tokens 
+%$x_{1:m_i}^{(i)}:=(x_{1}^{(i)},\ldots,x_{m_i}^{(i)})$. The events described therein directly affect a set of $k_i$ firms $(f_1^{(i)},\ldots,f_{k_i}^{(i)})$, with associated stock market tickers $(s_1^{(i)},\ldots,s_{k_i}^{(i)})$, where $s_{\ell}^{(i)}=$\texttt{`NaN'} if $f_{\ell}^{(i)}$ is not a publicly traded firm.
+%
+%
+%Our aim is to obtain an accurate analysis of the shocks narrated in the news articles. For this purpose, we design a set of functions within the GPT API in order to guide it in the task of parsing the news articles. 
+%
+%
+%
+%We aim to associate the events narrated in a news article, with a stock price movement in the affected firms. This association is performed through GPT, which takes $x_{1:m_i}^{(i)}$ as an input and delivers a set of responses channeled through some predefined functions $g_1,...,g_p$ that instruct GPT on the procedure to parse the article as well as in how to deliver its response. Such functions have been defined as $1$-shot, which means that we provide $1$ contextual example on how to proceed
+%\footnote{In general, a $z$-shot procedure specifies $z=0,1,...$ contextual examples to the LLM}
+%
+%For example, one function asks GPT to identify the main firms involved in the $i^{th}$ article. In this case, we should get $g_1(x_{1:m_i}^{(i)})=[f_1^{(i)},\ldots,f_{k_i}^{(i)}]$.  
+%%
+%
+%
+%%
+%%\newpage 
+%%\subsubsection{Function schema}
+%
+%In general, this procedure has been programmed using function calling throught the GPT API. This works by feeding the news articles to Chat GPT and ask it to fill a function schema. The umbrella function is \texttt{news\_eval} and it contains the following parameters: 
+
+%%----------------------------------------------------
+%\input{tab_GPT_functions_summary.tex}
+%%----------------------------------------------------
+%
+%{\large
+%\red{Provide an example
+%To give an example, consider the following piece of news
+%\begin{quote}
+%\textit{[Piece of news involving +1 firms]}
+%\end{quote}
+%In this case, the function schema is filled as follows: 
+%}
+%}
+%%----------------------------------------------------
+%\input{tab_GPT_functions_example.tex}
+%%----------------------------------------------------

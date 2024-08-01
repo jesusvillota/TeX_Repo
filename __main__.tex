@@ -1,0 +1,137 @@
+%\documentclass[12pt,article]{memoir}
+\documentclass[12pt,a4paper]{article}
+
+%---------------------- MACROS -----------------------
+%\usepackage{$$JVM_Macros}
+%\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/$$JVM_Macros}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Macros}
+%----------------------------------------------------
+
+\usepackage{authblk} % to write the title with the authors
+\usepackage{booktabs} % when using \documentclass[12pt,a4paper]{article}, you need to load this
+
+\title{\textsc{
+{\LARGE Predicting Market Reactions to News:} 
+\\
+{\large An LLM-Based Approach Using Spanish Business Articles }
+}}
+
+\author[1]{
+{ \bx \bx \bx 
+Jesus Villota-Miranda}
+\footnote{
+\textsc{PhD} Student at 
+\textsc{Cemfi} (Madrid, Spain). 
+%Advisor: Enrique Sentana. 
+Contact: \href{jesus.villota@cemfi.edu.es}{jesus.villota@cemfi.edu.es}.
+%I am grateful to everyone that contributed to the three discussions from my presentations. I acknowledge funding from the Bank of Spain to study this master's degree.
+}
+%\footnote{I would like to express my deepest gratitude to the Bank of Spain for their generous funding and support of my master's studies at \textsc{Cemfi}. 
+%I am also grateful to my advisor, colleagues, and family for their continuous support and encouragement throughout this journey.}
+}
+
+%\author[2]{Matías Covarrubias}
+%\author[2]{Nicolás Forteza}
+%\author[3]{Fourth Author}
+%\author[1,*]{Fifth Author}
+%\affil[1]{\small CEMFI}
+%\affil[2]{\small Bank of Spain}
+%\affil[3]{Department, Organization, Street, City, 610101, State, Country}
+%\affil[*]{Corresponding author: \texttt{user\_id@university.edu}}
+
+\date{}  % Remove date
+
+\setcounter{tocdepth}{2} % Only show up to subsections in the Table of Contents
+
+\begin{document}
+
+\newpage
+%%%%%%%%%%% TITLE & ABSTRACT %%%%%%%%%%%
+\maketitle
+%----------------------------------------------------
+\input{txt__ABSTRACT.tex}
+%----------------------------------------------------
+
+
+%%%%%%%% TABLE OF CONTENTS %%%%%%%%%%%
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+
+
+\newpage
+\setcounter{page}{1}
+%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%----------------------------------------------------
+\input{txt_introduction.tex}
+%----------------------------------------------------
+
+
+%%%%%%%%%%%% LITERATURE REVIEW %%%%%%%%%%%%%%%%%%
+\section{Literature Review}
+%----------------------------------------------------
+\input{txt_literature_review.tex}
+%----------------------------------------------------
+
+
+%%%%%%%%%%%%%%%%%%% DATA %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data}
+%----------------------------------------------------
+\input{txt_database_description.tex}
+%----------------------------------------------------
+
+
+
+%\newpage
+%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}
+%--------------------- KMEANS -----------------------
+\input{txt_Model_KMeans.tex} 
+%----------------------------------------------------
+
+%\newpage
+%--------------------- LLMs -------------------------
+\input{txt_Model_LLM.tex}
+%----------------------------------------------------
+
+
+%--------------------- LLMs -------------------------
+\input{txt_Robustness_Checks.tex}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%% HIGH FREQUENCY %%%%%%%%%%%%%%%%%%%%%%
+%\section{High Frequency Analysis}
+%\input{txt_HF_Analysis.tex}
+
+%%%%%%%%%%%%%%%%% EVENT STUDY %%%%%%%%%%%%%%%%%%%%%%
+%\section{Event Study}
+%\input{txt_Event_Study.tex}
+
+%%%%%%%%%%%%%%%%% TRANSACTION COSTS %%%%%%%%%%%%%%%%%%%%%%
+%\section{Transaction Costs}
+%\input{txt_Transaction_Costs.tex}
+
+
+%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
+\input{txt__CONCLUSION.tex}
+
+
+%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
+\bibliography{bib_references.bib}
+\bibliographystyle{plain}
+
+
+\newpage
+\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Appendix}
+\input{txt_Appendix.tex}
+
+
+
+
+
+
+\end{document}

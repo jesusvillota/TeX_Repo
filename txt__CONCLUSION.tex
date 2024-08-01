@@ -1,0 +1,12 @@
+\section{Conclusion}
+
+\hspace{0.5cm} In this paper we explore the incorporation of information in the stock market via a Trading strategy that trades clusters of news. In particular, for a set of Spanish business news articles from July 2020 to Septemeber 2021, we perform KMeans clustering and select the optimal clusters for trading using two proposed algorithms: \textit{Greedy} and \textit{Stable}. Both the clustering of articles and the selection of optimal clusters are done \textit{in-sample}, while the performance evaluation of the trading strategy is done by projecting the trading rule onto the test set. The results of this exercise show inconsistent earnings profile \textit{out-of-sample}, indicating that this strategy is not able to exploit news articles' information for profitable trading.
+
+\mx 
+In the second part, we feed the news articles to a Large Language Model and ask it to parse them according to a predefined schema. Such schema consists of identifying the firms affected by the articles and classifying the shocks implied by the article on such firms by their type, magnitude, and direction. Clustering based on the classification of shocks made by the LLM generates a more stable distribution of articles through clusters over data splits and provides a consistent profile of earnings in the test set. These results are robust to the choice of hyperparameters (the holding period length of the trading strategy and the amount of selected clusters for trading).
+
+\mx 
+The results of this paper show a promising avenue. LLMs can help predict market reactions to news by using a simple classification schema based on a shock analysis of the events narrated in the articles. 
+
+
+
