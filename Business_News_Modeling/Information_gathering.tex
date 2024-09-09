@@ -1,0 +1,122 @@
+\documentclass[12pt,article]{memoir}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/$$JVM_Macros}
+\Subject{A mathematical model for Business News Articles}
+%\Arg{Notes}
+
+
+\begin{document}
+%----------------------------------------------------
+\href{https://chatgpt.com/share/7bdd6993-9528-4892-9208-7a2f32a49439}{ChatGPT's conversation}
+%----------------------------------------------------
+
+Let $\mathcal{E}$ denote an event, then: 
+$$
+\mathcal{E}=\angl{\mathcal{F}, \mathcal{Y}, \mathcal{D}, \mathcal{A}, \mathcal{C}, \mathcal{R}}
+$$
+where:
+\begin{itemize}
+  \item 
+  $\mathcal{F}$ is the set of affected firms by the event. Formally, $\mathcal{F} \subseteq \mathcal{S}$, where $\mathcal{S}$ denotes the universal set of all firms being considered in the analysis.
+  \item $\mathcal{Y}$ is the datetime at which the event occurs. This could be represented as a specific timestamp in the appropriate format, typically in ISO 8601 format: $\mathcal{Y} \in \mathbb{T}$, where $\mathbb{T}$ denotes the set of all possible datetimes.
+  \item $\mathcal{D}$ represents the description of the event. This could be a natural language text summary or a vector representation (e.g., an embedding in some vector space) that captures the semantic meaning of the event.
+  \item $\mathcal{A}$ represents the attributes of the event, which could include various quantitative and qualitative measures, such as the magnitude of the event, sentiment scores, and other features derived from the news articles. Formally, $\mathcal{A}=\left\{a_1, a_2, \ldots, a_k\right\}$, where each $a_i \in \mathbb{R}$ represents a measurable attribute.
+  \item $\mathcal{C}$ is the category or type of event. For example, this could be an economic event, a merger/acquisition announcement, a regulatory change, etc. Formally, $\mathcal{C}$ belongs to a predefined set of categories, $\mathcal{C} \in \mathcal{K}$, where $\mathcal{K}$ is a finite set of possible event types.
+  \item $\mathcal{R}$ is the relevance or impact measure of the event, which quantifies how significant the event is with respect to the firms in $\mathcal{F}$. This could be a vector or a single value depending on whether you wish to capture the impact per firm or globally. Formally, $\mathcal{R}$ could be a mapping $\mathcal{R}: \mathcal{F} \rightarrow \mathbb{R}$, assigning an impact score to each affected firm, or a single value $r \in \mathbb{R}$.
+\end{itemize}
+
+\subsection{Objective Event $\mathcal{E}^o$}
+An Objective Event $\mathcal{E}^o$ is an unobservable event that has actually occurred. It is characterized as:
+$$
+\mathcal{E}^o=\left\langle\mathcal{F}, \mathcal{Y}, \mathcal{D}^o, \mathcal{A}^o, \mathcal{C}, \mathcal{R}^o\right\rangle
+$$
+where all components are as defined previously. However, the investor does not have direct access to $\mathcal{E}^o$.
+
+\subsection{Subjective Event $\mathcal{E}_i^s$}
+A Subjective Event $\mathcal{E}_i^s$ is the event as perceived and constructed by the investor after reading news articles. It is denoted as:
+$$
+\mathcal{E}_i^s=\left\langle\mathcal{F}_i^s, \mathcal{Y}_i^s, \mathcal{D}_i^s, \mathcal{A}_i^s, \mathcal{C}_i^s, \mathcal{R}_i^s\right\rangle
+$$
+where:
+\begin{itemize}
+  \item $\mathcal{F}_i^s$ is the set of firms the investor believes are affected, derived from the information in the articles.
+  \item $\mathcal{Y}_i^s$ is the datetime the investor believes the event took place, based on the articles.
+  \item $\mathcal{D}_i^s$ is the investor's subjective description of the event, formed after synthesizing the information.
+  \item $\mathcal{A}_i^s$ represents the attributes (e.g., magnitude, sentiment) that the investor assigns to the event.
+  \item $\mathcal{C}_i^s$ is the category of the event as perceived by the investor.
+  \item $\mathcal{R}_i^s$ is the perceived relevance or impact of the event on the market, according to the investor's interpretation.
+\end{itemize}
+
+
+\subsection{Information Gathering and Event Formation}
+
+The investor gathers information by reading news articles. Let $\mathcal{N}_{i, j}$ represent the $j$-th news article about event $i$. The investor reads $n_i$ articles about event $i$ from different sources, forming a set:
+$$
+\mathcal{N}_i=\left\{\mathcal{N}_{i, 1}, \mathcal{N}_{i, 2}, \ldots, \mathcal{N}_{i, n_i}\right\}
+$$
+Each article $\mathcal{N}_{i, j}$ provides a reported event $\mathcal{E}_{i, j}^r$, which the investor uses to infer the subjective event $\mathcal{E}_i^s$.
+The formation of the subjective event can be formalized as:
+$$
+\mathcal{E}_i^s=f\left(\left\{\mathcal{E}_{i, j}^r\right\}_{j=1}^{n_i}\right)
+$$
+
+where $f$ is a function that models the investor's process of aggregating and synthesizing the information from the various news articles. This function could involve:
+- Weighting the importance of different sources.
+- Averaging or voting on common attributes.
+- Applying heuristics based on the investor's experience or biases.
+
+\subsection{Trading Signal Formation}
+
+After forming the subjective event $\mathcal{E}_i^s$, the investor assigns a trading signal $S_i$ based on his perception of the event. The trading signal could be a buy, sell, or hold decision, represented as:
+
+$$
+S_i=g\left(\mathcal{E}_i^s\right)
+$$
+
+where $g$ is the decision function, which might depend on:
+- The perceived impact $\mathcal{R}_i^s$.
+- The investor's risk appetite.
+- The investor's overall strategy (e.g., momentum, mean-reversion).
+
+\subsection{Trading Strategy Based on Subjective Events}
+
+The investor executes trades in the market based on the trading signals $S_i$ generated by the subjective events $\mathcal{E}_i^s$. Let $\mathcal{T}$ denote the set of trades:
+
+$$
+\mathcal{T}=\left\{T_i\right\}_{i=1}^m
+$$
+
+where each trade $T_i$ is executed based on the trading signal $S_i$. The outcome of these trades depends on how well the subjective events $\mathcal{E}_i^s$ approximate the objective events $\mathcal{E}^o$.
+
+\subsection{Objective vs. Subjective Event Dynamics}
+The key dynamic here is the gap between the subjective events $\mathcal{E}_i^s$ and the unobservable objective events $\mathcal{E}^o$. This gap introduces a level of uncertainty and risk in the investor's trading strategy.
+\begin{itemize}
+  \item Modeling Errors: If the subjective event $\mathcal{E}_i^s$ diverges significantly from $\mathcal{E}^o$, the investor's trades might lead to losses. This can be modeled by comparing the performance of trades $\mathcal{T}$ with the theoretical performance had the investor known $\mathcal{E}^o$.
+  \item Learning and Adaptation: Over time, the investor might adapt $f$ and $g$ based on the outcomes of their trades, refining how they infer subjective events and assign trading signals.
+\end{itemize}
+
+Given the uncertainty about the true nature of $\mathcal{E}^o$, the investor might model the subjective events probabilistically:
+
+$$
+\mathcal{E}_i^s \sim P\left(\mathcal{E}_i^o \mid\left\{\mathcal{E}_{i, j}^r\right\}_{j=1}^{n_i}\right)
+$$
+\subsection{ Formalization in a Probabilistic Framework}
+where $P\left(\mathcal{E}_i^o \mid\left\{\mathcal{E}_{i, j}^r\right\}_{j=1}^{n_i}\right)$ represents the posterior distribution of the objective event given the reported events. The investor's trading decision can then be viewed as an action taken under uncertainty, with the goal of maximizing expected utility:
+
+$$
+S_i=\arg \max _{a \in \text { Actions }} \mathbb{E}\left[U\left(a \mid \mathcal{E}_i^s\right)\right]
+$$
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
