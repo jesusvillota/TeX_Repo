@@ -1,5 +1,7 @@
- \hspace{0.5cm} Our dataset $\mathcal D$ consists of $N=2,613$ Spanish business news articles 
+ \hspace{0.5cm} 
+ Our dataset consists of $N=2,613$ Spanish business news articles 
  sourced from DowJones and spanning the period from June 24, 2020, to September 30, 2021. 
+ We denote as $\mathcal D$ the set of all articles in our sample.
  % from DowJones for the period 2020-6-24 to 2021-09-30. 
  These articles have been specifically filtered to reference firms listed on the IBEX-35.
 % These articles have been specifically filtered to be explicitly referred to firms that are listed in the IBEX-35.
@@ -7,8 +9,14 @@
  Each article $i \in \mathcal{D}$ is a textual document detailing an event that directly pertains to a subset of firms $\mathcal{F}^i \subseteq \F_{\t{IBEX35}}$.
 % Each article $i\in \D$ is a textual document narrating an event that directly involves a set of firms %$\F^i \subseteq \F_{\t{IBEX35}}$.
 %
-The publication date and time of each article are represented as $\mathcal{Y}_0^i := \langle d_0^i, t_0^i \rangle$, where $d_0^i$ captures the date (YYYY-MM-DD) and $t_0^i$ captures the time (HH:MM
-.SSS) of publication. This datetime representation emphasizes the moment at which $\mathcal{F}^i$ receives the \qquote{treatment} of public news dissemination. 
+The publication date and time of each article are represented as $\mathcal{Y}_0^i := \langle d_0^i, t_0^i \rangle$, where $d_0^i$ captures the date 
+(YYYY-MM-DD) 
+and $t_0^i$ captures the time
+ (HH:MM) 
+ of publication. 
+%This datetime representation emphasizes 
+Therefore we observe
+the moment at which $\mathcal{F}^i$ receives the \qquote{treatment} of public news dissemination. 
 %The information conveyed by an article can then be represented in a tuple 
 %$
 %\langle i, \F^i , \mathcal Y_0^i \rangle 
@@ -19,14 +27,14 @@ The publication date and time of each article are represented as $\mathcal{Y}_0^
 %
 
 \mx 
-For robust model development and evaluation, the dataset is partitioned into three sequential subsets: training, validation, and test
+For robust model development and evaluation, the dataset is partitioned into three sequential subsets: training, validation, and test:
 $
-\D := [\D^{tr}, \D^{val}, \D^{test}].
+\D := \D^{tr} \cup \D^{val} \cup \D^{test}.
 $
 Define $N_{split}:=|\D^{split}|$ for $split\in\3{tr,val,test}$, where $\abs{\cd}$ denotes the cardinality of a set. 
-Then, it follows that
-%with $N_{tr}:=\abs{\D^{tr}}, N_{val}:=\abs{\D^{val}}$, N_{test}:=\abs{\D^{test}}$ 
-$\abs{\D}= N_{tr} + N_{val} + N_{test} = N$. 
+%Then, it follows that
+%%with $N_{tr}:=\abs{\D^{tr}}, N_{val}:=\abs{\D^{val}}$, N_{test}:=\abs{\D^{test}}$ 
+%$\abs{\D}= N_{tr} + N_{val} + N_{test} = N$. 
 %----------------------------------------------------
 %The training and validation samples represent 80\% of the total sample $(\frac{N_{tr}+N_{val}}{N} = 0.8)$ and are used to design the optimal trading strategy, while the test sample represents the remaining 20\% $(\frac{N_{test}}{N} = 0.2)$ and is used to evaluate the \textit{out-of-sample} performance of the strategy. 
 %--------- CHAT GPT OPTION ---------%
@@ -155,7 +163,7 @@ While it is challenging to assign a specific human-readable meaning to each of t
 %This is achieved by applying clustering techniques.  
 %
 Namely, we use the \texttt{KMeans} algorithm, a popular clustering method that assigns a set of vectors into $k$ clusters
-$\mathcal G:=\{1,2,...,k\}$ to minimize the within-cluster sum of squares (WCSS). 
+$\mathcal G:=\{0,1,...,k-1\}$ to minimize the within-cluster sum of squares (WCSS). 
 The implementation of this clustering algorithm is methodically presented in the Appendix (\cref{alg:KMeans}). 
 Each cluster $g\in\mathcal G$ defines a centroid $\mbf c_g$, which is the average vector of all the members of a cluster.
 %
@@ -702,10 +710,15 @@ The goal is to now design an algorithm that exploits this information to select 
 \subsubsection{Greedy Algorithm}
 
 The greedy selection of clusters is done in the validation sample 
-$$
-\mathcal{B}_g^{val}:= \{(i,j) \mid (i,j)\in\mathcal{B} ~\wedge~ i \in \D_g^{val} \}
+$
+\mathcal{B}_g^{val}:= \{
+%(i,j) \mid 
+(i,j)\in\mathcal{B} 
+%~\wedge~
+ \mid 
+  i \in \D_g^{val} \}
 ~,
-$$ 
+$
 from where we compute the cluster-average $\overline{S R}_g^{val}$ for each $g\in\G$.
 %
 %\mx 
@@ -855,7 +868,7 @@ $$
 \mathcal{G}_{\theta}^{+} = \{g \in \mathcal{G}_{\theta} \mid \overline{SR}_{g}^{tr} > 0 ~\wedge~ \overline{SR}_{g}^{val} > 0\}
 ,
 $$
-and by symmetry, short-traded clusters ($\mathcal{G}_{\theta}^{-}$) are the ones that have negative average Sharpe Ratios in both, training and validation samples.
+and by symmetry, short-traded clusters ($\mathcal{G}_{\theta}^{-}$) are the ones that have negative average Sharpe Ratios in both, training and validation samples
 $$
 \mathcal{G}_{\theta}^{-} = \{g \in \mathcal{G}_{\theta} \mid \overline{SR}_{g}^{tr} < 0 ~\wedge~ \overline{SR}_{g}^{val} < 0\}
 ~.
