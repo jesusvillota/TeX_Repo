@@ -4,14 +4,14 @@
 \caption{Function calling schema}
 %{\footnotesize
 %\renewcommand{\arraystretch}{1}
-\begin{tabular}{l||L{4.1cm}|L{6.8cm}|L{5cm}|}
+\begin{tabular}{lL{4.1cm}L{6.8cm}L{5cm}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\hline 
-\rowcolor{gray!10}
-\multicolumn{2}{|l|}{\textbf{Function}} & \textbf{Prompt} & \textbf{Options} \tabularnewline
+\hline \Xhline{2\arrayrulewidth}
+%\rowcolor{gray!10}
+\multicolumn{2}{l}{\textbf{Function}} & \textbf{Prompt} & \textbf{Options} \tabularnewline
 \hline \Xhline{2\arrayrulewidth} 
-\multicolumn{2}{|l|}{1. \texttt{firms}} & \qquote{List all the firms affected by the events narrated in the article} & \texttt{array} \tabularnewline
+\multicolumn{2}{l}{1. \texttt{firms}} & \qquote{List all the firms affected by the events narrated in the article} & \texttt{array} \tabularnewline
 \hline
  & 1.1. \texttt{firm} & \qquote{Iterate over each firm in \texttt{firms}} & \texttt{string}
  \tabularnewline
@@ -24,7 +24,8 @@
  & 1.4. \texttt{shock\_magnitude} & \qquote{How much impact is the shock expected to have on this firm?} & \{minor, major\}\tabularnewline
 \cline{2-4} \cline{3-4} \cline{4-4} 
  & 1.5. \texttt{shock\_direction} & \qquote{In what direction is the shock expected to impact this firm?} & \{positive, negative\}\tabularnewline 
-\cline{2-4} \cline{3-4} \cline{4-4} 
+%\cline{2-4} \cline{3-4} \cline{4-4} 
+\hline \Xhline{2\arrayrulewidth}
 \end{tabular}
 %}
 \begin{tablenotes}

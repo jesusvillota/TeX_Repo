@@ -228,7 +228,8 @@ where, for $i\in \D_g^{tr}$, the \textit{intra-cluster distance} is defined as
 $
 a_k (\mathbf{e}^i)
 :=
-\frac{1}{|\D^{tr}_g|-1} 
+%\frac{1}{|\D^{tr}_g|-1} 
+(|\D^{tr}_g|-1)^{-1}
 \sum_{m \in \D_g^{tr}, m \neq i} 
 \|
 \mathbf{e}^i-\mathbf{e}^m 
@@ -239,7 +240,8 @@ and it represents the average distance from an embedding $\mathbf{e}^i$ to all o
 $
 b_k(\mathbf{e}^i)
 :=\min _{l \neq g} 
-\frac{1}{|\D^{tr}_l|} 
+%\frac{1}{|\D^{tr}_l|}
+(|\D^{tr}_l|)^{-1}
 \sum_{m \in \D_l^{tr}}
 \|
 \mathbf{e}^i-\mathbf{e}^m
@@ -1001,21 +1003,28 @@ $$
 
 Finally, defining the mean portfolio return as %----------------------------------------------------
 $
-\mu^{\mathcal{P}}:=\frac{1}{|\tilde{\mathfrak{d}}|} \sum_{\tilde{d} \in \tilde{\mathfrak{d}}} \ln (1+r_{\tilde{d}}^{\mathcal{P}})
+\mu^{\mathcal{P}}:=
+%\frac{1}{|\tilde{\mathfrak{d}}|} 
+({1}/{|\tilde{\mathfrak{d}}|})
+\sum_{\tilde{d} \in \tilde{\mathfrak{d}}} \ln (1+r_{\tilde{d}}^{\mathcal{P}})
 $
 and the associated standard deviation:
 $ 
 \sigma^{\mathcal{P}}
 :=
 \sqrt{
-\frac{1}{|\tilde{\mathfrak{d}}|-1} 
+%\frac{1}{|\tilde{\mathfrak{d}}|-1} 
+({1}/{|\tilde{\mathfrak{d}}|-1})
 \sum_{\tilde{d} \in \tilde{\mathfrak{d}}}
 [\ln
 (1+r_{\tilde{d}}^{\mathcal{P}}
 )-\mu^{\mathcal{P}}]^2} 
 $
 , we can obtain the annualized Sharpe Ratio of the portfolio as
-$ SR^{\mathcal{P}} :=  \sqrt{252} ~\frac{\mu^{\mathcal{P}}}{\sigma^{\mathcal{P}}} $.
+$ SR^{\mathcal{P}} :=  \sqrt{252} ~
+%\frac{\mu^{\mathcal{P}}}{\sigma^{\mathcal{P}}} 
+{\mu^{\mathcal{P}}}/{\sigma^{\mathcal{P}}} 
+$.
 %----------------------------------------------------
 
 
@@ -1221,7 +1230,8 @@ The trading strategy is evaluated in the test sample by applying $TR\angl{(i,j),
 from where we can compute the portfolio returns 
 $
 r_{d}^{\mathcal{P}^{test}} = 
-\frac{1}{|\mathcal{P}_{d}^{test}|}
+%\frac{1}{|\mathcal{P}_{d}^{test}|}
+({1}/{|\mathcal{P}_{d}^{test}|})
 \sum_{(i, j), \in \mathcal{P}_{d}^{test}}
 T R_{{{L}}, \theta}\angl{(i,j), {d}} 
 \cdot 
@@ -1232,8 +1242,9 @@ and then obtain $\mu^{\mathcal{P}^{test}}$ and $\sigma^{\mathcal{P}^{test}}$. Fi
 $
 SR^{\mathcal{P}^{test}} = 
 \sqrt{252}~
-\frac{\mu^{\mathcal{P}^{test}}}{\sigma^{\mathcal{P}^{test}}}.
-$
+%\frac{\mu^{\mathcal{P}^{test}}}{\sigma^{\mathcal{P}^{test}}}
+{\mu^{\mathcal{P}^{test}}}/{\sigma^{\mathcal{P}^{test}}}
+.$
 
 \mx 
 In \cref{fig:KMeans_Portfolio_Cum_Returns} we plot the cumulative returns of the portfolio constructed based on our KMeans clustering of embeddings. In \cref{tab:KMeans_portfolio_statistics} we summarize the usual portfolio statistics. As we can see, both algorithms work well on the data splits they were trained on: the Stable algorithm works well on both, training and validation data, while the Greedy algorithm does a good job only on validation data as expected. However, this doesn't say anything about any of these algorithms, as it is easy to make profitable trades \textit{in-sample}. 
