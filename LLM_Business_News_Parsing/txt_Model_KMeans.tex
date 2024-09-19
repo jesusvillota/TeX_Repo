@@ -560,8 +560,7 @@ The notation overload in the regression coefficients $(\alpha^{(i,j)},\beta^{(i,
 %----------------------------------------------------
 
 \mx 
-The reason why we fit a market model to each $(i,j)\in\mathcal B$ is to then apply 
-a market-neutral strategy. This is an investment approach designed to minimize or eliminate exposure to overall market movements, isolating the performance of a specific firm. 
+The reason why we fit a market model to each $(i,j)\in\mathcal B$ is to then apply a market-neutral strategy as in \cite{chan2003stock} and \cite{jiang2021pervasive}. This is an investment approach designed to minimize or eliminate exposure to overall market movements, isolating the performance of a specific firm. 
 %The primary goal is to achieve positive returns regardless of the market's direction (up or down). 
 In particular, we employ a beta-neutral strategy by buying one unit of firm $j$'s stock and shorting $\beta^{(i,j)}$ units of the market index (i.e.: an ETF replicating the IBEX-35). 
 
@@ -952,7 +951,7 @@ g \in \G_{\theta}^-
 \end{align*}
 %----------------------------------------------------
 
-In this context, a portfolio is a collection of positions taken in a firm's stocks according to $TR_{{{L}},\theta}\angl{(i,j),{d}}$. In other words, it is the set of all $\angl{(i,j),{d}}$ for which a trade is executed,
+In this context, a portfolio is a collection of positions taken in a firm's stocks according to $TR_{{{L}},\theta}\angl{(i,j),{d}}$. In other words, it is the set of all $\angl{(i,j),{d}}$ for which a trade is executed. 
 \begin{align*}
 \mathcal P:= 
 \3{\angl{(i,j),{d}} 
@@ -978,7 +977,7 @@ T R_{L, \theta}\langle(i, j), {d}\rangle \neq 0
 }
 ,
 $$
-and, in order to avoid explosive returns, the portfolio is rebalanced every day so that each position $(i, j)\in \mathcal{P}_{d}$ receives a weight that is inversely proportional to the total amount of open positions in that day (i.e. $1/|\mathcal{P}_{d}|$).\footnote{
+and the portfolio is rebalanced every day, so each position $(i, j)\in \mathcal{P}_{d}$ receives a weight that is inversely proportional to the total amount of open positions in that day (i.e. $1/|\mathcal{P}_{d}|$).\footnote{
 Note that the cardinality of the set of open positions at day ${d}\in\tilde{\mathfrak d}$, denoted as $|\mathcal{P}_{d}|$, can be computed as the sum of the absolute values of the trading rule over all pairs $(i,j)\in\mathcal B$
  for a given trading day $d\in\tilde{\mathfrak{d}}$.
 $$
@@ -989,7 +988,8 @@ TR_{L, \theta}\angl{(i,j),  d}
 ~.
 $$
 }
-The returns of the portfolio at $d\in\tilde{\mathfrak{d}}$ can be obtained as an average of the abnormal returns weighted by the trading rule, which determines the direction of each position (long or short), and scaled by the number of open positions in that day
+This produces an equally-weighted rolling-portfolio similar to \cite{jegadeesh1993returns}.
+As in \cite{chan2003stock}, the overlapping returns of the portfolio at $d\in\tilde{\mathfrak{d}}$ can be obtained as an average of the abnormal returns weighted by the trading rule, which determines the direction of each position (long or short), and scaled by the number of open positions in that day
 $$
 r_{d}^{\mathcal{P}} 
 := 
@@ -1222,7 +1222,8 @@ $.
 %%\red{[Enrique: ``You should not do this last part. Simplify your life by committing yourself to a split from the beginning``.]}
 %
 \subsection{Evaluating the Trading Strategy}
-The trading strategy is evaluated in the test sample by applying $TR\angl{(i,j),d}$ to all $(i,j)\in\mathcal{B}^{test}$. This delivers the portfolio
+The trading strategy is evaluated in the test sample by applying $TR\angl{(i,j),d}$ to all $(i,j)\in\mathcal{B}^{test}$. 
+This delivers the portfolio
 \begin{align*}
 \mathcal{P}^{test}=\3{\angl{(i,j),d} \c (i,j)\in \mathcal{B}^{test} ~\wedge~  TR_{L,\theta}\angl{(i,j),d} \neq 0 }
 ,
