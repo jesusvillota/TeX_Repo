@@ -1,0 +1,120 @@
+%\documentclass[12pt,article]{memoir}
+\documentclass[12pt,a4paper]{article}
+
+%---------------------- MACROS -----------------------
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Macros}
+%----------------------------------------------------
+
+\usepackage{authblk} % to write the title with the authors
+\usepackage{booktabs} % when using \documentclass[12pt,a4paper]{article}, you need to load this
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%   TITLE     %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\textsc{
+{\LARGE News-implied Firm Networks}
+%\\
+%{\large News- }
+}}
+
+\author[1]{
+{ \bx \bx \bx Jesus Villota Miranda$^{\dagger}$
+%\footnote{
+%I am grateful to ...
+%I acknowledge financial support from ...
+%}
+}
+
+\bx 
+%(\textsc{cemfi})
+{\small
+$\big{<}$
+\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
+$\big{>}$
+
+$\big{<}$
+Email: \href{jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
+$\big{>}$
+}
+}
+
+\date{}  % Remove date
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+\thispagestyle{empty}  % Suppresses the page number on this page
+
+
+\begin{abstract}
+%----------------------------------------------------
+%\input{txt__ABSTRACT.tex}
+%----------------------------------------------------
+
+\bigskip
+\noindent\textbf{JEL Codes:} 
+
+\noindent\textbf{Keywords:}
+\end{abstract}
+
+
+%%%%%%%% TABLE OF CONTENTS %%%%%%%%%%%
+\newpage
+\tableofcontents
+\thispagestyle{empty}  % Suppresses the page number on this page
+
+\newpage
+\setcounter{page}{1}
+%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%
+\section{Introduction, Literature Review \& Structure}
+%----------------------------------------------------
+%\input{txt_introduction.tex}
+%----------------------------------------------------
+%----------------------------------------------------
+%\input{txt_literature_review.tex}
+%----------------------------------------------------
+%----------------------------------------------------
+%\input{txt_structure.tex}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%% DATA %%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data}
+%----------------------------------------------------
+%\input{txt_data.tex}
+%----------------------------------------------------
+
+
+
+%\newpage
+%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+\section{Methodology}
+\input{txt_Methodology.tex}
+
+
+%%%%%%%%%%%%%%%%% RESULTS %%%%%%%%%%%%%%%%%%%%%%
+\section{Results}
+
+%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+%\input{txt__CONCLUSION.tex}
+
+
+%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
+\bibliography{bib_references.bib}
+\bibliographystyle{plain}
+
+
+%\newpage
+\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Appendix}
+%\input{txt_Appendix.tex}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

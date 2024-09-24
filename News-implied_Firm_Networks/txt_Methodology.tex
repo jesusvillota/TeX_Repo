@@ -1,0 +1,294 @@
+
+Different from \cite{hu2021networks}: 
+\begin{itemize}
+  \item instead of considering that news articles embed a leader-follower relationship, we don't impose any structure in the news articles
+  \item we perform NER in a more realistic way, by having an LLM parse the news articles and extracting the firms that it considers as \qquote{directly affected by the news articles}. The problen with \cite{hu2021networks}'s NER is that they need to assume that every firm mentioned in a news article is relevant to the news article. This is actually not the case in most news articles, where many firms are mentioned contextually, or even more extreme, sometimes there is no relationship going on between the firms mentioned in the article. For example, we could have a news article like this: \qquote{Moodys lowers the credit rating of Banco Santander}. It's clear that this article is not talking about the existence of a relationship between Moodys and Banco Santander, however, in \cite{hu2021networks}'s logic, these article defines a connection between those two firms.
+\end{itemize}
+
+Our methodology is less restrictive and imposes no structure on the treatment of business news articles. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{quote}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Given a set of textual news articles aggregated in period $T, \D_T:=\left\{m_1, \ldots, m_d\right\}$ and a universe of $n$ firms $\F :=\{1, \ldots, n\}$, we identify the set of news linkage pairs $l^{(i,j)}_T$ between firms $i, j \in \F $ as:
+$$
+l^{(i,j)}_T
+%\stackrel{\text { def }}{=}
+:=
+ \bigcup_{m_d \in \D_T}\9{ (i, j) ~\bigg{|}~ 
+m_d \t{ describes a relationship between }i, j \in \F ~\t{}
+% j \text { in } m_d \text { title, } i \text { in } m_d \text { headline, } i \neq j
+}
+$$
+
+
+With the well-defined news linkage pairs, we then define the \qquote{News-implied Firm Network} at time period $T$ by the adjacency matrix 
+%Given a weighted direct graph $\mathcal{G}=(\mathcal{V}, \mathcal{E})$ 
+$$
+\mathcal{W}_T := 
+\2{
+\begin{array}{ccc}
+	|l^{(1,1)}_T| 		& \cdots  	& |l^{(1,n)}_T|
+	\\
+	\vdots				& \ddots 	& \vdots 
+	\\
+	|l^{(n,1)}_T|		& \cdots  	& |l^{(n,n)}_T|
+\end{array}
+}
+$$
+So far we have not imposed any hierarchy, so $\mathcal{W}_T$ is an asymmetric matrix with all zero diagonal values. However, we could further ask the LLM to give us the structure of the relationship between $i,j$. Depending on this relationship, we can define the following type of relationships: 
+\begin{itemize}
+  \item $i \sim j \iff i$ and $j$ are competitors within the same industry 
+  \item $i \succ j \iff i $ is the supplier of $j$
+  \item $i \bowtie j \iff $ in the rest of the cases
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\Vhrulefill
+{\center \href{https://chatgpt.com/share/66f342fc-07f0-800d-9210-0506f9c26169}{Conversation w/ ChatGPT}
+\par}
+\Vhrulefill
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Introduction}
+
+The increasing availability of textual data from business news articles provides a rich source of information for studying the relationships between firms. Traditionally, firm networks inferred from such data rely on simple co-occurrence models, where firms are assumed to be connected if they are mentioned together in an article. 
+
+%----------------------------------------------------
+\begin{quote}
+In particular, 
+\begin{itemize}
+  \item Let $\mathcal{F}=\left\{F_1, F_2, \ldots, F_n\right\}$ represent the set of $n$ firms you are analyzing.
+  \item Let $\mathcal{A}=\left\{A_1, A_2, \ldots, A_m\right\}$ represent the set of $m$ news articles that mention these firms.
+\end{itemize}
+We assume that the news articles can be mapped to specific dates, allowing for a time dimension if needed, i.e., $A_i(t)$, where $t$ represents the publication date of article $A_i$.
+
+\textit{Firm-Article Matrix (Incidence Matrix)}
+
+\begin{itemize}
+  \item Define an incidence matrix $M \in\{0,1\}^{n \times m}$, where the entry $M_{i j}=1$ if firm $F_i$ is mentioned in article $A_j$, and $M_{i j}=0$ otherwise.
+  \item This matrix allows us to encode which firms are co-mentioned in the same articles.
+\end{itemize}
+
+\textit{Co-occurrence Matrix}
+
+From the incidence matrix $M$, we can construct a co-occurrence matrix $C \in \mathbb{R}^{n \times n}$, where each entry $C^{i j}$ captures the number of articles in which firms $F_i$ and $F_j$ are co-mentioned.
+Mathematically, this can be expressed as:
+$$
+C=M M^T
+$$
+Here, $C^{i j}$ counts the number of articles that mention both firm $F_i$ and firm $F_j$.
+
+
+\textit{Weighted Network Representation}
+
+The co-occurrence matrix $C$ can be used to define a weighted undirected graph $G=$ $(\mathcal{F}, \mathcal{E}, w)$, where:
+\begin{itemize}
+  \item $\mathcal{F}$ is the set of firms (nodes).
+  \item $\mathcal{E} \subseteq \mathcal{F} \times \mathcal{F}$ is the set of edges between firms, where an edge exists between firms $F i$ and $F^j$ if $C^{i j}>0$ (i.e., they have been co-mentioned in at least one article).
+  \item $w: \mathcal{E} \rightarrow \mathbb{R}+$ is the weight function, where the weight of the edge between firms $F_i$ and $F j$ is given by $w\left(F_i, F^j\right)=C^{i j}$. This weight represents the strength of the connection between the two firms, based on the number of co-occurrences in news articles.
+\end{itemize}
+
+\end{quote}
+%----------------------------------------------------
+
+
+
+
+However, this approach does not account for the nature or type of relationships between firms, nor does it consider the directionality or complexity of those relationships.
+
+In this paper, I propose a novel methodology for constructing firm networks using Large Language Models (LLMs) to analyze the textual content of news articles. The LLM is tasked with two goals: (1) determining whether a substantive relationship exists between a pair of firms based on the context provided in the article, and (2) classifying the type of relationship (e.g., supplier-customer, competitor, partnership). Additionally, I incorporate the \textbf{directionality} of certain types of relationships, such as supplier-customer or mergers and acquisitions (M\&A), where relationships are inherently asymmetric. In particular, directionality refers to relationships between different firms where $F_i \rightarrow F_j$ but $F_j \not \rightarrow F_i$. I also consider \textbf{reflexivity}, where firms can have self-relations, such as internal restructuring or stock buybacks. In this case $F_i \leftrightarrow F_i$
+The methodology yields a nuanced and comprehensive firm network that captures both the strength and type of relationships between firms, providing a powerful tool for analyzing firm interactions, market dynamics, and the effects of external shocks.
+
+\subsection{Mathematical Framework for Firm Networks Using LLMs}
+
+\subsection{Firm Set and News Articles}
+
+Let $ \F = \{F_1, F_2, \dots, F_n\} $ represent the set of $ n $ firms under consideration. Each firm is potentially mentioned in a set of news articles $ \mathcal{A} = \{A_1, A_2, \dots, A_m\} $, where $ m $ denotes the number of articles. Each article $ A_i \in \mathcal{A} $ contains textual content $ T(A_i) $ and is published on a specific date $ t(A_i) $.
+
+\subsection{LLM-based Relationship Detection and Classification}
+
+For each article $ A_i $, the LLM processes the textual content $ T(A_i) $ and performs two key tasks:
+\begin{enumerate}
+    \item \textbf{Relationship Detection}: The LLM determines whether there is a substantive relationship between a pair of firms $(F_i,F_j)\in\F\times\F$ based on the context provided in article $A_k$.
+    \item \textbf{Relationship Classification}: If a relationship exists, the LLM classifies the relationship between $(F_i,F_j)$ described in article $A_k$ into a relationship type $ r_{ij}(A_k) \in \mathcal{T} $, where $\T=\{\t{Supplier, Competitor, Partnership, M\&A, Legal, Other}\}$ is the set of relationship types. Note that some relationships are \qquote{directional}, while others are not. In particular:
+%\begin{itemize}
+%  \item Supplier: One firm supplies goods or services to another.
+%  \item Competitor: Firms operate in the same industry and compete for market share.
+%  \item Partnership: Firms collaborate on a joint project or initiative.
+%  \item Legal Dispute: Firms are involved in a legal battle.
+%  \item Mergers \& Acquisitions: Firms are involved in a merger or acquisition event.
+%\end{itemize}
+    \begin{itemize}
+        \item \textit{Supplier-Customer}: $ F_i \to F_j $, where $ F_i $ is the supplier and $ F_j $ is the customer.
+        \item \textit{Competitor}: $ F_i \leftrightarrow F_j $, where both firms compete for market share.
+        \item \textit{Partnership}: $ F_i \leftrightarrow F_j $, where the firms collaborate on a project or initiative.
+        \item \textit{Mergers \& Acquisitions (M\&A)}: $ F_i \to F_j $, where firm $ F_i $ absorbs or acquires firm $ F_j $.
+        \item \textit{Legal Dispute}: $ F_i \to F_j $, where firm $ F_i $ sues or takes legal action against firm $ F_j $.
+        \item \textit{Other}: contains the rest of relationships that the LLM was unable to clasify in the previous categories. For simplicity, we make this an undirected relationship, so $F_i\leftrightarrow F_j$. 
+    \end{itemize}
+\end{enumerate}
+
+Note that in these defitions, order matters, as we are always considering that $F_i \to F_j$ in any directional relationship between any $(F_i, F_j)\in\F\times\F$. 
+
+The LLM also assigns a relationship score $ \text{LLM\_score}(A_k, F_i, F_j, r) $, reflecting the confidence in the existence and strength of the relationship $ r_{ij}(A_k) $ between firms $ F_i $ and $ F_j $ based on article $ A_k $.
+
+\subsection{General Relationship Matrix}
+
+Let $\mathcal{R}\left(A_i\right) \subseteq \F \times \F$ represent the set of firm pairs $\left(F_i, F_j\right)$ that the LLM determines to be related based on the content of article $A_i$. The task of the LLM is to analyze the article $T\left(A_i\right)$ and determine when a meaningful relationship or event connects the firms.
+
+For each article $A_i$, the LLM processes the text $T\left(A_i\right)$ and returns a set of firm relationships: 
+$$
+\mathcal{R}(A_i)
+=
+\9{
+\left(F_i, F_j\right) \in \F \times \F
+\mid 
+\t{LLM concludes $F_i$ and $F_j$ are economically tied in $A_i$}
+}
+$$
+
+The key here is that $\mathcal{R}\left(A_i\right)$ is determined by the LLM's understanding of the text, identifying cases where firms are tied by contracts, joint ventures, lawsuits, partnerships, or other significant business events, rather than simple co-mentioning.
+
+From the set of firm relationships across all articles, we can construct a relationship matrix $R \in \mathbb{R}^{n \times n}$, where each entry $R_{i j}$ quantifies the strength of the relationship between firm $F_i$ and firm $F_j$. The entry $R_{i j}$ is computed as:
+
+$$
+R_{i j}
+=
+\sum_{k=1}^m \I{(F_i, F_j) \in \mathcal{R}(A_k) }
+\cdot 
+\mathrm{LLM} \_\operatorname{score}\left(A_k, F_i, F_j\right)
+$$
+
+
+\subsection{Type-Specific Relationship Matrix}
+Since we have richer information about the relationship type, we can define a relationship matrix that is specific to each type of relationship $r\in\T$. 
+For each article $A_i$, we now have: 
+$$
+\mathcal{R}(A_i)
+=
+\9{
+\4{F_i, F_j, r_{ij}(A_k)} \in \F \times \F \times \T
+~\bigg{|}~
+\t{LLM detects and classifies a relationship}
+}
+$$
+For each relationship type $ r \in \mathcal{T} $, we define a relationship matrix $ R^r \in \mathbb{R}^{n \times n} $, where the entry $ R^r_{ij} $ quantifies the strength of the relationship $ r $ between firms $ F_i $ and $ F_j $.
+
+$$
+R^r_{ij} = \sum_{k=1}^{m} 
+\I{(F_i, F_j, r_{ij}(A_k)) \in \mathcal{R}(A_k)} 
+\cdot
+\text{LLM\_score}(A_k, F_i, F_j, r_{ij}(A_k)),
+$$
+
+where:
+\begin{itemize}
+    \item $\I{(F_i, F_j, r_{ij}(A_k)) \in \mathcal{R}(A_k)}$ is an indicator function that equals 1 if article $ A_k $ identifies relationship $ r $ between firms $ F_i $ and $ F_j $, and 0 otherwise.
+    \item $ \text{LLM\_score}(A_k, F_i, F_j, r_{ij}(A_k)) $ is the score provided by the LLM that quantifies the strength of the relationship.
+\end{itemize}
+
+For some relationship types, such as \textit{supplier-customer}, the matrix $ R^r $ is \textbf{asymmetric}, meaning $ R^r_{ij} \neq R^r_{ji} $. In contrast, for \textit{competitor} or \textit{partnership} relationships, the matrix $ R^r $ is \textbf{symmetric}, meaning $ R^r_{ij} = R^r_{ji} $.
+
+\subsection{Reflexivity in Firm Relationships}
+
+In addition to relationships between firms, we also consider \textbf{reflexive relationships}, where a firm $ F_i $ has a relationship with itself, denoted $ F_i \leftrightarrow F_i $. Reflexivity can capture internal actions such as:
+\begin{itemize}
+    \item \textit{Firm Restructuring}: Internal reorganization or governance changes.
+    \item \textit{Stock Buybacks}: Financial actions where a firm repurchases its own shares.
+    \item \textit{Internal Legal Actions}: Actions that affect a firm's own internal compliance or governance.
+\end{itemize}
+
+The reflexive relationships are represented in the diagonal elements $ R^r_{ii} $ of the relationship matrix for each type $ r $:
+
+$$
+R^r_{ii} = \sum_{k=1}^{m} 
+\I{(F_i, F_j, r_{ij}(A_k)) \in \mathcal{R}(A_k)}
+\cdot \text{LLM\_score}(A_k, F_i, F_i, r_{ij}(A_k)),
+$$
+
+where the diagonal element $ R^r_{ii} $ quantifies the strength of firm $ F_i $'s reflexive relationship under relationship type $r$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Mathematically, reflexivity would correspond to the diagonal elements of the relationship matrix $R^r$. 
+Specifically:
+\begin{itemize}
+  \item If $R_{i i}^r>0$, firm $F_i$ has a reflexive relationship in the context of relationship type $r$ (e.g., self-influence or self-reference).
+  \item If $R_{i i}^r=0$, firm $F_i$ does not have a reflexive relationship.
+
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Network Representation with Directionality and Reflexivity}
+
+The firm network is constructed as a \textbf{multi-layered graph} $G=\{G^r\}_{r\in\T}$
+%, where each $G^r=\left(\F, \mathcal{E}^r, w^r\right)$ is a relationship-specific layer 
+composed of relationship-specific layers $G^r=\left(\F, \mathcal{E}^r, w^r\right)$, where:
+\begin{itemize}
+  \item $\F$ is the set of firms (nodes).
+  \item $\mathcal{E}^r \subseteq \F \times \F$ is the set of edges representing relationships of type $r$, where an edge exists between $F_i$ and $F_j$ if $R_{i j}^r>0$. Depending on the type of relationship $r \in \mathcal{T}$, the edges may be \textbf{directed}, \textbf{undirected} or \textbf{looping}:
+\begin{itemize}
+    \item \textit{Directed edges}: For relationships such as supplier-customer, M\&A, and legal disputes, the edges are directed, representing asymmetric relationships where $ F_i \to F_j $ but not necessarily $ F_j \to F_i $.
+    \item \textit{Undirected edges}: For symmetric relationships like competition and partnerships, the edges are undirected, meaning $ F_i \leftrightarrow F_j $.
+    \item \textit{Looping edges}: For reflexive relationships where $F_i\leftrightarrow F_i$. The weight of the self-loop reflects the strength of the firm's internal actions.
+\end{itemize}
+  \item $w^r: \mathcal{E}^r \rightarrow \mathbb{R}_{+}$ is the weight function, where the weight of the edge between $F_i$ and $F_j$ is given by $w^r\left(F_i, F_j\right)=R_{i j}^r$, representing the strength of relationship type $r$ between the two firms.
+\end{itemize}
+
+This creates multiple layers of networks, each representing a different type of firm interaction.
+
+%The firm network is constructed as a \textbf{multi-layered graph} $ G = (\F, \mathcal{E}, w) $, where:
+%\begin{itemize}
+%    \item $ \F $ represents the set of firms (nodes).
+%    \item $ \mathcal{E} \subseteq \F \times \F $ represents the set of edges, with an edge $ (F_i, F_j) $ indicating a relationship between firms $ F_i $ and $ F_j $.
+%\begin{itemize}
+%  \item Directed edges $\mathcal{E}_D \subseteq \F \times \F$ represent directional relationships. For example, if firm $F_i$ supplies firm $F_j$, then $\left(F_i, F_j\right) \in \mathcal{E}_D$.
+%  \item Undirected edges $\mathcal{E}_U \subseteq \F \times \F$ represent symmetric relationships. For example, if firms $F_i$ and $F_j$ are competitors, then $\left(F_i, F_j\right) \in \mathcal{E}_U$.
+%\end{itemize}
+%    \item $ w: \mathcal{E} \to \mathbb{R}_+ $ is a weight function that assigns a weight $ w(F_i, F_j) = R^r_{ij} $, reflecting the strength of the relationship.
+%\end{itemize}
+
+
+\subsection{Dynamic Networks and Temporal Analysis}
+
+To capture how relationships between firms evolve over time, we introduce a \textbf{time-varying relationship matrix} for each relationship type $ r $:
+
+$$
+R^r_{ij}(t) = \sum_{k=1}^{m} \I{(F_i, F_j, r_{ij}(A_k)) \in \mathcal{R}(A_k)} \cdot \text{LLM\_score}(A_k, F_i, F_j, r_{ij}(A_k)) \cdot \I{t(A_k) = t}.
+$$
+
+This matrix captures the relationships at a specific time $ t $ based on the articles published during that time period. The resulting \textbf{dynamic network} $ G(t) $ allows for the study of how firm interactions and network structures evolve in response to economic events, mergers, or external shocks.
+
+\subsection{Analytical Methods and Potential Insights}
+
+With the constructed network, several analyses can be performed to extract valuable insights:
+\begin{itemize}
+    \item \textbf{Centrality Measures}: Compute various centrality measures (degree, eigenvector, betweenness) to identify key firms within specific relationship networks. For example, firms central in the "supplier" network might play crucial roles in supply chains, while those central in the "competitor" network might dominate their industries.
+    \item \textbf{Community Detection}: Apply community detection algorithms to identify clusters of firms that are closely related. Different clusters may emerge in different layers, such as a supply chain ecosystem or a competitive industry cluster.
+    \item \textbf{Temporal Analysis}: Track the evolution of firm relationships over time, analyzing how major economic events (e.g., financial crises, regulatory changes) impact the structure and strength of firm networks.
+    \item \textbf{Impact of Reflexivity}: Study firms with significant self-relations (high diagonal values in the relationship matrix) to understand how internal actions, such as restructuring or stock buybacks, affect firm performance and market position.
+\end{itemize}
+
+\subsection{Conclusion}
+
+This paper introduces a comprehensive and nuanced approach to constructing firm networks from business news articles by leveraging LLMs to detect and classify firm relationships. By incorporating relationship types, directionality, and reflexivity, the proposed methodology provides a rich framework for analyzing firm interactions and market dynamics. The resulting multi-layered, directed- and undirected network allows for advanced analysis of firm relationships, providing insights into how firms navigate competitive environments, form partnerships, and manage internal actions.
+
+This approach opens the door to further research into how firm networks evolve, how firms' internal and external actions affect their market position, and how different types of firm interactions impact the broader economic environment.
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{quote}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
