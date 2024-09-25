@@ -1,0 +1,91 @@
+\section{Methodology}
+
+\subsection{Reinforcement Learning for Asset Pricing}
+
+Reinforcement Learning (RL) is a branch of machine learning where an agent learns to make decisions by interacting with its environment. The goal of RL is to learn a policy that maximizes cumulative rewards over time. In our case, the agent is the asset pricing model, and the environment is the financial market. The agent observes the market state, takes actions to adjust portfolio weights or risk exposures, and receives feedback in the form of rewards, which we define as a combination of risk-adjusted returns and pricing errors.
+
+We now introduce the key components of the RL framework in the context of asset pricing.
+
+\subsubsection{State Space ($s_t$)}
+
+At each time $t$, the state $s_t \in \mathcal{S}$ represents all available information that the agent uses to make decisions. This includes:
+\begin{itemize}
+    \item \textbf{Macroeconomic variables} ($I_t$): Time-varying factors such as GDP growth, inflation rates, and market-wide variables that affect asset prices.
+    \item \textbf{Firm-specific characteristics} ($I_{t, i}$): Asset-level characteristics such as size, book-to-market ratio, and momentum that vary across firms.
+    \item \textbf{Previous portfolio weights} ($\omega_{t-1}$): The asset weights from the previous time step, which influence the current state.
+\end{itemize}
+
+Thus, the state vector can be written as:
+\[
+s_t = \{ I_t, I_{t, i}, \omega_{t-1} \}
+\]
+where $I_t \in \mathbb{R}^p$ represents the $p$ macroeconomic variables, $I_{t, i} \in \mathbb{R}^q$ represents the $q$ firm-specific characteristics for asset $i$, and $\omega_{t-1}$ represents the portfolio weights from the last period. 
+
+\subsubsection{Action Space ($a_t$)}
+
+The action space defines the set of possible adjustments that the agent can make to the portfolio weights and risk exposures. At each time step, the agent selects an action $a_t \in \mathcal{A}$, which could involve:
+\begin{itemize}
+    \item Adjusting the \textbf{SDF portfolio weights} ($\omega_t$): The agent reallocates portfolio weights based on updated market conditions.
+    \item Modifying the \textbf{risk loadings} ($\beta_t$): Adjusting the exposure to systematic risk factors by choosing new risk loadings.
+\end{itemize}
+
+The action space can either be continuous, where $\omega_t$ and $\beta_t$ are adjusted incrementally, or discrete, where specific portfolios are selected. Mathematically, the action can be written as:
+\[
+a_t = \{ \omega_t, \beta_t \}
+\]
+where $\omega_t \in \mathbb{R}^N$ represents the portfolio weights over $N$ assets, and $\beta_t \in \mathbb{R}^N$ represents the risk loadings.
+
+\subsubsection{Reward Function ($R_t$)}
+
+The reward function provides feedback to the agent on the quality of its decisions. In asset pricing, we balance two primary objectives: maximizing risk-adjusted returns (as measured by the Sharpe ratio) and minimizing pricing errors. The reward function is thus formulated as:
+\[
+R_t = SR(\omega_t) - \lambda \cdot PE(\omega_t, \beta_t)
+\]
+where $SR(\omega_t)$ is the Sharpe ratio of the portfolio with weights $\omega_t$, $PE(\omega_t, \beta_t)$ is the pricing error based on the chosen weights and risk loadings, and $\lambda$ is a parameter that balances the trade-off between these two objectives.
+
+\textbf{Sharpe Ratio}:
+The Sharpe ratio of the portfolio is defined as:
+\[
+SR(\omega_t) = \frac{\mathbb{E}[R_t]}{\sqrt{\operatorname{Var}(R_t)}}
+\]
+where $R_t = \omega_t^\top R_{t+1}^e$ is the portfolio return based on the excess returns $R_{t+1}^e$ of the assets.
+
+\textbf{Pricing Error}:
+The pricing error represents the deviation of the model's predicted returns from the observed returns, given the chosen risk exposures. It is defined as:
+\[
+PE(\omega_t, \beta_t) = \sum_{i=1}^N \left( R_{t+1, i}^e - \beta_{t, i} F_{t+1} \right)^2
+\]
+where $R_{t+1, i}^e$ is the excess return of asset $i$ and $\beta_{t, i} F_{t+1}$ is the predicted return based on the systematic factor $F_{t+1}$.
+
+The parameter $\lambda$ controls the importance of minimizing pricing errors relative to maximizing the Sharpe ratio.
+
+\subsubsection{Policy and Value Functions}
+
+The agent's objective is to find a policy $\pi(s_t)$ that maps the current state $s_t$ to an action $a_t$, maximizing the expected cumulative reward:
+\[
+\pi^*(s_t) = \arg \max_\pi \mathbb{E}\left[\sum_{k=0}^\infty \gamma^k R_{t+k} \mid s_t, \pi \right]
+\]
+where $\gamma \in (0, 1]$ is a discount factor that controls the weight given to future rewards. The optimal policy $\pi^*$ maximizes the expected discounted return over time.
+
+The value function $V^\pi(s_t)$ represents the expected cumulative reward starting from state $s_t$ under policy $\pi$:
+\[
+V^\pi(s_t) = \mathbb{E}\left[\sum_{k=0}^\infty \gamma^k R_{t+k} \mid s_t, \pi \right]
+\]
+
+The policy is learned through interaction with the environment, where the agent updates its policy to maximize $V^\pi(s_t)$ over time.
+
+\subsubsection{Actor-Critic Architecture}
+
+We adopt an \textit{actor-critic} architecture to implement the RL model:
+\begin{itemize}
+    \item The \textbf{actor} network represents the policy $\pi(s_t)$ and outputs the action $a_t = \{ \omega_t, \beta_t \}$.
+    \item The \textbf{critic} network estimates the value function $V^\pi(s_t)$ and evaluates the quality of the current state-action pair.
+\end{itemize}
+
+The critic network helps the actor update its policy by providing feedback on the long-term value of the actions taken. This structure allows for continuous improvement of the policy over time.
+
+\subsection{GAN and Reinforcement Learning Integration}
+
+In our model, we integrate the \textit{Generative Adversarial Network (GAN)} from \textit{Chen, Pelger, and Zhu (2023)} into the RL framework. The adversarial network in GAN selects the hardest-to-price moments, and the RL agent learns to adjust the portfolio weights and risk exposures to minimize the worst-case pricing errors. The GAN serves as the environment, continually presenting challenges for the RL agent to solve.
+
+At each step, the RL agent interacts with the GAN by selecting portfolio weights $\omega_t$ and risk loadings $\beta_t$, and the GAN adversary responds by identifying the moments where pricing errors are largest. The RL agent then updates its policy based on the reward function, adjusting its actions to minimize these errors and maximize the Sharpe ratio.

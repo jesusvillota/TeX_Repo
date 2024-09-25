@@ -1,0 +1,86 @@
+\section{Methodology}
+
+In this section, we outline the methodology for incorporating Reinforcement Learning (RL) into the deep learning framework for asset pricing. We will first define the key components of the RL framework, including the state space, action space, reward function, and policy optimization. We then describe how the Stochastic Discount Factor (SDF) and portfolio weights are adjusted dynamically based on market feedback.
+
+\subsection{Reinforcement Learning Framework}
+
+Reinforcement Learning (RL) is a machine learning paradigm in which an agent interacts with an environment by taking actions, receiving rewards, and updating its policy to maximize long-term cumulative rewards. In the context of asset pricing, the agent represents the model that estimates the SDF and portfolio weights, while the environment is the financial market that provides information about returns, risk factors, and macroeconomic variables.
+
+Formally, the RL framework is defined as a \textit{Markov Decision Process (MDP)}, which consists of the following components:
+
+\subsubsection{State Space ($s_t$)}
+
+The \textit{state space} $s_t$ at time $t$ contains all relevant information needed to price assets and estimate the SDF. In our framework, the state space is composed of:
+\[
+s_t = \left(I_t, I_{t, i}, \omega_{t-1}, h_t\right)
+\]
+where:
+\begin{itemize}
+    \item $I_t$: A vector of macroeconomic variables at time $t$ (e.g., GDP growth, inflation, interest rates).
+    \item $I_{t, i}$: A vector of firm-specific characteristics at time $t$ for asset $i$ (e.g., size, book-to-market ratio).
+    \item $\omega_{t-1}$: The SDF portfolio weights from the previous time step.
+    \item $h_t$: A set of hidden state variables that capture the dynamic patterns in the macroeconomic data, estimated via a Long Short-Term Memory (LSTM) network.
+\end{itemize}
+
+The inclusion of $h_t$ allows the model to incorporate both short-term and long-term dependencies in the macroeconomic and firm-specific data. The hidden states $h_t$ are updated at each time step as new macroeconomic information becomes available.
+
+\subsubsection{Action Space ($a_t$)}
+
+At each time step $t$, the agent selects an \textit{action} $a_t$ that adjusts the SDF portfolio weights $\omega_t$ and the risk exposures $\beta_t$. The action space can be either continuous or discrete, depending on the nature of the adjustments. For simplicity, we define the action space as continuous:
+\[
+a_t = \left(\Delta \omega_t, \Delta \beta_t\right)
+\]
+where:
+\begin{itemize}
+    \item $\Delta \omega_t$: The adjustment to the SDF portfolio weights at time $t$.
+    \item $\Delta \beta_t$: The adjustment to the risk exposures at time $t$.
+\end{itemize}
+
+The goal of the agent is to choose actions that maximize the reward over time, which we define next.
+
+\subsubsection{Reward Function ($R_t$)}
+
+The \textit{reward function} measures the performance of the agent at each time step and is used to guide the learning process. In our framework, the reward function reflects the trade-off between maximizing risk-adjusted returns and minimizing pricing errors. We define the reward function as:
+\[
+R_t = SR_t - \lambda \cdot PE_t
+\]
+where:
+\begin{itemize}
+    \item $SR_t$: The Sharpe ratio of the SDF portfolio at time $t$, which measures risk-adjusted returns. It is defined as:
+    \[
+    SR_t = \frac{\mathbb{E}[F_t]}{\sqrt{\operatorname{Var}(F_t)}}
+    \]
+    where $F_t$ is the return on the SDF portfolio at time $t$.
+    \item $PE_t$: The pricing error at time $t$, which measures how well the model prices assets. It is given by the cross-sectional pricing error:
+    \[
+    PE_t = \frac{1}{N} \sum_{i=1}^N \left( R_{t+1, i}^e - \mathbb{E}_t\left[R_{t+1, i}^e \right] \right)^2
+    \]
+    \item $\lambda$: A regularization parameter that balances the trade-off between maximizing the Sharpe ratio and minimizing the pricing error.
+\end{itemize}
+
+The reward function ensures that the agent learns to both optimize portfolio weights for high risk-adjusted returns and minimize the mispricing of assets.
+
+\subsection{Policy Optimization}
+
+The goal of the agent is to learn a policy $\pi(a_t \mid s_t)$ that maps states to actions in a way that maximizes the expected cumulative reward over time:
+\[
+\pi^* = \arg \max_{\pi} \mathbb{E}\left[\sum_{t=0}^T \gamma^t R_t \mid \pi \right]
+\]
+where $\gamma \in (0, 1]$ is a discount factor that determines the importance of future rewards. The policy $\pi$ is typically parameterized by a neural network, and the optimization is done using a gradient-based method such as \textit{policy gradient} or \textit{Deep Q-Learning}.
+
+The policy is updated iteratively as the agent interacts with the market environment. At each time step, the agent observes the current state $s_t$, selects an action $a_t$ based on the current policy, and receives a reward $R_t$. The policy is then updated to improve the expected cumulative reward by minimizing the loss function:
+\[
+L(\theta) = -\mathbb{E}\left[\sum_{t=0}^T \gamma^t R_t \mid \theta \right]
+\]
+where $\theta$ are the parameters of the policy network.
+
+\subsection{LSTM for Macroeconomic Dynamics}
+
+As described in \textit{Chen et al.}, macroeconomic variables are often non-stationary and exhibit complex dynamic patterns. To capture these dynamics, we use a \textit{Long Short-Term Memory (LSTM)} network to estimate hidden state variables $h_t$ that summarize the information in the macroeconomic time series. The LSTM processes the sequence of macroeconomic observations $\left(I_0, I_1, \ldots, I_t\right)$ and outputs a hidden state $h_t$ that reflects both short-term and long-term dependencies.
+
+Formally, the LSTM updates the hidden state according to the following equations:
+\[
+h_t = \sigma\left(W_h h_{t-1} + W_x I_t + b_h \right)
+\]
+where $\sigma$ is a non-linear activation function, $W_h$ and $W_x$ are weight matrices, and $b_h$ is a bias term. The hidden state $h_t$ is then used as an input to the RL agent for making decisions about portfolio adjustments.
+

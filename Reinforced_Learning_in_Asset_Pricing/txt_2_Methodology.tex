@@ -1,0 +1,95 @@
+\section{Methodology}
+
+\subsection{Reinforcement Learning for Asset Pricing}
+
+Reinforcement Learning (RL) is a machine learning paradigm in which an agent interacts with an environment by taking actions, receiving rewards, and updating its policy to maximize long-term cumulative rewards. In the context of asset pricing, the agent represents the model that estimates the SDF and portfolio weights, while the environment is the financial market that provides information about returns, risk factors, and macroeconomic variables.
+
+Formally, the RL framework is defined as a \textit{Markov Decision Process (MDP)}, which consists of the following components:
+
+\subsubsection{State Space ($s_t$)}
+
+The \textit{state space} $s_t$ at time $t$ contains all relevant information needed to price assets and estimate the SDF. In our framework, the state space is composed of:
+\[
+s_t = \left(I_t, I_{t, i}, \omega_{t-1}, h_t\right)
+\]
+where:
+\begin{itemize}
+    \item $I_t$: A vector of macroeconomic variables at time $t$ (e.g., GDP growth, inflation, interest rates).
+    \item $I_{t, i}$: A vector of firm-specific characteristics at time $t$ for asset $i$ (e.g., size, book-to-market ratio).
+    \item $\omega_{t-1}$: The SDF portfolio weights from the previous time step.
+    \item $h_t$: A set of hidden state variables that capture the dynamic patterns in the macroeconomic data, estimated via a Long Short-Term Memory (LSTM) network.
+\end{itemize}
+
+The inclusion of $h_t$ allows the model to incorporate both short-term and long-term dependencies in the macroeconomic and firm-specific data. The hidden states $h_t$ are updated at each time step as new macroeconomic information becomes available.
+
+\subsubsection{Action Space ($a_t$)}
+
+At each time step $t$, the agent selects an \textit{action} $a_t$ that adjusts the SDF portfolio weights $\omega_t$ and the risk exposures $\beta_t$. The action space can be either continuous or discrete, depending on the nature of the adjustments. We define the action space as continuous:
+\[
+a_t = \left(\omega_t, \beta_t\right)
+\]
+where:
+\begin{itemize}
+    \item $\omega_t$: The portfolio weights at time $t$ for the SDF.
+    \item $\beta_t$: The exposure to systematic risks at time $t$.
+\end{itemize}
+
+The goal of the agent is to choose actions that maximize the reward over time, which we define next.
+
+\subsubsection{Reward Function ($R_t$)}
+
+The \textit{reward function} measures the performance of the agent at each time step and is used to guide the learning process. In our framework, the reward function reflects the trade-off between maximizing risk-adjusted returns and minimizing pricing errors. We define the reward function as:
+\[
+R_t = SR(\omega_t) - \lambda \cdot PE(\omega_t, \beta_t)
+\]
+where:
+\begin{itemize}
+    \item $SR(\omega_t)$: The Sharpe ratio of the portfolio with weights $\omega_t$, defined as:
+    \[
+    SR(\omega_t) = \frac{\mathbb{E}[R_t]}{\sqrt{\operatorname{Var}(R_t)}}
+    \]
+    where $R_t = \omega_t^\top R_{t+1}^e$ is the portfolio return based on the excess returns $R_{t+1}^e$ of the assets.
+    \item $PE(\omega_t, \beta_t)$: The pricing error, which measures the deviation of the model's predicted returns from observed returns, defined as:
+    \[
+    PE(\omega_t, \beta_t) = \sum_{i=1}^N \left( R_{t+1, i}^e - \beta_{t, i} F_{t+1} \right)^2
+    \]
+    \item $\lambda$: A regularization parameter that balances the trade-off between maximizing the Sharpe ratio and minimizing the pricing error.
+\end{itemize}
+
+The reward function ensures that the agent learns to both optimize portfolio weights for high risk-adjusted returns and minimize the mispricing of assets.
+
+\subsubsection{Policy and Value Functions}
+
+The agent's objective is to learn a policy $\pi(a_t \mid s_t)$ that maps states to actions in a way that maximizes the expected cumulative reward over time:
+\[
+\pi^* = \arg \max_{\pi} \mathbb{E}\left[\sum_{t=0}^T \gamma^t R_t \mid \pi \right]
+\]
+where $\gamma \in (0, 1]$ is a discount factor that determines the importance of future rewards. The policy $\pi$ is typically parameterized by a neural network, and the optimization is done using a gradient-based method such as \textit{policy gradient} or \textit{Deep Q-Learning}.
+
+The policy is updated iteratively as the agent interacts with the market environment. At each time step, the agent observes the current state $s_t$, selects an action $a_t$ based on the current policy, and receives a reward $R_t$. The policy is then updated to improve the expected cumulative reward.
+
+\subsubsection{Actor-Critic Architecture}
+
+We adopt an \textit{actor-critic} architecture to implement the RL model:
+\begin{itemize}
+    \item The \textbf{actor} network represents the policy $\pi(s_t)$ and outputs the action $a_t = \{ \omega_t, \beta_t \}$.
+    \item The \textbf{critic} network estimates the value function $V^\pi(s_t)$ and evaluates the quality of the current state-action pair.
+\end{itemize}
+
+The critic network helps the actor update its policy by providing feedback on the long-term value of the actions taken. This structure allows for continuous improvement of the policy over time.
+
+\subsection{LSTM for Macroeconomic Dynamics}
+
+Macroeconomic variables are often non-stationary and exhibit complex dynamic patterns. To capture these dynamics, we use a \textit{Long Short-Term Memory (LSTM)} network to estimate hidden state variables $h_t$ that summarize the information in the macroeconomic time series. The LSTM processes the sequence of macroeconomic observations $\left(I_0, I_1, \ldots, I_t\right)$ and outputs a hidden state $h_t$ that reflects both short-term and long-term dependencies.
+
+Formally, the LSTM updates the hidden state according to the following equations:
+\[
+h_t = \sigma\left(W_h h_{t-1} + W_x I_t + b_h \right)
+\]
+where $\sigma$ is a non-linear activation function, $W_h$ and $W_x$ are weight matrices, and $b_h$ is a bias term. The hidden state $h_t$ is then used as an input to the RL agent for making decisions about portfolio adjustments.
+
+\subsection{GAN and Reinforcement Learning Integration}
+
+In our model, we integrate the \textit{Generative Adversarial Network (GAN)} from \textit{Chen, Pelger, and Zhu (2023)} into the RL framework. The adversarial network in GAN selects the hardest-to-price moments, and the RL agent learns to adjust the portfolio weights and risk exposures to minimize the worst-case pricing errors. The GAN serves as the environment, continually presenting challenges for the RL agent to solve.
+
+At each step, the RL agent interacts with the GAN by selecting portfolio weights $\omega_t$ and risk loadings $\beta_t$, and the GAN adversary responds by identifying the moments where pricing errors are largest. The RL agent then updates its policy based on the reward function, adjusting its actions to minimize these errors and maximize the Sharpe ratio.

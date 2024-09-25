@@ -1,0 +1,41 @@
+\section{Introduction}
+
+\subsection{Motivation}
+
+Asset pricing has long been concerned with understanding the relationship between risk and return in financial markets. Classical models such as the Capital Asset Pricing Model (CAPM) and multifactor models like Fama-French, seek to explain the cross-section of asset returns through linear relationships between returns and factors. However, these traditional models, while intuitive and tractable, struggle to capture the complex, nonlinear dynamics and interactions between macroeconomic factors and asset characteristics.
+
+Recent advances in \textit{Deep Learning} have opened new possibilities for asset pricing, enabling models to capture nonlinearities, time dependencies, and interactions in a data-driven way. In particular, \textit{Chen, Pelger, and Zhu (2023)} introduced a deep learning framework for asset pricing that employs \textit{Generative Adversarial Networks (GANs)} to estimate the \textit{Stochastic Discount Factor (SDF)}. The SDF, which determines the price of risky assets, is essential for understanding how systematic risk is priced in the market.
+
+The GAN framework of \textit{Chen et al.} improves upon traditional models by dynamically selecting moment conditions that are hardest to price, forcing the model to minimize these worst-case pricing errors. However, despite its power, this framework remains relatively static in nature-it focuses on optimizing at each time step without leveraging the sequential and dynamic structure of financial markets. Financial markets are inherently dynamic, with feedback loops and evolving relationships between variables, making a dynamic approach to SDF estimation crucial.
+
+\subsection{Why Reinforcement Learning?}
+
+\textit{Reinforcement Learning (RL)} provides a natural extension to the deep learning framework for asset pricing, as it is inherently designed to deal with dynamic, time-evolving environments. RL has been successfully applied in fields such as robotics, game theory, and complex decision-making problems, where learning policies over time leads to optimal long-term outcomes. In financial markets, RL allows for continuous learning and adaptation to changes in market conditions by learning optimal policies for portfolio selection and pricing.
+
+Unlike traditional deep learning models, which learn static mappings between inputs and outputs, RL models interact with their environment by selecting actions (in our case, adjusting portfolio weights or risk exposures) and receiving feedback (returns or pricing errors). This feedback is used to update the model's policy, which seeks to maximize cumulative rewards over time. This dynamic aspect makes RL particularly suitable for problems in asset pricing, where the goal is not only to minimize pricing errors at a single time point but also to learn optimal strategies over time that adjust to market conditions.
+
+Moreover, RL can extend the framework of \textit{Chen et al.} by learning policies that dynamically adjust the SDF portfolio weights \( \omega_t \) and risk exposures \( \beta_t \) to maximize the risk-adjusted returns (as measured by the Sharpe ratio) while minimizing pricing errors. The integration of RL transforms the problem from a static optimization to one that is dynamic, enabling the model to continuously adapt and improve in response to new information.
+
+\subsection{Contributions}
+
+In this paper, we propose extending the deep learning framework of \textit{Chen, Pelger, and Zhu} by incorporating \textit{Reinforcement Learning} for the dynamic estimation of the Stochastic Discount Factor. The primary contributions of this paper are as follows:
+
+\begin{itemize}
+    \item We introduce a Reinforcement Learning framework for dynamic asset pricing, where the model learns an optimal policy for adjusting portfolio weights and risk exposures based on market feedback.
+    \item We propose a novel reward function that balances risk-adjusted returns (Sharpe ratio) and pricing errors, enabling the model to dynamically adjust to maximize long-term performance.
+    \item We compare the RL-augmented model with the GAN model from \textit{Chen et al.} and traditional forecasting approaches, demonstrating that RL provides superior performance in capturing dynamic market behavior.
+\end{itemize}
+
+The rest of this paper is structured as follows. In Section 2, we outline the methodology for incorporating RL into the asset pricing framework. Section 3 discusses the implementation of the RL model, including the neural network architecture and training procedure. Section 4 presents the empirical evaluation of the model, comparing its performance with existing models. Finally, Section 5 concludes and discusses future research directions.
+
+\subsection{Structure of the Paper}
+
+The remainder of this paper is organized as follows:
+
+\begin{itemize}
+    \item In Section 2, we describe the methodology for incorporating Reinforcement Learning into the asset pricing framework.
+    \item Section 3 explains the implementation details of the RL model, including the architecture, training procedure, and regularization techniques.
+    \item In Section 4, we present the empirical evaluation of the RL model and compare its performance to the GAN model and traditional approaches.
+    \item Section 5 concludes with a discussion of key findings and future research directions.
+\end{itemize}
+
