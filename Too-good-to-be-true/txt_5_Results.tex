@@ -1,0 +1,141 @@
+\section{Results}
+
+In this section, we present the empirical results of our analysis. We begin by providing descriptive statistics for the dataset and the initial performance of the trading strategies. We then evaluate the performance of each strategy over time using the rolling-window framework, followed by formal tests for overfitting and profitability decay. Finally, we assess the robustness of our findings through a series of robustness checks.
+
+\subsection{Descriptive Statistics}
+
+Table \ref{tab:descriptive_stats} provides summary statistics for the key variables used in the analysis. These include the mean, standard deviation, and median returns for each asset class in the dataset, as well as the average number of trades executed by each trading strategy. The dataset spans from [start date] to [end date], covering a total of [X] observations for each asset.
+
+\begin{table}[H]
+    \centering
+    \caption{Descriptive Statistics of the Dataset}
+    \label{tab:descriptive_stats}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Variable} & \textbf{Mean} & \textbf{Standard Deviation} & \textbf{Median} \\
+        \hline
+        Asset 1 Return & X.XX\% & X.XX\% & X.XX\% \\
+        Asset 2 Return & X.XX\% & X.XX\% & X.XX\% \\
+        Number of Trades (Strategy 1) & XX & XX & XX \\
+        Number of Trades (Strategy 2) & XX & XX & XX \\
+        \hline
+    \end{tabular}
+\end{table}
+
+In the initial test period, the average out-of-sample return for each strategy is reported in Table \ref{tab:initial_performance}. We find that most strategies exhibit positive returns during the first out-of-sample window, with an average Sharpe ratio of [X.XX]. However, this initial profitability may be overstated due to overfitting, as examined in the subsequent analysis.
+
+\begin{table}[H]
+    \centering
+    \caption{Initial Out-of-Sample Performance (First Window)}
+    \label{tab:initial_performance}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Strategy} & \textbf{Average Return} & \textbf{Sharpe Ratio} & \textbf{Alpha} \\
+        \hline
+        Strategy 1 & X.XX\% & X.XX & X.XX\% \\
+        Strategy 2 & X.XX\% & X.XX & X.XX\% \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Performance of Trading Strategies Over Time}
+
+Figure \ref{fig:rolling_performance} shows the out-of-sample performance of each trading strategy over time, computed using the rolling-window framework. We observe that profitability declines for most strategies as the sample progresses, with sharp declines during [certain periods, e.g., financial crises].
+
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=0.8\textwidth]{rolling_performance}
+%    \caption{Out-of-Sample Performance of Trading Strategies Over Time}
+%    \label{fig:rolling_performance}
+%\end{figure}
+
+The rolling Sharpe ratio for each strategy is presented in Figure \ref{fig:rolling_sharpe}, which highlights the decline in risk-adjusted returns over time. Notably, the Sharpe ratio for [Strategy 1] is initially high but decays rapidly after [time period], suggesting that the strategy's initial profitability was either an anomaly or arbitraged away by market participants.
+
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=0.8\textwidth]{rolling_sharpe}
+%    \caption{Rolling Sharpe Ratios Over Time}
+%    \label{fig:rolling_sharpe}
+%\end{figure}
+
+\subsection{Tests for Overfitting}
+
+To formally test for overfitting, we compare the profitability of the trading strategies in the first out-of-sample window to their profitability in later windows. Table \ref{tab:overfitting_test} reports the results of a paired t-test, showing that the average profitability in the first window is significantly higher than in subsequent windows (p-value = [XX]). This provides strong evidence of out-of-sample overfitting.
+
+\begin{table}[H]
+    \centering
+    \caption{Overfitting Test Results (Paired t-test)}
+    \label{tab:overfitting_test}
+    \begin{tabular}{lcc}
+        \hline
+        \textbf{Window Comparison} & \textbf{Mean Profitability Difference} & \textbf{p-value} \\
+        \hline
+        First vs. Later Windows & X.XX\% & X.XX \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Alpha Decay}
+
+Table \ref{tab:alpha_decay} presents the results of the alpha decay test. The estimated decay rate $\hat{\rho}$ is [X.XX], with a 95\% confidence interval of [XX, XX]. The fact that $\hat{\rho}$ is significantly less than 1 (p-value = [XX]) suggests that the profitability of these strategies decays over time, consistent with the predictions of market efficiency.
+
+\begin{table}[H]
+    \centering
+    \caption{Alpha Decay Test Results}
+    \label{tab:alpha_decay}
+    \begin{tabular}{lcc}
+        \hline
+        \textbf{Alpha Decay Rate} & \textbf{Estimate} & \textbf{p-value} \\
+        \hline
+        $\rho$ & X.XX & X.XX \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Figure \ref{fig:alpha_decay} provides a visual representation of the alpha decay over time. We see that the alpha for most strategies approaches zero within [X] periods, providing further evidence that market efficiency erodes excess returns.
+
+%\begin{figure}[H]
+%    \centering
+%    \includegraphics[width=0.8\textwidth]{alpha_decay}
+%    \caption{Alpha Decay Over Time}
+%    \label{fig:alpha_decay}
+%\end{figure}
+
+\subsection{Robustness of Results}
+
+To ensure the robustness of our results, we perform several checks. First, we vary the rolling-window length to test whether the decay in profitability is sensitive to the choice of window size. Table \ref{tab:robustness_window} shows that the results remain consistent across different window lengths, with similar estimates for alpha decay and overfitting across all specifications.
+
+\begin{table}[H]
+    \centering
+    \caption{Robustness to Window Lengths}
+    \label{tab:robustness_window}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Window Length} & \textbf{Alpha Decay Estimate} & \textbf{p-value} & \textbf{Overfitting Test p-value} \\
+        \hline
+        $T_{out} = 1$ year & X.XX & X.XX & X.XX \\
+        $T_{out} = 3$ years & X.XX & X.XX & X.XX \\
+        \hline
+    \end{tabular}
+\end{table}
+
+We also test alternative profitability metrics, such as the Sortino ratio and maximum drawdown, and find that the results hold across these metrics (see Table \ref{tab:robustness_metrics}). These robustness checks provide further confidence in the validity of our findings.
+
+\begin{table}[H]
+    \centering
+    \caption{Robustness to Alternative Profitability Metrics}
+    \label{tab:robustness_metrics}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Metric} & \textbf{Alpha Decay Estimate} & \textbf{p-value} & \textbf{Overfitting Test p-value} \\
+        \hline
+        Sharpe Ratio & X.XX & X.XX & X.XX \\
+        Sortino Ratio & X.XX & X.XX & X.XX \\
+        Maximum Drawdown & X.XX & X.XX & X.XX \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Summary of Findings}
+
+Overall, our results provide strong evidence that the profitability of trading strategies decays over time due to both overfitting and market efficiency. The initial profitability observed in out-of-sample tests is often overstated, as evidenced by the significant drop in performance in later test windows. Furthermore, the alpha decay results suggest that market participants quickly arbitrage away any excess returns, leading to the eventual erosion of profitability.

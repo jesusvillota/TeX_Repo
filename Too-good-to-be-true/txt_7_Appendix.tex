@@ -1,0 +1,114 @@
+\appendix
+
+\section{Appendix: Technical Details and Mathematical Derivations}
+
+In this appendix, we provide the mathematical and technical details that were omitted from the main text for brevity. We explore the formal derivations related to out-of-sample overfitting, alpha decay, multiple testing corrections, and the bootstrapping methodology used to generate confidence intervals.
+
+\subsection{Derivation of Bias in Out-of-Sample Overfitting}
+
+To formally understand the bias introduced by peeking at the test data during model selection, consider the model $f_{\theta}$, parameterized by $\theta \in \Theta$, where $\hat{\theta}$ is chosen to maximize profitability on test data $\mathcal{D}_{test}$:
+\[
+\hat{\theta} = \arg \max_{\theta} \mathcal{P}(\theta; \mathcal{D}_{test}).
+\]
+We want to compute the expected out-of-sample performance, $\mathcal{P}_{future}$, conditional on $\mathcal{P}_{test}$. Assume that $\mathcal{P}(\theta; \mathcal{D})$ is normally distributed with mean $\mu(\theta)$ and variance $\sigma^2(\theta)$. The key issue arises when $\mathcal{P}(\theta; \mathcal{D}_{test})$ is used for model selection, leading to an upward bias in the estimate of future profitability.
+
+Let $\mu(\hat{\theta})$ be the true expected profitability of the selected model $\hat{\theta}$. The observed profitability $\mathcal{P}(\hat{\theta}; \mathcal{D}_{test})$ is an upward-biased estimate of $\mu(\hat{\theta})$. The bias can be expressed as:
+\[
+\mathbb{E}[\mathcal{P}_{test}] - \mathbb{E}[\mathcal{P}_{future}] = \text{Bias}(\hat{\theta}),
+\]
+where $\text{Bias}(\hat{\theta})$ depends on the variance of the profitability estimate and the number of models/hyperparameters tested.
+
+This bias is amplified by the number of trials conducted during model selection. If $k$ different models or hyperparameter sets are tested, the expected bias is given by:
+\[
+\text{Bias}(\hat{\theta}) = \frac{\sigma}{\sqrt{2\pi}} \cdot \log(k).
+\]
+This relationship demonstrates that as the number of hyperparameter trials increases, the likelihood of selecting a model that overfits to test data also increases, leading to overstated out-of-sample profitability.
+
+\subsection{Detailed Explanation of AR(1) Model for Alpha Decay}
+
+We model the decay of alpha, $\alpha_t$, as an autoregressive process of order 1 (AR(1)):
+\[
+\alpha_{t+1} = \rho \cdot \alpha_t + \epsilon_t,
+\]
+where $\epsilon_t \sim N(0, \sigma^2)$ represents a white noise error term. The parameter $\rho \in (0, 1)$ determines the rate of decay in profitability, and the closer $\rho$ is to zero, the faster the decay.
+
+To estimate $\rho$, we use maximum likelihood estimation (MLE). The likelihood function for the AR(1) process is given by:
+\[
+L(\rho, \sigma^2) = \prod_{t=1}^{T-1} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(\alpha_{t+1} - \rho \cdot \alpha_t)^2}{2\sigma^2} \right).
+\]
+Maximizing this likelihood function yields the following estimator for $\rho$:
+\[
+\hat{\rho} = \frac{\sum_{t=1}^{T-1} \alpha_t \alpha_{t+1}}{\sum_{t=1}^{T-1} \alpha_t^2}.
+\]
+The standard error of $\hat{\rho}$ is given by:
+\[
+\text{SE}(\hat{\rho}) = \frac{\sigma_{\epsilon}}{\sqrt{\sum_{t=1}^{T-1} \alpha_t^2}},
+\]
+where $\sigma_{\epsilon}$ is the standard deviation of the residuals. A $1-\alpha$ confidence interval for $\rho$ is given by:
+\[
+\hat{\rho} \pm z_{\alpha/2} \cdot \text{SE}(\hat{\rho}),
+\]
+where $z_{\alpha/2}$ is the critical value from the standard normal distribution.
+
+\subsection{Multiple Testing Corrections}
+
+In the presence of multiple trading strategies, we need to adjust the significance level $\alpha$ to account for the multiple comparisons problem. The simplest approach is the Bonferroni correction, which adjusts $\alpha$ as:
+\[
+\alpha_{corrected} = \frac{\alpha}{k},
+\]
+where $k$ is the number of independent strategies tested. This method is conservative but ensures that the family-wise error rate (FWER) is controlled at $\alpha$.
+
+More sophisticated methods, such as Holm's procedure or the Benjamini-Hochberg (BH) procedure, control the false discovery rate (FDR), which is the expected proportion of false positives among rejected hypotheses. The BH procedure adjusts p-values as follows:
+\[
+p_i \text{ is significant if } p_i \leq \frac{i}{k} \cdot \alpha,
+\]
+where $p_i$ is the $i$th ordered p-value.
+
+\subsection{Bootstrapping Methodology for Confidence Intervals}
+
+To compute confidence intervals for profitability metrics, we employ the bootstrapping method. Let $\mathcal{P}_t$ denote the out-of-sample profitability in rolling window $t$. We resample the set $\{\mathcal{P}_1, \dots, \mathcal{P}_T\}$ with replacement to generate $B$ bootstrap samples:
+\[
+\mathcal{P}^*_t = \{ \mathcal{P}_{b1}, \dots, \mathcal{P}_{bT} \}, \quad b=1,\dots,B.
+\]
+For each bootstrap sample, we compute the profitability metric of interest (e.g., mean return, Sharpe ratio, alpha). The $1-\alpha$ confidence interval for the true profitability is given by the $\alpha/2$ and $1-\alpha/2$ quantiles of the bootstrap distribution:
+\[
+[\hat{\mathcal{P}}_{(B\alpha/2)}, \hat{\mathcal{P}}_{(B(1-\alpha/2))}].
+\]
+
+This approach provides robust confidence intervals that do not rely on the normality assumption, making it well-suited for financial data with fat tails or skewness.
+
+\subsection{Robustness Checks with Varying Window Lengths}
+
+To ensure the robustness of our results, we conduct analyses using different rolling-window lengths. Let $T_{in}$ and $T_{out}$ represent the in-sample and out-of-sample window lengths, respectively. For each window configuration, we recompute the profitability metrics and test statistics to ensure that the results are not driven by a specific choice of $T_{in}$ or $T_{out}$.
+
+Table \ref{tab:window_robustness} shows the results for varying window lengths, demonstrating that the alpha decay and overfitting tests remain robust across different configurations.
+
+\begin{table}[H]
+    \centering
+    \caption{Robustness to Rolling-Window Lengths}
+    \label{tab:window_robustness}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Window Length} & \textbf{Alpha Decay Estimate} & \textbf{p-value} & \textbf{Overfitting Test p-value} \\
+        \hline
+        $T_{out} = 1$ year & X.XX & X.XX & X.XX \\
+        $T_{out} = 3$ years & X.XX & X.XX & X.XX \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Additional Theoretical Details on Market Efficiency}
+
+The efficient market hypothesis (EMH) posits that prices fully reflect all available information, implying that no trading strategy should consistently generate excess returns. In the context of our alpha decay analysis, we observe that as more market participants adopt a trading strategy, the alpha decays due to arbitrage.
+
+The rate of decay, $\rho$, is influenced by the speed at which market participants respond to new information. If markets are highly liquid and participants are well-informed, we expect $\rho$ to be close to zero, meaning that excess returns are quickly arbitraged away. In less efficient markets, where information dissemination is slower, $\rho$ may be closer to 1, indicating a slower decay in profitability.
+
+The long-run profitability of a strategy can be expressed as:
+\[
+\mathbb{E}[\alpha_n] = \rho^n \cdot \alpha_0,
+\]
+where $\alpha_0$ is the initial alpha and $n$ represents the number of periods. As $n \to \infty$, $\mathbb{E}[\alpha_n] \to 0$, consistent with the EMH.
+
+\section{Conclusion of Appendix}
+
+The technical details provided in this appendix clarify the statistical and mathematical foundations underlying our empirical methodology. These derivations enhance the rigor of our analysis and support the conclusions drawn in the main text.

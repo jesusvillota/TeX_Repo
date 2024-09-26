@@ -1,0 +1,78 @@
+\section{Empirical Methodology}
+
+In this section, we outline the empirical methodology used to test the profitability of trading strategies over time. The methodology is designed to address the two key issues discussed in the theoretical framework: out-of-sample overfitting and the erosion of profitability due to market efficiency. To accomplish this, we employ a rolling-window framework that generates multiple out-of-sample profitability estimates, allowing us to test whether trading strategies were ever genuinely profitable and how their profitability decays over time.
+
+\subsection{Data Description}
+
+The data used in this analysis consist of historical price and return data for a large cross-section of assets, including equities, bonds, and commodities. We obtain this data from well-established sources such as CRSP for equities and Fama-French factors for market benchmarks. The dataset spans from [start date] to [end date], providing [X] years of historical data.
+
+For each asset, we collect daily price and volume data, which we use to construct returns. In addition to raw returns, we also compute excess returns over a benchmark, such as the risk-free rate or market return, depending on the specific trading strategy. Trading strategies are derived from prior academic literature and cover a broad range of approaches, including momentum, value, and machine learning-based strategies such as neural networks and random forests.
+
+Data preprocessing includes handling missing values, adjusting for stock splits, and aligning the frequency of returns across assets. All returns are adjusted for dividends and corporate actions to ensure accurate measures of total return.
+
+\subsection{Rolling-Window Framework}
+
+To evaluate the out-of-sample performance of each trading strategy, we employ a rolling-window methodology. Let $T_{in}$ represent the in-sample window length (used for training the model), and $T_{out}$ represent the out-of-sample window length (used for testing). For each strategy $f_{\theta}$, we estimate the model parameters over a rolling in-sample window of length $T_{in}$ and then test the strategy on the subsequent out-of-sample window of length $T_{out}$. This process is repeated over the entire historical dataset, generating a sequence of out-of-sample performance measures.
+
+Formally, let $\{R_t\}_{t=1}^{T}$ denote the returns of an asset or portfolio from time $t=1$ to $T$. At each time step $t$, the model is trained using the in-sample window $\{R_{t-T_{in}+1}, \dots, R_{t}\}$, and out-of-sample performance is evaluated on the subsequent window $\{R_{t+1}, \dots, R_{t+T_{out}}\}$. This rolling process can be written as:
+\[
+\hat{\theta}_t = \arg \max_{\theta} \mathcal{P}(\theta; R_{t-T_{in}+1:t}),
+\]
+\[
+\mathcal{P}_{t+1:t+T_{out}} = \mathcal{P}(\hat{\theta}_t; R_{t+1:t+T_{out}}),
+\]
+where $\hat{\theta}_t$ represents the model parameters estimated at time $t$, and $\mathcal{P}_{t+1:t+T_{out}}$ represents the out-of-sample profitability over the subsequent window.
+
+The rolling-window framework provides a robust way to evaluate out-of-sample performance across different time periods, allowing us to observe how the profitability of each strategy evolves over time. The choice of window length $T_{in}$ and $T_{out}$ can influence the results, so we conduct robustness checks with varying window sizes.
+
+\subsection{Profitability Metrics}
+
+To measure the profitability of each trading strategy, we employ several commonly used performance metrics:
+\begin{itemize}
+    \item \textbf{Average Return:} The mean return over the out-of-sample period, computed as:
+    \[
+    \mathbb{E}[R_t] = \frac{1}{T_{out}} \sum_{t=1}^{T_{out}} R_t.
+    \]
+    \item \textbf{Sharpe Ratio:} The Sharpe ratio, which adjusts for risk by dividing excess returns by the standard deviation of returns, is given by:
+    \[
+    SR = \frac{\mathbb{E}[R_t - R_f]}{\text{Std}(R_t - R_f)},
+    \]
+    where $R_f$ is the risk-free rate.
+    \item \textbf{Alpha:} Excess return, or "alpha," is computed using a linear regression of asset returns on market returns:
+    \[
+    R_t = \alpha + \beta R_m + \epsilon_t,
+    \]
+    where $R_m$ is the return on the market portfolio.
+\end{itemize}
+
+We compute confidence intervals for each profitability metric using bootstrapping techniques. Specifically, for each rolling window, we resample the out-of-sample returns to generate a distribution of profitability measures and construct $95\%$ confidence intervals for the mean profitability, Sharpe ratio, and alpha.
+
+\subsection{Statistical Tests}
+
+To test for overfitting and the decay of profitability due to market efficiency, we conduct the following statistical tests:
+\begin{itemize}
+    \item \textbf{Overfitting Test:} We test for overfitting by comparing the profitability in the initial test window to that in subsequent windows. Specifically, we compute the difference in profitability between the first out-of-sample window and later windows and test whether the difference is statistically significant using a t-test:
+    \[
+    H_0: \mathbb{E}[\mathcal{P}_{initial}] = \mathbb{E}[\mathcal{P}_{future}], \quad H_1: \mathbb{E}[\mathcal{P}_{initial}] > \mathbb{E}[\mathcal{P}_{future}].
+    \]
+    \item \textbf{Alpha Decay Test:} To test for the decay of alpha over time due to market efficiency, we estimate an autoregressive (AR(1)) model for alpha, as described in the theoretical framework. We then test whether the decay rate $\rho$ is significantly less than 1:
+    \[
+    H_0: \rho = 1, \quad H_1: \rho < 1.
+    \]
+    If $\rho$ is significantly less than 1, we conclude that the profitability of the strategy decays over time.
+    \item \textbf{Multiple Testing Correction:} When evaluating multiple trading strategies, we apply the Bonferroni correction to account for multiple hypothesis testing. If $k$ strategies are tested, the significance level $\alpha$ is adjusted as:
+    \[
+    \alpha_{corrected} = \frac{\alpha}{k}.
+    \]
+\end{itemize}
+
+\subsection{Robustness Checks}
+
+To ensure that our results are robust to the choice of methodology, we conduct several robustness checks:
+\begin{itemize}
+    \item \textbf{Varying Window Lengths:} We repeat the analysis with different rolling-window lengths, including shorter and longer in-sample and out-of-sample windows, to determine whether the results are sensitive to the choice of window size.
+    \item \textbf{Alternative Profitability Metrics:} In addition to the average return, Sharpe ratio, and alpha, we also compute other performance metrics such as maximum drawdown and Sortino ratio.
+    \item \textbf{Subsample Analysis:} We run the analysis on different subsamples of the data (e.g., pre-crisis vs. post-crisis) to check for any time-period-specific effects.
+\end{itemize}
+
+These robustness checks ensure that our findings are not driven by specific methodological choices and provide greater confidence in the validity of the results.

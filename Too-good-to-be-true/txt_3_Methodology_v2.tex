@@ -1,0 +1,99 @@
+\section{Theoretical Framework}
+
+In this section, we develop a rigorous statistical framework to explain the two primary mechanisms by which the profitability of trading strategies decays over time: overfitting and market efficiency. We incorporate statistical methods to quantify the biases that arise from model selection on test data and to model the decay of excess returns due to arbitrage and market efficiency.
+
+\subsection{Overfitting and Out-of-Sample Profitability Decay}
+
+Let $\mathcal{D}_{train}$, $\mathcal{D}_{val}$, and $\mathcal{D}_{test}$ represent the training, validation, and test datasets, respectively. Assume that a trading strategy $f_{\theta}$ is parameterized by a set of hyperparameters $\theta \in \Theta$. The researcher's goal is to select $\theta$ to maximize the profitability of the strategy based on performance in the validation set, $\mathcal{D}_{val}$, and then evaluate the out-of-sample performance on the test set, $\mathcal{D}_{test}$. Let $\mathcal{P}(\theta; \mathcal{D}_{test})$ represent the profitability of the strategy on the test set.
+
+Ideally, hyperparameters $\theta$ should be chosen based on performance on the validation set:
+\[
+\hat{\theta} = \arg \max_{\theta} \mathcal{P}(\theta; \mathcal{D}_{val}).
+\]
+However, in practice, researchers may be tempted to select $\theta$ based on performance on the test set itself, leading to an overfitting problem. Specifically, the choice of $\hat{\theta}$ is implicitly a function of $\mathcal{D}_{test}$, which violates the principle of out-of-sample testing and introduces selection bias.
+
+Formally, this overfitting leads to biased estimates of out-of-sample profitability. Let $\mathcal{P}_{test} = \mathcal{P}(\hat{\theta}; \mathcal{D}_{test})$ denote the observed profitability on the test set and $\mathcal{P}_{future} = \mathcal{P}(\hat{\theta}; \mathcal{D}_{future})$ denote the true out-of-sample profitability on future data. The expectation of future profitability, conditional on test data, can be expressed as:
+\[
+\mathbb{E}[\mathcal{P}_{future} \mid \mathcal{P}_{test}] = \mathcal{P}_{test} - \text{Bias}(\hat{\theta}),
+\]
+where $\text{Bias}(\hat{\theta})$ represents the overfitting bias introduced by selecting $\hat{\theta}$ based on test data.
+
+\paragraph{Bias-Variance Tradeoff:}
+
+The bias can be understood in terms of the bias-variance tradeoff. By tuning the model on test data, the researcher minimizes variance in $\mathcal{D}_{test}$ at the cost of increased bias. The expected future performance can be decomposed as follows:
+\[
+\mathbb{E}[\mathcal{P}_{future}] = \mathbb{E}[\mathcal{P}_{test}] - \text{Bias}(\hat{\theta}) - \sigma^2_{\mathcal{D}_{test}},
+\]
+where $\sigma^2_{\mathcal{D}_{test}}$ is the variance of profitability estimates on the test data.
+
+\paragraph{Multiple Testing Problem:}
+
+The problem of overfitting is compounded by the multiple testing problem. If a researcher tests many strategies and only reports the most successful one, the probability of observing significant profitability by chance increases. Formally, if $k$ different models or hyperparameters are tested, the probability of finding at least one profitable strategy purely by chance is:
+\[
+\mathbb{P}(\text{False Positive}) = 1 - (1 - \alpha)^k,
+\]
+where $\alpha$ is the significance level (typically 0.05). As $k$ increases, the likelihood of reporting a spurious trading strategy also increases. To correct for this, techniques such as the Bonferroni correction or Holm's method should be applied to adjust for the multiple testing bias.
+
+\paragraph{Confidence Intervals for Profitability:}
+
+Given the observed profitability on test data, $\mathcal{P}_{test}$, the true out-of-sample profitability is uncertain due to the estimation error introduced by overfitting. The true profitability on future data can be expressed as:
+\[
+\mathcal{P}_{future} \sim \mathcal{N}(\mathcal{P}_{test} - \text{Bias}(\hat{\theta}), \sigma^2_{\mathcal{D}_{test}}),
+\]
+where $\sigma^2_{\mathcal{D}_{test}}$ is the variance of the profitability estimate on the test data.
+
+A $1 - \alpha$ confidence interval for the future profitability can then be given by:
+\[
+\mathcal{P}_{future} \in [\mathcal{P}_{test} - \text{Bias}(\hat{\theta}) - z_{\alpha/2} \cdot \sigma_{\mathcal{D}_{test}}, \mathcal{P}_{test} - \text{Bias}(\hat{\theta}) + z_{\alpha/2} \cdot \sigma_{\mathcal{D}_{test}}],
+\]
+where $z_{\alpha/2}$ is the critical value from the standard normal distribution.
+
+\subsection{Market Efficiency and Profitability Decay}
+
+Even if a trading strategy is genuinely profitable, its profitability tends to decay over time as it becomes widely known and adopted by other market participants. According to the efficient market hypothesis (EMH), any predictable excess returns should be arbitraged away as market participants incorporate the strategy into their trading decisions.
+
+Let $\alpha_t$ represent the excess return (or "alpha") generated by a trading strategy at time $t$. Under the EMH, the alpha follows a decay process as the strategy becomes more widely adopted. We can model this process as an autoregressive (AR(1)) process:
+\[
+\alpha_{t+1} = \rho \cdot \alpha_t + \epsilon_t,
+\]
+where $|\rho| < 1$ represents the rate of decay, and $\epsilon_t$ is a white noise error term with $\mathbb{E}[\epsilon_t] = 0$ and $\text{Var}(\epsilon_t) = \sigma^2$. As more traders adopt the strategy, the alpha decays toward zero:
+\[
+\lim_{t \to \infty} \alpha_t = 0.
+\]
+
+We can test the hypothesis that a trading strategy's alpha decays over time using a simple t-test. The null hypothesis is that the strategy generates no excess returns over time:
+\[
+H_0: \alpha_t = 0 \quad \text{for all } t.
+\]
+The alternative hypothesis is that the strategy initially generates alpha, but the alpha decays over time:
+\[
+H_1: \alpha_t > 0 \text{ for some initial } t, \quad \lim_{t \to \infty} \alpha_t = 0.
+\]
+
+Under this framework, we can estimate $\rho$ and test whether it is significantly less than 1 (indicating decay). If $\rho$ is significantly less than 1, we conclude that the profitability of the strategy decays over time, consistent with the predictions of market efficiency.
+
+\paragraph{Confidence Interval for Alpha Decay:}
+
+Given the AR(1) model, we can compute a confidence interval for the decay rate $\rho$. The maximum likelihood estimate (MLE) of $\rho$ is:
+\[
+\hat{\rho} = \frac{\sum_{t=1}^{T-1} \alpha_t \alpha_{t+1}}{\sum_{t=1}^{T-1} \alpha_t^2}.
+\]
+The standard error of $\hat{\rho}$ is given by:
+\[
+\text{SE}(\hat{\rho}) = \frac{\sigma_{\epsilon}}{\sqrt{\sum_{t=1}^{T-1} \alpha_t^2}},
+\]
+where $\sigma_{\epsilon}$ is the standard deviation of the residuals.
+
+A $1 - \alpha$ confidence interval for $\rho$ is then:
+\[
+\hat{\rho} \pm z_{\alpha/2} \cdot \text{SE}(\hat{\rho}),
+\]
+where $z_{\alpha/2}$ is the critical value from the standard normal distribution.
+
+\paragraph{Long-Run Decay of Alpha:}
+
+Finally, the long-run profitability of the strategy can be computed by iterating the AR(1) process. The expected profitability after $n$ periods is given by:
+\[
+\mathbb{E}[\alpha_n] = \rho^n \cdot \alpha_0.
+\]
+As $n \to \infty$, the alpha converges to zero, consistent with market efficiency.
