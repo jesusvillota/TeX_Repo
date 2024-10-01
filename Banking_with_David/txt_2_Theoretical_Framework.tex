@@ -1,0 +1,51 @@
+\section{Theoretical Framework}
+\label{sec:theoretical}
+
+In this section, we develop a theoretical framework to understand how banks adjust their lending behavior in response to public information, such as news articles, and private information obtained through lending relationships. We also account for the role of bank specialization in sectors and how this expertise influences the interpretation of news signals. The framework considers two types of banks: those with access to private information (relationship lenders) and those without such access (transactional lenders). Additionally, we introduce a third dimension: specialized banks that possess deeper knowledge of specific sectors.
+
+\subsection{Lending Behavior in the Presence of Public and Private Information}
+
+Consider a firm $X$ that is seeking to borrow from a bank. The firm may be hit by a shock, which could be either transitory or permanent. This shock becomes public knowledge through a news article. Banks that are potential creditors for firm $X$ must decide whether to adjust their lending terms, including interest rates, loan amounts, and collateral requirements, based on the information available to them.
+
+We define the utility of a bank from lending to firm $X$ as:
+\[
+U_B = E[\text{Profit}_B] - \lambda \cdot \sigma_B
+\]
+where $E[\text{Profit}_B]$ is the expected profit from lending to the firm, $\lambda$ is the bank's risk aversion parameter, and $\sigma_B$ is the perceived risk of lending to firm $X$. The bank updates its beliefs about $\sigma_B$ based on two sources of information: 
+\begin{enumerate}
+    \item Public information from news articles.
+    \item Private information obtained through past interactions and relationship lending.
+\end{enumerate}
+
+For transactional lenders, the decision to extend credit will be driven primarily by the public signal from the news article. For relationship lenders, however, private information plays a larger role in the decision-making process. If a bank believes the shock affecting firm $X$ is transitory, it may choose to continue lending even after negative news. Conversely, if the shock is perceived as permanent, the bank may reduce lending or tighten credit terms.
+
+We can formalize the bank's decision-making process using Bayesian updating. Let $\pi_P$ represent the probability, based on the public signal, that the shock is permanent, and $\pi_R$ represent the probability, based on private information, that the shock is permanent. For a relationship lender, the updated belief about the probability of a permanent shock can be expressed as:
+\[
+\pi_{\text{updated}} = \alpha \cdot \pi_P + (1 - \alpha) \cdot \pi_R
+\]
+where $\alpha$ represents the weight the bank places on the public signal relative to private information. For transactional lenders, who lack private information, we assume $\alpha = 1$, meaning their lending decision is fully based on public information. For relationship lenders, $0 < \alpha < 1$, indicating that private information moderates their response to public news.
+
+\subsection{Sector Specialization and Lending Behavior}
+
+In addition to the distinction between relationship and transactional lenders, we introduce the concept of sector specialization. Specialized banks, which concentrate their lending activities within a particular sector, possess expertise and knowledge that allows them to better assess sector-specific shocks. These banks can more accurately differentiate between transitory and permanent shocks in their specialized sectors.
+
+We hypothesize that for sector-specialized banks, the value of private information is augmented by their sector-specific expertise. Thus, the weight placed on the public signal, $\alpha$, is even lower for specialized banks compared to non-specialized banks. For a specialized bank, the updated belief about a shock can be expressed as:
+\[
+\pi_{\text{updated}}^{\text{specialized}} = \beta \cdot \pi_P + (1 - \beta) \cdot \pi_R
+\]
+where $0 < \beta < \alpha < 1$. This reflects the notion that specialized banks rely even more heavily on their private knowledge and are less influenced by public signals. 
+
+For example, consider a bank specializing in the real estate sector. If a negative news article reports a short-term decline in real estate prices, the specialized bank may assess that this shock is likely transitory based on its knowledge of the sector's cyclical behavior. As a result, the bank may continue to extend credit to firms in the real estate sector, while non-specialized banks may reduce lending due to the negative public signal.
+
+\subsection{Hypotheses}
+
+Based on this theoretical framework, we derive the following testable hypotheses:
+\begin{enumerate}
+    \item \textbf{H1:} Transactional lenders, who lack private information, will respond more strongly to negative public signals (i.e., adverse news articles) by reducing lending and tightening credit terms compared to relationship lenders.
+    
+    \item \textbf{H2:} Relationship lenders, who possess private information about the firm, will place less weight on public signals and will be more likely to maintain or extend credit following negative news, especially if the shock is perceived to be transitory.
+    
+    \item \textbf{H3:} Sector-specialized banks will respond more cautiously to negative public signals, placing even less weight on these signals compared to non-specialized banks, due to their superior ability to assess the long-term viability of firms in their specialized sector.
+\end{enumerate}
+
+This framework provides a foundation for the empirical analysis, which will assess how different types of banks react to news articles about firms, and how these reactions vary depending on the bank's relationship with the firm and its specialization in the firm's sector. The next section will describe the data and methods used to test these hypotheses.

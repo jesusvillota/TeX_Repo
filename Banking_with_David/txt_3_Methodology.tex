@@ -1,0 +1,89 @@
+\section{Data and Methodology}
+\label{sec:data}
+
+In this section, we describe the data sources used in the empirical analysis and the methodology employed to test the hypotheses developed in Section \ref{sec:theoretical}. We begin by detailing the collection of news articles and the process of analyzing their content using Large Language Models (LLMs). We then explain how we integrate firm-level and bank-level data to analyze the credit implications of these news articles. Finally, we present the econometric models used to test our hypotheses.
+
+\subsection{Data Sources}
+
+The analysis draws on three main data sources: (i) a dataset of news articles, (ii) firm-level borrowing data, and (iii) bank-level characteristics, including information on relationship lending and sector specialization.
+
+\subsubsection{News Articles}
+
+The first component of our dataset is a collection of business and financial news articles from a major news provider, such as the New York Times or Reuters. We focus on articles published over the period [INSERT TIME RANGE], which mention firms from various sectors. The articles are filtered to retain those that are relevant to firm performance, creditworthiness, and other financially material events. 
+
+Using a Natural Language Processing (NLP) pipeline, we classify the articles based on their sentiment (positive or negative) and relevance to the firm's credit risk. We employ a pre-trained Large Language Model (LLM) to query the articles in a structured manner and obtain a measure of the potential impact of the news on the firm's creditworthiness. Specifically, we query the LLM with questions designed to assess:
+\begin{enumerate}
+    \item The nature of the shock described in the article (transitory or permanent).
+    \item The expected financial impact on the firm.
+    \item The potential implications for the firm's ability to obtain credit.
+\end{enumerate}
+The output from the LLM is used to generate a score for each news article, reflecting the projected credit implications for the firm. This score, denoted $S_{news}$, serves as one of the key independent variables in the subsequent analysis.
+
+\subsubsection{Firm-Level Borrowing Data}
+
+The second dataset comprises firm-level borrowing data, obtained from sources such as Dealscan or a similar syndicated loan database. This dataset provides detailed information on the loans extended to firms, including loan amounts, interest rates, collateral requirements, and maturity. For each loan, we observe the date of the loan, the identity of the lender, and the key terms of the loan contract. This allows us to measure changes in credit terms in response to the news articles.
+
+The borrowing data is merged with the news data by firm name and date, allowing us to track how loan terms change after the release of relevant news articles. In addition to loan terms, we collect firm-level characteristics, such as firm size, leverage, and profitability, to control for these factors in the empirical analysis.
+
+\subsubsection{Bank-Level Characteristics}
+
+The third component of our dataset is information on the lending banks. We focus on two key dimensions:
+\begin{enumerate}
+    \item \textbf{Relationship lending}: For each loan, we assess whether the lender has an ongoing relationship with the borrowing firm. Relationship lending is proxied by the length of the bank-firm relationship (e.g., the number of years the bank has been extending credit to the firm) and the frequency of loans between the two.
+    \item \textbf{Sector specialization}: For each bank, we calculate its degree of specialization in specific sectors. Sector specialization is measured as the proportion of the bank's total lending that is concentrated in a given sector (e.g., real estate, energy, manufacturing). Banks with a high concentration of lending in a particular sector are classified as specialized banks.
+\end{enumerate}
+These bank-level characteristics allow us to test the hypotheses related to the role of private information and sector specialization in shaping the bank's response to news articles.
+
+\subsection{Methodology}
+
+The empirical strategy involves assessing how loan terms change in response to news articles, and whether these changes differ based on the bank's relationship with the firm and its sector specialization. We employ the following econometric model to test the hypotheses developed in Section \ref{sec:theoretical}:
+
+\subsubsection{Baseline Model}
+
+We estimate the following fixed-effects regression model:
+
+\begin{align*}
+Y_{i,j,t} 
+= 
+\beta_1 S_{news,i,t} 
++ 
+\beta_2 \text{Relationship}_{i,j,t} 
++ 
+\beta_3 \text{Specialization}_{j} 
++ 
+\beta_4 \left(S_{news,i,t} \times \text{Relationship}_{i,j,t}\right) 
+\\ + 
+\beta_5 \left(S_{news,i,t} \times \text{Specialization}_{j}\right) 
++ 
+\mathbf{X}_{i,t} \gamma 
++ 
+\delta_i 
++ 
+\eta_t 
++ 
+\epsilon_{i,j,t}
+\end{align*}
+
+where:
+\begin{itemize}
+    \item $Y_{i,j,t}$ represents the credit terms for firm $i$ borrowing from bank $j$ at time $t$. This includes the interest rate, loan amount, collateral requirements, and loan maturity.
+    \item $S_{news,i,t}$ is the LLM-generated score for the news article mentioning firm $i$ at time $t$, capturing the projected credit implications of the news.
+    \item $\text{Relationship}_{i,j,t}$ is a binary variable indicating whether bank $j$ has a prior lending relationship with firm $i$ at time $t$.
+    \item $\text{Specialization}_{j}$ measures the degree of sector specialization of bank $j$.
+    \item $\mathbf{X}_{i,t}$ is a vector of firm-level control variables, including firm size, leverage, profitability, and sector dummies.
+    \item $\delta_i$ and $\eta_t$ are firm and time fixed effects, respectively, to control for unobserved firm-specific and time-specific factors.
+    \item $\epsilon_{i,j,t}$ is the error term.
+\end{itemize}
+
+This model allows us to test the main hypotheses. Specifically, $\beta_1$ measures the overall effect of news articles on credit terms. $\beta_2$ and $\beta_3$ capture the impact of relationship lending and bank specialization, respectively, on lending behavior. The interaction terms $\beta_4$ and $\beta_5$ test whether the effect of news is moderated by the bank's relationship with the firm or its specialization.
+
+\subsubsection{Robustness Checks}
+
+To ensure the robustness of our results, we conduct several additional tests:
+\begin{enumerate}
+    \item \textbf{Alternative measures of news sentiment}: We replicate the analysis using different sentiment analysis techniques to verify that our results are not sensitive to the specific LLM-generated score.
+    \item \textbf{Placebo tests}: We perform placebo tests using randomly assigned news dates to confirm that the observed changes in loan terms are driven by the actual timing of news articles.
+    \item \textbf{Firm and bank fixed effects}: We include firm and bank fixed effects to account for time-invariant unobserved heterogeneity.
+\end{enumerate}
+
+

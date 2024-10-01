@@ -66,21 +66,26 @@ $-$ If a firm is affected neutrally by the news article, don't include it in the
 
 Then, a news article is fed to the LLM, for example:
 
+%%%%%%%%%%%%%%% ENGLISH VERSION %%%%%%%%%%%%%%%%%%%
 \begin{quote}
-
 {\centering 
-\textbf{Cellnex tendrá más competencia en Europa}.  \par }
+\textbf{Cellnex will face more competition in Europe}.  \par }
 \textit{
-La filial de Telefónica (TEF.MC) Telxius Telecom ha acordado vender su división de torres de telecomunicaciones en Europa y Latinoamérica a American Tower (AMT), lo cual aumentará la presencia de ésta en Europa e incrementará la competencia para el grupo español de telecomunicaciones inalámbricas Cellnex Telecom (CLNX.MC), señala Equita Sim. La transacción "supone la entrada de un nuevo operador independiente de torres en el mercado español y potencialmente más competencia para el crecimiento futuro también en el mercado europeo", sostiene la correduría. 
-%Cellnex llegó a un acuerdo en noviembre con CK Hutchison (0001.HK) para comprar el negocio europeo de torres y sus activos del conglomerado cotizado en Hong Kong. La acción de Telefónica sube un 9,6\% a EUR3,94 y la de Cellnex avanza un 0,3\% a EUR47,79.
+Telefónica's (TEF.MC) subsidiary, Telxius Telecom, has agreed to sell its telecommunications tower division in Europe and Latin America to American Tower (AMT), which will expand the latter's presence in Europe and increase competition for the Spanish wireless telecommunications group Cellnex Telecom (CLNX.MC), according to Equita Sim. The transaction "represents the entry of a new independent tower operator into the Spanish market and potentially more competition for future growth in the European market as well," says the brokerage firm.	
+%In November, Cellnex reached an agreement with CK Hutchison (0001.HK) to purchase the European tower business and assets of the Hong Kong-listed conglomerate. Telefónica's stock is up 9.6\% to EUR 3.94, while Cellnex's shares are up 0.3\% to EUR 47.79.
 }
 \end{quote}
+
+%%%%%%%%%%%%%%% SPANISH VERSION %%%%%%%%%%%%%%%%%%%
 %\begin{quote}
-%{\centering \textbf{Permanencia de los Benetton en accionariado Cellnex sería positiva}. \par }
+%{\centering 
+%\textbf{Cellnex tendrá más competencia en Europa}.  \par }
 %\textit{
-%En medio de las especulaciones en prensa sobre el interés de varios fondos internacionales por la participación de los Benetton en Cellnex (CLNX.MC), Banco Sabadell cree que la permanencia de la familia italiana en el accionariado del operador español de infraestructuras de telecomunicaciones sería doblemente positiva. Por un lado, el compromiso de los Benetton con el proyecto de Cellnex alejaría el riesgo de una posible presión vendedora en el corto plazo, "algo que tras la ruptura del pacto de accionistas era fuente de incertidumbre", señala el banco. Por otro, el interés de los fondos por esta participación "pondría de manifiesto el apetito que hay por Cellnex", añade. Reitera su recomendación de comprar, con un precio objetivo de 55,80\euro. La acción baja un 0,7\% a 53,44\euro.	
+%La filial de Telefónica (TEF.MC) Telxius Telecom ha acordado vender su división de torres de telecomunicaciones en Europa y Latinoamérica a American Tower (AMT), lo cual aumentará la presencia de ésta en Europa e incrementará la competencia para el grupo español de telecomunicaciones inalámbricas Cellnex Telecom (CLNX.MC), señala Equita Sim. La transacción "supone la entrada de un nuevo operador independiente de torres en el mercado español y potencialmente más competencia para el crecimiento futuro también en el mercado europeo", sostiene la correduría. 
+%%Cellnex llegó a un acuerdo en noviembre con CK Hutchison (0001.HK) para comprar el negocio europeo de torres y sus activos del conglomerado cotizado en Hong Kong. La acción de Telefónica sube un 9,6\% a EUR3,94 y la de Cellnex avanza un 0,3\% a EUR47,79.
 %}
 %\end{quote}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Next, we define an umbrella function \qquote{firms}, which asks the LLM to identify the set $\F^i_{LLM}$ for each $i\in\D$. Then, for each $j\in\F_{LLM}^i$ we ask the LLM to categorize the type, expected magnitude, and expected direction that the shock described in the article implies in that particular firm $j$.
 %The structure of such functions is as follows:
