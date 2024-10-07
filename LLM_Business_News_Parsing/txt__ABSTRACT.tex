@@ -1,10 +1,19 @@
 %\begin{abstract}
-%%%%%%%%%%%%%%%%% THIS VERSION: 192 WORDS %%%%%%%%%%%%%%%%%%%%%
-In this paper, we explore the incorporation of information in the stock market by building a trading strategy that trades clusters of news. First, we construct the clusters by applying KMeans to the vector embedding representations of the articles. We then propose two algorithms that select \textit{in-sample} the most profitable clusters for trading and project them \textit{out-of-sample} to evaluate the performance of the trading strategy. 
-%\mx 
-In the second part, we perform the clustering by feeding the news articles to a Large Language Model and asking it to classify the type, magnitude, and direction of the shocks implied by each article on the affected firms according to a predefined schema. We then apply the same algorithms for cluster selection as before and check the performance of our trading strategy.
-%
-The results show an inconsistent earnings profile in the test set for the KMeans clustering, while the LLM clustering is able to exploit the information of the articles in a profitable way, creating a consistent earnings profile. These results are robust to hyperparameter variability, such as the number of periods in the holding window and the upper bound on the number of traded clusters. 
+%----------------------------------------------------
+% 8th October | ~200 words
+%----------------------------------------------------
+In financial markets, news impact stock prices. Despite the postulated \qquote{Efficient Market Hypothesis}, evidence shows inefficiencies, especially with complex information. Research attempting to explain such inefficiencies has often relied on dictionary-based methods, sentiment analysis, topic modeling, and more recently, language models like BERT, which still lack a comprehensive understanding of the text. Additionally, many studies disregard firm-specific news-implied shocks and overly depend on headlines for analysis. This paper addresses these limitations by leveraging Large Language Models (LLMs) to provide a comprehensive, firm-specific analysis of full news articles. 
+%Using a dataset of Spanish business news articles from DowJones Newswires spanning a period of  heightened uncertainty (June 2020 to September 2021), we apply LLMs to understand economic shocks affecting firms, categorizing them by type, magnitude, and direction. The findings illustrate that LLM-based analysis offers superior insights during such volatile periods compared to a benchmark model (KMeans clustering of vector embeddings, which serves as an upper bound for methods lacking comprehensive content analysis). By using LLMs to parse news articles in a way that mimics human processing of the news-implied firm-specific economic shocks, we are able to understand how market reacts to news article, which is evidenced by the out-of-sample profitability of our simple trading strategy.
+Using a dataset of Spanish business news from DowJones Newswires during a period of high uncertainty (June 2020 to September 2021), we apply LLMs to understand economic shocks affecting firms, categorizing them by type, magnitude, and direction. The findings show that LLM-based analysis provides superior insights during volatile periods compared to a benchmark model (KMeans clustering of vector embeddings, serving as an upper bound for methods lacking comprehensive content analysis). By using LLMs to parse news in a human-like manner, we gain clearer understanding of market reactions to firm-specific information, as evidenced by the profitability of our simple trading strategy.
+
+%----------------------------------------------------
+% Previous version | 192 words
+%----------------------------------------------------
+%In this paper, we explore the incorporation of information in the stock market by building a trading strategy that trades clusters of news. First, we construct the clusters by applying KMeans to the vector embedding representations of the articles. We then propose two algorithms that select \textit{in-sample} the most profitable clusters for trading and project them \textit{out-of-sample} to evaluate the performance of the trading strategy. 
+%%\mx 
+%In the second part, we perform the clustering by feeding the news articles to a Large Language Model and asking it to classify the type, magnitude, and direction of the shocks implied by each article on the affected firms according to a predefined schema. We then apply the same algorithms for cluster selection as before and check the performance of our trading strategy.
+%%
+%The results show an inconsistent earnings profile in the test set for the KMeans clustering, while the LLM clustering is able to exploit the information of the articles in a profitable way, creating a consistent earnings profile. These results are robust to hyperparameter variability, such as the number of periods in the holding window and the upper bound on the number of traded clusters. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\end{abstract}
