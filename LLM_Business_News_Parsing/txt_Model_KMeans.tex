@@ -252,6 +252,7 @@ and it represents the minimum average distance from an embedding $\mathbf{e}^i$ 
 In \cref{fig:silhouette_score} we plot the average silhouette score for $\D^{tr}$ computed over a grid $\mbf k$ ranging from 2 to 100. The vertical dashed green line signals the maximizer of the grid, which corresponds to a cluster size of $k^*=26$. 
 
 %----------------------------------------------------
+\inserthere{fig:silhouette_score}
 \begin{figure}[H]
   \centering
 \caption{Average Silhouette Scores in the Training data}
@@ -341,6 +342,7 @@ $$
 %%----------------------------------------------------
 
 %----------------------------------------------------
+\inserthere{fig:combined_plots}
 \begin{figure}[H]
     \centering
     \caption{Distribution of articles through KMeans clusters}
@@ -675,6 +677,7 @@ and it provides a measure of the performance of the beta-neutral positions in ea
 The distribution of cluster-average Sharpe Ratios across the different clusters is plotted in \cref{fig:KMeans_distr_avg_SR}. In the validation set, they are centered at 0, but we observe some outliers with unusually low and high average $SR$. On the other hand, the distributions in the train and test data are slightly skewed to the right and show no presence of substantial outliers.
 
 %----------------------------------------------------
+\inserthere{fig:KMeans_distr_avg_SR}
 \begin{figure}[H]
   \centering
   \caption{Distribution  of Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
@@ -1254,6 +1257,7 @@ In \cref{fig:KMeans_Portfolio_Cum_Returns} we plot the cumulative returns of the
 The generalizability of the strategy is determined \textit{out-of-sample} in the test data. As we can see, the performance is much worse there for both algorithms. In the plot, we can see that none of them is able to generate a consistent profile of earnings, and the statistics confirm that profits are negligible, and would most likely be eaten away by exogenous considerations such as trading costs and slippage.
 
 %----------------------- PLOT ----------------------
+\inserthere{fig:KMeans_Portfolio_Cum_Returns}
 \begin{figure}[H]
   \centering
     \caption{Cumulative Returns of $\mathcal P$ across data splits}

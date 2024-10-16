@@ -102,23 +102,27 @@ Note that the firms identified by the LLM do not necessarily match those identif
 \mx 
 The output provided by the LLM comprises two parts: a \qquote{Structured output}, and an \qquote{Unstructured output} justifying the choices made in the \qquote{Structured output}. For our analysis, we will only focus on the structured part.
 
+
 \begin{quote}
-\textbf{1) Structured Output: }
-\begin{table}[H]
-\centering
-%\begin{tabular}{|c|c|c|c|c|}
-\begin{tabular}{ccccc}
-\hline \Xhline{2\arrayrulewidth}
-%\rowcolor{gray!10}
-\texttt{firm} & \texttt{ticker} & \texttt{shock\_type} & \texttt{shock\_magnitude} & \texttt{shock\_direction}
-\\ \hline \Xhline{2\arrayrulewidth} 
-Cellnex Telecom & CLNX.MC & supply & minor & negative
-\\ 
-Telefónica & TEF.MC & financial & minor & positive
-\\ 
-\hline \Xhline{2\arrayrulewidth}
-\end{tabular}
-\end{table}
+
+\textbf{1) Structured Output: } 
+
+\vspace{0.2cm}
+%\begin{table}[H]
+%\centering
+	\begin{tabular}{ccccc}
+		\hline \Xhline{2\arrayrulewidth}
+		%\rowcolor{gray!10}
+		\texttt{firm} & \texttt{ticker} & \texttt{shock\_type} & \texttt{shock\_magnitude} & \texttt{shock\_direction}
+		\\ \hline \Xhline{2\arrayrulewidth} 
+		Cellnex Telecom & CLNX.MC & supply & minor & negative
+		\\ 
+		Telefónica & TEF.MC & financial & minor & positive
+		\\ 
+		\hline \Xhline{2\arrayrulewidth}
+	\end{tabular}
+\vspace{0.2cm}
+%\end{table}
 
 %\begin{verbatim}
 %{'firm': 'Cellnex Telecom', 'ticker': 'CLNX.MC', 'shock\_type': 'supply', 'shock\_magnitude': 'minor', 'shock\_direction': 'negative'},
@@ -130,7 +134,6 @@ Telefónica & TEF.MC & financial & minor & positive
 \textit{The news about American Tower's expansion in Europe may increase competition for Cellnex, which is why it's classified as a negative supply shock. On the other hand, Telefónica benefits from the sale of its tower division, which is why it's classified as a positive financial shock.}
 
 \end{quote}
-
 
 This procedure is run iteratively from beginning (defining system prompt) to end (getting the output) for every $i\in\D$.\footnote{
 This procedure was run on a MacBook Pro M2 with 16GB RAM, 12-core central processing units (CPU), 19-core graphics processing units (GPU), and 16-core Neural Engine. The first run of the code takes about 18.4 hours; however, successive runs were required afterwards with smaller subsets of failed articles, as the LLM always raises errors for a certain percentage of the articles that are fed to it.
@@ -206,6 +209,7 @@ Different from KMeans clustering with embeddings, now the distribution profile o
 
 %----------------------------------------------------
 %----------------------------------------------------
+\inserthere{fig:LLM_cluster_distribution}
 \begin{figure}[H]
     \centering
     \caption{Distribution of articles through LLM clusters}
@@ -244,12 +248,14 @@ Different from KMeans clustering with embeddings, now the distribution profile o
 %----------------------------------------------------
 
 
-In the same fashion as before, we can plot the distribution of cluster-average Sharpe Ratios for each data split. Different from before, all distributions are left-skewed. The train split's distribution has fat tails which severely contrasts with the light-tailed distribution of the validation sample. In the test data, we observe a bell-shaped distribution with some accumulation of mass at high $SR$s (between 5 and 15).
+In the same fashion as before, we can plot the distribution of cluster-average Sharpe Ratios for each data split (\cref{fig:LLM_cluster-average-SR-by-split}). Different from before, all distributions are left-skewed. The train split's distribution has fat tails which severely contrasts with the light-tailed distribution of the validation sample. In the test data, we observe a bell-shaped distribution with some accumulation of mass at high $SR$s (between 5 and 15).
 %----------------------------------------------------
+\inserthere{fig:LLM_cluster-average-SR-by-split}
 \begin{figure}[H]
   \centering
   \caption{Distribution  of Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
   \includegraphics[scale=0.5]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/CEMFI/__MSc__/__Second_year__/6th_Term/MasterThesis/__Output/LLAMA_Cluster-Avg_SR_Distribution.pdf}
+  \label{fig:LLM_cluster-average-SR-by-split}
 \end{figure}
 %----------------------------------------------------
 
@@ -275,6 +281,7 @@ In \cref{fig:LLM_portfolio_returns} we plot the cumulative returns of the portfo
 The summary statistics of the portfolio are provided in \cref{tab:LLM_portfolio_statistics}, where we see confirmed the fact that both algorithms excel at generating profits even out of sample. 
 
 %----------------------- PLOT ----------------------
+\inserthere{fig:LLM_portfolio_returns}
 \begin{figure}[H]
   \centering
     \caption{Cumulative Returns of $\mathcal P_{LLM}$ across data splits}

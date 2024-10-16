@@ -1,0 +1,96 @@
+{\centering \href{https://chatgpt.com/share/6705ce5e-3bb4-800d-b77e-fc6fb7837572}{Conversation w/ ChatGPT} \par}
+
+%\begin{abstract}
+%This paper proposes a novel application of Reinforcement Learning (RL) to asset pricing, inspired by the methodology introduced in Chen, Pelger, and Zhu (CPZ). We develop a framework that adapts RL techniques to identify optimal policies for pricing risky assets by leveraging deep learning. We utilize the same dataset employed by CPZ, which allows for a robust comparison with existing state-of-the-art methodologies, such as Generative Adversarial Networks (GAN) and Feedforward Networks (FFN). Our approach integrates Reinforcement Learning with the no-arbitrage condition to ensure economically consistent pricing. 
+%\end{abstract}
+%
+
+
+\section{Model}
+\subsection{No-Arbitrage Asset Pricing}
+Similar to CPZ, our model is built on the fundamental concept of no-arbitrage in the cross-section of asset returns. Let $R_{t+1, i}$ denote the return of asset $i$ at time $t+1$, and let $M_{t+1}$ represent the stochastic discount factor (SDF). For any return in excess of the risk-free rate, denoted as $R_{t+1, i}^e = R_{t+1, i} - R_{t+1}^f$, the no-arbitrage condition implies:
+
+\begin{equation}
+    \mathbb{E}_t\left[M_{t+1} R_{t+1, i}^e\right] = 0,
+\end{equation}
+
+where $\mathbb{E}_t[\cdot]$ represents the expectation conditional on the information set at time $t$. The SDF is formulated as an affine combination of factors, where the goal is to use reinforcement learning to determine optimal SDF weights that minimize pricing errors.
+
+\subsection{Reinforcement Learning Framework}
+To apply reinforcement learning, we define a Markov Decision Process (MDP) to model the asset pricing problem:
+
+\begin{itemize}
+    \item \textbf{State Space ($\mathcal{S}$)}: The state at time $t$, $s_t$, is represented by the information set $I_t$, which includes macroeconomic variables, firm-specific characteristics, and historical returns. Formally, $s_t = [I_t, I_{t, i}]$, where $I_t$ represents macroeconomic variables, and $I_{t, i}$ are firm-specific characteristics.
+    \item \textbf{Action Space ($\mathcal{A}$)}: The action $a_t$ represents the choice of SDF portfolio weights, $\omega_t$, at each time $t$. These weights determine the construction of the SDF.
+    \item \textbf{Reward Function ($R$)}: The reward at time $t+1$, $r_{t+1}$, is defined as the negative of the squared pricing error:
+    \begin{equation}
+        r_{t+1} = -\left( M_{t+1} R_{t+1, i}^e \right)^2 = -\left( \left( 1 - \omega_t^{\top} R_{t+1}^e \right) R_{t+1, i}^e \right)^2.
+    \end{equation}
+    This reward function encourages the agent to minimize pricing errors, thereby finding SDF weights that best price the cross-section of returns.
+    \item \textbf{Transition Dynamics ($P$)}: The transition from state $s_t$ to state $s_{t+1}$ depends on the evolution of macroeconomic and firm-specific variables. These transitions are modeled based on the observed data.
+\end{itemize}
+
+The objective is to find a policy $\pi: \mathcal{S} \rightarrow \mathcal{A}$ that maximizes the expected cumulative reward over time:
+
+\begin{equation}
+    J(\pi) = \mathbb{E}\left[ \sum_{t=0}^{T} \gamma^t r_{t+1} \mid s_0, \pi \right],
+\end{equation}
+
+where $\gamma \in [0, 1]$ is the discount factor, which ensures that the agent prioritizes immediate rewards while considering future pricing errors.
+
+\subsection{Actor-Critic Algorithm}
+To solve the optimization problem, we adopt an **Actor-Critic** approach, where the actor learns the policy and the critic estimates the value function.
+
+\begin{itemize}
+    \item \textbf{Actor}: The actor is a neural network that takes the state $s_t$ as input and outputs the portfolio weights $\omega_t$. The actor is updated by using the **policy gradient** to adjust the weights in the direction that improves the cumulative reward.
+    \item \textbf{Critic}: The critic evaluates the chosen actions by estimating the **value function** $V(s_t)$, which represents the expected cumulative reward starting from state $s_t$. The critic is updated by minimizing the **temporal difference (TD) error**:
+    \begin{equation}
+        \delta_t = r_{t+1} + \gamma V(s_{t+1}) - V(s_t).
+    \end{equation}
+\end{itemize}
+
+The actor and critic networks are both parameterized by feedforward neural networks combined with LSTMs, similar to the model architecture in CPZ, to capture the time-series dependencies in macroeconomic variables.
+
+\section{Estimation}
+\subsection{Loss Function and Training Procedure}
+The empirical loss function for training the actor and critic is defined as the negative of the cumulative reward. For the critic, the loss function is the mean squared TD error:
+
+\begin{equation}
+    L_{\text{critic}} = \frac{1}{T} \sum_{t=0}^T \delta_t^2.
+\end{equation}
+
+For the actor, we use the **policy gradient theorem** to update the policy parameters $\theta$:
+
+\begin{equation}
+    \nabla_{\theta} J(\pi_\theta) = \mathbb{E}\left[ \nabla_{\theta} \log \pi_\theta(a_t \mid s_t) \cdot \delta_t \right].
+\end{equation}
+
+We train the actor and critic using **stochastic gradient descent (SGD)** with an adaptive learning rate. **Dropout** is employed as a regularization technique to prevent overfitting, similar to CPZ.
+
+\subsection{Hyperparameter Tuning and Ensemble Learning}
+We use an ensemble approach to achieve robust and stable estimates. The models are trained multiple times with different initializations, and the final portfolio weights are averaged over all model fits:
+
+\begin{equation}
+    \hat{\omega} = \frac{1}{M} \sum_{m=1}^M \hat{\omega}^{(m)},
+\end{equation}
+
+where $M$ is the number of ensemble models. We tune hyperparameters such as the number of layers, nodes per layer, discount factor $\gamma$, and learning rate using a validation set to maximize the Sharpe ratio of the SDF on the validation data.
+
+\section{Model Comparison}
+We compare our RL-based asset pricing model with the GAN and FFN models from CPZ. The comparison is based on three metrics:
+
+\begin{enumerate}
+    \item **Sharpe Ratio (SR)**: The unconditional Sharpe ratio of the SDF portfolio, defined as:
+    
+    \begin{equation}
+        SR = \frac{\mathbb{E}[F]}{\sqrt{\operatorname{Var}[F]}}.
+    \end{equation}
+    
+    \item **Explained Variation (EV)**: The proportion of variation in asset returns explained by the SDF.
+    
+    \item **Cross-Sectional $R^2$ (XS-$R^2$)**: The cross-sectional $R^2$ measure that captures the average pricing error normalized by the average mean return.
+\end{enumerate}
+
+\section{Conclusion}
+This paper introduces a novel application of Reinforcement Learning to asset pricing, building upon the methodology of Chen, Pelger, and Zhu. By modeling the asset pricing problem as a Markov Decision Process and using an Actor-Critic algorithm, we provide a framework that captures complex relationships in asset returns, while ensuring no-arbitrage pricing. Our results demonstrate that RL can achieve competitive pricing performance compared to state-of-the-art deep learning methods.
+

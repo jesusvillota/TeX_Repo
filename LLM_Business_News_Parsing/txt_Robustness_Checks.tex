@@ -7,6 +7,7 @@
 First, we focus on the holding period length of the beta-neutral strategy ($L$). For this purpose, we fix $\theta=\integer{0.5k}$ and, for each clustering method, obtain the series of Sharpe Ratios over a grid $\mbf L$ (which ranges from 1 to 20 trading periods). This delivers the series $\{SR^{\mathcal P ^{test}} (L)\}_{L\in\mbf L}$, which we then plot in two formats. On the left side of \cref{fig:LLM_Robustness_L} we plot the distribution of Sharpe Ratios in the grid, and in the right side, we show the mapping $L\mapsto SR^{\mathcal P ^{test}} (L)$ over $\mbf L$. 
 
 %----------------------------------------------------
+\inserthere{fig:LLM_Robustness_L}
 \begin{figure}[H]
   \centering
   \caption{Sensitivity of $SR^{\mathcal P^{test}}$ to the holding window length ($L$)}
@@ -50,6 +51,7 @@ We then turn to analyze the sensitivity of $SR^{\mathcal P^{test}}$ to different
 
 
 %----------------------------------------------------
+\inserthere{fig:Robustness_theta}
 \begin{figure}[H]
   \centering
   \caption{Sensitivity of $SR^{\mathcal P^{test}}$ to the upper bound on the number of traded clusters on each side ($\theta$)}
