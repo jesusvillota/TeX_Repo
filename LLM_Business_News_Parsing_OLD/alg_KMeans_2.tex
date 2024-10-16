@@ -1,0 +1,41 @@
+\section*{KMeans Clustering Algorithm}
+
+\subsection*{Inputs}
+\begin{itemize}
+    \item Embedding vectors: $\{\mathbf{e}^1, \mathbf{e}^2, \ldots, \mathbf{e}^{N_{tr}}\}$
+    \item Number of clusters: $k$
+\end{itemize}
+
+\subsection*{Outputs}
+\begin{itemize}
+    \item Cluster assignments: $\{C_1, C_2, \ldots, C_k\}$
+    \item Centroids: $\{\mathbf{c}_1, \mathbf{c}_2, \ldots, \mathbf{c}_k\}$
+\end{itemize}
+
+\subsection*{Algorithm}
+\begin{enumerate}
+    \item \textbf{Initialize} centroids $\{\mathbf{c}_1, \mathbf{c}_2, \ldots, \mathbf{c}_k\}$ randomly.
+    \item \textbf{Repeat until convergence:}
+    \begin{enumerate}
+        \item \textbf{Assignment Step:}
+        \[
+        C_j = \left\{ \mathbf{e}^i \mid j = \arg \min_{l} \|\mathbf{e}^i - \mathbf{c}_l\|^2, \quad l = 1, 2, \ldots, k \right\}
+        \]
+        \item \textbf{Update Step:}
+        \[
+        \mathbf{c}_j = \frac{1}{|C_j|} \sum_{\mathbf{e}^i \in C_j} \mathbf{e}^i, \quad \forall j = 1, 2, \ldots, k
+        \]
+    \end{enumerate}
+    \item \textbf{Convergence Criterion:} Repeat steps 2(a) and 2(b) until the cluster assignments do not change, i.e.,
+    \[
+    C_j^{(t+1)} = C_j^{(t)}, \quad \forall j = 1, 2, \ldots, k
+    \]
+    where $t$ denotes the iteration number.
+\end{enumerate}
+
+\subsection*{Objective}
+The KMeans algorithm aims to minimize the within-cluster sum of squares (WCSS):
+\[
+\min_{C, \mathbf{c}} \sum_{j=1}^k \sum_{\mathbf{e}^i \in C_j} \|\mathbf{e}^i - \mathbf{c}_j\|^2
+\]
+

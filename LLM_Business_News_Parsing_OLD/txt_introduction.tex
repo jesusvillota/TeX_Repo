@@ -1,0 +1,376 @@
+%----------------------------------------------------
+% 7th October 2024 | Introduction (used GPT4o with canvas) | https://chatgpt.com/share/6704e351-460c-800d-a267-1656528e9ec7
+%----------------------------------------------------
+In financial markets, news plays a pivotal role in shaping stock prices. Every day, market participants respond to a broad spectrum of news-ranging from firm-specific announcements, such as earnings releases, to macroeconomic events, such as central bank interest rate announcements, or geopolitical developments, like international trade conflicts or political elections. The Efficient Market Hypothesis (EMH), introduced by \cite{fama1970efficient}, posits that markets efficiently incorporate new information almost instantaneously. Both theoretical perspectives and empirical observations indicate that markets do not always exhibit such efficiency, particularly when the information is complex or ambiguous. This discrepancy between theory and reality suggests significant room for improvement in understanding how news is processed by market participants and how it influences asset prices.
+
+A substantial body of literature has endeavored to predict market reactions to news, yet significant gaps persist. First, there is a lack of granularity in the analysis of information. Traditional approaches frequently rely on sentiment analysis, reducing the richness of news content to binary classifications of positive or negative sentiment. Despite their reductionist nature, sentiment analysis remains popular due to the ease of implementation and interpretability
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(\cite{tetlock2007giving}, \cite{tetlock2008more}, \cite{bollen2011twitter}, \cite{hanley2010information}, \cite{loughran2011liability}, \cite{garcia2013sentiment}, \cite{jegadeesh2013word}, \cite{ke2019predicting}, \cite{wei2018stock}, \cite{lee2020bert}, 
+\cite{lopez2023can}).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sentiment analysis often misses the intricacy inherent in news-such as the interplay between multiple factors or subtle shifts in tone. More recent research has sought to enhance this granularity through topic modeling, which categorizes text into broad themes 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+(\cite{antweiler2006us}, \cite{hansen2018transparency}, \cite{bybee2021business}, \cite{bybee2023narrative}).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+However, these models are limited in adapting to new and evolving information and lack the specificity needed to assess the precise impact of news on individual firms or sectors. Topic models can identify broad themes, but they struggle to capture the changing context of financial news, particularly when new narratives emerge, such as unexpected geopolitical events or technological disruptions.
+
+Second, there is an insufficient focus on firm-specific analysis in the existing literature. Many studies examine the impact of news on broader market indices, such as the S\&P 500 or DJIA, rather than on individual firms. While research by 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cite{cutler1988moves}, \cite{mitchell1994impact}, \cite{bollen2011twitter}, \cite{garcia2013sentiment}, \cite{baker2016measuring}, \cite{manela2017news}, \cite{baker2021triggers} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+and others provides valuable insights into market-wide reactions, these studies fall short in elucidating how specific firms are affected by news events. Firm-specific impacts are often masked when aggregated at the index level, leading to a loss of critical information about how particular entities are influenced by specific news. During the COVID-19 pandemic, while overall market indices were impacted significantly, firm-specific effects varied widely, with some sectors like technology and healthcare experiencing positive returns while others, such as hospitality, travel, and retail, experienced significant negative impacts due to widespread lockdowns and reduced consumer spending. Such nuanced differences are often obscured when focusing solely on market indices. Tools like Named Entity Recognition (NER), which could help identify firms impacted by particular events, remain underutilized in financial research, further contributing to the lack of firm-level granularity.
+
+Third, there is an over-reliance on headlines as the basis for news analysis. Headlines are often used due to their availability and the simplicity of extracting sentiment from them, making them convenient but insufficient for comprehensive analysis. Numerous studies, including 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\cite{chan2003stock}, \cite{oncharoen2018deep}, \cite{wei2018stock}, \cite{lopez2023can}, \cite{chen2022expected} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+utilize headlines to gauge market sentiment.  Headlines are designed to capture attention, not to provide a comprehensive summary of all relevant details. Consequently, relying solely on headlines can lead to overly simplistic analyses that fail to capture critical contextual details necessary for accurately predicting market reactions.
+
+This paper seeks to address these three limitations by leveraging Large Language Models (LLMs) to facilitate a more granular, firm-specific analysis of complete news articles. LLMs, such as GPT and LLaMA, offer a sophisticated mechanism for processing news due to their ability to handle large contexts, understand intricate language patterns, and recognize implicit relationships. For example, LLMs could simulate human analysis of news articles, understanding the economic shocks that a news article describes upon a specific firm-such as supply chain disruptions affecting manufacturing, shifts in consumer demand impacting retail, or policy changes influencing energy sectors-and quantifying both the magnitude and direction of these impacts on specific firms. Unlike traditional sentiment scores, LLMs are capable of capturing the full context of articles, thereby enriching our understanding of the specific economic effects conveyed by news. The ability of LLMs to understand nuanced language, recognize implicit relationships, and integrate contextual information makes them particularly well-suited for analyzing financial news. By using LLMs, we can move beyond simplistic sentiment measures and towards a more holistic understanding of how news influences firm behavior and market outcomes.
+
+In this study, I apply LLMs to a dataset of Spanish business news articles from DowJones Newswires, spanning June 2020 to September 2021-a particularly unstable period marked by economic disruptions due to the COVID-19 pandemic. This period was purposefully chosen because it presents a challenging environment for traditional sentiment and topic modeling methods, which often fail under rapidly evolving conditions. By testing the proposed methodology during such an unstable period, we aim to evaluate its robustness. It is relatively easy for traditional methods to perform well in stable times, but during periods of heightened uncertainty, their limitations become apparent. This is precisely the scenario in which we seek to determine whether LLM-based analysis can provide superior insights. As a benchmark, we will compare the LLM clustering method with simple KMeans clustering of embeddings. That is, one could simply represent a news article as a  vector in high-dimensional space and then apply an unsupervised clustering method such as KMeans. This is more sophisticated than a sentiment or topic based method, but still does not rely on a comprehensive parsing of the news article content. Later on, we pass news articles through an LLM through a schema that asks the LLM to classify article-implied firm-specific shocks according to their type (demand, supply, technological, policy, financial), magnitude (minor, major) and direction (positive, negative). By categorizing and comprehending the economic implications of news, LLMs provide insights that extend beyond mere sentiment analysis, helping to elucidate the underlying mechanisms driving market behavior. The approach taken in this paper involves not only identifying the firms mentioned in each article but also determining the type, magnitude, and direction of the shocks implied by the news. This allows for a more detailed assessment of how specific pieces of information influence particular firms, providing a richer and more precise picture of market dynamics.
+
+The objective of this paper is not to parse the largest dataset available or to develop a realistic trading strategy with commercial application. Rather, it aims to introduce a novel methodology for analyzing news articles in a granular and firm-specific manner, demonstrating its utility through a reduced dataset. By focusing on a smaller, high-quality dataset, the study emphasizes methodological rigor and interpretability. The findings are intended to contribute to a more nuanced understanding of how market participants process news, using a simple trading strategy to illustrate the potential of this approach in capturing the complexities of information processing in financial markets. This methodological contribution lays the groundwork for future research that could extend these techniques to larger datasets and more complex trading applications, ultimately enhancing our ability to understand and predict market behavior in response to news.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%	 LITERATURE REVIEW 		%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%----------------------------------------------------
+% 7th October 2024 | 
+%----------------------------------------------------
+%
+%The foundation of textual analysis in finance, particularly in predicting stock returns using economic news, has evolved through three main phases: assessing traditional news, exploring novel sources like social media, and incorporating advanced machine learning and natural language processing techniques.
+%
+%Early studies focused on understanding how public information affects investor behavior and market dynamics. For instance, \cite{cutler1988moves} examined the influence of macroeconomic and political news on aggregate stock prices, revealing that not all price movements are fully explained by news events. \cite{mitchell1994impact} found that the relationship between daily news volume and market response was often weak, suggesting that markets are influenced by factors beyond public news releases.
+%
+%\cite{chan2003stock} extended this analysis to firm-level reactions, documenting post-news drift, particularly after bad news, which indicated potential underreaction by investors. Similar findings by \cite{abarbanell1992tests} and \cite{michaely1995price} showed systematic underreaction to earnings information and differential market responses to dividend changes, highlighting inefficiencies in information processing. In this line, \cite{jiang2021pervasive} contributed to the understanding of  firm-specific reactions to news by decomposing  daily stock returns into news-driven and non-news-driven components and identified significant underreaction to firm news. This underreaction led to return continuation over several days, creating profitable trading opportunities. The study emphasized the importance of analyzing individual firm responses to news, rather than focusing solely on aggregate behavior.
+%
+%Other avenues of research highlighted media sentiment's impact on stock returns. \cite{tetlock2007giving} showed that high media pessimism predicted lower future returns, emphasizing sentiment's role in shaping investor decisions. \cite{fang2009media} found that stocks with less media coverage earned higher returns, suggesting that limited dissemination affects risk perception and investor awareness.
+%
+%Sentiment analysis expanded beyond traditional media with \cite{bollen2011twitter}, who linked Twitter mood to stock market movements, showing that social media sentiment could predict financial outcomes. \cite{jegadeesh2013word} refined content analysis by quantifying word relevance in financial filings, while \cite{loughran2011liability} improved sentiment accuracy using specialized word lists tailored to finance.
+%
+%Economic linkages inferred from news also gained attention. \cite{scherbina2015economic}, \cite{schwenkler2019network}, \cite{hu2021networks} and \cite{hilt2024different}, found that information flows through firm connections, such as co-mentions in news, contributed to cross-predictability in stock returns, highlighting how news affects interconnected entities.
+%
+%The rise of machine learning and natural language processing marked a significant shift, allowing for more granular analysis. \cite{ke2019predicting} introduced the Sentiment Extraction via Screening and Topic Modeling (SESTM), leveraging machine learning to predict returns from news content. \cite{bybee2021business} employed Latent Dirichlet Allocation (LDA) to distill news into topics explaining stock market returns. \cite{chen2022expected} present a comprehensive analysis of market timing capabilities using LLMs, emphasizing their efficacy in extracting and modeling stock returns from financial news. The authors maintain a reliance on more traditional technologies such as BERT, RoBERTa, and OPT, for explicating model behaviors, potentially limiting the adaptability and future readiness of their approach.
+%
+%Recent studies have highlighted the use of LLMs in finance. \cite{bybee2023ghost} used GPT-3.5 to generate economic expectations from historical news, providing macro-level insights but lacking firm-specific detail. \cite{lopez2023can} investigated the use of ChatGPT for stock market predictions by analyzing news headlines, using a dataset consisting of headlines from major news sources post-September 2021. Their method involved prompting ChatGPT to classify headlines as \qquote{good}, \qquote{neutral}, or \qquote{bad} for stock prices. \cite{chen2023chatgpt} utilized a similar approach, using news headlines to predict aggregate market movements, in this case tasking ChatGPT with reading a headline and predicting whether the stock market will \qquote{go up}, \qquote{go down}, or remain \qquote{unknown}. These approaches employed LLMs to analyze broad market impacts, but did not fully explore the firm-level insights that can be derived from detailed news content.
+%
+%This paper utilizes LLMs to analyze complete news articles, providing deeper insights into firm-level stock performance and enhancing the precision of news-driven financial predictions. Building on these advancements, this paper addresses gaps in the literature. Traditional methods like dictionary-based sentiment analysis and topic modeling offer valuable insights but face limitations. Sentiment analysis oversimplifies information into positive or negative categories, lacking nuance. Topic models, on the other hand, require reestimation when topics evolve, making them less effective over time in changing environments. By leveraging LLMs for detailed news analysis at a firm-specific level, this paper introduces a more nuanced methodology for predicting stock returns, focusing on how specific economic shocks impact individual firms rather than relying solely on aggregate or sentiment-based measures.
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The remainder of this paper is organized as follows: Section 2 discusses the dataset and preprocessing steps. Section 3 progresses through the methodology and results, comparing the use of KMeans and LLMs for news analysis and clustering. Section 4 presents the robustness checks, showing that results are not sensitive to hyperparameter variability. Section 5 concludes and discusses the implications of the findings, highlighting contributions and avenues for future research.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%----------------------------------------------------
+%% 7 October 2024 | SKELETON OF THE INTRO (FOLLOWS THE STRUCTURE OF THE PPT I WILL PRESENT IN CANADA)
+%%----------------------------------------------------
+%
+%In financial markets, news plays a crucial role in driving stock prices. Every day, markets react to a wide range of news, whether it's firm-specific, like earnings reports, or macroeconomic shocks such as geopolitical events. But how well do markets actually process this flood of information? The Efficient Market Hypothesis, proposed by Fama in 1970, suggests that markets are efficient-they process and react to new information almost instantaneously. However, we know from both theory and practice that this isn't always the case, especially when the news is complex or ambiguous.
+%In recent decades, researchers have tried to to predict market reactions to news...
+%
+%%SKELETON OF INTRODUCTION
+%
+%\begin{itemize}
+%  \item Financial Markets constantly react to macroeconomic, geopolitical and firm-specific news: 
+%  \item Efficient Market Hypothesis (Fama, 1970) suggests markets react immediately, but reality shows otherwise
+%  \item A vast body of research has focused on understanding market reactions to news, yet several gaps remain: 
+%\begin{enumerate}
+%  \item \textbf{ISSUE \#1: Lack of Granularity in Information Analysis}
+%\begin{itemize}
+%  \item Over-reliance on dictionary methods \& sentiment analysis (categorize info as positive or negative) 
+%\begin{itemize}
+%  \item 
+%Tetlock(2007); 
+%Tetlock, P. C., Saar-Tsechansky, M., \& Macskassy, S. A. (2008); 
+%Bollen, J., Mao, H., \& Zeng, X. (2010); 
+%Hanley, K. W., \& Hoberg, G. (2010); 
+%Loughran, T., \& McDonald, B. (2011); 
+%García, D. (2013); 
+%Jegadeesh, N., \& Wu, D. (2013); 
+%Z. T. Ke, B. T. Kelly, and D. Xiu (2019); 
+%Feng, W., Wei, F., \& Nguyen, U. T. (2020); 
+%Lee, C.-C., Gao, Z., \& Tsai, C.-L. (2020); 
+%Lopez-Lira, A., \& Tang, Y. (2023); 
+%   
+%  \item these methods fail to capture the full context and detailed nuances of the data.
+%\end{itemize}
+%\end{itemize}
+%
+%\begin{itemize}
+%  \item Some papers go a bit further by running topic models
+%\begin{itemize}
+%  \item Hansen, S., McMahon, M., \& Prat, A. (2018); 
+%Antweiler, W., \& Frank, M. Z. (2006); 
+%Bybee, L., Kelly, B. T., Manela, A., \& Xiu, D. (2021); 
+%Bybee, L., Kelly, B. T., \& Su, Y. (2021)
+%  \item Topic modeling categorizes text into broad themes, but these...
+%\begin{itemize}
+%  \item can't easily adapt to new \& dynamic information
+%  \item can't capture the specific implications of a news event for a particular firm or sector.
+%\end{itemize}
+%\end{itemize}
+%
+%\end{itemize}
+%	\item \textbf{ISSUE \# 2. Lack of Firm-Specific focus}
+%\begin{itemize}
+%  \item Most studies fail to identify how news affects individual firms
+%  \item Instead, they focus on broader market indices (e.g., S\&P500, DJIA, VIX).
+%\begin{itemize}
+%\item Cutler, D. M., Poterba, J. M., \& Summers, L. H. (1989); 
+%Mitchell, M. L., \& Mulherin, J. H. (1994);
+%Bollen, J., Mao, H., \& Zeng, X. (2010); 
+%García, D. (2013);
+%Baker, S. R., Bloom, N., \& Davis, S. J. (2016);
+%Manela, A., \& Moreira, A. (2017);
+%Baker, S. R., Bloom, N., Davis, S. J., \& Sammon, M. (2021)
+%\end{itemize}
+%  \item Named Entity Recognition (tool to identify named entities) is still underdeveloped in finance
+%\end{itemize}
+%\item \textbf{ISSUE \#3: Over-Reliance on Headlines}
+%\begin{itemize}
+%  \item Many studies rely on news headlines, which lack the full nuance \& context of complete articles.
+%  \item Headlines are too simplistic to fully capture the complexity of news and its impact on markets.
+%  \item Chan, W. S. (2003); 
+%Oncharoen, P., \& Vateekul, P. (2018);
+%Feng, W., Wei, F., \& Nguyen, U. T. (2020);
+%Lopez-Lira, A., \& Tang, Y. (2023);
+%J. Chen, G. Tang, G. Zhou, \& W. Zhu. (2023)
+%\end{itemize}
+%\end{enumerate}
+%\end{itemize}
+%
+%%----------------------------------------------------
+%\textbf{CONTRIBUTION:}
+%
+%This paper addresses these 3 issues by... leveraging Large Language Models (LLMs) to achieve a [1] granular, [2] firm-specific analysis of [3] full news articles to predict market reactions to news.
+%
+%LLMs like GPT and LLaMA offer a more sophisticated way of processing news we harness LLMs to categorize news in terms of economic shocks-like demand, supply, or policy-quantify the magnitude and direction of the news's impact on a firm.
+%Instead of reducing news to a sentiment score, they capture the full context of articles. %Here I apply LLMs to Spanish business news articles to see whether this deeper analysis can improve our ability to predict market reactions. 
+%We'll explore how LLMs offer more than just sentiment-they help us classify and understand the full economic impact of the news
+%
+%%----------------------------------------------------
+%\textbf{CAVEATS:}
+%\begin{itemize}
+%  \item The goal of this paper is NOT to
+%\begin{itemize}
+%  \item parse the biggest available possible dataset of +10 million news articles 
+%  \item get rich implementing a realistic trading strategy
+%\end{itemize}
+%
+%\item Instead, the goal of this paper IS to 
+%\begin{itemize}
+%  \item introduce a novel methodology for analyzing news articles in a granular and firm-specific way 
+%  \item show the utility of this new methodology with a reduced dataset 
+%  \item understand market reactions to news by building a simple trading strategy.
+%\end{itemize}
+%\end{itemize}
+%
+%
+%
+%
+%
+%
+%%----------------------------------------------------
+%% 18 September 2024 | New introduction for submission to JBF
+%%----------------------------------------------------
+%
+%In financial markets, the ability to efficiently process and react to new information is fundamental. Markets are constantly processing vast amounts of data, much of which stems from media coverage that reports on firm-specific events, macroeconomic developments, and geopolitical shocks. Historically, understanding how news influences stock prices has been a central concern in finance research. The Efficient Market Hypothesis (EMH) posits that markets reflect all available information, including news, instantaneously and efficiently (Fama, 1970). However, both theoretical and empirical studies have shown that this process is not always immediate or efficient, particularly when news is complex or ambiguous (Klibanoff, Lamont \& Wizman, 1998).
+%
+%The role of media in driving market reactions has been well documented. Early work by Tetlock (2007) demonstrated that negative words in news articles could predict declines in stock prices, laying the foundation for textual analysis in finance. Building on this, Fang and Peress (2009) explored the relationship between media coverage and stock returns, showing that firms with less media coverage tend to generate higher future returns. These studies established the connection between textual content and market behavior, particularly through sentiment analysis. 
+%
+%Traditional models of market reactions have relied heavily on structured data like earnings reports, which are easier to quantify. However, the richness of unstructured data-like news articles-has increasingly attracted attention. Studies such as those by Bollen et al. (2011) on social media sentiment and Barber \& Odean (2008) on investor behavior highlight the expanding role of sentiment in understanding market trends. Yet, sentiment-based approaches, while informative, often fail to capture the economic implications of news in its full complexity.
+%
+%Recent advancements in machine learning, particularly in NLP, have opened up new possibilities for more granular analysis of news content. Studies like Bybee et al. (2021) employed Latent Dirichlet Allocation (LDA) to distilling news articles into thematic categories. Their findings demonstrated that shifts in thematic attention correlate closely with macroeconomic activity, explaining a significant portion of aggregate stock market returns. However, the limitation of their approach, which uses a bag-of-words model, is that it overlooks the contextual and syntactic nuances of language. In contrast, newer techniques such as those employed in this paper, leveraging the capabilities of Large Language Models (LLMs), preserve these nuances, allowing for a more precise understanding of how news content influences individual stock prices.
+%
+%While much of the existing literature has concentrated on sentiment-based approaches (Engle, 2019; Garcia, 2013), this paper seeks to push the boundaries by applying advanced NLP techniques to extract deeper insights from news articles. Specifically, we investigate whether clustering news articles based on their economic implications-such as demand, supply, financial, policy, and technology shocks-, rather than simply their sentiment, can enhance the predictive power of trading strategies. By employing clustering methods such as KMeans, which groups news articles based on text embeddings, and Large Language Models (LLMs), which classify articles using a predefined schema to detect firm-specific shocks, we aim to offer a more nuanced approach that captures the economic relevance of news to particular firms.
+%
+%The key distinction between these approaches lies in the level of understanding they offer. KMeans clustering relies on unsupervised grouping based on article embeddings, capturing broad similarities in textual content. In contrast, LLM-based clustering involves a structured analysis of the news, where the model is explicitly tasked with classifying the shocks that affect specific firms. This deeper parsing results in clusters that are more stable across time and splits, generating cleaner trading signals that are more economically interpretable.
+%
+%The integration of LLMs has seen growing adoption in finance, as demonstrated by Chen et al. (2022), who explore LLM-based market timing strategies. However, they relied on outdated models like BERT and RoBERTa, which limit adaptability. In contrast, our approach employs cutting-edge models (e.g., LLaMA-3, released in 2024) and function-calling to extract firm-specific news signals, ensuring higher relevance for market predictions. Similarly, while Lopez-Lira and Tang (2023) used ChatGPT to predict stock price movements based on news headlines, their analysis was confined to simplistic classifications of headline sentiment. Our methodology, which parses entire news articles rather than headlines, captures deeper economic context and generates more actionable trading signals. 
+%
+%Moreover, works like Bybee (2023) show that LLMs can be effective tools for generating economic beliefs from historical news data. While his analysis focused on replicating survey-based economic expectations, our paper adopts a more targeted approach by focusing on firm-specific news impacts, offering practical applications for investors. Similarly, Scherbina and Schlusche (2016) identified how news stories reveal economic linkages between firms, finding that linked firms cross-predict one another's returns. This highlights the broader relevance of news in forecasting firm performance, a theme we expand upon by clustering news based on specific economic shocks.
+%
+%The novelty of this paper, therefore, lies in demonstrating how a deeper understanding of news articles, facilitated by LLMs, can lead to more stable clusters, improved signal clarity, and enhanced out-of-sample performance. Our findings suggest that LLM-based clustering of news provides a more structured and economically relevant lens through which market participants can interpret news, offering a potential edge in constructing profitable trading strategies.
+%
+%The ability to identify firm-specific impacts in a structured manner is critical, as Hilt \& Schwenkler (2024) argue that networks of firm linkages-extracted from news-are crucial for understanding firm-level and aggregate risks. Our use of LLMs aligns with this line of research, offering a scalable and consistent methodology to parse news and generate actionable insights. Finally, while previous studies like Chen (2023) focused on market-level predictions from headlines, our firm-level approach allows for greater granularity, improving the precision of market timing strategies.
+%
+%In conclusion, this paper builds on the foundation of textual analysis in finance, extending it into the realm of advanced NLP and LLMs. By parsing news into economic shocks and clustering articles accordingly, we demonstrate that LLM-based clustering methods outperform traditional approaches in generating cleaner, more stable signals for trading strategies. This contributes to a growing body of literature that seeks to understand how unstructured data, particularly news, can be harnessed to predict market movements with greater accuracy and nuance.
+%
+%%While much of the literature has focused on sentiment-based approaches (Engle, 2019; Garcia, 2013), we seek to contribute to a growing field of research that applies advanced NLP techniques to extract deeper insights from news content. Specifically, we investigate whether clustering news articles based on their economic implications, rather than simply their sentiment, can enhance the predictive power of trading strategies. By employing clustering techniques such as KMeans on text embeddings and Large Language Models (LLMs), we can offer a more nuanced approach that captures the economic relevance of news to particular firms.
+%%
+%%The novelty of this paper lies in the comparison of clustering methods based on two distinct approaches: traditional KMeans clustering on text embeddings, and clustering based on Large Language Models (LLMs), which offer a deeper, more structured understanding of the news content. By allowing the LLM to parse articles and classify them according to shock types, we argue that the resulting clusters are more stable over time, produce cleaner trading signals, and ultimately lead to better out-of-sample performance. This approach provides a more structured, economically-relevant lens through which market participants can interpret news, offering a potential edge in constructing a profitable trading strategy.
+%
+%
+%%----------------------------------------------------
+%% 18 June 2024 | Raw text from my own writing
+%%----------------------------------------------------
+%
+%\hspace{0.5cm} This paper aims to provide a novel and universal approach to analyzing the impact of business news on stock prices. Our approach is novel in that it is the first time that Large Language Models are employed to \textit{comprehensively} analyze the shocks described in business news articles for return prediction purposes, and it is universal in the sense that it does not rely on access to structured metadata from paid news portals, which, in general, are not widely accessible to the common researcher.
+%
+%\mx 
+%Our database consists of a set of Spanish business news articles from DowJones spanning June 2020 to September 2021. Such articles are filtered in a way that allows us to extract the firms directly involved in them. In the first exercise, we convert the wording of the articles from text to high-dimensional vector embeddings by using a transformer model. Such representation captures the general contextual and semantic meaning of the text but is not able to capture the subtle nuances of the shocks described there on the affected firms. 
+%
+%\mx 
+%We then cluster our news articles by applying the KMeans algorithm to the associated vector embeddings. This procedure delivers 26 clusters of business news, where each cluster usually pools together articles about a firm or set of firms in the same sector. 
+%
+%\mx 
+%For each firm affected by an article, a market model is constructed on some window previous to the day where the article's information got incorporated into the market. Such model is then used to construct a beta-neutral strategy that extracts the abnormal returns of the firm after controlling for the market. 
+%%\mx 
+%By obtaining the metrics of this strategy and comparing them across clusters, we can obtain a measure of the profitability of each cluster. We then propose two algorithms that exploit this information to select the optimal clusters.
+%%to build a trading rule. 
+%
+%\mx 
+%Finally, a trading rule is constructed by launching trades on the selected clusters over a specific holding period. By projecting the trading rule onto the test set, we obtain a measure of the profitability of the whole procedure out-of-sample. 
+%
+%\mx 
+%The strategy based on KMeans clustering of vector embeddings is not able to generate a consistent earnings profile in the test set, which occurs due to the instability of the clustering method. Namely, the distribution of articles through clusters across data splits shows a very inconsistent pattern, which already hints at the fact that signals generated by the trading rule will not be generalizable out-of-sample.
+%
+%\mx 
+%In the second part of the paper, we feed the news articles to a Large Language Model (LLM) and ask it to manually parse them. In particular, we ask the LLM to extract the affected firms and to individually classify the shock implied by the article in each affected firm based on a predefined schema. Such schema consists of a classification of news articles' shocks based on three categories: type (demand, supply, financial, technology, policy), magnitude (minor, major), and direction (positive, negative). We can then cluster the articles based on this classification. 
+%
+%\mx
+%In this case, the distribution of articles through clusters is very stable across data splits, which indicates that the trading rule will generate signals that will be generalizable across data splits. Indeed, this is confirmed by the out-of-sample performance of the trading strategy, which shows a consistent earnings profile. These results are robust to hyperparameter variability. In particular, we show that the distribution of Sharpe Ratios in the test set for different choices of holding period length and maximum number of traded clusters is right-skewed and centered at positive values.
+
+%----------------------------------------------------
+% 29 April 2024 | Raw text from my own writing
+%----------------------------------------------------
+
+%This paper aims to provide a novel and universal approach to analyzing the impact of business news on stock prices. Our approach is novel in that it is the first time that Large Language Models are employed to comprehensively analyze the shocks described in business news articles for return prediction purposes, and it is universal in the sense that it does not rely on access to structured metadata from paid news portals, which, in general, are not widely accessible to the common researcher.
+
+
+%
+%\mx 
+%We start with an unstructured corpus of textual data, namely Spanish business news articles, which undergoes preprocessing before being fed into the GPT API. Subsequently, we guide GPT in parsing these news articles and generating structured responses using "function calling", i.e., a predefined set of functions and parameters of our writing to rigorously instruct GPT on how to respond. 
+%
+%\mx
+%Such functions prompt GPT to identify various attributes of the article, including its publication datetime, the type of information provided (new information, historical, analysis/comments, marketing) and its scope (firm-level, industry, global). If the scope of the article is at the firm level, we further ask GPT to list the firms that are directly affected by the events narrated therein. For each identified firm, we request GPT to provide its associated stock market ticker (if publicly traded; otherwise, it returns "NaN"), and further, to classify several aspects regarding how the shock pertains to the firm. Specifically, we prompt GPT to classify the type of shock (e.g., demand, supply, regulatory), the expected duration (short-term, long-term, permanent), the magnitude or relevance (minor, mild, major), and the expected impact on the firm's performance (positive, neutral, negative). Lastly, we obtain GPT's own trading signal by putting it in the shoes of a financial advisor tasked with deciding whether to \textit{Long} or \textit{Short} the stock associated with the firm affected by the news article.
+%
+%\mx 
+%The methodological framework outlined above not only facilitates the identification of pertinent metadata but also generates a structured and comparable array of responses, enabling us to progress the analysis to a supervised stage, which consists of two parts.
+%
+%\mx 
+%In the first part, we examine the predictability of stock returns in response to the shocks delineated in the news articles. To achieve this, we will conduct regressions of the stock returns of affected firms on the dummified shock classifications provided by GPT. This analysis will elucidate the direction and significance of shock predictors for return prediction.
+%
+%\mx 
+%In the second part, we will assess the market timing capabilities of GPT through a market timing test. This involves contrasting GPT's decisions with the decisions that should have been made based on realized returns. In other words, we will juxtapose the stock return predictions of GPT, which inform decisions to long or short the stock, with the actual stock return performance of the respective stock.
+%
+%\mx 
+%Finally, we will construct a set of Long-Short portfolios. One of these portfolios will trade shock signals, determining whether to go long or short based on the shock classifications provided by GPT. Another portfolio will be created using GPT's raw market timing capabilities, disregarding the deeper understanding of the news article implied by the shock analysis and categorization.
+%
+%\mx 
+%All in all, our approach allows us to transition from an unsupervised learning procedure with unstructured data to a supervised learning procedure with structured data that enables us to study the stock return predictability of the shocks described by business news articles.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%\mx 
+%%The methodological framework described above not only facilitates the identification of relevant metadata but also produces a structured and comparable set of responses that allows us to advance the analysis further to a supervised stage,
+%
+%
+%%In the first part, we analyze the stock return predictability of the shocks described in the news articles. For this purpose, we will regress the stock returns of the affected firms on the dummified shock classifications made by GPT. This will allow us to shed light on the direction and significance of shock predictors for return prediction. 
+%%
+%%For the second part, we will analyze the market timing capabilities of GPT by performing a market timing test. Here we will contrast the decision made by GPT with the decision that should have been taken based on the realized returns. In n other words, we will compare the stock return predictions of GPT (which underlie in the decision made to long or short the stock) and the actual stock return performance of the stock in question. 
+%
+%%Finally, we will construct a set of Long-Short portfolios. One of such portfolio will trade shock signals; that is, it will decide whether to long/short based on the shock classifications made by GPT. Another portfolio will be constructed using GPT's raw market timing abilities (that is, by simply asking GPT to long or short based on the news and without regard to the deeper understanding on the news article implied by the shock analysis and categorization)
+%
+%
+%%in which we study the stock return predictability of the shock analysis and market timing signals generated by GPT.
+%
+%%Namely, the output from GPT's response consists of a classification of the shocks implied by the news articles. We launch a set of queries to GPT: we ask it to identify the publication datetime of the article, the type of article (set of possible answers: new information, historical, analysis or comments, marketing) and its scope (firm-level, industry, global). If the scope of the article is at the firm-level, then, we ask GPT to list the firms that are primarily and directly affected by the events narrated in the article. Then, for each firm in that list of firms, we prompt GPT to give us its associated stock market ticker (if the company is publicly traded, otherwise, it spits ``NaN'') and we further ask GPT to classify a set of aspects of how that shock relates to the firm in question. In particular, we ask it about the shock type (demand, supply, regulation,...), the expected duration of that shock (set of possible answers: short-term, long-term, permanent), the magnitude or relevance (set of possible answers: minor, mild, or major), and the direction in which that shock is expected to affect the firm's performance (set of possible answers: positive, neutral negative). Further, we ask GPT to provide a trading signal based on the news article; namely, we put GPT in the shoes of a financial advisor having to decide on whether to Long or Short the stock associated to the affected firm based on the events described in the news article. Once we have obtained a structured answer from GPT we can obtain the metadata of the identified firms to analyze the stock return predictability of the shock analysis and market timing signals generated by GPT.
+%%
+%
+%
+%
+%%In particular, our approach departs from an unstructured dataset of textual data (a corpus of Spanish news articles) that is preprocessed and fed to GPT. At this stage, we direct GPT on how to parse these news articles and generate a structured response through ``function calling'' (i.e., writing a set of functions and parameters to precisely instruct GPT on to output its completions). This methodology allows us to not only identify the relevant metadata but also to obtain a structured and comparable output that places us in the right place to take the analysis to a supervised stage.
+%%---
+%%
+%%At this stage, a set of functions is defined to instruct GPT on how to parse and analyze the news articles. 
+%%
+%%At this stage, we task GPT to produce a set of answers according to a function schema that we predefined in advance. 
+%%
+%%
+%%---
+%
+%%
+%%. Different from the previous literature, our procedures don't rely on having access to structured metadata from payable news portals, which are not widely accessible to the common researcher. 
+%%
+%%In other words, our approach is universal in that it doesn't require metadata from news portals that require subscriptions. 
+%%
+%%In this sense, we obtain all the information by asking GPT. This is an unsupervised learning approach. 
+%%
+%%How do we get around this? By delegating the identification of all the relevant metadata to GPT. However, this delegation only works if the right textual preprocessing is performed and the right questions are asked to GPT.  
+%%
+%%The modus operandi consists of starting from an unsupervised learning approach with unstructured textual data (news articles), which we then preprocess and feed to GPT. 
+%%
+%%Departing from unstructured news article data, we parse those articles by passing them through the GPT API. 
+%%
+%%
+%%This leads GPT to produce a structured output that can then be employed to analyze the stock return predictability of GPT. 
+%%
+%
+%
+%
+%%Namely, the output from GPT's response consists of a classification of the shocks implied by the news articles. We launch a set of queries to GPT: we ask it to identify the publication datetime of the article, the type of article (set of possible answers: new information, historical, analysis or comments, marketing) and its scope (firm-level, industry, global). If the scope of the article is at the firm-level, then, we ask GPT to list the firms that are primarily and directly affected by the events narrated in the article. Then, for each firm in that list of firms, we prompt GPT to give us its associated stock market ticker (if the company is publicly traded, otherwise, it spits ``NaN'') and we further ask GPT to classify a set of aspects of how that shock relates to the firm in question. In particular, we ask it about the shock type (demand, supply, regulation,...), the expected duration of that shock (set of possible answers: short-term, long-term, permanent), the magnitude or relevance (set of possible answers: minor, mild, or major), and the direction in which that shock is expected to affect the firm's performance (set of possible answers: positive, neutral negative). Further, we ask GPT to provide a trading signal based on the news article; namely, we put GPT in the shoes of a financial advisor having to decide on whether to Long or Short the stock associated to the affected firm based on the events described in the news article. Once we have obtained a structured answer from GPT we can obtain the metadata of the identified firms to analyze the stock return predictability of the shock analysis and market timing signals generated by GPT.
+%
+%
+%% That is, our approach allows us to transition from an unsupervised learning with unstructured data to a supervised learning procedure with structured data. This latter procedure consists of two parts.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%----------------------------------------------------
+%% 29 April 2024 | Parsed using GPT (asked it to simply rephrase my text)
+%%----------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%This paper endeavors to establish a methodical framework for the analysis of business news articles, aiming to transform unstructured news data into structured insights through the utilization of the GPT API.
+%%
+%%By instructing GPT through a series of predefined functions, we orchestrate the parsing of news articles to yield structured responses. This approach facilitates the extraction of comparable insights, primarily focusing on classifying the shocks conveyed within the articles. Our methodology involves querying GPT to ascertain key attributes of the articles, including publication datetime, article type (such as new information, historical context, analysis, or commentary), and scope (ranging from firm-level to industry or global perspectives).
+%%
+%%When the scope pertains to specific firms, we prompt GPT to identify the principal firms directly impacted by the events narrated in the article. Subsequently, for each identified firm, we solicit GPT to classify various aspects of the shock, encompassing its type (such as demand, supply, or regulatory), expected duration (ranging from short-term to long-term or permanent), magnitude or relevance (ranging from minor to major), and anticipated direction of impact on the firm's performance (positive, neutral, or negative). Additionally, we task GPT with generating trading signals based on the news articles, simulating the role of a financial advisor deciding whether to Long or Short the stock associated with the affected firm based on the article's content.
+%%
+%%The initial phase of our study focuses on analyzing the predictability of stock returns based on these shock classifications. Employing regression analysis, we explore the relationship between stock returns of affected firms and the identified shock predictors, examining both the direction and significance of these predictors.
+%%
+%%Subsequently, we delve into assessing the market timing capabilities of GPT through a rigorous market timing test. This involves contrasting GPT's decisions regarding stock returns with the ideal decisions that should have been made, thereby evaluating the effectiveness of GPT's predictions in real-world market scenarios.
+%%
+%%In the final phase, we construct a series of Long-Short portfolios to further explore the practical implications of GPT's insights. One such portfolio will trade based on shock signals, leveraging GPT's shock classifications to inform Long or Short decisions. Another portfolio will utilize GPT's raw market timing abilities, disregarding deeper shock analysis, and solely relying on GPT's instantaneous market predictions derived from news articles.
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%----------------------------------------------------
+%% 29 April 2024 | Parsed using GPT (asked it to do whatever it want with my text)
+%%----------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%This paper presents a systematic framework for analyzing business news articles using the GPT API. Departing from unstructured data, we employ a structured approach by instructing GPT through predefined functions, enabling the extraction of comparable and analyzable responses.
+%%
+%%Our methodology begins by parsing articles through the GPT API, directing it to identify key attributes such as publication datetime, article type, and scope. For articles focused on individual firms, GPT identifies the primary affected firms and classifies aspects of the associated shock, including type, duration, magnitude, and expected impact direction.
+%%
+%%Furthermore, we task GPT with providing trading signals based on the news content, simulating the decision-making process of a financial advisor. This approach lays the foundation for our subsequent analyses.
+%%
+%%In the first part of the paper, we investigate the predictability of stock returns based on GPT's shock classifications. Through regression analysis, we examine the significance and directionality of these predictors.
+%%
+%%Subsequently, we assess GPT's market timing capabilities by comparing its stock return predictions with actual performance. This market timing test evaluates the efficacy of GPT's decision-making process in real-world scenarios.
+%%
+%%Finally, we construct Long-Short portfolios to further explore GPT's capabilities. One portfolio trades based on GPT's shock signals, while another relies solely on GPT's raw market timing abilities, providing insights into the impact of deeper news analysis.
+%%
+%%By employing this structured approach, we aim to enhance our understanding of the relationship between business news content and stock market movements, leveraging the capabilities of advanced language models like GPT. 
+
