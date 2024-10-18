@@ -30,16 +30,20 @@
 \hline \Xhline{2\arrayrulewidth}
 \end{tabular}
 %}
-\begin{tablenotes}
-\footnotesize
-\mx
-\item \textit{Note: 
-For clarity of exposition, the actual prompts passed to LlaMA are avoided here but can be found in the code. 
+%\begin{tablenotes}
+%\footnotesize
+%\mx
+%\item \textit{Note: 
+%For clarity of exposition, the actual prompts passed to LlaMA are avoided here but can be found in the code. 
 %The ``Options'' column imposes the asnwer format that the LLM must follow. For example, in \texttt{firms}, the option \texttt{array} indicates that the answer must be an enumeration of firms, while the option \texttt{string} in the subfunctions \texttt{firm} and \texttt{ticker} indicates that the answer must be a single name. Finally, the \texttt{shock\_} subfunctions ask the LLM to choose from a predefined set of options.
-}
-\end{tablenotes}
+%}
+%\end{tablenotes}
 \label{tab:function_calling_structure}
 \end{threeparttable}
+\mx 
+\subcaption*{\textit{
+This table outlines the structure of the function calling schema we designed to guide the LLM through the analysis of news-implied firm-specific economic shocks. The \qquote{Function} column specifices the name of the tool passed to the LLM. We can understand the umbrella function \texttt{firms} as running a loop over each of its arguments, with the indented subfunctions being referred to the specific argument passed to them. The \qquote{Prompt} column provides an example of the simplified instructions given to the LLM (the actual prompts are longer as the LLM needs clear and detailed instructions, with useful examples for context).  Finally, the ``Options'' column imposes the answer format that the LLM must follow. For example, in \texttt{firms}, the ``\texttt{array}'' option indicates that the answer must be an enumeration of firms, while the  ``\texttt{string}'' option in the subfunctions \texttt{firm} and \texttt{ticker} indicates that the answer must be a single string. Finally, the \texttt{shock\_} subfunctions ask the LLM to choose from a predefined set of possible responses.
+}}
 \end{table}
 
 

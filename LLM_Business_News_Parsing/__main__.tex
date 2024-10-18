@@ -24,7 +24,7 @@
 { 
 \sx \bx 
 Jesus Villota Miranda$^{\dagger}$\footnote{
-I am grateful to Enrique Sentana, Dante Amengual, Rafael Repullo, Julio Crego, Francisco Penaranda, Javier Suarez, David Martinez-Miera, Juan Segura-Buisan, Nicolas Forteza, and Matias Covarrubias for useful comments and feedback. 
+I am grateful to Enrique Sentana, Menuel Arellano, Dante Amengual, Rafael Repullo, Julio Crego, Francisco Penaranda, Javier Suarez, David Martinez-Miera, Luis Varona, Nicolas Forteza, and Matias Covarrubias for useful comments and feedback. 
 I acknowledge financial support from Banco de España (BdE). 
 }}
 
@@ -37,6 +37,10 @@ $\big{>}$
 $\big{<}$
 Email: \href{jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
 $\big{>}$
+
+\mx 
+\textbf{This version: 17th October 2024}
+
 }
 }
 
@@ -60,6 +64,8 @@ $\big{>}$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%\tableofcontents
+
 \newpage
 \setcounter{page}{1}
 
@@ -73,13 +79,15 @@ $\big{>}$
 \section{Data}
 %----------------------------------------------------
 \input{txt_Data.tex}
-%\input{txt_database_description.tex}
 %----------------------------------------------------
 
 %%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
-\section{Methodology}
-\input{txt_Model_KMeans.tex} 
-\input{txt_Model_LLM.tex}
+%\section{Methodology}
+\input{txt_General_Setup.tex}
+\input{txt_Clustering.tex}
+\input{txt_Trading_Strategy.tex}
+
+%%%%%%%%%%%%% ROBUSTNESS CHECKS %%%%%%%%%%%%%%%%%%
 \input{txt_Robustness_Checks.tex}
 
 %%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
@@ -115,7 +123,21 @@ $\big{>}$
 
 % End the main part of the paper here, after this tables/figures appear
 \newpage
-\processdelayedfloats % To make sure all the tables/figures appear before the appendix
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% UNCOMMENT BELOW %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% To make sure all the tables/figures appear before the appendix
+\processdelayedfloats 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% UNCOMMENT ABOVE %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Reset the numbering for appendix figures and tables
 \renewcommand{\thefigure}{A\arabic{figure}} 
@@ -128,160 +150,3 @@ $\big{>}$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
-
-
-
-
-
-%\documentclass[12pt,a4paper]{article}
-%
-%%---------------------- MACROS -----------------------
-%\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Macros}
-%%----------------------------------------------------
-%
-%\usepackage{authblk} % to write the title with the authors
-%\usepackage{booktabs} % when using \documentclass[12pt,a4paper]{article}, you need to load this
-%\usepackage[nomarkers, nolists, tablesfirst]{endfloat} % puts tables and figures at the end of the document
-%
-%\usepackage{etoolbox} % To use \AtBeginEnvironment and \AtEndEnvironment
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%\title{\textsc{
-%{\LARGE Predicting Market Reactions to News:} 
-%\\
-%{\large An LLM-Based Approach Using Spanish Business Articles }
-%}}
-%
-%\author[1]{
-%{ 
-%%\bx \bx 
-%\sx \bx 
-%Jesus Villota Miranda$^{\dagger}$\footnote{
-%%\textsc{Cemfi} 
-%I am grateful to Enrique Sentana, Dante Amengual, Rafael Repullo, Julio Crego, Francisco Penaranda, Javier Suarez, David Martinez-Miera, Juan Segura-Buisan, Nicolas Forteza and Matias Covarrubias for useful comments and feedback. 
-%I acknowledge financial support from Banco de España (BdE). 
-%%For financial support, I thank Banco de España (BdE). 
-%%\textit{Email}: 
-%%\href{jesus.villota@cemfi.edu.es}{jesus.villota@cemfi.edu.es}.
-%%\textit{Address}: 
-%%Calle Casado del Alisal, 5, Retiro, 28014, Madrid, Spain. 
-%}}
-%
-%\bx 
-%%(\textsc{cemfi})
-%{\small
-%$\big{<}$
-%\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
-%$\big{>}$
-%
-%$\big{<}$
-%Email: \href{jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
-%$\big{>}$
-%}
-%}
-%
-%\date{}  % Remove date
-%
-%\begin{document}
-%
-%\maketitle
-%\begin{abstract}
-%%----------------------------------------------------
-%\input{txt__ABSTRACT.tex}
-%%----------------------------------------------------
-%
-%%\bigskip
-%\noindent\textbf{JEL Codes:} G12, G14, C45, C58, C63, D83
-%
-%\noindent\textbf{Keywords:} Large Language Models, Business News, Stock Market Reaction, Market Efficiency
-%\end{abstract}
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%%%%%%%%% TABLE OF CONTENTS %%%%%%%%%%%
-%%\newpage
-%%\thispagestyle{empty}
-%%\tableofcontents
-%%\thispagestyle{empty}
-%
-%
-%\newpage
-%\setcounter{page}{1}
-%%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%
-%\section{Introduction}
-%%----------------------------------------------------
-%\input{txt_introduction.tex}
-%%----------------------------------------------------
-%
-%
-%%%%%%%%%%%%%% LITERATURE REVIEW %%%%%%%%%%%%%%%%%%
-%%\section{Literature Review}
-%%%----------------------------------------------------
-%%\input{txt_literature_review.tex}
-%%%----------------------------------------------------
-%
-%
-%%%%%%%%%%%%%%%%%%%% DATA %%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Data}
-%%----------------------------------------------------
-%\input{txt_database_description.tex}
-%%----------------------------------------------------
-%
-%
-%
-%%\newpage
-%%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
-%\section{Methodology}
-%%--------------------- KMEANS -----------------------
-%\input{txt_Model_KMeans.tex} 
-%%----------------------------------------------------
-%
-%%\newpage
-%%--------------------- LLMs -------------------------
-%\input{txt_Model_LLM.tex}
-%%----------------------------------------------------
-%
-%
-%%--------------------- LLMs -------------------------
-%\input{txt_Robustness_Checks.tex}
-%%----------------------------------------------------
-%
-%%%%%%%%%%%%%%%%%%% HIGH FREQUENCY %%%%%%%%%%%%%%%%%%%%%%
-%%\section{High Frequency Analysis}
-%%\input{txt_HF_Analysis.tex}
-%
-%%%%%%%%%%%%%%%%%% EVENT STUDY %%%%%%%%%%%%%%%%%%%%%%
-%%\section{Event Study}
-%%\input{txt_Event_Study.tex}
-%
-%%%%%%%%%%%%%%%%%% TRANSACTION COSTS %%%%%%%%%%%%%%%%%%%%%%
-%%\section{Transaction Costs}
-%%\input{txt_Transaction_Costs.tex}
-%
-%
-%%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
-%\input{txt__CONCLUSION.tex}
-%
-%
-%%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
-%\bibliography{bib_references.bib}
-%\bibliographystyle{plain}
-%
-%
-%\newpage
-%\appendix
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section{Appendix}
-%\input{txt_Appendix.tex}
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\end{document}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

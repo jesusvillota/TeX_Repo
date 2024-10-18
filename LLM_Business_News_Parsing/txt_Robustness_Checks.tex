@@ -39,8 +39,9 @@ First, we focus on the holding period length of the beta-neutral strategy ($L$).
     \caption{\textbf{LLM}: Series of $SR^{\mathcal P^{test}}(L)$}
     \label{fig:LLM_Robustness_L_Series}
   \end{subfigure}
-
 \label{fig:LLM_Robustness_L}
+\mx 
+\subcaption*{\textit{Note: This figure examines the sensitivity of the Sharpe Ratios ($SR^{\mathcal P^{test}}$) of the test portfolio to changes in the holding window length ($L$), with $\theta$ fixed at $\integer{0.5k}$. Panels \textsc{(a)} and \textsc{(b)} display the distribution and time series of $SR^{\mathcal P^{test}}(L)$ for KMeans clustering, respectively, while Panels \textsc{(c)} and \textsc{(d)} present the same for the LLM-based clustering. The left-hand panels show the skewness of the distributions: KMeans clustering results in a left-skewed distribution of Sharpe Ratios, whereas the LLM-based approach yields a right-skewed distribution, indicating higher profitability. The right-hand panels highlight that KMeans clustering only produces positive Sharpe Ratios for very short holding periods, whereas the LLM-based clustering shows more consistent positive performance across a wider range of $L$ values, though with some variability.}}
 \end{figure}
 %----------------------------------------------------
 
@@ -83,6 +84,9 @@ We then turn to analyze the sensitivity of $SR^{\mathcal P^{test}}$ to different
     \caption{\textbf{LLM}: Series of $SR^{\mathcal P^{test}}(\theta)$}
     \label{fig:LLM_Robustness_theta_Series}
   \end{subfigure}
+
+\mx 
+\subcaption*{\textit{Note: This figure displays the sensitivity of the Sharpe Ratios ($SR^{\mathcal P^{test}}$) to variations in the upper bound on the number of traded clusters ($\theta$), with $L$ fixed at 4. Panels \textsc{(a)} and \textsc{(b)} show the distribution and series of $SR^{\mathcal P^{test}}(\theta)$ for KMeans clustering, respectively, while Panels \textsc{(c)} and \textsc{(d)} illustrate the same for LLM-based clustering. For KMeans, the results are mixed: the \textit{Stable} algorithm generates positive Sharpe Ratios for low $\theta$ values, whereas the \textit{Greedy} algorithm performs better with high $\theta$ values, indicating sensitivity and instability. In contrast, the LLM-based clustering shows a more consistent pattern, with a concentration of positive Sharpe Ratios across a broader range of $\theta$ values, suggesting greater robustness and stability in the trading strategy.}}
 
 \label{fig:Robustness_theta}
 \end{figure}
