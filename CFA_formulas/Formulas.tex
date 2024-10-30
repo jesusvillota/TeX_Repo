@@ -1,0 +1,45 @@
+\documentclass[12pt,article]{memoir}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/$$JVM_Macros}
+\Subject{CFA-Formulas}
+%\Arg{}
+
+\begin{document}
+\chapter{Fixed Income}
+Notation: 
+$$\begin{array}{ll}
+\t{Price of the bond} & P_t
+\\
+\t{Coupon (annual rate)} & c^{(1)}_t
+\end{array}$$
+
+\subsubsection{Current Yield}
+$$CY_t = \frac{c^{(1)}_t}{P_t}$$
+
+Cash flow structures: 
+$$\begin{array}{llllllll}
+\t{Bullet Bond} & : & [-P_0 & I_1, & I_2, &..., &I_n + A]
+\\ 
+\t{Fully Amortizing Loan} &:& [-P_0 & I_1+A_1, &I_2+A_2, &..., & I_n+A_n]
+\\
+\t{Partially Amortizing Loan} &:& [-P_0 & I_1+A_1, &I_2+A_2, &..., & I_n+\frac{A}{2}] & \t{\textit{Balloon payment}}=\frac{A}{2}
+\end{array}$$
+
+\subsubsection{Loan}
+Periodic payment of a loan: 
+$$
+a = \frac{r \times A}{1-(1+r)^{-n}}
+$$
+where $a$ is the periodic payment, $A$ is the principal, $r$ is the market interest rate per period and $n$ are the total number of periods.
+\subsubsection{Floating Rate Note}
+Price of a $T$-year FRN with periodicity $k$
+$$
+P = \sum_{t=0}^{kT} \frac{PMT_t^{(k)}}{1+r_t^{(k)}}
+$$
+with:
+$$\begin{array}{rlll}
+PMT_t^{(k)} &:= MRR_t^{(k)} + QM^{(k)} &= \frac{MRR_t^{(1)}}{k} + \frac{QM^{(1)}}{k}
+\\[0.7em]
+r_t^{(k)}   &:= MRR_t^{(k)} + DM_t^{(k)} &= \frac{MRR_t^{(1)}}{k} + \frac{DM_t^{(1)}}{k}
+\end{array}$$
+where recall that the market reference rate, quoted margin and discount margins are usually quoted in annual terms: $MRR_t^{(1)}, QM^{(1)}, DM_t^{(1)}$
+\end{document}

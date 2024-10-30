@@ -1,0 +1,67 @@
+\section{Concept}
+A language model (LM) is a probability distribution over sequences of tokens. Suppose we have a vocabulary $\mathcal{V}$ of a set of tokens. A language model $p$ assigns each sequence of tokens $\3{x_1, \ldots, x_L} \in \mathcal{V}$ a probability
+$
+p\1{x_1, \ldots, x_L} = p(x_{1:L})
+$
+This probability intuitively tells us how "good" a sequence of tokens is. For example, if the vocabulary is $\mathcal{V}=\{$ate, ball, cheese, mouse, the$\}$, the language model might assign:
+\begin{align*}
+p(\text {the}, \text {mouse, ate}, \text {the}, \text {cheese})&=0.02 \\
+p(\text {the}, \text {cheese}, \text {ate, the}, \text {mouse})&=0.01 \\
+p(\text {mouse, the}, \text {the}, \text {cheese}, \text {ate})&=0.0001
+\end{align*}
+
+That is, the LM should assign $\3{\t{mouse, the, the, cheese, ate}}$ a very low probability implicitly because it's ungrammatical (syntactic knowledge). The LM should assign $\3{\t{the, mouse, ate, the, cheese}}$ higher probability than $\3{\t{the, cheese, ate, the, mouse}}$ implicitly because of world knowledge: both sentences are the same syntactically, but they differ in semantic plausibility.
+
+\subsection{Generation} 
+As defined, a language model $p$ takes a sequence and returns a probability to assess its goodness. We can also generate a sequence given a language model. The purest way to do this is to sample a sequence $x_{1: L}$ from the language model $p$ with probability equal to $p\left(x_{1: L}\right)$, denoted:
+$$
+x_{1: L} \sim p .
+$$
+
+How to do this computationally efficiently depends on the form of the language model $p$. In practice, we do not generally sample directly from a language model both because of limitations of real language models and because we sometimes wish to obtain not an "average" sequence but something closer to the "best" sequence.
+
+\section{Autoregressive language models}
+A common way to write the joint distribution $p\left(x_{1: L}\right)$ of a sequence $x_{1: L}$ is using the chain rule of probability:
+\begin{align*}
+p\left(x_{1: L}\right)=p\left(x_1\right) p\left(x_2 \mid x_1\right) p\left(x_3 \mid x_1, x_2\right) \cdots p\left(x_L \mid x_{1: L-1}\right)=\prod_{i=1}^L p\left(x_i \mid x_{1: i-1}\right) .
+\end{align*}
+
+For example:
+\begin{align*}
+p(\text{the},\text{mouse},\text{ate},\text{the},\text{cheese}) = ~& p(\text{the}) \\
+& \times p(\text{mouse}\mid\text{the}) \\
+& \times p(\text{ate}\mid\text{the, mouse}) \\
+& \times p(\text{the}\mid\text{the, mouse, ate}) \\
+& \times p(\text{cheese}\mid\text{the, mouse, ate, the}) .
+\end{align*}
+
+
+In particular, $p\left(x_i \mid x_{1: i-1}\right)$ is a conditional probability distribution of the next token $x_i$ given the previous tokens $x_{1: i-1}$.
+
+Of course, any joint probability distribution can be written this way mathematically, but an autoregressive language model is one where each conditional distribution $p\left(x_i \mid x_{1: i-1}\right)$ can be computed efficiently (e.g., using a feedforward neural network).
+
+\subsection{Generation}
+Now to generate an entire sequence $x_{1: L}$ from an autoregressive language model $p$, we sample one token at a time given the tokens generated so far:
+\begin{align*}
+\t{for}~~ i & =1, \ldots, L: \\
+x_i & \sim p\left(x_i \mid x_{1: i-1}\right)^{1 / T},
+\end{align*}
+where $T \geq 0$ is a temperature parameter that controls how much randomness we want from the language model:
+\begin{itemize}
+  \item $T=0$ : deterministically choose the most probable token $x_i$ at each position $i$
+  \item $T=1$ : sample "normally" from the pure language model
+  \item $T=\infty$ : sample from a uniform distribution over the entire vocabulary $\mathcal{V}$
+\end{itemize}
+
+
+However, if we just raise the probabilities to the power $1 / T$, the probability distribution may not sum to 1 . We can fix this by re-normalizing the distribution. We call the normalized version
+$p_T\left(x_i \mid x_{1: i-1}\right) \propto p\left(x_i \mid x_{1: i-1}\right)^{1 / T}$ the annealed conditional probability distribution. 
+
+\subsection{Conditional generation}
+More generally, we can perform conditional generation by specifying some prefix sequence $x_{1: i}$ (called a prompt) and sampling the rest $x_{i+1: L}$ (called the completion). For example, generating with $T=0$ produces:
+\begin{align*}
+\ub{\3{\t{the, mouse, ate}}}{\t{prompt}} \overset{T=0}{\leadsto} 
+\ub{\3{\t{the,cheese}}}{\t{completion}}
+\end{align*}
+
+If we change the temperature to $T=1$, we can get more variety, for example, $\3{\t{its, house}}$ or $\3{\t{my, homework}}$.
