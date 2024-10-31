@@ -4,17 +4,32 @@
 %\Arg{}
 
 \begin{document}
-\chapter{Fixed Income}
-Notation: 
-$$\begin{array}{ll}
-\t{Price of the bond} & P_t
-\\
-\t{Coupon (annual rate)} & c^{(1)}_t
-\end{array}$$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\chapter{Fixed Income}
+
+\subsubsection{Periodicity conversion}
+\begin{align*}
+%\1{1+\frac{APR^{(m)}}{m}}^m
+%&= 
+%\1{1+\frac{APR^{(n)}}{n}}^n
+%\\[1em]
+\1{1+r^{(k)}}^k &= \1{1+r^{(m)}}^m 
+%\hspace{2cm}\t{with}~~ i^{(k)}=\frac{j^{(k)}}{k}
+\\[1em]
+r^{(1)_k} &:= r^{(k)}\times k
+\end{align*}
+
+%----------------------------------------------------
 \subsubsection{Current Yield}
 $$CY_t = \frac{c^{(1)}_t}{P_t}$$
-
+%Notation: 
+%$$\begin{array}{ll}
+%\t{Price of the bond} & P_t
+%\\
+%\t{Coupon (annual rate)} & c^{(1)}_t
+%\end{array}$$
+where $P_t$ is the price of the bond, and $c^{(1)}_t$ is the coupon (stated as an annual rate).
 Cash flow structures: 
 $$\begin{array}{llllllll}
 \t{Bullet Bond} & : & [-P_0 & I_1, & I_2, &..., &I_n + A]
@@ -23,14 +38,117 @@ $$\begin{array}{llllllll}
 \\
 \t{Partially Amortizing Loan} &:& [-P_0 & I_1+A_1, &I_2+A_2, &..., & I_n+\frac{A}{2}] & \t{\textit{Balloon payment}}=\frac{A}{2}
 \end{array}$$
-
+%----------------------------------------------------
 \subsubsection{Loan}
 Periodic payment of a loan: 
 $$
 a = \frac{r \times A}{1-(1+r)^{-n}}
 $$
 where $a$ is the periodic payment, $A$ is the principal, $r$ is the market interest rate per period and $n$ are the total number of periods.
-\subsubsection{Floating Rate Note}
+
+
+%----------------------------------------------------
+\section{Yield Spread Measures for Fixed-Rate Bonds}
+\subsubsection{G-Spread}
+
+$$
+\t{G-Spread} = YTM^{(1)\{H\}}-G^{\{H\}}
+$$
+where $YTM^{(1)\{H\}}$ is the yield-to-maturity of a bond expressed in anual terms and for a horizon of $H$ years, and $G^{\{H\}}$ is the actual or interpolated government bond yield that matches the horizon $H$ of the bond upon which we are calculating the $YTM$. 
+
+Modus Operandi: For a bond that has $B$ years until settlement, and given government bond yields for $A$ and $C$ horizons ($G^{\{A\}}$ and $G^{\{C\}}$), with $A<B<C$.
+$$\begin{array}{lllll}
+1)~\t{Compute  $YTM^{(1)\{B\}}$} && YTM^{(1)\{B\}}=YTM^{(k)\{B\}}\cd k~:~P_t = \sum_{t}^{t+kB} \frac{c_t^{(k)}}{\1{1+YTM^{(k)\{B\}}}^t} + \frac{100}{\1{1+YTM^{(k)\{B\}}}^{t+kB}}
+\\[1.5em]
+2)~\t{Find $G^{\{B\}}$} && G^{\{B\}}= \frac{B-A}{C-A} \times G^{\{A\}} +  \frac{C-B}{C-A} \times G^{\{C\}}
+\\[1.5em]
+3)~\t{Compute G-Spread} && \t{G-Spread} = YTM^{(1)} - G^{\{B\}}
+\end{array}$$
+
+\subsubsection{I-Spread}
+$$
+\t{I-Spread} = YTM^{(1)\{H\}} - SSR^{\{H\}}
+$$
+where $SSR^{\{H\}}$ is the Standard Swap Rate in the same currency and with the same tenor (horizon) as the bond.
+
+\subsubsection{Z-Spread}
+Z-Spread, aka \qquote{zero-volatility spread}
+$$
+Z~~:~~ PV_t = \sum_{t}^{t+T} \frac{PMT}{(1+z_t+Z)^t} + \frac{FV}{(1+z_T+Z)^T}
+$$
+
+\subsubsection{OAS}
+OAS, aka \qquote{Option-Adjusted Spread} on a callable bond
+$$
+OAS = \t{Z-Spread}-\t{Option value in basis points per year}
+$$
+
+
+%----------------------------------------------------
+\section{Yield Measures for Money Market Instruments}
+
+\subsubsection{Discount Rates $(DR)$}
+$$
+PV = FV \1{1- DR \times \frac{\t{Days}}{\t{Year}}}
+$$
+where $PV$ is the Present Value, $FV$ is the Final Value, $DR$ is the Discount Rate, $\text{Days}$ represents the number of days between settlements and maturity, and $\text{Year}$ is the number of days in the year.
+%where
+%$$\begin{array}{lllll}
+%PV & = & \t{Present Value}
+%\\
+%FV & = & \t{Final Value}
+%\\
+%DR & = & \t{Discount Rate}
+%\\
+%\t{Days} & = & \t{\# days betweeen settlements and maturity}
+%\\
+%\t{Year} & = & \t{\# days in the year}
+%\end{array}$$
+
+\subsubsection{Add-On Rates $(AOR)$}
+$$
+PV = \frac{FV}{1+AOR\times\frac{\t{Days}}{\t{Year}}} 
+\iff 
+PV \1{1+AOR\times\frac{\t{Days}}{\t{Year}}} = FV
+$$
+where $PV$ is the Present Value, $FV$ is the Final Value, $AOR$ is the Add-On Rate $\text{Days}$ represents the number of days between settlements and maturity, and $\text{Year}$ is the number of days in the year.
+
+\subsubsection{\qquote{Bond Equivalent Yield} or \qquote{Investment Yield}}
+It's a money market rate quoted on a 365-day add-on rate basis. 
+
+\begin{itemize}
+
+	\item Going from discount rates to bond equivalent yields 
+$$\begin{array}{lllllll}
+1) & \t{Compute $FV/PV$ using $DR$} &&&  \frac{FV}{PV}=\frac{1}{1- DR \times \frac{\t{Days}}{\t{Year}}}
+\\[1em]
+2) & \t{Solve for the 365-day $AOR$} &&& AOR = \1{\frac{FV}{PV}-1}\times\frac{365}{\t{Days}}
+\end{array}$$
+
+	\item From add-on rates to bond equivalent yields
+$$\begin{array}{lllllll}
+1) & \t{Compute $FV/PV$ using $AOR$} &&&  \frac{FV}{PV} =  \1{1+AOR\times\frac{\t{Days}}{\t{Year}}}
+\\[1em]
+2) & \t{Solve for the 365-day $AOR$} &&& AOR = \1{\frac{FV}{PV}-1}\times\frac{365}{\t{Days}}
+\end{array}$$
+
+\end{itemize}
+
+
+\red{
+Important: The periodicity in Money Market Instruments is $k=\frac{\t{Year}}{\t{Days}}$, hence, in order to convert periodicities:
+\begin{align*}
+\1{1+\frac{APR^{(m)}}{m}}^{m} &= \1{1+\frac{APR^{(n)}}{n}}^n
+%\\[1em]
+\implies
+\1{1+\frac{APR^{\1{\1{\frac{\t{Year}}{\t{Days}}}}}}{\1{\frac{\t{Year}}{\t{Days}}}}}^{\1{\frac{\t{Year}}{\t{Days}}}} = \1{1+\frac{APR^{(n)}}{n}}^n
+\end{align*}
+}
+
+
+
+%----------------------------------------------------
+\section{Floating Rate Note}
 Price of a $T$-year FRN with periodicity $k$
 $$
 P = \sum_{t=0}^{kT} \frac{PMT_t^{(k)}}{1+r_t^{(k)}}
@@ -41,5 +159,5 @@ PMT_t^{(k)} &:= MRR_t^{(k)} + QM^{(k)} &= \frac{MRR_t^{(1)}}{k} + \frac{QM^{(1)}
 \\[0.7em]
 r_t^{(k)}   &:= MRR_t^{(k)} + DM_t^{(k)} &= \frac{MRR_t^{(1)}}{k} + \frac{DM_t^{(1)}}{k}
 \end{array}$$
-where recall that the market reference rate, quoted margin and discount margins are usually quoted in annual terms: $MRR_t^{(1)}, QM^{(1)}, DM_t^{(1)}$
+where $MRR$ is the market reference rate, $QM$ is the quoted margin and $DM$ is the discount margins. Usually they are quoted in annual terms: $MRR_t^{(1)}, QM^{(1)}, DM_t^{(1)}$
 \end{document}
