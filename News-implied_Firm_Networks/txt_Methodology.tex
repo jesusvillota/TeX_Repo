@@ -1,58 +1,62 @@
 
-Different from \cite{hu2021networks}: 
+\violet{\textbf{My initial idea was to take \cite{hu2021networks}, and do it right by doing the NER in a rigorous way using LLMs:}}
+
 \begin{itemize}
   \item instead of considering that news articles embed a leader-follower relationship, we don't impose any structure in the news articles
-  \item we perform NER in a more realistic way, by having an LLM parse the news articles and extracting the firms that it considers as \qquote{directly affected by the news articles}. The problen with \cite{hu2021networks}'s NER is that they need to assume that every firm mentioned in a news article is relevant to the news article. This is actually not the case in most news articles, where many firms are mentioned contextually, or even more extreme, sometimes there is no relationship going on between the firms mentioned in the article. For example, we could have a news article like this: \qquote{Moodys lowers the credit rating of Banco Santander}. It's clear that this article is not talking about the existence of a relationship between Moodys and Banco Santander, however, in \cite{hu2021networks}'s logic, these article defines a connection between those two firms.
+  \item we perform NER in a more realistic way, by having an LLM parse the news articles and extracting the firms that it considers as \qquote{directly affected by the news articles}. The problen with \cite{hu2021networks}'s NER is that they need to assume that every firm mentioned in a news article is relevant. This is actually not the case in most news articles, where many firms are mentioned contextually, or even more extreme, sometimes there is no relationship going on between the firms mentioned in the article. For example, we could have a news article like this: \qquote{Moodys lowers the credit rating of Banco Santander}. It's clear that this article is not talking about the existence of a relationship between Moodys and Banco Santander, however, in \cite{hu2021networks}'s logic, these article defines a connection between those two firms.
 \end{itemize}
 
-Our methodology is less restrictive and imposes no structure on the treatment of business news articles. 
+%Our methodology is less restrictive and imposes no structure on the treatment of business news articles. 
+
+\violet{\textbf{However, I am not invested in this idea and would be more than happy to do something different.
+Below, I deploy some methodology. Again, I am not invested in it, if you want to propose a different methodology, feel free.}}
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{quote}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{quote}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Given a set of textual news articles aggregated in period $T, \D_T:=\left\{m_1, \ldots, m_d\right\}$ and a universe of $n$ firms $\F :=\{1, \ldots, n\}$, we identify the set of news linkage pairs $l^{(i,j)}_T$ between firms $i, j \in \F $ as:
-$$
-l^{(i,j)}_T
-%\stackrel{\text { def }}{=}
-:=
- \bigcup_{m_d \in \D_T}\9{ (i, j) ~\bigg{|}~ 
-m_d \t{ describes a relationship between }i, j \in \F ~\t{}
-% j \text { in } m_d \text { title, } i \text { in } m_d \text { headline, } i \neq j
-}
-$$
-
-
-With the well-defined news linkage pairs, we then define the \qquote{News-implied Firm Network} at time period $T$ by the adjacency matrix 
-%Given a weighted direct graph $\mathcal{G}=(\mathcal{V}, \mathcal{E})$ 
-$$
-\mathcal{W}_T := 
-\2{
-\begin{array}{ccc}
-	|l^{(1,1)}_T| 		& \cdots  	& |l^{(1,n)}_T|
-	\\
-	\vdots				& \ddots 	& \vdots 
-	\\
-	|l^{(n,1)}_T|		& \cdots  	& |l^{(n,n)}_T|
-\end{array}
-}
-$$
-So far we have not imposed any hierarchy, so $\mathcal{W}_T$ is an asymmetric matrix with all zero diagonal values. However, we could further ask the LLM to give us the structure of the relationship between $i,j$. Depending on this relationship, we can define the following type of relationships: 
-\begin{itemize}
-  \item $i \sim j \iff i$ and $j$ are competitors within the same industry 
-  \item $i \succ j \iff i $ is the supplier of $j$
-  \item $i \bowtie j \iff $ in the rest of the cases
-\end{itemize}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\Vhrulefill
-{\center \href{https://chatgpt.com/share/66f342fc-07f0-800d-9210-0506f9c26169}{Conversation w/ ChatGPT}
-\par}
-\Vhrulefill
+%Given a set of textual news articles aggregated in period $T, \D_T:=\left\{m_1, \ldots, m_d\right\}$ and a universe of $n$ firms $\F :=\{1, \ldots, n\}$, we identify the set of news linkage pairs $l^{(i,j)}_T$ between firms $i, j \in \F $ as:
+%$$
+%l^{(i,j)}_T
+%%\stackrel{\text { def }}{=}
+%:=
+% \bigcup_{m_d \in \D_T}\9{ (i, j) ~\bigg{|}~ 
+%m_d \t{ describes a relationship between }i, j \in \F ~\t{}
+%% j \text { in } m_d \text { title, } i \text { in } m_d \text { headline, } i \neq j
+%}
+%$$
+%
+%
+%With the well-defined news linkage pairs, we then define the \qquote{News-implied Firm Network} at time period $T$ by the adjacency matrix 
+%%Given a weighted direct graph $\mathcal{G}=(\mathcal{V}, \mathcal{E})$ 
+%$$
+%\mathcal{W}_T := 
+%\2{
+%\begin{array}{ccc}
+%	|l^{(1,1)}_T| 		& \cdots  	& |l^{(1,n)}_T|
+%	\\
+%	\vdots				& \ddots 	& \vdots 
+%	\\
+%	|l^{(n,1)}_T|		& \cdots  	& |l^{(n,n)}_T|
+%\end{array}
+%}
+%$$
+%So far we have not imposed any hierarchy, so $\mathcal{W}_T$ is an asymmetric matrix with all zero diagonal values. However, we could further ask the LLM to give us the structure of the relationship between $i,j$. Depending on this relationship, we can define the following type of relationships: 
+%\begin{itemize}
+%  \item $i \sim j \iff i$ and $j$ are competitors within the same industry 
+%  \item $i \succ j \iff i $ is the supplier of $j$
+%  \item $i \bowtie j \iff $ in the rest of the cases
+%\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\Vhrulefill
+%{\center \href{https://chatgpt.com/share/66f342fc-07f0-800d-9210-0506f9c26169}{Conversation w/ ChatGPT}
+%\par}
+%\Vhrulefill
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,18 +281,15 @@ With the constructed network, several analyses can be performed to extract valua
     \item \textbf{Impact of Reflexivity}: Study firms with significant self-relations (high diagonal values in the relationship matrix) to understand how internal actions, such as restructuring or stock buybacks, affect firm performance and market position.
 \end{itemize}
 
-\subsection{Conclusion}
 
-This paper introduces a comprehensive and nuanced approach to constructing firm networks from business news articles by leveraging LLMs to detect and classify firm relationships. By incorporating relationship types, directionality, and reflexivity, the proposed methodology provides a rich framework for analyzing firm interactions and market dynamics. The resulting multi-layered, directed- and undirected network allows for advanced analysis of firm relationships, providing insights into how firms navigate competitive environments, form partnerships, and manage internal actions.
-
-This approach opens the door to further research into how firm networks evolve, how firms' internal and external actions affect their market position, and how different types of firm interactions impact the broader economic environment.
+%This approach opens the door to further research into how firm networks evolve, how firms' internal and external actions affect their market position, and how different types of firm interactions impact the broader economic environment.
+%
 
 
 
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\end{quote}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\end{quote}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
