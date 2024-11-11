@@ -17,7 +17,7 @@
 \1{1+r^{(k)}}^k &= \1{1+r^{(m)}}^m 
 %\hspace{2cm}\t{with}~~ i^{(k)}=\frac{j^{(k)}}{k}
 \\[1em]
-r^{(1)_k} &:= r^{(k)}\times k
+r^{(1)_k} &:= r^{(k)}\times k \iff r^{(k)} = \frac{r^{(1)_k}}{k}
 \end{align*}
 
 %----------------------------------------------------
@@ -54,7 +54,7 @@ where $a$ is the periodic payment, $A$ is the principal, $r$ is the market inter
 $$
 \t{G-Spread} = YTM^{(1)\{H\}}-G^{\{H\}}
 $$
-where $YTM^{(1)\{H\}}$ is the yield-to-maturity of a bond expressed in anual terms and for a horizon of $H$ years, and $G^{\{H\}}$ is the actual or interpolated government bond yield that matches the horizon $H$ of the bond upon which we are calculating the $YTM$. 
+where $YTM^{(1)\{H\}}$ is the yield-to-maturity of a bond expressed in anual terms and for a horizon/maturity of $H$ years, and $G^{\{H\}}$ is the actual or interpolated government bond yield that matches the horizon $H$ of the bond coupon of which we are calculating the $YTM$. 
 
 Modus Operandi: For a bond that has $B$ years until settlement, and given government bond yields for $A$ and $C$ horizons ($G^{\{A\}}$ and $G^{\{C\}}$), with $A<B<C$.
 $$\begin{array}{lllll}
@@ -151,7 +151,7 @@ Important: The periodicity in Money Market Instruments is $k=\frac{\t{Year}}{\t{
 \section{Floating Rate Note}
 Price of a $T$-year FRN with periodicity $k$
 $$
-P = \sum_{t=0}^{kT} \frac{PMT_t^{(k)}}{1+r_t^{(k)}}
+P = \sum_{t=1}^{kT} \frac{PMT_t^{(k)}}{\4{1+r_t^{(k)}}^t}
 $$
 with:
 $$\begin{array}{rlll}
@@ -160,4 +160,61 @@ PMT_t^{(k)} &:= MRR_t^{(k)} + QM^{(k)} &= \frac{MRR_t^{(1)}}{k} + \frac{QM^{(1)}
 r_t^{(k)}   &:= MRR_t^{(k)} + DM_t^{(k)} &= \frac{MRR_t^{(1)}}{k} + \frac{DM_t^{(1)}}{k}
 \end{array}$$
 where $MRR$ is the market reference rate, $QM$ is the quoted margin and $DM$ is the discount margins. Usually they are quoted in annual terms: $MRR_t^{(1)}, QM^{(1)}, DM_t^{(1)}$
+
+
+On each periodic reset date, the FRN is priced at par. Between coupon dates, its flat price will be at premium or discount to par values.
+
+$$
+\t{Discount / Premium} = \sum_{t=1}^{kT} \frac{QM^{(k)}-DM^{(k)}}{\1{1+MRR_t^{(k)}+DM^{(k)}}^t}
+\implies 
+\mycases{llll}{
+	>0 & \Rightarrow & \t{Premium} \\ 
+	=0 & \Rightarrow & \t{At Par} \\
+	<0 & \Rightarrow & \t{Discount}}
+$$
+
+
+%----------------------------------------------------
+\section{Spot, Forward, Par rates}
+
+\subsection{Spot curve (zero or strip curve)}
+\begin{itemize}
+  \item Plot spot rates against all maturities
+  \item Ideal rates = default-risk-free zero-coupon bonds for a full range of maturities
+  \item in practice, use developed-market sovereing bonds
+\end{itemize}
+
+No arbitrage bond pricing with spot rates. Given a sequence of (annual) spot rates $\{z_t^{(1)_k}\}_{t=1}^{T}$
+$$
+\blue{P_0} = \sum_{t=1}^{kT} \frac{c_t^{(k)}}{(1+z_t^{(k)})^t}
+$$
+
+\subsection{Par rate}
+Hypothetical coupon implied by the spot curve. Given a sequence of (annual) spot rates $\{z_t^{(1)_k}\}_{t=1}^{T}$, solve for $\{c_{\tau}^{(k)}\}_{\tau = 1}^T$.
+$$
+\blue{c^{(k)}_{\tau}} : 100=\sum_{t=1}^{k \tau} \frac{\blue{c_{\tau}^{(k)}}}{(1+z_t^{(k)})^t} + \frac{100}{(1+z_t^{(k)})^{k \tau}}
+$$
+
+\subsection{Forward Rates}
+Implied Forward Rate from par rates: \qquote{(B-A)y(A)y} = \textit{(B-A)} year into \textit{A} year rate $\implies$ \textit{A} is the forward period, \textit{B-A} is the tenor of the forward yield.
+$$
+\1{1+Z_A}^A \times \1{1+IFR_{A,B-A}}^{B-A} = \1{1+Z_B}^B
+$$
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule 
+Spot Curve Shape & Par Curve & Forward Curve
+\\ \toprule 
+Upward Sloping & < Spot curve & > Spot curve
+\\
+Flat & = Spot curve & = Spot curve
+\\
+Downward sloping & > Spot curve & < Spot curve
+\\ \bottomrule
+\end{tabular}
+\end{table}
+
+
 \end{document}
