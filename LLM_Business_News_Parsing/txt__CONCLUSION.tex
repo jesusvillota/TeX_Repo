@@ -1,12 +1,45 @@
 \section{Conclusion}
 
-\hspace{0.5cm} In this paper we explore the incorporation of information in the stock market via a Trading strategy that trades clusters of news. In particular, for a set of Spanish business news articles from July 2020 to Septemeber 2021, we perform KMeans clustering and select the optimal clusters for trading using two proposed algorithms: \textit{Greedy} and \textit{Stable}. Both the clustering of articles and the selection of optimal clusters are done \textit{in-sample}, while the performance evaluation of the trading strategy is done by projecting the trading rule onto the test set. The results of this exercise show inconsistent earnings profile \textit{out-of-sample}, indicating that this strategy is not able to exploit news articles' information for profitable trading.
-
-\mx 
-In the second part, we feed the news articles to a Large Language Model and ask it to parse them according to a predefined schema. Such schema consists of identifying the firms affected by the articles and classifying the shocks implied by the article on such firms by their type, magnitude, and direction. Clustering based on the classification of shocks made by the LLM generates a more stable distribution of articles through clusters over data splits and provides a consistent profile of earnings in the test set. These results are robust to the choice of hyperparameters (the holding period length of the trading strategy and the amount of selected clusters for trading).
-
-\mx 
-The results of this paper show a promising avenue. LLMs can help predict market reactions to news by using a simple classification schema based on a shock analysis of the events narrated in the articles. 
+\hspace{0.5cm} 
 
 
+This paper investigates how information from business news affects stock market prices. We analyze a dataset of Spanish business articles during a particularly volatile period-the COVID-19 pandemic-and examine firm-specific stock market reactions to news. We show that transforming text into vector embeddings and clustering them using KMeans yields clusters that are firm-specific and industry-specific. However, the distribution of articles across clusters is unstable over sequential data splits, indicating temporal instability. When we implement a cluster-based trading strategy-similar to portfolio sorts-on the KMeans clusters, we observe an over-reliance on the past performance of a cluster. That is, signals are short-lived due to temporal instability. Consequently, the out-of-sample profitability of the trading strategy is negligible, evidencing the method's poor temporal generalizability. Therefore, a model based on embeddings is superficial and is not able to anticipate market trends.
+
+Alternatively, we develop a novel approach by guiding a Large Language Model (LLM) through a structured news-parsing schema, enabling it to analyze news-implied firm-specific economic shocks. The schema involves identifying the firms affected by the articles and classifying the implied shocks on such firms by their type, magnitude, and direction. This LLM-based methodology demonstrates several advantages over the traditional clustering approach. Even in a volatile period, it produces stable distributions of articles across clusters in sequential splits, demonstrating robust temporal stability. Moreover, the resulting trading signals are both long-lasting and economically relevant, as they are based on fundamental economic shocks rather than statistical patterns. The results show that the LLM-based trading strategy effectively identifies winners and losers, illustrating the parser's ability to anticipate market trends by comprehending the economic implications of firm-specific shocks. This approach generates a consistent profile of earnings in the test set, with results robust to the choice of hyperparameters-the holding period length of the trading strategy and the number of selected clusters for trading. Our findings demonstrate a promising avenue: LLMs, when guided by appropriate economic frameworks, can help predict market reactions to news through systematic classification of economic shocks embedded in financial narratives.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%This paper explores the incorporation of information from business news into the stock markett by analyzing a dataset of Spanish business articles during a specially volatile period (the covid 19 pandemic) and looking at firm specific stock market reactions to news.
+%
+%We show that transforming text into vector embeddings and futrher clustering using KMeans delivers Firm-specific \& Industry-specific clusters. The distribution of article through clusters is unstable across data splits, and since data splits are sequential, this evidences temporal instability%. When implementing a cluster-based trading strategy (similar to portfolio sorts) on kmeans clusters, we see an over-reliance of signals on the past performance of a cluster. That is, signals are short-lived due to temporal instability. As a consequence, the out-of-sample profitability of the trading strategy is negligible, which evidences the poor temporal generalizability of the method. Hence, a model based on embeddings is superficial and is not able to anticipate market trends
+%
+%Alternatively, we develop a novel approach by guiding a Large Language Model through a structured news-parsing schema, enabling it to analyze news-implied firm-specific economic shocks. The schema consists of identifying the firms affected by the articles and classifying the shocks implied by the article on such firms by their type, magnitude, and direction. This LLM-based methodology demonstrates several advantages over the traditional clustering approach. Even in a volatile period, it produces stable distribution profiles of articles through clusters across splits, demonstrating robust temporal stability. Moreover, the resulting trading signals are both long-lasting and economically relevant, as they are based on fundamental economic shocks rather than statistical patterns.
+%
+%The results show that the LLM-based trading strategy effectively identifies winners and losers, illustrating the parser's ability to anticipate market trends by comprehending the economic implications of firm-specific shocks. This approach generates a consistent profile of earnings in the test set, with results robust to the choice of hyperparameters (the holding period length of the trading strategy and the amount of selected clusters for trading). Our findings demonstrate a promising avenue: LLMs, when guided by appropriate economic frameworks, can help predict market reactions to news through systematic classification of economic shocks embedded in financial narratives.
+
+%----------------------------------------------------
+
+%In the second part, we feed the news articles to a Large Language Model and ask it to parse them according to a predefined schema. Such schema consists of identifying the firms affected by the articles and classifying the shocks implied by the article on such firms by their type, magnitude, and direction. Clustering based on the classification of shocks made by the LLM generates a more stable distribution of articles through clusters over data splits and provides a consistent profile of earnings in the test set. These results are robust to the choice of hyperparameters (the holding period length of the trading strategy and the amount of selected clusters for trading).
+%
+%\mx 
+%The results of this paper show a promising avenue. LLMs can help predict market reactions to news by using a simple classification schema based on a shock analysis of the events narrated in the articles. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% CONCLUSIONS FROM THE POWER POINT %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%By guiding an LLM through news-parsing schema, we were able to obtain a structured analysis of news-implied firm-specific economic shocks
+%
+%
+%Even in a volatile period, the LLM-based method produced stable distribution profiles of articles through clusters across splits, demonstrating the temporal stability of the methodology. 
+%
+%
+%The LLM-based trading signals are both long-lasting & economically relevant, as they are based on trading economic shocks.
+%
+%
+%The LLM-based trading strategy effectively identifies winners & losers, illustrating the parser's ability to anticipate market trends by comprehending the market implications of economic shocks
+%
 

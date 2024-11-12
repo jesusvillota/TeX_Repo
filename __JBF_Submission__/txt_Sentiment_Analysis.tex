@@ -1,0 +1,99 @@
+\begin{quote}
+\textit{
+Sentiment analysis is highly sensitive to the specific tool
+or model employed. Here, we demonstrate this by analyzing a piece of
+business news using various popular sentiment analysis tools:
+\texttt{TextBlob}, \texttt{text2data}, \texttt{VADER}, and
+\texttt{FinBERT}. The methods vary significantly in both their approach
+to sentiment determination and the output they provide, as illustrated
+below.}%------------------- BEGIN FOOTNOTE -------------------------
+\footnote{Note that applying Loughran-Macdonald is not recommended in for short texts as it yields sparse results. For example, in the example we are considering, it outputs a category distribution that only loads on \qquote{Strong Modal}, which is not a really useful analysis.
+ 
+\texttt{
+LM\_Scores = \{'Negative': 0, 'Positive': 0, 'Uncertainty': 0, 'Litigious': 0, 
+'Strong\_Modal': 2, 'Weak\_Modal': 0, 'Constraining': 0, 'Complexity': 0\}}
+}
+\end{quote}
+%--------------------- END FOOTNOTE -----------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{news}
+    [A news article about Telefónica and Cellnex | Sentiment: \texttt{TextBlob}]  
+    [news:cellnex-article]                            
+    {\green{Cellnex will face more competition in Europe} \resubp[dark_green]{\text{~\textnormal{\textbf{Score: 0.50}}~}}} 
+    \bblue{Telefónica's (TEF.MC) subsidiary, Telxius Telecom, has agreed to sell its telecommunications tower division in Europe and Latin America to American Tower (AMT), which will expand the latter's presence in Europe and increase competition for the Spanish wireless telecommunications group Cellnex Telecom (CLNX.MC), according to Equita Sim.}
+    \resubp[blue]{\text{~\textnormal{\textbf{Score: 0.00}}~}}\bluegreen{The transaction "represents the entry of a new independent tower operator into the Spanish market and potentially more competition for future growth in the European market as well," says the brokerage firm.} \resubp[bluegreen]{\text{~\textnormal{\textbf{Score: 0.06}}~}} 
+
+
+\vspace{0.5cm}
+{\centering  
+\textnormal{\textsc{Overall}} 
+ \resubp[bluegreen]{\text{~\textnormal{\textbf{Score: 0.085}}~}}
+\par}
+\end{news}
+
+\begin{quote}
+\textit{Note: \texttt{TextBlob} is a general-purpose sentiment analysis tool that relies on a pre-built lexicon to assess the polarity of the text. It computes a sentiment score ranging from -1 to 1, where -1 signifies a negative sentiment, 1 indicates a positive sentiment, and 0 represents a neutral sentiment. The methodology behind \texttt{TextBlob} focuses on tokenizing the input into words and phrases, which are compared against its built-in polarity dictionary.}
+\end{quote}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{news}
+    [A news article about Telefónica and Cellnex | Sentiment: \texttt{text2data}]                         
+    {\bblue{Cellnex will face more competition in Europe} \resubp[blue]{\text{~\textnormal{\textbf{Score: 0.145}}~}}
+    }
+    \red{Telefónica's (TEF.MC) subsidiary, Telxius Telecom, has agreed to sell its telecommunications tower division in Europe and Latin America to American Tower (AMT), which will expand the latter's presence in Europe and increase competition for the Spanish wireless telecommunications group Cellnex Telecom (CLNX.MC), according to Equita Sim.} \resubp[red]{\text{~\textnormal{\textbf{Score: -0.512}}~}} \red{The transaction "represents the entry of a new independent tower operator into the Spanish market and potentially more competition for future growth in the European market as well," says the brokerage firm. }	\resubp[red]{\text{~\textnormal{\textbf{Score: -0.560}}~}}
+    
+\vspace{0.5cm}
+{\centering  
+\textnormal{\textsc{Overall}} 
+ \resubp[red]{\text{~\textnormal{\textbf{Score: -0.61}}~}}
+\par}
+\end{news}
+\begin{quote}
+\textit{Note: \texttt{text2data} employs scientific deep learning NLP methods to analyze sentiment. Every sentence is split into smaller chunks and represented as a tree structure, capturing the syntactic relationships between words and phrases. To determine the final sentiment score, \texttt{text2data} uses probabilistic methods based on a pre-trained data model, providing an output score between -1 and 1, where -1 is negative and 1 is positive. 
+}\end{quote}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{news}
+    [A news article about Telefónica and Cellnex | Sentiment: \texttt{VADER}]  
+    [news:cellnex-article]                            
+    {\bblue{Cellnex will face more competition in Europe} \resubp[blue]{\text{~\textnormal{\textbf{Score: 0.00}}~}}} 
+    \green{Telefónica's (TEF.MC) subsidiary, Telxius Telecom, has agreed to sell its telecommunications tower division in Europe and Latin America to American Tower (AMT), which will expand the latter's presence in Europe and increase competition for the Spanish wireless telecommunications group Cellnex Telecom (CLNX.MC), according to Equita Sim.}
+    \resubp[dark_green]{\text{~\textnormal{\textbf{Score: 0.69}}~}}\green{The transaction "represents the entry of a new independent tower operator into the Spanish market and potentially more competition for future growth in the European market as well," says the brokerage firm.} \resubp[dark_green]{\text{~\textnormal{\textbf{Score: 0.57}}~}} 
+
+
+\vspace{0.5cm}
+{\centering  
+\textnormal{\textsc{Overall}} 
+ \resubp[dark_green]{\text{~\textnormal{\textbf{Score: 0.81}}~}}
+\par}
+\end{news}
+
+\begin{quote}
+\textit{Note: 
+\texttt{VADER} (Valence Aware Dictionary and sEntiment Reasoner) is a lexicon and rule-based sentiment analysis tool 
+%that is particularly effective for analyzing social media and other forms of short text. It 
+uses a combination of lexical features (i.e., words) that are generally classified as having positive, negative, or neutral valence. \texttt{VADER} produces four sentiment metrics: positive, negative, neutral, and a compound score. The compound score is a normalized, weighted composite score that ranges from -1 to 1, indicating the overall sentiment of the text. In this example, we provide the compound measure sentence by sentence and for the whole text.
+}
+\end{quote}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{news}
+    [A news article about Telefónica and Cellnex | Sentiment: \texttt{FinBERT}]  
+    [news:cellnex-article]                            
+    {\red{Cellnex will face more competition in Europe} \resubp[red]{\text{~\textnormal{\textbf{Negative, 0.75}}~}} } 
+    \bblue{Telefónica's (TEF.MC) subsidiary, Telxius Telecom, has agreed to sell its telecommunications tower division in Europe and Latin America to American Tower (AMT), which will expand the latter's presence in Europe and increase competition for the Spanish wireless telecommunications group Cellnex Telecom (CLNX.MC), according to Equita Sim.} \resubp[blue]{\text{~\textnormal{\textbf{Neutral, 0.98}}~}} \red{The transaction "represents the entry of a new independent tower operator into the Spanish market and potentially more competition for future growth in the European market as well," says the brokerage firm.}	\resubp[red]{\text{~\textnormal{\textbf{Negative, 0.81}}~}}
+
+\vspace{0.5cm}
+{\centering  
+\textnormal{\textsc{Overall}} 
+ \resubp[red]{\text{~\textnormal{\textbf{Negative, 0.94}}~}}
+\par}
+\end{news}
+\begin{quote}
+\textit{Note: \texttt{FinBERT} is a domain-specific transformer-based model trained on financial texts. Unlike the previous models, \texttt{FinBERT} provides both a sentiment classification (Positive, Negative, Neutral) and a confidence score ranging from 0 to 1, representing the model's certainty about the sentiment classification.}
+\end{quote}

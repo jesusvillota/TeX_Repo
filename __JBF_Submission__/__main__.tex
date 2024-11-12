@@ -1,0 +1,84 @@
+\documentclass[preprint]{elsarticle}
+%---------------------- MACROS -----------------------
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Macros}
+%----------------------------------------------------
+\usepackage[nomarkers, nolists, tablesfirst]{endfloat} % puts tables and figures at the end of the document
+\usepackage{etoolbox} % For \AtBeginEnvironment and \AtEndEnvironment
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{ 
+	\textsc{Predicting Market Reactions to News: } \\ 
+	{\large An LLM-Based Approach Using Spanish Business Articles }
+} 
+%----------------------------------------------------
+\author[1]{Jesus Villota Miranda
+	\corref{cor1}
+	\fnref{fn1}}
+\ead{jesus.villota@cemfi.edu.es}
+
+\cortext[cor1]{Corresponding author: Jesus Villota Miranda <\href{jesus.villota@cemfi.edu.es}{jesus.villota@cemfi.edu.es}>} 
+\fntext[fn1]{I am deeply grateful to Enrique Sentana, Manuel Arellano, Dante Amengual, Rafael Repullo, Javier Suárez, David Martínez-Miera, Julio Crego, and Francisco Peñaranda for their comments. I am especially indebted to Nicolás Forteza and Matías Covarrubias, whose invaluable guidance and insights have greatly enriched this work. I also thank Gustavo Schwenkler for his thoughtful discussion, as well as the participants of the Banking \& Finance Seminar at CEMFI, the Generative AI in Finance Conference at Concordia University and the Miriam Andrés Seminar at the University of La Rioja. Finally, I gratefully acknowledge financial support from Banco de España (BdE).}
+
+\affiliation[1]{
+	organization={CEMFI}, 
+	addressline={Calle Casado del Alisal, 5}, 
+	postcode={28014}, 
+	city={Madrid}, 
+	country={Spain}
+}
+%----------------------------------------------------
+
+\begin{document}
+%----------------------------------------------------
+\begin{abstract}
+\input{txt_Abstract.tex}
+\end{abstract}
+%----------------------------------------------------
+\begin{keyword}
+Large Language Models, Business News, Stock Market Reaction, Market Efficiency
+\JEL G12\sep G14\sep C45\sep C58\sep C63\sep D83
+\end{keyword}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+\newpage
+\setcounter{page}{1}
+
+%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%
+\input{txt_Introduction.tex}
+
+%%%%%%%%%%%%%%%%%%% DATA %%%%%%%%%%%%%%%%%%%%%%%%
+\input{txt_Data.tex}
+
+%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+\input{txt_General_Setup.tex}
+\input{txt_Clustering.tex}
+\input{txt_Trading_Strategy.tex}
+
+%%%%%%%%%%%%% ROBUSTNESS CHECKS %%%%%%%%%%%%%%%%%%
+\input{txt_Robustness_Checks.tex}
+
+%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
+\input{txt_Conclusion.tex}
+
+%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
+\bibliography{bib_references.bib}
+\bibliographystyle{plain}
+
+%----------------------------------------------------
+\newpage
+% To make sure all the tables/figures appear before the appendix
+\processdelayedfloats 
+% Reset the numbering for appendix figures and tables
+\renewcommand{\thefigure}{A\arabic{figure}} 
+\renewcommand{\thetable}{A\arabic{table}}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%% APPENDIX %%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{Appendix}
+\input{txt_Appendix.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

@@ -250,7 +250,7 @@ and it provides a measure of the performance of the beta-neutral positions in ea
 %%%%%%%%%%%%%%%%%%   KMEANS   %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In the case of KMeans embeddings, the distribution of cluster-average Sharpe Ratios for across the different clusters is plotted in \cref{fig:KMeans_distr_avg_SR}. In the validation set, they are centered at 0, but we observe some outliers with unusually low and high average $SR$. On the other hand, the distributions in the train and test data are slightly skewed to the right and show no presence of substantial outliers.
+In the case of KMeans, the distribution of cluster-average Sharpe Ratios across the different clusters is plotted in \cref{fig:KMeans_distr_avg_SR}. In the validation set, they are centered at 0, but we observe some outliers with unusually low and high average $SR$. On the other hand, the distributions in the train and test data are slightly skewed to the right and show no presence of substantial outliers.
 
 %----------------------------------------------------
 \inserthere{fig:KMeans_distr_avg_SR}
@@ -299,7 +299,11 @@ In the case of LLM-based clustering,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \mx
-The goal is to now design an algorithm that exploits this information to select the best clusters for the trading strategy. In the remainder of this section, we propose two algorithms. First, an algorithm developed on validation data that will select the clusters maximizing the performance for that split (\qquote{greedy}), and second, an algorithm that will exploit the information from both, training and validation data (higher information set), and whose objective will be to select the most stable clusters among both splits (\qquote{stable}). 
+We now focus on developing two algorithms that optimally leverages the cluster information for our trading strategy. Our approach draws parallels with traditional portfolio sorting methods, where assets are typically arranged into deciles based on specific characteristics, and trading positions are established by going long on top deciles and short on bottom ones. Similarly, our strategy will construct self-financing portfolios based on clusters rather than individual assets: taking long positions in clusters expected to outperform and short positions in those expected to underperform.
+%
+To identify the optimal clusters for trading, we propose two distinct algorithmic approaches. The first approach, which we term \qquote{greedy}, selects clusters by maximizing the Sharpe Ratio within the validation dataset. The second approach, termed \qquote{stable}, utilizes a broader information set by incorporating both training and validation data, aiming to identify clusters that maintain consistent performance across different time periods. In both algorithms, we impose sign restrictions to ensure that our trading positions align with the expected direction of returns.
+
+%The goal is to now design an algorithm that exploits this information to select the best clusters for the trading strategy. This is similar to portfolio sorts, where you sort portfolios by deciles and then take long short positions on top and bottom deciles. Here we will do something similar but with clusters, we will long the clusters with highest expected returns and short clusters ...viceversa. That is, similar to traditional long-short portfolios, we will have long-short cluster-based self-financing portfolios. In order to rank the clusters optimally to implement our trading strategy, we will propose two algorithms. First, an algorithm developed on validation data that will select the clusters maximizing the performance for that split (\qquote{greedy}), and second, an algorithm that will exploit the information from both, training and validation data (higher information set), and whose objective will be to select the most stable clusters among both splits (\qquote{stable}). In both cases, we impose signal restrictions to ensure that the positions align with the direction of expected returns. 
 
 
 %----------------------------------------------------
@@ -327,12 +331,12 @@ The goal is to now design an algorithm that exploits this information to select 
 
 The greedy selection of clusters is done in the validation sample 
 $
-\mathcal{B}_g^{val}:= \{
+\mathcal{B}^{val}:= \{
 %(i,j) \mid 
 (i,j)\in\mathcal{B} 
 %~\wedge~
  \mid 
-  i \in \D_g^{val} \}
+  i \in \D^{val} \}
 ~,
 $
 from where we compute the cluster-average $\overline{S R}_g^{val}$ for each $g\in\G$.
@@ -513,7 +517,7 @@ In Table \ref{tab:KMeans_Clusters_Signal} we show the 26 clusters with their pro
 As we can see, trading clusters of news articles based on this procedure is quite risky, as there is a high reliance of the signal on the past performance of a cluster. For example, clusters 21 and 22 are linked to the financial performance of Repsol and Aena, respectively, during the training and validation samples. Evidently, the future performance of these firms can change, but the signal provided by the algorithm will still indicate ``\textsc{long}''. 
 %
 %\bx 
-Additionally, some clusters are heavily built on specific events of the period of time they were constructed upon. For example, cluster 17 pools articles related to the challenges of the tourism industry in Spain in Covid times, and cluster 25 is related to the post-covid developments of Inditex and Acerinox. Thus, a clustering approach based on embeddings is not generalizable over time. As the world evolves, topics become outdated and new topics arise. However, this clustering technique is not flexible to these type of changes and is likely to produce misguided trading signals over time. 
+Additionally, some clusters are heavily built on specific events of the period of time they were constructed upon. For example, cluster 17 pools articles related to the challenges of the tourism industry in Spain in Covid times, and cluster 25 is related to the post-covid developments of Inditex and Acerinox. Thus, a clustering approach based on embeddings is not generalizable over time. As the world evolves, clusters become outdated and require constant recalibration to maintain their relevance and predictive power. Hence, any trading strategy based solely on historical cluster performance is likely to produce misguided trading signals over time 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -525,16 +529,21 @@ Additionally, some clusters are heavily built on specific events of the period o
 %\noindent \Vhrulefill [~~LLM~~] \Vhrulefill
 %
 %\noindent \Vhrulefill}
-
-\mx 
-%\hspace{0.5cm}
-On the other hand, our LLM-based clustering methodology has the advantage that signals become cleaner and more interpretable. The selection of clusters by the \textit{Greedy} algorithm is highly correlated with the direction of the shocks. Intuitively, the stock price of a firm that is negatively affected by a shock is expected to go down and vice versa.
-Looking at \cref{tab:LLM_cluster_mapping_extended} we can clearly see that both algorithms go short on articles classified as policy shocks independently of the direction (positive or negative). Both algorithms go long on the famous cluster 8, which, as we discussed above, concentrates about 1/3 of the news articles. This cluster contains articles categorized as undergoing financial minor and positive shocks.
-Counterintuitively, both algorithms go long on negative major demand shocks and they go short on positive major demand shocks. 
-
 %----------------------------------------------------
 \input{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/CEMFI/__MSc__/__Second_year__/6th_Term/MasterThesis/__Output/LLAMA_Cluster_Mapping_Extended.tex}
 %----------------------------------------------------
+%\mx 
+%\hspace{0.5cm}
+In contrast, our LLM-based clustering methodology offers significant advantages by focusing on the fundamental nature of economic shocks rather than historical patterns. This approach provides more robust and generalizable signals that are less susceptible to temporal changes in market conditions. Moreover, unlike the black box nature of vector embeddings, our methodology offers transparency and interpretability in signal generation. This is evident in how the \textit{Greedy} algorithm's cluster selection closely aligns with the direction of economic shocks: negative shocks typically correspond to price decreases and positive shocks to increases. 
+
+Looking at \cref{tab:LLM_cluster_mapping_extended}, we observe that both algorithms consistently short articles classified as policy shocks, regardless of direction, while going long on cluster 8, which contains approximately one-third of news articles (those categorized as undergoing financial minor and positive shocks). This consistent shorting of policy shocks likely reflects markets' general aversion to policy uncertainty, as policy changes - even positive ones - often create implementation uncertainty and take time for market participants to fully price in. Interestingly, both algorithms also exhibit seemingly counter-intuitive behavior by going long on negative major demand shocks and short on positive major demand shocks. This pattern might suggest a ``mean reversion'' expectation in the algorithms, where major demand shocks are viewed as temporary deviations that will eventually correct: negative shocks present buying opportunities, while positive shocks signal potential overvaluation.
+
+%In contrast, our LLM-based clustering methodology offers significant advantages by focusing on the fundamental nature of economic shocks rather than historical patterns. This approach provides more robust and generalizable signals that are less susceptible to temporal changes in market conditions. Moreover, unlike the black box nature of vector embeddings, our methodology offers transparency and interpretability in signal generation. This is evident in how the \textit{Greedy} algorithm's cluster selection closely aligns with the direction of economic shocks: negative shocks typically correspond to price decreases and positive shocks to increases. Looking at \cref{tab:LLM_cluster_mapping_extended}, we observe that both algorithms consistently short articles classified as policy shocks, regardless of direction, while going long on cluster 8, which contains approximately one-third of news articles (those categorized as undergoing financial minor and positive shocks). Interestingly, both algorithms also exhibit counter-intuitive behavior by going long on negative major demand shocks and short on positive major demand shocks
+
+%On the other hand, our LLM-based clustering methodology has the advantage that . Besides, as opposed to the black box nature of vector embeddings, our methodology is transparent and signals are cleaner and more interpretable. 
+%The selection of clusters by the \textit{Greedy} algorithm is highly correlated with the direction of the shocks. Intuitively, the stock price of a firm that is negatively affected by a shock is expected to go down and vice versa.
+%Looking at \cref{tab:LLM_cluster_mapping_extended} we can clearly see that both algorithms go short on articles classified as policy shocks independently of the direction (positive or negative). Both algorithms go long on the famous cluster 8, which, as we discussed above, concentrates about 1/3 of the news articles. This cluster contains articles categorized as undergoing financial minor and positive shocks.
+%Counterintuitively, both algorithms go long on negative major demand shocks and they go short on positive major demand shocks. 
 
 %\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

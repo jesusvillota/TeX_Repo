@@ -1,0 +1,21 @@
+\inserthere{tab:LLM_portfolio_statistics}
+
+\begin{table}[H]
+    \caption{Statistics of $\mathcal{P}_{LLM}$ across data splits}
+    \centering
+    \renewcommand{\arraystretch}{0.8}
+    \begin{tabular}{cccccc}
+        \hline \Xhline{2\arrayrulewidth}
+%        \rowcolor{gray!10}
+        \textbf{Split} & \textbf{Algorithm} & \textbf{Cum. Return} & \textbf{Avg. Return} & \textbf{St. Deviation} & \textbf{Sharpe Ratio} \\
+%        \rowcolor{gray!10}
+        & & & \textit{(daily)} & \textit{(daily)} & \textit{(annual)} \\
+		\hline \Xhline{2\arrayrulewidth}
+        \multirow{2}{*}{All}       & \textit{Greedy} & 1.311 & 0.082 & 0.006 & 2.17 \\        & \textit{Stable} & 1.365 & 0.095 & 0.005 & 2.78 \\         \hline          \multirow{2}{*}{Train}       & \textit{Greedy} & 1.113 & 0.065 & 0.007 & 1.44 \\        & \textit{Stable} & 1.179 & 0.100 & 0.006 & 2.53 \\         \hline          \multirow{2}{*}{Validation}       & \textit{Greedy} & 1.086 & 0.093 & 0.005 & 2.86 \\        & \textit{Stable} & 1.054 & 0.059 & 0.004 & 2.16 \\         \hline          \multirow{2}{*}{Test}       & \textit{Greedy} & 1.083 & 0.105 & 0.004 & 4.30 \\        & \textit{Stable} & 1.099 & 0.124 & 0.004 & 4.38 \\         \hline \Xhline{2\arrayrulewidth}
+    \end{tabular}
+    \label{tab:LLM_portfolio_statistics}
+\vspace{0.5cm}
+\subcaption*{\textit{Note: Portfolio statistics of the trading strategy applied to the LLM clusters. The statistics provided are: Cumulative Return, Average Return, Standard Deviation and Sharpe Ratio, which have been computed in accordance to the formulas provided in the text. Such statistics are provided for both cluster-selection algorithms: Greedy and Stable. The Greedy algorithm longs (shorts) clusters that maximize (minimize) the cluster-average-$SR$ in the validation sample subject to a positivity (negativity) constraint, while the Stable algorithm longs (shorts) clusters that minimize the rank difference between the training and validation rankings of the cluster-average-$SR$'s subject to a positivity (negativity) constraint, which is now imposed on both sample splits. In both algorithms, the cardinality of each leg is upper-bounded by a hyperparameter $\theta$. 
+The holding period of the beta-neutral positions is set to $L$ = 4 trading days and the number of traded clusters is, $\theta = 0.5k=13$ as there are $k^*=26$ KMeans clusters of article embeddings. The selection criteria for these hyperparameters ($L,\theta$) is based on maximizing the Sharpe Ratios of the train and validation samples.
+}}
+\end{table}
