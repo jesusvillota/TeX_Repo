@@ -5,7 +5,7 @@ First, given the substantial computational demands of LLM-based analysis, we str
 %
 Second, we specifically chose the Covid-19 era to test our methodology's extrapolative capabilities during periods of significant market instability and volatility. While existing textual algorithms typically perform well in stable market conditions, they often struggle to generalize effectively during periods of heightened uncertainty. By focusing on this volatile period, we can better assess our methodology's robustness and its ability to maintain predictive power under challenging market conditions.
 
-The dataset consists of high-quality articles that have been filtered to include only those mentioning Spanish publicly traded firms listed on the IBEX-35 index. These 35 companies represent the largest firms in Spain by market capitalization and are typically the most liquid and actively traded Spanish stocks. Moreover, these companies tend to receive the most consistent media coverage, making them ideal for the scope of our analysis.
+The dataset consists of high-quality articles that have been filtered to include only those mentioning Spanish publicly traded firms listed on the IBEX-35 index. These 35 companies represent the largest firms in Spain by market capitalization and are typically the most liquid and actively traded Spanish stocks. Moreover, these companies tend to receive the most consistent media coverage, making them ideal for the scope of our analysis. 
 
 The use of Dow Jones Newswires as our news source is also intentional. Dow Jones has a standard practice of including the stock market ticker of firms directly affected by the article in parentheses, while excluding firms mentioned for secondary purposes from ticker specification.
 This feature significantly facilitates the extraction of named entities (i.e., Named Entity Recognition, or NER). The tickers used by Dow Jones align with those from Yahoo Finance, enabling seamless integration between our NER algorithm and subsequent firm-specific trading operations via the Yahoo Finance API.
@@ -32,7 +32,7 @@ Due to the high quality of the dataset, the correlation between entities identif
 For subsequent analysis, we partition the dataset into three splits: \textit{Train}, \textit{Validation}, and \textit{Test}. Each split serves a distinct purpose that will be explained in detail as we progress through the paper. Summary statistics for each data split are provided in \cref{tab:Articles_Summary_Statistics}.
 
 %----------------------------------------------------
-\input{EDA_Articles_by_SplitSummary_Statistics.tex}
+\input{tab_EDA_Articles_by_SplitSummary_Statistics.tex}
 %----------------------------------------------------
 
 The most frequently used words in the whole dataset are depicted in \cref{fig:WordCloud} by means of a WordCloud. As shown, the most prominent words include \qquote{empresa} (firm), \qquote{compañía} (company), and \qquote{españa} (Spain), reinforcing that the dataset primarily comprises Spanish business news, with a prevalence of technical terms such as \qquote{beneficio neto} (net profit), \qquote{precio objetivo} (target price), \qquote{proyecto} (project), and \qquote{operación} (operation).
@@ -42,7 +42,7 @@ The most frequently used words in the whole dataset are depicted in \cref{fig:Wo
 \begin{figure}[H]
   \centering
   \caption{Word Cloud of all the dataset}
-  \includegraphics[scale=0.496]{EDA_WordCloud.pdf}
+  \includegraphics[scale=0.496]{fig_EDA_WordCloud.pdf}
   \label{fig:WordCloud}
   \subcaption*{\textit{Note: This Word Cloud visualizes the most frequent words in our dataset of Spanish business news articles. Larger words correspond to higher frequencies. The color of the words is purely for visual differentiation and holds no additional meaning. The most prominent words include \qquote{empresa} (firm), \qquote{compañía} (company), and \qquote{españa} (Spain), reinforcing that the dataset primarily comprises Spanish business news, with a prevalence of technical terms such as \qquote{beneficio neto} (net profit), \qquote{precio objetivo} (target price), \qquote{proyecto} (project), and \qquote{operación} (operation).}}
 \end{figure}
@@ -58,14 +58,14 @@ However, the long right tail points to instances of more comprehensive coverage.
   \centering
   \begin{subfigure}[b]{0.46\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{EDA_Histogram_of_Number_of_News_Articles_per_day.pdf}
+    \includegraphics[width=\textwidth]{fig_EDA_Histogram_of_Number_of_News_Articles_per_day.pdf}
     \caption{Number of News Articles per Day}
     \label{fig:hist_1}
   \end{subfigure}
   \hspace{0.05\textwidth} % Add horizontal space between the subfigures
   \begin{subfigure}[b]{0.46\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{EDA_Number_of_Words_per_Article.pdf}
+    \includegraphics[width=\textwidth]{fig_EDA_Number_of_Words_per_Article.pdf}
     \caption{Number of Words per Article}
     \label{fig:hist_2}
   \end{subfigure}
@@ -82,8 +82,16 @@ The time series of the number of articles published per day throughout the sampl
 \begin{figure}[H]
   \centering
   \caption{Time Series of Number of Articles per Day and 30-Period Moving Average}
-  \includegraphics[scale=0.445]{EDA_Time_Series_of_Articles.pdf}
+  \includegraphics[scale=0.445]{fig_EDA_Time_Series_of_Articles.pdf}
   \label{fig:ts_articles}
   \subcaption*{\textit{Note: The time series shows the daily number of news articles published, characterized by significant variability with occasional sharp spikes. The 30-day moving average smooths these fluctuations, revealing an average publication rate of 5 to 10 articles per day.}}
 \end{figure}
 %----------------------------------------------------
+
+
+\textbf{Data Availability.} 
+% OPTION 1
+The dataset used in this study contains confidential information provided under agreements with the Bank of Spain and Dow Jones Newswires, and cannot be shared publicly or with third parties. We are committed to transparency in our research methods and are available to discuss our methodology and provide additional non-confidential details upon request.
+% OPTION 2
+%Due to confidentiality and proprietary constraints, the dataset used in this research is not publicly available. Any inquiries regarding the data availability should be directed to the relevant parties who own the data.
+

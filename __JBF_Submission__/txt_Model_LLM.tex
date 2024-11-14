@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection*{Large Language Models}
+\subsubsection{Large Language Models}
 
 \hspace{0.5cm}In natural language processing (NLP), Large Language Models (LLMs) are designed to \qquote{understand} and generate human-like text. These models utilize the transformer architecture, which excels in modeling complex language tasks by capturing long-range dependencies and contextual relationships.
 
@@ -29,7 +29,7 @@ $$
 $$
 
 
-\subsubsection*{Evolution of LLMs}
+\subsubsection{Evolution of LLMs}
 \hspace{0.5cm} The transformer architecture, introduced in the seminal work ``\textit{Attention Is All You Need}'' \citep{vaswani2017attention}, revolutionized LLM development due to its superior handling of long-range dependencies and efficient parallelization of computations.  Subsequent advancements include the encoder-only \texttt{BERT} model \citep{devlin2018bert}, showcasing the power of pre-training on large datasets for fine-tuning on specific tasks. 
 
 \mx 
@@ -38,7 +38,7 @@ Conversely, OpenAI's \texttt{GPT} series (\citealp{radford2018improving}) demons
 \mx 
 The trend towards open-source models like \texttt{BLOOM} \citep{le2023bloom}, \texttt{Mixtral} and Meta's \texttt{LLaMA} series \citep{touvron2023llama} emphasizes accessibility and transparency in LLM development.  The latest models, including OpenAI's  \texttt{GPT-4o} and \texttt{GPT-o1}, Google's \texttt{Gemini} and \texttt{Mixtral} and \texttt{Gemma}, Anthropic's \texttt{Claude 3.5 Sonnet}, and Meta's \texttt{LLaMA-3}, \texttt{LLaMA-3.1} and  \texttt{LLaMA-3.2} continue to push boundaries with improved accuracy, multimodal capabilities, and larger context windows.
 
-\subsubsection*{Function Calling with LlaMA-3}
+\subsubsection{Function Calling with LlaMA-3}
 
 \hspace{0.5cm} In our endeavor we will employ \texttt{LlaMA-3}, developed by Meta AI and released on April 18, 2024. This model has been pre-trained on approximately 15 trillion tokens of text gathered from ``publicly available sources'' and it comes in two sizes: 8 billion and 70 billion parameters. In this application, we will employ the 70B version, which we will access through an API via \texttt{GroqCloud}.
 
@@ -113,7 +113,7 @@ This procedure was run on a MacBook Pro M2 with 16GB RAM, 12-core central proces
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection*{Clustering with the LLM}
+\subsubsection{Clustering with the LLM}
 Formally, we can define the set $\mathcal B:=\{(i,j)\mid i\in \D ~\wedge~j\in\mathcal F^i \}$ containing all the unique pairs of articles and identified firms. 
 The LLM assigns each pair $(i,j)\in \mathcal B$ with a choice from each of the following sets:
 $$
@@ -165,7 +165,7 @@ Different from KMeans clustering with embeddings, now the distribution profile o
     \begin{subfigure}[b]{\textwidth}
         \caption{All data ($\mathcal D$)}
         \centering
-        \includegraphics[scale=0.48]{LLAMA_Cluster_Distribution.pdf}
+        \includegraphics[scale=0.48]{fig_LLAMA_Cluster_Distribution.pdf}
         \label{fig:all_data}
     \end{subfigure}
 
@@ -173,19 +173,19 @@ Different from KMeans clustering with embeddings, now the distribution profile o
     \begin{subfigure}[b]{0.32\textwidth}
         \caption{Training data ($\D^{tr}$)}
         \centering
-        \includegraphics[width=\textwidth]{LLAMA_Cluster_Distribution_Train.pdf}
+        \includegraphics[width=\textwidth]{fig_LLAMA_Cluster_Distribution_Train.pdf}
         \label{fig:train_data}
     \end{subfigure}
     \begin{subfigure}[b]{0.32\textwidth}
         \caption{Validation data ($\D^{val}$)}
         \centering
-        \includegraphics[width=\textwidth]{LLAMA_Cluster_Distribution_Validation.pdf}
+        \includegraphics[width=\textwidth]{fig_LLAMA_Cluster_Distribution_Validation.pdf}
         \label{fig:val_data}
     \end{subfigure}
     \begin{subfigure}[b]{0.32\textwidth}
         \caption{Test data ($\D^{test}$)}
         \centering
-        \includegraphics[width=\textwidth]{LLAMA_Cluster_Distribution_Test.pdf}
+        \includegraphics[width=\textwidth]{fig_LLAMA_Cluster_Distribution_Test.pdf}
         \label{fig:test_data}
     \end{subfigure}
     \label{fig:LLM_cluster_distribution}

@@ -1,16 +1,103 @@
+%===================================================================
+%|                         OPTION 1: SUBMISSION                    |
+%===================================================================
+
 \documentclass[preprint]{elsarticle}
+
+%===================================================================
+%|                         END OF OPTION 1                         |
+%===================================================================
+
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+%|                         OPTION 2: REGULAR                       |
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+%\documentclass[12pt,a4paper]{article}
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+%|                         END OF OPTION 2                         |
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 %---------------------- MACROS -----------------------
-\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Macros}
+\usepackage{JVM_Macros}
 %----------------------------------------------------
 \usepackage[nomarkers, nolists, tablesfirst]{endfloat} % puts tables and figures at the end of the document
 \usepackage{etoolbox} % For \AtBeginEnvironment and \AtEndEnvironment
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+%|                         OPTION 2: REGULAR                       |
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+%\usepackage{authblk} % to write the title with the authors
+%\usepackage{booktabs} % for better tables
+%
+%\title{\textsc{
+%{\LARGE Predicting Market Reactions to News:} 
+%\\
+%{\large An LLM-Based Approach Using Spanish Business Articles }
+%}}
+%
+%\author[1]{
+%{ 
+%%\sx \bx 
+%Jesus Villota Miranda$^{\dagger}$\footnote{
+%%I am grateful to Enrique Sentana, Manuel Arellano, Dante Amengual, Rafael Repullo, Javier Suarez, David Martinez-Miera, Julio Crego and Francisco Penaranda for their comments and feedback. 
+%%I am especially grateful to Nicolas Forteza and Matias Covarrubias for their guidance. 
+%%I am also grateful to Gustavo Schwenkler (discussant) and all the participants of the Generative AI in Finance Conference (Concordia University) and Mirian Andrés Seminar (U. La Rioja).
+%%I acknowledge financial support from Banco de España (BdE). 
+%\scriptsize{I am deeply grateful to Enrique Sentana, Manuel Arellano, Dante Amengual, Rafael Repullo, Javier Suárez, David Martínez-Miera, Julio Crego, and Francisco Peñaranda for their comments. I am especially indebted to Nicolás Forteza and Matías Covarrubias, whose invaluable guidance and insights have greatly enriched this work. I also thank Gustavo Schwenkler for his thoughtful discussion, as well as the participants of the Generative AI in Finance Conference at Concordia University and the Mirian Andrés Seminar at the University of La Rioja.
+%% for their engaging and insightful comments. 
+%Finally, I gratefully acknowledge financial support from Banco de España (BdE).
+%}
+%}}
+%
+%\bx 
+%{\small
+%$\big{<}$
+%\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
+%$\big{>}$
+%
+%$\big{<}$
+%Email: \href{jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
+%$\big{>}$
+%%
+%%\mx 
+%%\textbf{This version: 17th October 2024}
+%%
+%}
+%}
+%
+%\date{}  % Remove date
+%
+%\begin{document}
+%
+%\maketitle
+%\begin{abstract}
+%%----------------------------------------------------
+%\input{txt_Abstract.tex}
+%%----------------------------------------------------
+%
+%\noindent\textbf{JEL Codes:} G12, G14, C45, C58, C63, D83
+%
+%\noindent\textbf{Keywords:} Large Language Models, Business News, Stock Market Reaction, Market Efficiency
+%\end{abstract}
+
+
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+%|                         END OF OPTION 2                         |
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+%===================================================================
+%|                         OPTION 1: SUBMISSION                    |
+%===================================================================
+
 \title{ 
 	\textsc{Predicting Market Reactions to News: } \\ 
 	{\large An LLM-Based Approach Using Spanish Business Articles }
 } 
-%----------------------------------------------------
 \author[1]{Jesus Villota Miranda
 	\corref{cor1}
 	\fnref{fn1}}
@@ -39,9 +126,16 @@ Large Language Models, Business News, Stock Market Reaction, Market Efficiency
 \JEL G12\sep G14\sep C45\sep C58\sep C63\sep D83
 \end{keyword}
 %----------------------------------------------------
+\maketitle
+
+%===================================================================
+%|                         END OF OPTION 1                         |
+%===================================================================
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\maketitle
 \newpage
 \setcounter{page}{1}
 
@@ -63,7 +157,7 @@ Large Language Models, Business News, Stock Market Reaction, Market Efficiency
 \input{txt_Conclusion.tex}
 
 %%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
-\bibliography{bib_references.bib}
+\bibliography{bib_references_DOI.bib}
 \bibliographystyle{plain}
 
 %----------------------------------------------------

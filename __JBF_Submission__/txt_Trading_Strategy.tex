@@ -180,7 +180,7 @@ In the case of KMeans, the distribution of cluster-average Sharpe Ratios across 
 \begin{figure}[H]
   \centering
   \caption{Distribution of Embeddings-based Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
-  \includegraphics[scale=0.45]{KMeans_Cluster-Avg_SR_Distribution.pdf}
+  \includegraphics[scale=0.45]{fig_KMeans_Cluster-Avg_SR_Distribution.pdf}
 \label{fig:KMeans_distr_avg_SR}
 \subcaption*{\textit{Note: This figure shows the distribution of cluster-average Sharpe Ratios $(\overline{SR}_g)$ for the embeddings-based KMeans clusters across the different data splits: training, validation, and test sets. Each Sharpe Ratio is computed as the average of beta-neutral positions associated with articles in a given cluster. In the validation set, the distribution is centered around 0, with a few outliers showing unusually high or low Sharpe Ratios. Conversely, the distributions in the training and test sets are slightly skewed to the right, suggesting better performance in certain clusters, with no significant presence of outliers.}}
 
@@ -196,7 +196,7 @@ In the case of LLM-based clustering, all distributions are left-skewed. The dist
 \begin{figure}[H]
   \centering
   \caption{Distribution of LLM-based Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
-  \includegraphics[scale=0.5]{LLAMA_Cluster-Avg_SR_Distribution.pdf}
+  \includegraphics[scale=0.5]{fig_LLAMA_Cluster-Avg_SR_Distribution.pdf}
   \label{fig:LLM_cluster-average-SR-by-split}
  \subcaption*{\textit{Note: This figure presents the distribution of cluster-average Sharpe Ratios $(\overline{SR}_g)$ for the LLM-based clustering across the training, validation, and test data splits. All distributions exhibit left-skewness, indicating a higher frequency of lower Sharpe Ratios across clusters. The training data shows a distribution with fat tails, suggesting the presence of extreme values, while the validation data exhibits a much lighter-tailed distribution. In the test data, the distribution is more bell-shaped, with a notable concentration of Sharpe Ratios in the range of 5 to 15, indicating stronger performance in some clusters.}}
 
@@ -210,7 +210,7 @@ We now focus on developing two algorithms that optimally leverages the cluster i
 %
 To identify the optimal clusters for trading, we propose two distinct algorithmic approaches. The first approach, which we term \qquote{greedy}, selects clusters by maximizing the Sharpe Ratio within the validation dataset. The second approach, termed \qquote{stable}, utilizes a broader information set by incorporating both training and validation data, aiming to identify clusters that maintain consistent performance across different time periods. In both algorithms, we impose sign restrictions to ensure that our trading positions align with the expected direction of returns.
 
-\subsubsubsection{Greedy Algorithm}
+\subsubsection{Greedy Algorithm}
 
 The greedy selection of clusters is done in the validation sample 
 $
@@ -307,7 +307,7 @@ $\abs{\G_\theta}=2\theta^*$.
 In the appendix, we can find the formal design of this algorithm (\cref{alg:greedy_selection}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsubsection{Stable Algorithm}
+\subsubsection{Stable Algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 In this case, we prioritize the stability of the cluster rankings by ensuring that the traded clusters minimize the rank difference of the cluster-average Sharpe Ratios between the training and validation samples. 
@@ -358,7 +358,7 @@ The implementation of the algorithm is methodically presented in the Appendix (\
 %%%%%%%%%%%%%%%%%%   KMEANS   %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %----------------------------------------------------
-\input{KMeans_Cluster_Mapping_Traded_Clusters.tex}
+\input{tab_KMeans_Cluster_Mapping_Traded_Clusters.tex}
 %----------------------------------------------------
 In Table \ref{tab:KMeans_Clusters_Signal} we show the 26 clusters with their proposed names (based on the articles they pool together as shown in \cref{tab:KMeans_Articles_3_English}) and the selection of long and short-traded clusters according to each algorithm: \qquote{greedy} and \qquote{stable}. We write ``\textsc{long}'' for those clusters $g\in\G_\theta^+$ and ``\textsc{short}'' for $g\in\G_\theta^-$. 
 %
@@ -374,7 +374,7 @@ Additionally, some clusters are heavily built on specific events of the period o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %----------------------------------------------------
-\input{LLAMA_Cluster_Mapping_Extended.tex}
+\input{tab_LLAMA_Cluster_Mapping_Extended.tex}
 %----------------------------------------------------
 %\mx 
 %\hspace{0.5cm}
@@ -543,13 +543,13 @@ The generalizability of the strategy is determined \textit{out-of-sample} in the
 \begin{figure}[H]
   \centering
     \caption{Cumulative Returns of $\mathcal{P}_{\t{KMeans}}$ across data splits for embeddings-based clustering}
-  \includegraphics[scale=0.58]{KMeans_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
+  \includegraphics[scale=0.58]{fig_KMeans_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
   \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L$ = 4 trading days and the number of traded clusters is, $\theta = \integer{0.5k}=13$ as we have $k^*=26$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. The poor out-of-sample performance of the trading strategy indicates that the embeddings-based clusters lack robustness and fail to generalize effectively over time.}}
   \label{fig:KMeans_Portfolio_Cum_Returns}
 \end{figure}
 %----------------------------------------------------
 %----------------------------------------------------
-\input{KMeans_Portfolio_Statistics_(L=4,theta=0.5k).tex}
+\input{tab_KMeans_Portfolio_Statistics_(L=4,theta=0.5k).tex}
 %----------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -568,7 +568,7 @@ The summary statistics of the portfolio are provided in \cref{tab:LLM_portfolio_
 \begin{figure}[H]
   \centering
     \caption{Cumulative Returns of $\mathcal P_{LLM}$ across data splits for LLM-based clustering}
-  \includegraphics[scale=0.58]{LLAMA_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
+  \includegraphics[scale=0.58]{fig_LLAMA_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
   \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L=4$ trading days and the number of traded clusters is  $\theta=\integer{0.5k}=10$, as now we have $k=20$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. 
 %
 The strong out-of-sample performance of the trading strategy suggests that our proposed LLM-based clusters effectively provide insights for predicting market reactions to firm-specific economic shocks implied by news.
@@ -578,6 +578,6 @@ The strong out-of-sample performance of the trading strategy suggests that our p
 %----------------------------------------------------
 
 %--------------------- TABLE ------------------------
-\input{LLAMA_Portfolio_Statistics_(L=4,theta=0.5k).tex}
+\input{tab_LLAMA_Portfolio_Statistics_(L=4,theta=0.5k).tex}
 %----------------------------------------------------
 

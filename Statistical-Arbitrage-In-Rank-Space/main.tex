@@ -672,6 +672,285 @@ Taking the natural logarithm:
 Maximizing the log-likelihood with respect to $a_i$ and $b_i$ is equivalent to minimizing the sum of squared residuals, which is what OLS achieves.
 }
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\textbf{Discretization of an OU Process}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Vhrulefill 
+~~
+\href{https://mammouth.ai/app/a/default/c/82166}{[Claude Sonnet 3.5]}
+~~
+\Vhrulefill 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Let's derive the exact solution for the OU process. Here's the step-by-step derivation:
+First, let's rewrite our SDE: $$dX_t = \frac{1}{\tau}(\mu - X_t)dt + \sigma dB_t$$
+
+
+The key is to use Itô's lemma with a clever choice of function. Let's try: $$Y_t = X_t e^{t/\tau}$$
+
+
+Applying Itô's product rule: $d(XY) = Yd(X)+Xd(Y) + d(Y)d(X)$ $$dY_t = e^{t/\tau}dX_t + \frac{1}{\tau}X_te^{t/\tau}dt$$
+Substitute the original SDE for $dX_t$
+
+$$dY_t = e^{t/\tau}[\frac{1}{\tau}(\mu - X_t)dt + \sigma dB_t] + \frac{1}{\tau}X_te^{t/\tau}dt$$
+
+
+Simplify: $$dY_t = \frac{\mu}{\tau}e^{t/\tau}dt + \sigma e^{t/\tau}dB_t$$
+
+Integrate from s to t: 
+$$Y_t - Y_s = \frac{\mu}{\tau}\int_s^t e^{u/\tau}du + \sigma\int_s^t e^{u/\tau}dB_u$$
+
+
+Solve the deterministic integral: $$Y_t - Y_s = \mu(e^{t/\tau} - e^{s/\tau}) + \sigma\int_s^t e^{u/\tau}dB_u$$
+
+
+Substitute back $Y_t = X_t e^{t/\tau}$
+: $$X_t e^{t/\tau} - X_s e^{s/\tau} = \mu(e^{t/\tau} - e^{s/\tau}) + \sigma\int_s^t e^{u/\tau}dB_u$$
+Solve for $X_t$
+$$X_t = X_s e^{-(t-s)/\tau} + \mu(1-e^{-(t-s)/\tau}) + \sigma e^{-t/\tau}\int_s^t e^{u/\tau}dB_u$$
+
+
+The integral $\int_{s}^{t} e^{u/\tau} dB_u$
+ is normally distributed with mean 0 and variance $\frac{\tau}{2}\left(e^{2(t-s) / \tau}-1\right)$
+
+Therefore, setting $\Delta_t = t-s$
+
+$$X_{t+\Delta t} = X_t e^{-\Delta t/\tau} + \mu(1-e^{-\Delta t/\tau}) + \sigma\sqrt{\frac{1-e^{-2\Delta t/\tau}}{2/\tau}}\epsilon_t$$
+
+where $\eps_t$ is a standard normal random variable
+
+The variance of the stochastic integral term can be computed using Itô isometry: $E[(\int_s^t e^{u/\tau}dB_u)^2] = \int_s^t e^{2u/\tau}du = \frac{\tau}{2}(e^{2(t-s)/\tau}-1)$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Vhrulefill 
+~~
+\href{https://chatgpt.com/share/673478c9-072c-800d-91e0-ce3b3378d284}{[o1]} 
+~~
+\Vhrulefill
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Step 1: Rewrite the SDE in Standard Form
+First, rewrite the SDE to group like terms:
+
+$$
+d X_t=-\frac{1}{\tau} X_t d t+\frac{\mu}{\tau} d t+\sigma d B_t
+$$
+
+
+This rearranges the terms so that $X_t$ is isolated on one side.
+
+Step 2: Apply an Integrating Factor
+To solve this linear SDE, we'll use an integrating factor. The integrating factor $M_t$ is given by:
+$$
+M_t=\exp \left(-\int \frac{1}{\tau} d t\right)=\exp \left(-\frac{t}{\tau}\right) .
+$$
+
+Step 3: Multiply Both Sides by the Integrating Factor
+Multiply both sides of the SDE by $M_t$ :
+
+$$
+M_t d X_t=-\frac{1}{\tau} M_t X_t d t+\frac{\mu}{\tau} M_t d t+\sigma M_t d B_t .
+$$
+
+
+Substituting $M_t=e^{t / \tau}$, we have:
+
+$$
+e^{t / \tau} d X_t=-\frac{1}{\tau} e^{t / \tau} X_t d t+\frac{\mu}{\tau} e^{t / \tau} d t+\sigma e^{t / \tau} d B_t .
+$$
+
+Step 4: Simplify the Left-Hand Side
+Observe that:
+\begin{align*}
+d\left(e^{t / \tau} X_t\right)
+&= e^{t / \tau}d\1{X_t} + d\1{e^{t / \tau}} X_t + d\1{e^{t / \tau}}d\1{X_t}
+\\ &=
+e^{t / \tau} d X_t + \1{\frac{1}{\tau} e^{t/\tau} dt}X_t  - \red{ \frac{1}{\tau} e^{t/\tau} \ub{dt d X_t}{=0}}
+\\ &=
+e^{t / \tau} d X_t+\frac{1}{\tau} e^{t / \tau} X_t d t
+\end{align*}
+
+
+Rewriting:
+$$
+\violet{e^{t / \tau} d X_t=d\left(e^{t / \tau} X_t\right) -\frac{1}{\tau} e^{t / \tau} X_t d t}
+$$
+
+Step 5: Substitute Back into the Equation
+Substitute $e^{-t / \tau} d X_t$ from Step 4 back into the equation:
+$$
+\violet{
+d\left(e^{t / \tau} X_t\right) 
+-
+\frac{1}{\tau} e^{t / \tau} X_t d t
+}
+=
+-\frac{1}{\tau} e^{t / \tau} X_t d t
++
+\frac{\mu}{\tau} e^{t / \tau} d t+\sigma e^{t / \tau} d B_t .
+$$
+
+
+Simplify by canceling out the $\1{-\frac{1}{\tau} e^{t / \tau} X_t d t}$ terms on both sides:
+$$
+d\left(e^{t / \tau} X_t\right)=\frac{\mu}{\tau} e^{t / \tau} d t+\sigma e^{t / \tau} d B_t
+$$
+
+Step 6: Integrate both sides from 0 to $t$ :
+
+$$
+\int_0^t d\left(e^{s / \tau} X_s\right)=\int_0^t \frac{\mu}{\tau} e^{s / \tau} d s+\int_0^t \sigma e^{s / \tau} d B_s
+$$
+
+Compute the left-hand side:
+$$
+e^{t / \tau} X_t-e^{0 / \tau} X_0=e^{t / \tau} X_t-X_0
+$$
+
+Compute the first integral on the right-hand side:
+$$
+\int_0^t \frac{\mu}{\tau} e^{s / \tau} d s
+=
+\mu \int_{0}^t \frac{1}{\tau} e^{s/\tau}
+=
+\mu\left[e^{s / \tau}\right]_0^t
+=
+\mu\left(e^{t / \tau}-1\right)
+$$
+Step 8: Simplify the Equation
+Now, the equation becomes:
+$$
+e^{t / \tau} X_t-X_0
+=
+\mu\left(e^{t / \tau} - 1 \right)
++
+\sigma \int_0^t e^{s / \tau} d B_s
+$$
+Solve for $X_t$
+\begin{align*}
+X_t 
+&= X_0 e^{-t/\tau} +  \mu\left(e^{t / \tau} -1 \right) e^{-t/\tau} + e^{-t/\tau}\sigma \int_0^t e^{s / \tau} d B_s
+\\&=
+X_0 e^{-t/\tau} +  \mu\left(1-e^{-t / \tau}\right)
++
+\sigma \int_0^t e^{-(t-s) / \tau} d B_s
+\end{align*}
+where $X_0$ is the initial condition at $t=0$
+
+
+
+\subsubsection{Discretization Over Time Interval $\Delta t$}
+
+We aim to find the relationship between $X_t$ and $X_{t+\Delta t}$ over a discrete time step $\Delta t$.
+
+\textbf{Exact Discretization}
+
+The exact discretization for the OU process from $t$ to $t+\Delta t$ is:
+$$
+X_{t+\Delta t}=
+X_t e^{-\Delta t / \tau}
++
+\mu (1- e^{-\Delta t / \tau})+\epsilon_t,
+$$
+
+where:
+$e^{-\Delta t / \tau}$ is the decay factor,
+$\epsilon_t$ is a Gaussian random variable representing the stochastic component.
+
+\textbf{Variance of the Noise Term}
+
+The variance of $\epsilon_t$ is derived from the integral term in the continuous solution:
+$$
+\epsilon_t=\sigma \int_t^{t+\Delta t} e^{-(t+\Delta t-s) / \tau} d B_s
+$$
+
+Compute the variance $\sigma_\epsilon^2$ :
+$$
+\begin{aligned}
+\sigma_\epsilon^2 & =\operatorname{Var}\left(\epsilon_t\right) \\
+& =\sigma^2 \int_t^{t+\Delta t} e^{-2(t+\Delta t-s) / \tau} d s \\
+& =\sigma^2 \int_0^{\Delta t} e^{-2 u / \tau} d u \\
+& =\frac{\sigma^2 \tau}{2}\left(1-e^{-2 \Delta t / \tau}\right)
+\end{aligned}
+$$
+
+Combining the deterministic and stochastic components, the discrete-time OU process is:
+$$
+X_{t+\Delta t}=
+X_t  e^{-\Delta t / \tau}
++
+\mu (1-e^{-\Delta t / \tau})
++
+\epsilon_t,
+$$
+
+with $\epsilon_t \sim N\left(0, \sigma_\epsilon^2\right)$ where:
+$
+\sigma_\epsilon^2=\frac{\sigma^2 \tau}{2}\left(1-e^{-2 \Delta t / \tau}\right) .
+$
+The discretized OU process resembles an Autoregressive process of order 1 (AR(1)):
+$$
+X_{t+\Delta t}=a X_t+b+\epsilon_t
+$$
+where:
+$a=e^{-\Delta t / \tau}$ is the autoregressive coefficient,
+$b=\mu(1-a)$ is a constant drift term,
+$\epsilon_t$ is white noise with variance $\sigma_\epsilon^2$.
+
+\textbf{Modus Operandi: Fit the discretized OU process to discrete data:}
+
+\begin{enumerate}
+  \item Collect Data: Ensure your data $\left\{X_{t_i}\right\}$ is sampled at regular intervals $\Delta t$.
+  \item Estimate Parameters:
+\begin{itemize}
+  \item Use statistical methods (e.g., Maximum Likelihood Estimation or Least Squares) to estimate $a, b$, and $\sigma_\epsilon^2$ from the data.
+  \item Recover $\tau$ from $a$ :
+
+$$
+\tau=-\frac{\Delta t}{\ln a}
+$$
+
+\item Compute $\mu$ from $b$ and $a$ :
+
+$$
+\mu=\frac{b}{1-a}
+$$
+
+\item Estimate $\sigma_{\eps}$ as the empirical standard deviation of residuals
+
+
+$$\begin{array}{ll}
+\t{Residuals for Asset $i$}
+&
+\epsilon_t^{(i)}=x_{t+1}^{(i)}-(a_i x_t^{(i)}+b_i)
+\\
+\t{Empirical St.Dev.}
+&
+\sigma_\eps^{(i)}=\sqrt{\frac{1}{T-2} \sum_{t=1}^{T-1}\left(\epsilon_t^{(i)}\right)^2}
+\end{array}$$
+
+
+
+\item Estimate $\sigma$ from $\sigma_\epsilon^2$ :
+
+$$
+\sigma=\sqrt{\frac{2 \sigma_\epsilon^2}{\tau\left(1-e^{-2 \Delta t / \tau}\right)}}
+$$
+
+\end{itemize}
+
+\item Model Validation: Check the residuals $\epsilon_t$ to ensure they are white noise and normally distributed.
+\end{enumerate}
+
+
 \end{document}
 
 
