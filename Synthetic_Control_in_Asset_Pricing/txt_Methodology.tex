@@ -1,0 +1,620 @@
+\section{Methodology}
+
+\hspace{0.5cm} The Synthetic Control Method (SCM) is a powerful statistical technique initially developed for causal inference in comparative case studies. In asset pricing, SCM can be adapted to construct a synthetic portfolio that closely replicates the return dynamics of a target financial instrument by optimally weighting a combination of the returns of other instruments. 
+
+\subsection{Traditional SCM}
+
+Consider a universe of financial instruments $\mathcal I:= \{0,1,\ldots,N\}$ and discrete time periods $\T := \{1,\ldots,T\}$. Let $R_{it}$ denote the returns of instrument $i$ at time $t$ and take instrument 0 to be our target. Our goal is to mimick the returns of instrument 0 with a linear combination of returns from a donor pool $\J:=\{1,\ldots J\}$
+$$
+R_{0t}^* = \sum_{j\in\J} w_{j} R_{jt} ~,
+$$
+where the weights $\{w_{j}\}_{j\in\J}$ are chosen to minimize the tracking error over a training period $\T_{tr}\subset \T$
+$$
+\begin{aligned}
+\min & \sum_{t\in\mathcal T_{tr}} (R_{0t} - \sum_{j\in\J} w_{j} R_{jt})^2
+%\$$0.4em]
+\qquad 
+\t{s.t.} & \sum_{j\in\J} w_j = 1
+~.
+\end{aligned}
+$$
+
+Different from traditional SCM, we don't impose a positivity constraint on the weights, as in finance, it makes sense to consider negative weights (it just implies short selling).
+
+
+\subsection{Generalized Linear SCM with Regularization}
+Define $T_{tr}=\abs{\T_{tr}}$ as the number of periods in the training sample, $\mbf R_0\in\R^{T_{tr}}$ as the vector with the time series of target returns, and $\mbf R\in\R^{T_{tr}\times J}$ as the panel with the returns of the donor pool over the training sample. Then, a more sophisticated SMC is:
+
+$$\begin{aligned}
+\min_{\mathbf{w}} & \quad 
+\norm{\mbf R_0 - \mbf R \mathbf{w}} 
+%( \mbf R_0 - \mbf R \mathbf{w} )' \mathbf{W} ( \mbf R_0 - \mbf R \mathbf{w} ) 
++ \lambda \mathcal{R}(\mathbf{w}) 
+\\
+\text{s.t.} & \quad 
+\mbf 1\' \mbf w = 1
+%\sum_{i=1}^{N} w_i = 1 \\
+%& \quad w_i \geq 0 \quad \text{(if non-negativity is imposed)}
+\end{aligned}$$
+
+where $\norm{\cdot}$ denotes some norm, and $\mathcal{R}(\mathbf{w})$ is a regularization term that can take various forms depending on the desired properties of the solution. 
+The hyperparameter $\lambda \geq 0$ is selected through cross-validation and it controls the strength of the regularization. When $\lambda = 0$, we recover the basic SCM formulation. As $\lambda$ increases, the solution becomes more regularized, trading off tracking error for more desirable weight properties.
+Common choices of $\mathcal R(\cdot)$ include:
+
+\begin{itemize}
+    \item \textbf{Lasso Regularization (L1 Penalty)}:
+    $
+    \mathcal{R}(\mathbf{w}) = \| \mathbf{w} \|_1 = \sum_{i=1}^{N} |w_i|
+    $
+which promotes sparsity in $ \mathbf{w} $, potentially setting some weights to zero. It is specially useful when the number of donor assets $ N $ is large.
+
+    \item \textbf{Ridge Regularization (L2 Penalty)}:
+    $
+    \mathcal{R}(\mathbf{w}) = \| \mathbf{w} \|_2^2 = \sum_{i=1}^{N} w_i^2
+    $
+which shrinks weights towards zero but does not enforce exact zeros. It stabilizes the solution when predictors are highly correlated.
+
+    \item \textbf{Elastic Net Regularization}:
+    Combines L1 and L2 penalties:
+    $
+    \mathcal{R}(\mathbf{w}) = \alpha \| \mathbf{w} \|_1 + (1 - \alpha) \| \mathbf{w} \|_2^2
+    $
+    where the hyperparameter  $ \alpha \in [0, 1] $ balances between Lasso and Ridge penalties.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Nonlinear Synthetic Control via Machine Learning}
+To capture nonlinearities, we extend SCM by incorporating machine learning (ML) techniques. 
+%Let us consider the same setting as before, with the target asset returns $\mathbf{R}_0 \in \mathbb{R}^{T_{tr}}$ and the donor pool returns matrix $\mathbf{R} \in \mathbb{R}^{T_{tr} \times J}$. 
+Instead of modeling the target returns as a linear combination of donor assets, we model the relationship using a nonlinear function $f_{\b \theta} : \mathbb{R}^{J} \rightarrow \mathbb{R}$ parameterized by $\b \theta\in\Theta$
+$$
+R_{0t}^* = f_{\b \theta}(\mathbf{R}_{t}) 
+~~~~ 
+t \in \mathcal{T}_{tr} 
+~,
+$$
+where $\mathbf{R}_{t} \in \mathbb{R}^{J}$ is the vector of donor asset returns at time $t$.
+%
+Our objective is to learn the function $f_{\b \theta}$ that maps the donor pool returns to the target asset returns. This can be achieved by minimizing a suitable loss function over the training period $\mathcal{T}_{tr}$
+$$
+\min_{\b \theta} \quad \frac{1}{T_{tr}} \sum_{t \in \mathcal{T}_{tr}} L\left( R_{0t}, f_{\b \theta}(\mathbf{R}_{t}) \right) 
++ \lambda \mathcal{R}(\b \theta)
+,
+$$
+where $L(\cdot, \cdot)$ is a loss function (e.g., mean squared error), $\mathcal{R}(\b \theta)$ is a regularization term to prevent overfitting, and $\lambda \geq 0$ is a hyperparameter controlling the strength of regularization.
+
+\subsubsection{Machine Learning Models}
+
+Several machine learning models can be employed to capture nonlinear relationships:
+
+\begin{itemize}
+    \item \textbf{Neural Networks (NNs)}: NNs are flexible function approximators capable of capturing complex nonlinear patterns. A feedforward neural network with $L$ layers can be defined recursively as:
+    $$
+    \begin{aligned}
+    \mathbf{h}^{(0)} &= \mathbf{R}_{t}, \\
+    \mathbf{h}^{(l)} &= \sigma^{(l)}\left( \mathbf{W}^{(l)} \mathbf{h}^{(l-1)} + \mathbf{b}^{(l)} \right), \quad l = 1, \ldots, L-1, \\
+    f_{\b \theta}(\mathbf{R}_{t}) &= \mathbf{W}^{(L)} \mathbf{h}^{(L-1)} + b^{(L)},
+    \end{aligned}
+    $$
+
+    where $\sigma^{(l)}(\cdot)$ is an activation function (e.g., ReLU, sigmoid), $\mathbf{W}^{(l)}$ and $\mathbf{b}^{(l)}$ are weight matrices and bias vectors, and $\b \theta = \{ \mathbf{W}^{(l)}, \mathbf{b}^{(l)} \}_{l=1}^{L}$.
+
+    \item \textbf{Kernel Methods}: Kernel regression models, such as Support Vector Regression (SVR), can capture nonlinearities by implicitly mapping inputs into a high-dimensional feature space via a kernel function $K(\mathbf{R}_{t}, \mathbf{R}_{s})$.
+
+    \item \textbf{Tree-Based Models}: Models like Random Forests and Gradient Boosting Machines (e.g., XGBoost) use ensembles of decision trees to model nonlinear interactions between variables.
+
+    \item \textbf{Gaussian Processes}: Probabilistic models that define a distribution over functions and can provide uncertainty estimates along with predictions.
+
+\end{itemize}
+
+\subsubsection{Training and Validation}
+
+To train the ML models, we split the data into training and validation sets. The training set ($\T_{tr}$) is used to fit the model parameters $\b \theta$, while the validation set ($\T_{val}$) is used to tune hyperparameters and prevent overfitting.
+
+\begin{itemize}
+    \item \textbf{Cross-Validation}: Techniques like $k$-fold cross-validation can be employed to assess model performance and robustness.
+
+    \item \textbf{Regularization}: Regularization techniques such as weight decay (L2 regularization), dropout (for neural networks), and early stopping help mitigate overfitting.
+
+    \item \textbf{Hyperparameter Tuning}: Hyperparameters, including network architecture, learning rate, and regularization strength, are optimized using validation performance metrics.
+
+\end{itemize}
+
+\subsubsection{Model Evaluation}
+
+The performance of the ML-based SCM is evaluated using appropriate metrics:
+
+\begin{itemize}
+    \item \textbf{Mean Squared Error (MSE)}: Measures the average squared difference between the predicted and actual returns.
+
+    \item \textbf{Mean Absolute Error (MAE)}: Measures the average absolute difference, providing robustness to outliers.
+
+    \item \textbf{Out-of-Sample Testing}: Evaluate the model on unseen data to assess generalization performance.
+
+\end{itemize}
+
+\subsubsection{Interpretability}
+To understand the nonlinear relationships learned by the model:
+
+\begin{itemize}
+   \item \textbf{SHAP Values}: Calculate Shapley values to quantify the contribution of each donor instrument
+   $$\phi_j = \sum_{S\subseteq \J\setminus\{j\}} \frac{|S|!(|\J|-|S|-1)!}{|\J|!}[f_S(\{j\}) - f_S(\emptyset)]$$
+   
+   \item \textbf{Partial Dependence Plots}: Visualize how changes in one donor instrument affect the synthetic return while averaging over other instruments
+   $$\text{PDP}_j(x) = \mathbb{E}_{R_{-j}}[f_{\b \theta}(R_j=x,R_{-j})]$$
+\end{itemize}
+
+The ML-based SCM can capture complex nonlinear relationships while maintaining interpretability through these analysis tools. This approach is particularly valuable when the linear SCM fails to adequately replicate the target instrument's returns.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Practical Applications}
+
+\subsection{SCM for Statistical Arbitrage}
+Statistical arbitrage strategies can be developed using SCM by identifying and exploiting temporary price discrepancies between a target asset and its synthetic replica. The methodology is particularly suitable for this application because:
+
+\begin{itemize}
+    \item \textbf{Pairs Trading Extension}: While traditional pairs trading focuses on two similar assets, SCM allows for constructing a more sophisticated synthetic counterpart using multiple assets, potentially capturing the target's characteristics more accurately.
+    
+    \item \textbf{Trading Signals}: Deviations between the target asset and its synthetic replica can generate trading signals. When the spread between them exceeds a predetermined threshold (e.g., 2 standard deviations), we can simultaneously:
+    \begin{itemize}
+        \item Long (short) the target asset if it's trading below (above) its synthetic value
+        \item Short (long) the synthetic portfolio with the optimal weights
+    \end{itemize}
+    
+    \item \textbf{Risk Management}: The regularization terms help control portfolio turnover and transaction costs, making the strategy more practical to implement. Specifically:
+    \begin{itemize}
+        \item L1 regularization promotes sparse portfolios, reducing transaction costs
+        \item L2 regularization stabilizes weights over time, reducing turnover
+    \end{itemize}
+\end{itemize}
+
+\subsection{SCM for Hedging}
+SCM provides a systematic approach to constructing hedging portfolios for complex financial instruments or illiquid assets:
+
+\begin{itemize}
+    \item \textbf{Options Hedging}: For exotic options or structured products without liquid market hedges, SCM can construct synthetic hedging portfolios using more liquid instruments:
+    \begin{itemize}
+        \item Target: Returns of the complex option
+        \item Donor pool: Returns of vanilla options, the underlying, and related liquid securities
+    \end{itemize}
+    
+    \item \textbf{Illiquid Asset Hedging}: For assets that trade infrequently or have high transaction costs:
+    \begin{itemize}
+        \item Target: Returns of the illiquid asset
+        \item Donor pool: Returns of liquid assets with similar risk exposures
+    \end{itemize}
+\end{itemize}
+
+\subsection{SCM for ETF Replication}
+The method can be applied to create cost-effective alternatives to existing ETFs or to develop new investment vehicles:
+
+\begin{itemize}
+    \item \textbf{ETF Shadowing}: Replicate the performance of expensive ETFs using a smaller set of liquid components:
+    \begin{itemize}
+        \item Target: ETF returns
+        \item Donor pool: Major constituent stocks or related liquid instruments
+    \end{itemize}
+    
+    \item \textbf{Custom Index Tracking}: Create bespoke indices with specific characteristics:
+    \begin{itemize}
+        \item Reduced tracking error through optimal weighting
+        \item Lower implementation costs through regularization-induced sparsity
+    \end{itemize}
+\end{itemize}
+
+\subsection{SCM for Risk Analysis}
+The methodology can enhance various aspects of risk management and analysis:
+
+\begin{itemize}
+    \item \textbf{Factor Exposure Analysis}: Decompose an asset's returns into exposures to various factors:
+    \begin{itemize}
+        \item Target: Asset returns
+        \item Donor pool: Factor-mimicking portfolios
+    \end{itemize}
+    
+    \item \textbf{Stress Testing}: Estimate how an asset might perform in scenarios where historical data is limited:
+    \begin{itemize}
+        \item Construct synthetic versions using assets with longer histories
+        \item Use the synthetic portfolio to simulate performance in different market conditions
+    \end{itemize}
+    
+    \item \textbf{Liquidity Risk Assessment}: Evaluate the replicability of an asset's returns using liquid alternatives:
+    \begin{itemize}
+        \item Higher tracking error suggests greater liquidity risk
+        \item Regularization parameters can be tuned to reflect transaction cost constraints
+    \end{itemize}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage 
+\section{Appendix}
+
+
+\subsection{Asymptotic Framework}
+
+\subsubsection{Assumptions}
+
+We begin by establishing the necessary assumptions for our asymptotic analysis:
+
+\begin{assumption}[Data Generating Process]
+For each asset $i$ and time $t$, returns follow:
+\begin{equation}
+    R_{it} = \mu_i(F_t) + \epsilon_{it}
+\end{equation}
+where $F_t$ is a vector of common factors, $\mu_i(\cdot)$ is a continuous function, and $\epsilon_{it}$ satisfies:
+\begin{enumerate}[label=(\alph*)]
+    \item $E[\epsilon_{it}|F_t] = 0$
+    \item $E[\epsilon_{it}\epsilon_{jt}|F_t] = 0$ for $i \neq j$
+    \item $E[\epsilon_{it}\epsilon_{is}|F_t,F_s] = 0$ for $t \neq s$
+\end{enumerate}
+\end{assumption}
+
+\begin{assumption}[Mixing Conditions]
+The sequence $\{(R_{it}, F_t)\}_{t=1}^T$ is strictly stationary and $\alpha$-mixing with mixing coefficients $\alpha(h)$ satisfying:
+\begin{equation}
+    \sum_{h=1}^{\infty} h^2\alpha(h)^{\delta/(2+\delta)} < \infty
+\end{equation}
+for some $\delta > 0$.
+\end{assumption}
+
+\begin{assumption}[Moment Conditions]
+For all $i$ and $t$:
+\begin{enumerate}[label=(\alph*)]
+    \item $E|R_{it}|^{4+\delta} < \infty$
+    \item $E|\epsilon_{it}|^{4+\delta} < \infty$
+    \item $\sup_t E\|F_t\|^{4+\delta} < \infty$
+\end{enumerate}
+\end{assumption}
+
+\subsection{Consistency Theory}
+
+\subsubsection{Weight Convergence}
+
+Let $w_T^*$ denote the optimal weights estimated using $T$ observations. We establish:
+
+\begin{theorem}[Weight Consistency]
+Under Assumptions 1-3, as $T \to \infty$:
+\begin{equation}
+    \|w_T^* - w^0\| \xrightarrow{p} 0
+\end{equation}
+where $w^0$ represents the population optimal weights.
+\end{theorem}
+
+\begin{proof}
+The proof proceeds in three steps:
+
+1. First, we show that the objective function converges uniformly:
+\begin{equation}
+    \sup_{w \in \mathcal{W}} |Q_T(w) - Q(w)| \xrightarrow{p} 0
+\end{equation}
+where
+\begin{align}
+    Q_T(w) &= \frac{1}{T}\sum_{t=1}^T (R_{it} - \sum_{j=1}^J w_jR_{jt})^2 \\
+    Q(w) &= E[(R_{it} - \sum_{j=1}^J w_jR_{jt})^2]
+\end{align}
+
+2. Using the mixing conditions, we apply a uniform law of large numbers:
+\begin{equation}
+    \|Q_T(w) - Q(w)\|_{\infty} = O_p(T^{-1/2}\log T)
+\end{equation}
+
+3. Finally, we establish identification of $w^0$ through the positive definiteness of the second moment matrix of returns.
+\end{proof}
+
+\subsubsection{Rate of Convergence}
+
+We establish the convergence rate under additional regularity conditions:
+
+\begin{theorem}[Convergence Rate]
+Under Assumptions 1-3 and suitable regularity conditions:
+\begin{equation}
+    \sqrt{T}(w_T^* - w^0) \xrightarrow{d} N(0, V)
+\end{equation}
+where
+\begin{equation}
+    V = H^{-1}\Sigma H^{-1}
+\end{equation}
+with
+\begin{align}
+    H &= E[\nabla^2 Q(w^0)] \\
+    \Sigma &= \lim_{T \to \infty} \text{Var}(\sqrt{T}\nabla Q_T(w^0))
+\end{align}
+\end{theorem}
+
+\subsection{Inference Procedures}
+
+\subsubsection{Asymptotic Distribution}
+
+For the synthetic return estimator:
+
+\begin{theorem}[Asymptotic Normality]
+Under stated assumptions:
+\begin{equation}
+    \sqrt{T}(R_{it}^S - R_{it}^*) \xrightarrow{d} N(0, \Omega)
+\end{equation}
+where
+\begin{equation}
+    \Omega = R_{jt}'VR_{jt} + \sigma_{\epsilon}^2
+\end{equation}
+\end{theorem}
+
+\subsubsection{Hypothesis Testing Framework}
+
+For testing the accuracy of synthetic control matches:
+
+\begin{equation}
+    H_0: R_{it}^S = R_{it}^* \quad \text{vs} \quad H_1: R_{it}^S \neq R_{it}^*
+\end{equation}
+
+Test statistic:
+\begin{equation}
+    \tau_T = T(R_{it}^S - R_{it}^*)'\hat{\Omega}^{-1}(R_{it}^S - R_{it}^*)
+\end{equation}
+
+Under $H_0$:
+\begin{equation}
+    \tau_T \xrightarrow{d} \chi^2(k)
+\end{equation}
+
+\subsection{Finite Sample Properties}
+
+\subsubsection{Bias Analysis}
+
+The finite sample bias of the synthetic control estimator is:
+
+\begin{equation}
+    E[R_{it}^S - R_{it}^*] = B_T + O(T^{-1})
+\end{equation}
+
+where
+\begin{equation}
+    B_T = -\frac{1}{2T}tr(H^{-1}\Sigma) + O(T^{-3/2})
+\end{equation}
+
+\subsubsection{Higher-Order Properties}
+
+We derive the Edgeworth expansion:
+
+\begin{equation}
+    P(\sqrt{T}(R_{it}^S - R_{it}^*) \leq x) = \Phi(x) + T^{-1/2}p_1(x)\phi(x) + O(T^{-1})
+\end{equation}
+
+where $p_1(x)$ is a polynomial depending on the third and fourth moments.
+
+\subsection{Robust Inference}
+
+\subsubsection{HAC Estimation}
+
+For robust variance estimation:
+
+\begin{equation}
+    \hat{\Omega} = \sum_{|h| < m_T} k(h/m_T)\hat{\Gamma}(h)
+\end{equation}
+
+where
+\begin{equation}
+    \hat{\Gamma}(h) = \frac{1}{T}\sum_{t=|h|+1}^T \hat{u}_t\hat{u}_{t-|h|}'
+\end{equation}
+
+with $k(\cdot)$ being a kernel function and $m_T$ the bandwidth parameter.
+
+\subsubsection{Bootstrap Procedures}
+
+We establish the validity of the following bootstrap procedure:
+
+1. Generate bootstrap samples:
+\begin{equation}
+    R_{it}^{*b} = R_{it}^S + \epsilon_{it}^{*b}
+\end{equation}
+
+2. Compute bootstrap weights:
+\begin{equation}
+    w_T^{*b} = \arg\min_{w \in \mathcal{W}} \sum_{t=1}^T (R_{it}^{*b} - \sum_{j=1}^J w_jR_{jt})^2
+\end{equation}
+
+3. Bootstrap distribution:
+\begin{equation}
+    \sqrt{T}(w_T^{*b} - w_T^*) \xrightarrow{d} N(0, V)
+\end{equation}
+
+\subsection{Time-Varying Parameter Extensions}
+
+\subsubsection{Local Asymptotic Framework}
+
+For time-varying parameters:
+
+\begin{equation}
+    w_t = w_0 + h_T\beta(t/T)
+\end{equation}
+
+where $h_T \to 0$ as $T \to \infty$.
+
+Local linear estimator:
+\begin{equation}
+    \hat{w}_t = \arg\min_{w,\beta} \sum_{s=1}^T K_h(t-s)(R_{is} - \sum_{j=1}^J (w_j + \beta_j(t-s))R_{js})^2
+\end{equation}
+
+\subsubsection{Uniform Inference}
+
+We establish uniform confidence bands:
+
+\begin{equation}
+    P(\sup_{t \in [0,1]} |\hat{w}_t - w_t| \leq c_{\alpha}\sqrt{\log T/Th}) \to 1-\alpha
+\end{equation}
+
+where $c_{\alpha}$ is the critical value obtained from the distribution of the supremum of a Gaussian process.
+
+
+\subsection{Implementation Details}
+For simplicity, consider a weighted L2 norm $\norm{\cdot}_{\mbf W}$ defined by a positive definite matrix $\mbf W\in\R^{T_{tr}\times T_{tr}}$. Common choices include the identity matrix $\mbf W = \mbf I$ (standard L2 norm) or the inverse of the sample covariance matrix $\mbf W = \hat{\boldsymbol\Sigma}^{-1}$ (Mahalanobis norm), which accounts for the correlation structure in the returns.
+The optimization problem can be solved through the method of Lagrange multipliers. 
+$$
+\mathcal{L}(\mathbf{w}, \mu) 
+= 
+(
+\mathbf R_0 - \mathbf R \mathbf{w} 
+)\' 
+\mathbf{W} 
+( \mathbf R_0 - \mathbf R \mathbf{w} 
+) 
++ 
+\lambda \mathcal{R}(\mathbf{w}) 
+- 
+\mu 
+( \mbf 1\' \mbf w - 1)
+$$
+For differentiable regularization functions $\mathcal R(\cdot)\in C$ the gradient is
+$$
+\p{\mathcal L}{\mbf w} =
+-2 \mbf R' \mathbf{W} ( \mbf R_0 - \mbf R \mathbf{w} ) + \lambda \nabla \mathcal{R}(\mathbf{w}) - \mu \mathbf{1} = \mathbf{0}
+~.
+$$
+With Ridge regularization $ \mathcal{R}(\mathbf{w}) = \| \mathbf{w} \|_2^2 =\mbf w\'\mbf w$ we have $\nabla \mathcal{R}(\mathbf{w}) = 2 \mathbf{w}$
+$$
+\p{\mathcal L}{\mbf w} =
+-2 \mbf R' \mathbf{W} \left( \mbf R_0 - \mbf R \mathbf{w} \right) + 2 \lambda \mathbf{w} - \mu \mathbf{1} = \mathbf{0}
+$$
+Simplify:
+$$
+2 \left( \mbf R' \mathbf{W} \mbf R + \lambda \mathbf{I} \right) \mathbf{w} - 2 \mbf R' \mathbf{W} \mbf R_0 - \mu \mathbf{1} = \mathbf{0}
+$$
+Let $ \mathbf{M} = \mbf R' \mathbf{W} \mbf R + \lambda \mathbf{I} $ and $ \mathbf{b} = \mbf R' \mathbf{W} \mbf R_0 $. Then:
+$$
+\mathbf{M} \mathbf{w} - \mathbf{b} + \frac{\mu}{2} \mathbf{1} = \mathbf{0}
+$$
+
+From the constraint:
+
+$$
+\mathbf{1}' \mathbf{w} = 1
+$$
+
+Stacking the equations:
+
+$$
+\begin{bmatrix}
+\mathbf{M} & \frac{1}{2} \mathbf{1} \\
+\mathbf{1}' & 0
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{w} \\
+\mu
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf{b} \\
+1
+\end{bmatrix}
+$$
+
+The resulting linear system can be solved efficiently using standard numerical methods. However, care must be taken as the matrix $\mbf M$ may be ill-conditioned, especially when assets in the donor pool are highly correlated. In such cases, increasing $\lambda$ can help stabilize the solution.
+
+For the Lasso case ($\mathcal{R}(\mathbf{w}) = \|\mathbf{w}\|_1$), the optimization problem becomes non-differentiable and requires specialized algorithms such as proximal gradient descent or coordinate descent methods.
+
+
+\subsection{Cross-Validation}
+The choice of $\lambda$ is crucial for the performance of the synthetic portfolio. We employ $k$-fold cross-validation over the training period to select an optimal value. The training period $\mathcal{T}_{tr}$ is divided into $k$ consecutive blocks. For each candidate $\lambda$ and each fold, we:
+\begin{enumerate}
+    \item Estimate weights using $k-1$ blocks
+    \item Compute out-of-sample tracking error on the held-out block
+\end{enumerate}
+
+The final $\lambda$ is chosen to minimize the average out-of-sample tracking error across folds:
+$$
+\lambda^* = \argmin_{\lambda} \frac{1}{k}\sum_{\ell =1}^k \text{TE}_{\ell}(\lambda)
+$$
+where $\text{TE}_{\ell}(\lambda)$ is the tracking error on the $i$-th validation fold using regularization parameter $\lambda$.
+
+\subsection{Rolling Window Estimation}
+
+In financial markets, the relationships between assets are dynamic and can change over time due to evolving economic conditions, market sentiments, and structural shifts. To capture these time-varying relationships, we implement a rolling window estimation approach for the synthetic control weights $\mathbf{w}_t$.
+%
+%At each time point $t$, we re-estimate the weights by solving the optimization problem using the most recent $h$ observations, effectively creating a moving window that rolls forward through time. This approach allows the synthetic portfolio to adapt to new information and changing market dynamics.
+%
+The optimization problem at time $t$ is formulated as:
+\begin{equation}
+\mathbf{w}_t^* = 
+\underset{\{w_{j}\}_{j\in\mathcal{J}}}{\arg\min} ~~
+    \sum_{\tau = t - h}^{t - 1}
+    v_{\tau} \left( R_{0\tau} - \sum_{j \in \mathcal{J}} w_{j} R_{j\tau} \right)^2
+    + \lambda \mathcal{R}(\mathbf{w}_t)
+~~~~
+\text{s.t.} \sum_{j\in\J}w_j =1
+\end{equation}
+%\begin{equation}
+%\mathbf{w}_t^* = 
+%\underset{\{w_{j}\}_{j\in\mathcal{J}}}{\arg\min} ~~
+%\frac{1}{h}
+%    \sum_{\tau = t - h}^{t - 1}
+%L( 
+%R_{0\tau},
+%f(\mbf R_\tau)
+%%\sum_{j \in \mathcal{J}} w_{j} R_{j\tau} 
+%)
+%+ \lambda \mathcal{R}(\b \theta)
+%~~~~
+%\end{equation}
+for a weighting function $v_s(\cdot)$ and some estimation window $h$. 
+The weighting function $v_{\tau}$ determines how observations within the window contribute to the estimation:
+
+\begin{itemize}
+    \item \textbf{Uniform Weights}: $v_{\tau} = 1$ for all $\tau$, giving equal importance to all observations in the window.
+    \item \textbf{Exponential Weights}: $v_{\tau} = \exp\left( -\gamma (t - \tau) \right)$, where $\gamma > 0$ controls the rate at which older observations are discounted.
+    \item \textbf{Linear Decay}: $v_{\tau} = \frac{\tau - (t - h)}{h}$, linearly decreasing the weight of older observations.
+\end{itemize}
+
+The choice depends on the desired responsiveness of the model to recent data.
+%
+In order to avoid overly frequent changes in weughts which would lead to higher transaction costs, we could incorporate a penalty for weight changes or directly include transaction costs in the optimization.
+
+\textbf{Recursive Least Squares}
+An alternative to explicitly solving the optimization problem in each window is to use recursive least squares (RLS), which updates the weight estimates incrementally:
+\begin{equation*}
+\mathbf{w}_t = \mathbf{w}_{t-1} + \mathbf{K}_t \left( R_{0, t-1} - \mathbf{R}_{t-1}' \mathbf{w}_{t-1} \right),
+\end{equation*}
+
+where $\mathbf{K}_t$ is the gain matrix computed based on the covariance of the predictor variables. RLS is efficient and well-suited for online updating.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsection{Donor Pool}
+The donor pool $\J$ could be defined in various ways. A lax way to define it would be simply as $\J := \mathcal S \setminus \{0\}$ and let regularization select optimally from the highest possible set of donors. Alternatively, we could define it through a hierarchical screening process:
+\begin{equation*}
+    \mathcal{J} = \{j: S_j \geq \bar{S} \cap d(X_i, X_j) \leq \delta \cap \rho_{ij} \geq \bar{\rho}\}
+\end{equation*}
+where:
+\begin{itemize}
+    \item $S_j$ represents firm size (market capitalization), with $\bar{S}$ as a minimum threshold
+    \item $d(X_i, X_j)$ is a distance metric between firm characteristics vectors
+    \item $\rho_{ij}$ is the historical return correlation, with $\bar{\rho}$ as a minimum threshold
+\end{itemize}
+
+The characteristics vector $X_i$ includes:
+\begin{equation*}
+    X_i = [\text{Size}_i, \text{B/M}_i, \text{Momentum}_i, \text{Volatility}_i, \text{Industry}_i]
+\end{equation*}
+
+\textbf{Dynamically Updated Donor Pool}
+
+To maintain pool relevance, we implement a rolling update mechanism:
+\begin{equation*}
+    \mathcal{J}_t = \mathcal{J}_{t-1} \cup \mathcal{A}_t \setminus \mathcal{D}_t
+\end{equation*}
+
+where $\mathcal{A}_t$ and $\mathcal{D}_t$ represent additions and deletions based on the screening criteria at time $t$.
+
+
