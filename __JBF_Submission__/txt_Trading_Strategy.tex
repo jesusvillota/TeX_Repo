@@ -533,10 +533,13 @@ SR^{\mathcal{P}^{test}} =
 .$
 
 \mx 
+%In \cref{fig:KMeans_Portfolio_Cum_Returns} we plot the cumulative returns of the portfolio constructed based on our KMeans clustering of embeddings. In \cref{tab:KMeans_portfolio_statistics} we summarize the usual portfolio statistics. As we can see, both algorithms work well on the data splits they were trained on: the Stable algorithm works well on both, training and validation data, while the Greedy algorithm does a good job only on validation data as expected. However, this doesn't say anything about any of these algorithms, as it is easy to make profitable trades \textit{in-sample}. 
+%%
+%The generalizability of the strategy is determined \textit{out-of-sample} in the test data. As we can see, the performance is much worse there for both algorithms. In the plot, we can see that none of them is able to generate a consistent profile of earnings, and the statistics confirm that profits are negligible, and would most likely be eaten away by exogenous considerations such as trading costs and slippage.
+
 In \cref{fig:KMeans_Portfolio_Cum_Returns} we plot the cumulative returns of the portfolio constructed based on our KMeans clustering of embeddings. In \cref{tab:KMeans_portfolio_statistics} we summarize the usual portfolio statistics. As we can see, both algorithms work well on the data splits they were trained on: the Stable algorithm works well on both, training and validation data, while the Greedy algorithm does a good job only on validation data as expected. However, this doesn't say anything about any of these algorithms, as it is easy to make profitable trades \textit{in-sample}. 
-%
-%\mx 
-The generalizability of the strategy is determined \textit{out-of-sample} in the test data. As we can see, the performance is much worse there for both algorithms. In the plot, we can see that none of them is able to generate a consistent profile of earnings, and the statistics confirm that profits are negligible, and would most likely be eaten away by exogenous considerations such as trading costs and slippage.
+
+The generalizability of the strategy is determined \textit{out-of-sample} in the test data. The empirical analysis reveals significant challenges in the strategy's ability to maintain consistent performance across different time periods. During the training and validation phases, the methodology shows promising results with annualized returns ranging from 26.6\% to 47.7\% and strong risk-adjusted performance metrics (Sharpe ratios between 2.0 and 3.2). However, this performance deteriorates substantially in the test period, where returns drop to modest levels (2.9\% to 4.9\% annually) with significantly lower Sharpe ratios (0.2 to 0.7), suggesting that the strategy's alpha-generating capability does not generalize well out of sample. The distributional properties of returns in the test period provide additional insights into the strategy's behavior under true out-of-sample conditions. The shift from negative to strongly positive skewness (1.85 to 2.46) coupled with high excess kurtosis (5.50 to 14.57) suggests that the strategy's return distribution has fundamentally changed, characterized by more frequent small losses offset by occasional large gains. This asymmetric return pattern, while potentially appealing from a risk preference perspective, differs markedly from the training period characteristics. The tail risk measures further illuminate the strategy's risk profile, with annualized 95\% VaR ranging from -7.8\% to -18.9\% and corresponding CVaR from -9.7\% to -26.8\% in the test period. These statistical properties, combined with the strong dependence on historical cluster-specific performance, indicate that the strategy fails to identify stable and generalizable trading signals, likely due to its reliance on firm and industry-specific clustering patterns that do not persist out of sample. As we can see in the plot, neither algorithm is able to generate a consistent profile of earnings, and the statistics confirm that profits are negligible, and would likely be eaten away by exogenous market frictions (e.g. trading costs).
 
 %----------------------- PLOT ----------------------
 \inserthere{fig:KMeans_Portfolio_Cum_Returns}
@@ -549,7 +552,8 @@ The generalizability of the strategy is determined \textit{out-of-sample} in the
 \end{figure}
 %----------------------------------------------------
 %----------------------------------------------------
-\input{tab_KMeans_Portfolio_Statistics_(L=4,theta=0.5k).tex}
+%\input{tab_KMeans_Portfolio_Statistics_(L=4,theta=0.5k).tex}
+\input{tab_KMeans_Portfolio_Statistics_UPDATED.tex}
 %----------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -559,9 +563,14 @@ The generalizability of the strategy is determined \textit{out-of-sample} in the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \mx 
+%In \cref{fig:LLM_portfolio_returns} we plot the cumulative returns of the portfolio based on LLM clustering ($\mathcal P_{LLM}$). As before, both algorithms perform really well on ``seen'' data. However, different from before, the \textit{Greedy} algorithm works well also on the Training Split (which it was not trained on). More importantly, both algorithms do a great job in the test data. As we can see, both are able to achieve a consistent profile of earnings through the split. 
+%%
+%The summary statistics of the portfolio are provided in \cref{tab:LLM_portfolio_statistics}, where we see confirmed the fact that both algorithms excel at anticipating the market out of sample. 
+
 In \cref{fig:LLM_portfolio_returns} we plot the cumulative returns of the portfolio based on LLM clustering ($\mathcal P_{LLM}$). As before, both algorithms perform really well on ``seen'' data. However, different from before, the \textit{Greedy} algorithm works well also on the Training Split (which it was not trained on). More importantly, both algorithms do a great job in the test data. As we can see, both are able to achieve a consistent profile of earnings through the split. 
-%
-The summary statistics of the portfolio are provided in \cref{tab:LLM_portfolio_statistics}, where we see confirmed the fact that both algorithms excel at anticipating the market out of sample. 
+
+The empirical analysis reveals notable consistency in the strategy's performance across different time periods. During the training and validation phases, the methodology demonstrates solid performance with annualized returns ranging from 16.0\% to 28.3\% and Sharpe ratios between 1.4 and 2.9. This performance strengthens in the test period, where returns increase to 30.8\%-37.2\% annually with Sharpe ratios of 4.3-4.4, indicating that the strategy's alpha-generating capability successfully generalizes to out-of-sample conditions. The distributional properties of returns provide evidence for the strategy's robustness. The test period maintains positive skewness (0.84 to 1.49) and moderate to high excess kurtosis (1.95 to 8.30), indicating an asymmetric return pattern with more frequent small losses offset by larger gains. This return distribution is complemented by contained maximum drawdowns (1.1\% to 1.5\%) and strong Calmar ratios (21.0 to 34.5) in the test period. The tail risk measures further support the strategy's risk management properties, with annualized 95\% VaR (-6.9\% to -9.5\%) and CVaR (-9.9\% to -11.3\%) in the test period. These statistical properties, combined with the strategy's ability to maintain and enhance its performance metrics out of sample, suggest that the LLM-based clustering approach captures persistent trading signals that transcend specific market regimes.
+
 
 %----------------------- PLOT ----------------------
 \inserthere{fig:LLM_portfolio_returns}
@@ -578,6 +587,7 @@ The strong out-of-sample performance of the trading strategy suggests that our p
 %----------------------------------------------------
 
 %--------------------- TABLE ------------------------
-\input{tab_LLAMA_Portfolio_Statistics_(L=4,theta=0.5k).tex}
+%\input{tab_LLAMA_Portfolio_Statistics_(L=4,theta=0.5k).tex}
+\input{tab_LLAMA_Portfolio_Statistics_UPDATED.tex}
 %----------------------------------------------------
 
