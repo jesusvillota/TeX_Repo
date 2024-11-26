@@ -7,51 +7,73 @@ $
 \mathcal{B}:=\3{(i,j) \mid i\in \D ~\wedge~j\in \F^i }
 $, where $\abs{\mathcal{B}}=3410>\abs{\D}=2613$. 
 We then fit a market model to each unique pair $(i,j)\in \mathcal{B}$
-on some window of time $\mathcal{M}^i\subset \tilde{\mathfrak{d}}$ before the effective treatment day: 
-\footnote{To rigorously define $\mathcal M^i$, we need to work with the index and inverse index functions. 
-\begin{itemize}
-  \item \textbf{Index Function}. 
-Given a finite ordered set $\mathcal{Z}=\left\{z_1, z_2, \ldots, z_n\right\}$, the index function 
-$\mathbb{I}_{\mathcal{Z}}: \mathcal{Z} \rightarrow\{1,2, \ldots,|\mathcal{Z}|\}$
- maps an element $z\in\Z$ to its position in the ordered set $\mathcal{Z}$. Formally:
+on some window of time $\mathcal{M}^i\subset \tilde{\mathfrak{d}}$ before the effective treatment day,%
+%------------------- START FOOTNOTE-------------------
+\footnote{$\mathcal M_i$ is a window of $w_m=100$ days formed with a buffer of $w_b=10$ days  before the effective treatment date $\tilde d_0^i$. Formally, it is defined as   
 $
-\mathbb{I}_{\mathcal{Z}}(z_{\ell})=\ell 
-~ \text { for } ~ \ell \in\{1,2, \ldots,|\mathcal{Z}|\}
-.
-$
-
-\item \textbf{Inverse Index Function}. 
-The inverse index function 
-$\mathbb{I}_{\mathcal{Z}}^{-1}:\{1,2, \ldots,|\mathcal{Z}|\} \rightarrow \mathcal{Z}$
- retrieves the element $z \in \mathcal{Z}$ corresponding to a given index ${\ell}$.
-Formally:
-$
-\mathbb{I}_{\mathcal{Z}}^{-1}({\ell})=z_{\ell} ~\text { for } ~{\ell} \in\{1,2, \ldots,|\mathcal{Z}|\}
-.$
-\end{itemize}
-For the market model window, we use $\mathbb{I}_{\tilde{\mathfrak{d}}}$ and $\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} $ applied to the set of trading days $\tilde{\mathfrak d}$. Namely:
-$$
 \mathcal{M}^i := 
-\3{
+\{
 d\in \tilde{\mathfrak{d}}
-\c 
+\mid 
 \mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} 
-\1{
+(
 \mathbb{I}_{\tilde{\mathfrak{d}}} (\tilde{d}_0^i) - {w}_b - {w}_m 
-}
+)
 \leq d \leq 
 \mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} 
-\1{ 
+(
 \mathbb{I}_{\tilde{\mathfrak{d}}} (\tilde{d}_0^i) - {w}_b 
-}
-}
+)
+\}
 ,
-$$
-with a buffer of ${w}_b=10$ trading days before the effective treatment date, and a market model window length of ${w}_m=100$ trading days.
-
-
-
+$
+where $\mathbb{I}_{\tilde{\mathfrak d}}$ maps an element $d\in\tilde{\mathfrak d}$ to its position in $\tilde{\mathfrak d}$ and $\mathbb{I}_{\tilde{\mathfrak d}}$ does the inverse operation. 
 }
+%
+%
+%\footnote{To rigorously define $\mathcal M^i$, we need to work with the index and inverse index functions. 
+%\begin{itemize}
+%  \item \textbf{Index Function}. 
+%Given a finite ordered set $\mathcal{Z}=\left\{z_1, z_2, \ldots, z_n\right\}$, the index function 
+%$\mathbb{I}_{\mathcal{Z}}: \mathcal{Z} \rightarrow\{1,2, \ldots,|\mathcal{Z}|\}$
+% maps an element $z\in\Z$ to its position in the ordered set $\mathcal{Z}$. Formally:
+%$
+%\mathbb{I}_{\mathcal{Z}}(z_{\ell})=\ell 
+%~ \text { for } ~ \ell \in\{1,2, \ldots,|\mathcal{Z}|\}
+%.
+%$
+%
+%\item \textbf{Inverse Index Function}. 
+%The inverse index function 
+%$\mathbb{I}_{\mathcal{Z}}^{-1}:\{1,2, \ldots,|\mathcal{Z}|\} \rightarrow \mathcal{Z}$
+% retrieves the element $z \in \mathcal{Z}$ corresponding to a given index ${\ell}$.
+%Formally:
+%$
+%\mathbb{I}_{\mathcal{Z}}^{-1}({\ell})=z_{\ell} ~\text { for } ~{\ell} \in\{1,2, \ldots,|\mathcal{Z}|\}
+%.$
+%\end{itemize}
+%For the market model window, we use $\mathbb{I}_{\tilde{\mathfrak{d}}}$ and $\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} $ applied to the set of trading days $\tilde{\mathfrak d}$. Namely:
+%$$
+%\mathcal{M}^i := 
+%\3{
+%d\in \tilde{\mathfrak{d}}
+%\c 
+%\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} 
+%\1{
+%\mathbb{I}_{\tilde{\mathfrak{d}}} (\tilde{d}_0^i) - {w}_b - {w}_m 
+%}
+%\leq d \leq 
+%\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} 
+%\1{ 
+%\mathbb{I}_{\tilde{\mathfrak{d}}} (\tilde{d}_0^i) - {w}_b 
+%}
+%}
+%,
+%$$
+%with a buffer of ${w}_b=10$ trading days before the effective treatment date, and a market model window length of ${w}_m=100$ trading days.
+%}
+%------------- END OF FOOTNOTE -----------------------
+%
 %----------------------------------------------------
 $$
 r_{d}^{j} = \alpha^{(i,j)} + \beta^{(i,j)} r_{d}^M + \epsilon_{ d}^{(i,j)} 
@@ -107,12 +129,13 @@ The position is taken at the effective treatment date $\tilde d_0^i$ and is main
 The holding period of the position is defined as 
 $
 \mathcal H^i:=
-\3{
+\{
 d \in \tilde{\mathfrak{d}}
-\c 
+\mid 
 \tilde{d}_0^i
 \leq d \leq 
-\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}}\1{\mathbb{I}_{\tilde{\mathfrak{d}}}(\tilde d_0^i)+L}}
+\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}}(\mathbb{I}_{\tilde{\mathfrak{d}}}(\tilde d_0^i)+L)
+\}
 $}
 %----------------------------------------------------
 The justification for this choice of $L$ is made in section A.2 of the Appendix. 
@@ -157,7 +180,9 @@ $$
 \subsection{Optimal Cluster Selection}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-After taking beta-neutral positions on each pair $(i,j)\in\mathcal B$ and holding them over some window $\mathcal H^i$, we can obtain a measure of how profitable the positions are on average for articles that belong to the same cluster $g\in\mathcal G$. For this purpose, let $\mathcal{B}_g$ denote the set of all article and firm pairs such that the article belongs to some cluster $g\in\mathcal G$. 
+After taking beta-neutral positions on each pair $(i,j)\in\mathcal B$ and holding them over some window $\mathcal H^i$, we can obtain a measure of how profitable the positions are on average for articles that belong to the same cluster.
+% $g\in\mathcal G$. 
+For this purpose, let $\mathcal{B}_g$ denote the set of all article-firm pairs such that the article belongs to some cluster $g\in\mathcal G$. 
 $$
 \mathcal{B}_g:= \{(i,j) \mid (i,j)\in\mathcal{B} ~\wedge~ i \in \D_g \}
 .
@@ -168,47 +193,17 @@ $$
 ,
 $$
 and it provides a measure of the performance of the beta-neutral positions in each cluster. 
+%
+%
+The distribution of cluster-average Sharpe Ratios across the different clusters is shown in Appendix \cref{fig:cluster-average-SR-by-split}. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%   KMEANS   %%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-In the case of KMeans, the distribution of cluster-average Sharpe Ratios across the different clusters is plotted in \cref{fig:KMeans_distr_avg_SR}. In the validation set, they are centered at 0, but we observe some outliers with unusually low and high average $SR$. On the other hand, the distributions in the train and test data are slightly skewed to the right and show no presence of substantial outliers.
-
-%----------------------------------------------------
-\inserthere{fig:KMeans_distr_avg_SR}
-\begin{figure}[H]
-  \centering
-  \caption{Distribution of Embeddings-based Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
-  \includegraphics[scale=0.45]{fig_KMeans_Cluster-Avg_SR_Distribution.pdf}
-\label{fig:KMeans_distr_avg_SR}
-\subcaption*{\textit{Note: This figure shows the distribution of cluster-average Sharpe Ratios $(\overline{SR}_g)$ for the embeddings-based KMeans clusters across the different data splits: training, validation, and test sets. Each Sharpe Ratio is computed as the average of beta-neutral positions associated with articles in a given cluster. In the validation set, the distribution is centered around 0, with a few outliers showing unusually high or low Sharpe Ratios. Conversely, the distributions in the training and test sets are slightly skewed to the right, suggesting better performance in certain clusters, with no significant presence of outliers.}}
-
-\end{figure}
-%----------------------------------------------------
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%   LLM   %%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In the case of LLM-based clustering, all distributions are left-skewed. The distribution in the training sample has fat tails which severely contrasts with the light-tailed distribution of the validation sample. In the test data, we observe a bell-shaped distribution with some accumulation of mass at high $SR$s (between 5 and 15), indicating stronger performance in some clusters.
-%----------------------------------------------------
-\inserthere{fig:LLM_cluster-average-SR-by-split}
-\begin{figure}[H]
-  \centering
-  \caption{Distribution of LLM-based Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
-  \includegraphics[scale=0.5]{fig_LLAMA_Cluster-Avg_SR_Distribution.pdf}
-  \label{fig:LLM_cluster-average-SR-by-split}
- \subcaption*{\textit{Note: This figure presents the distribution of cluster-average Sharpe Ratios $(\overline{SR}_g)$ for the LLM-based clustering across the training, validation, and test data splits. All distributions exhibit left-skewness, indicating a higher frequency of lower Sharpe Ratios across clusters. The training data shows a distribution with fat tails, suggesting the presence of extreme values, while the validation data exhibits a much lighter-tailed distribution. In the test data, the distribution is more bell-shaped, with a notable concentration of Sharpe Ratios in the range of 5 to 15, indicating stronger performance in some clusters.}}
-
-\end{figure}
-%----------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%   ALGORITHMS   %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-We now focus on developing two algorithms that optimally leverages the cluster information for our trading strategy. Our approach draws parallels with traditional portfolio sorting methods, where assets are typically arranged into deciles based on specific characteristics, and trading positions are established by going long on top deciles and short on bottom ones. Similarly, our strategy will construct self-financing portfolios based on clusters rather than individual assets: taking long positions in clusters expected to outperform and short positions in those expected to underperform.
+We then focus on developing two algorithms that optimally leverage the cluster information for our trading strategy. Our approach draws parallels with traditional portfolio sorting methods, where assets are typically arranged into deciles based on specific characteristics, and trading positions are established by going long on top deciles and short on bottom ones. Similarly, our strategy will construct self-financing portfolios based on clusters rather than individual assets: taking long positions in clusters expected to outperform and short positions in those expected to underperform.
 %
-To identify the optimal clusters for trading, we propose two distinct algorithmic approaches. The first approach, which we term \qquote{greedy}, selects clusters by maximizing the Sharpe Ratio within the validation dataset. The second approach, termed \qquote{stable}, utilizes a broader information set by incorporating both training and validation data, aiming to identify clusters that maintain consistent performance across different time periods. In both algorithms, we impose sign restrictions to ensure that our trading positions align with the expected direction of returns.
+To identify the optimal clusters for trading, we propose two distinct algorithmic approaches. The first approach, which we term \qquote{greedy}, selects clusters by maximizing the Sharpe Ratio within the validation dataset. The second approach, termed \qquote{stable}, utilizes a broader information set by incorporating both training and validation data, aiming to identify clusters that maintain consistent performance across both splits. In both algorithms, we impose sign restrictions to ensure that our trading positions align with the expected direction of returns.
 
 \subsubsection{Greedy Algorithm}
 
@@ -467,7 +462,7 @@ TR_{L, \theta}\angl{(i,j),  d}
 $$
 }
 This produces an equally-weighted rolling-portfolio similar to \cite{jegadeesh1993returns} and \cite{chan2003stock}.
-The overlapping returns of the portfolio at $d\in\tilde{\mathfrak{d}}$ can be obtained as an average of the abnormal returns weighted by the trading rule, which determines the direction of each position (long or short), and scaled by the number of open positions in that day:
+The overlapping returns of the portfolio at $d\in\tilde{\mathfrak{d}}$ can be obtained as an average of the abnormal returns weighted by the trading rule, which determines the direction of each position (long or short), and scaled by the number of open positions in that day,
 $$
 r_{d}^{\mathcal{P}} 
 := 
@@ -479,115 +474,152 @@ AR_{{d}}^{(i,j)}
 ~.
 $$
 
-Finally, defining the mean portfolio return as
-%----------------------------------------------------
-$
-\mu^{\mathcal{P}}:=
-({1}/{|\tilde{\mathfrak{d}}|})
-\sum_{\tilde{d} \in \tilde{\mathfrak{d}}} \ln (1+r_{\tilde{d}}^{\mathcal{P}})
-$
-and the associated standard deviation:
-$ 
-\sigma^{\mathcal{P}}
-:=
-\sqrt{
-({1}/{|\tilde{\mathfrak{d}}|-1})
-\sum_{\tilde{d} \in \tilde{\mathfrak{d}}}
-[\ln
-(1+r_{\tilde{d}}^{\mathcal{P}}
-)-\mu^{\mathcal{P}}]^2} 
-$
-, we can obtain the annualized Sharpe Ratio of the portfolio as
-$ SR^{\mathcal{P}} :=  \sqrt{252} ~
-{\mu^{\mathcal{P}}}/{\sigma^{\mathcal{P}}} 
-$.
-%----------------------------------------------------
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%  Evaluating the Trading Strategy  %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Finally, defining the mean portfolio return as
+%%----------------------------------------------------
+%$
+%\mu^{\mathcal{P}}:=
+%({1}/{|\tilde{\mathfrak{d}}|})
+%\sum_{\tilde{d} \in \tilde{\mathfrak{d}}} \ln (1+r_{\tilde{d}}^{\mathcal{P}})
+%$
+%and the associated standard deviation:
+%$ 
+%\sigma^{\mathcal{P}}
+%:=
+%\sqrt{
+%({1}/{|\tilde{\mathfrak{d}}|-1})
+%\sum_{\tilde{d} \in \tilde{\mathfrak{d}}}
+%[\ln
+%(1+r_{\tilde{d}}^{\mathcal{P}}
+%)-\mu^{\mathcal{P}}]^2} 
+%$
+%, we can obtain the annualized Sharpe Ratio of the portfolio as
+%$ SR^{\mathcal{P}} :=  \sqrt{252} ~
+%{\mu^{\mathcal{P}}}/{\sigma^{\mathcal{P}}} 
+%$.
+%%----------------------------------------------------
+%
+%
+
+%--------  Evaluating the Trading Strategy  %-----------
+
+%
+%\subsection{Evaluating the Trading Strategy}
+%\hspace{0.5cm}The trading strategy is evaluated in the test sample by applying $TR\angl{(i,j),d}$ to all $(i,j)\in\mathcal{B}^{test}$. 
+%This delivers the portfolio
+%\begin{align*}
+%\mathcal{P}^{test}=\3{\angl{(i,j),d} \c (i,j)\in \mathcal{B}^{test} ~\wedge~  TR_{L,\theta}\angl{(i,j),d} \neq 0 }
+%,
+%\end{align*}
+%from where we can compute the portfolio returns 
+%$
+%r_{d}^{\mathcal{P}^{test}} = 
+%({1}/{|\mathcal{P}_{d}^{test}|})
+%\sum_{(i, j), \in \mathcal{P}_{d}^{test}}
+%T R_{{{L}}, \theta}\angl{(i,j), {d}} 
+%\cdot 
+%AR_{{d}}^{(i,j)}
+%,
+%$
+%and then obtain $\mu^{\mathcal{P}^{test}}$ and $\sigma^{\mathcal{P}^{test}}$. Finally, we evaluate the \textit{out-of-sample} performance of our trading strategy by looking at the Sharpe Ratio in the test sample
+%$
+%SR^{\mathcal{P}^{test}} = 
+%\sqrt{252}~
+%{\mu^{\mathcal{P}^{test}}}/{\sigma^{\mathcal{P}^{test}}}
+%.$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Evaluating the Trading Strategy}
-\hspace{0.5cm}The trading strategy is evaluated in the test sample by applying $TR\angl{(i,j),d}$ to all $(i,j)\in\mathcal{B}^{test}$. 
-This delivers the portfolio
-\begin{align*}
-\mathcal{P}^{test}=\3{\angl{(i,j),d} \c (i,j)\in \mathcal{B}^{test} ~\wedge~  TR_{L,\theta}\angl{(i,j),d} \neq 0 }
-,
-\end{align*}
-from where we can compute the portfolio returns 
-$
-r_{d}^{\mathcal{P}^{test}} = 
-({1}/{|\mathcal{P}_{d}^{test}|})
-\sum_{(i, j), \in \mathcal{P}_{d}^{test}}
-T R_{{{L}}, \theta}\angl{(i,j), {d}} 
-\cdot 
-AR_{{d}}^{(i,j)}
-,
-$
-and then obtain $\mu^{\mathcal{P}^{test}}$ and $\sigma^{\mathcal{P}^{test}}$. Finally, we evaluate the \textit{out-of-sample} performance of our trading strategy by looking at the Sharpe Ratio in the test sample
-$
-SR^{\mathcal{P}^{test}} = 
-\sqrt{252}~
-{\mu^{\mathcal{P}^{test}}}/{\sigma^{\mathcal{P}^{test}}}
-.$
+In \cref{fig:portfolio_returns_comparison} we plot the cumulative gross returns of trading strategies based on KMeans clustering (Panel A) and LLM clustering (Panel B) across different data splits
 
-\mx 
-%In \cref{fig:KMeans_Portfolio_Cum_Returns} we plot the cumulative returns of the portfolio constructed based on our KMeans clustering of embeddings. In \cref{tab:KMeans_portfolio_statistics} we summarize the usual portfolio statistics. As we can see, both algorithms work well on the data splits they were trained on: the Stable algorithm works well on both, training and validation data, while the Greedy algorithm does a good job only on validation data as expected. However, this doesn't say anything about any of these algorithms, as it is easy to make profitable trades \textit{in-sample}. 
-%%
-%The generalizability of the strategy is determined \textit{out-of-sample} in the test data. As we can see, the performance is much worse there for both algorithms. In the plot, we can see that none of them is able to generate a consistent profile of earnings, and the statistics confirm that profits are negligible, and would most likely be eaten away by exogenous considerations such as trading costs and slippage.
+%----------------------------------------------------
+\inserthere{fig:portfolio_returns_comparison}
+\begin{figure}[H]
+\caption{Comparison of Cumulative Gross Returns across Clustering Approaches}
+\label{fig:portfolio_returns_comparison}
 
-In \cref{fig:KMeans_Portfolio_Cum_Returns} we plot the cumulative returns of the portfolio constructed based on our KMeans clustering of embeddings. In \cref{tab:KMeans_portfolio_statistics} we summarize the usual portfolio statistics. As we can see, both algorithms work well on the data splits they were trained on: the Stable algorithm works well on both, training and validation data, while the Greedy algorithm does a good job only on validation data as expected. However, this doesn't say anything about any of these algorithms, as it is easy to make profitable trades \textit{in-sample}. 
+% Panel A: KMeans
+\begin{subfigure}{\textwidth}
+\caption{Panel A: Cumulative Gross Returns of $\mathcal{P}_{\text{KMeans}}$}
+\centering
+\includegraphics[scale=0.44]{fig_KMeans_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
+\end{subfigure}
 
+\vspace{0.75cm}
+
+% Panel B: LLM
+\begin{subfigure}{\textwidth}
+\caption{Panel B: Cumulative Gross Returns of $\mathcal{P}_{\text{LLM}}$}
+\centering
+\includegraphics[scale=0.44]{fig_LLAMA_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
+\end{subfigure}
+
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+{\footnotesize\textit{Note:} 
+This figure presents the cumulative gross returns of trading strategies based on KMeans clustering (Panel A) and LLM clustering (Panel B) across different data splits. For both approaches, the holding period of the beta-neutral strategies is set to $L=4$ trading days. The number of traded clusters differs between approaches: $\theta=\integer{0.5k}=13$ for KMeans ($k^*=26$ clusters) and $\theta=\integer{0.5k}=10$ for LLM ($k=20$ clusters). The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. The Test split is higlhighted with a yellow background.
+%
+%The two approaches show markedly different out-of-sample performance. The embeddings-based KMeans clusters (Panel A) demonstrate poor out-of-sample performance, indicating a lack of robustness and failure to generalize effectively over time. In contrast, the LLM-based clustering approach (Panel B) exhibits strong out-of-sample performance, suggesting that the LLM-derived clusters effectively capture and predict market reactions to firm-specific economic shocks implied by news.
+}
+\end{minipage}
+\end{figure}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%  KMEANS %%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{KMeans}. 
+%In \cref{fig:portfolio_returns_comparison} Panel A we plot the cumulative returns of the portfolio constructed based on our KMeans clustering of embeddings. In Panel A of \cref{tab:portfolio_statistics_gross_comparison} we summarize the associated portfolio statistics. 
+As we can see, both algorithms work well on the data splits they were trained on: the Stable algorithm works well on both, training and validation data, while the Greedy algorithm does a good job only on validation data as expected. However, this doesn't say anything about any of these algorithms, as it is easy to make profitable trades \textit{in-sample}. 
+%
 The generalizability of the strategy is determined \textit{out-of-sample} in the test data. The empirical analysis reveals significant challenges in the strategy's ability to maintain consistent performance across different time periods. During the training and validation phases, the methodology shows promising results with annualized returns ranging from 26.6\% to 47.7\% and strong risk-adjusted performance metrics (Sharpe ratios between 2.0 and 3.2). However, this performance deteriorates substantially in the test period, where returns drop to modest levels (2.9\% to 4.9\% annually) with significantly lower Sharpe ratios (0.2 to 0.7), suggesting that the strategy's alpha-generating capability does not generalize well out of sample. The distributional properties of returns in the test period provide additional insights into the strategy's behavior under true out-of-sample conditions. The shift from negative to strongly positive skewness (1.85 to 2.46) coupled with high excess kurtosis (5.50 to 14.57) suggests that the strategy's return distribution has fundamentally changed, characterized by more frequent small losses offset by occasional large gains. This asymmetric return pattern, while potentially appealing from a risk preference perspective, differs markedly from the training period characteristics. The tail risk measures further illuminate the strategy's risk profile, with annualized 95\% VaR ranging from -7.8\% to -18.9\% and corresponding CVaR from -9.7\% to -26.8\% in the test period. These statistical properties, combined with the strong dependence on historical cluster-specific performance, indicate that the strategy fails to identify stable and generalizable trading signals, likely due to its reliance on firm and industry-specific clustering patterns that do not persist out of sample. As we can see in the plot, neither algorithm is able to generate a consistent profile of earnings, and the statistics confirm that profits are negligible, and would likely be eaten away by exogenous market frictions (e.g. trading costs).
 
-%----------------------- PLOT ----------------------
-\inserthere{fig:KMeans_Portfolio_Cum_Returns}
-\begin{figure}[H]
-  \centering
-    \caption{Cumulative Returns of $\mathcal{P}_{\t{KMeans}}$ across data splits for embeddings-based clustering}
-  \includegraphics[scale=0.58]{fig_KMeans_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
-  \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L$ = 4 trading days and the number of traded clusters is, $\theta = \integer{0.5k}=13$ as we have $k^*=26$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. The poor out-of-sample performance of the trading strategy indicates that the embeddings-based clusters lack robustness and fail to generalize effectively over time.}}
-  \label{fig:KMeans_Portfolio_Cum_Returns}
-\end{figure}
+%%----------------------- PLOT ----------------------
+%\inserthere{fig:KMeans_Portfolio_Cum_Returns}
+%\begin{figure}[H]
+%  \centering
+%    \caption{Cumulative Gross Returns of $\mathcal{P}_{\t{KMeans}}$ across data splits for embeddings-based clustering}
+%  \includegraphics[scale=0.58]{fig_KMeans_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
+%  \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L$ = 4 trading days and the number of traded clusters is, $\theta = \integer{0.5k}=13$ as we have $k^*=26$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. The poor out-of-sample performance of the trading strategy indicates that the embeddings-based clusters lack robustness and fail to generalize effectively over time.}}
+%  \label{fig:KMeans_Portfolio_Cum_Returns}
+%\end{figure}
+
+
 %----------------------------------------------------
-%----------------------------------------------------
-%\input{tab_KMeans_Portfolio_Statistics_(L=4,theta=0.5k).tex}
-\input{tab_KMeans_Portfolio_Statistics_UPDATED.tex}
+\input{tab_Portfolio_Statistics_Comparison_GROSS.tex}
 %----------------------------------------------------
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%  LLM  %%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\mx 
-%In \cref{fig:LLM_portfolio_returns} we plot the cumulative returns of the portfolio based on LLM clustering ($\mathcal P_{LLM}$). As before, both algorithms perform really well on ``seen'' data. However, different from before, the \textit{Greedy} algorithm works well also on the Training Split (which it was not trained on). More importantly, both algorithms do a great job in the test data. As we can see, both are able to achieve a consistent profile of earnings through the split. 
-%%
-%The summary statistics of the portfolio are provided in \cref{tab:LLM_portfolio_statistics}, where we see confirmed the fact that both algorithms excel at anticipating the market out of sample. 
+%%%%%%%%%%%%%%%%%%%%%% LLM %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In \cref{fig:LLM_portfolio_returns} we plot the cumulative returns of the portfolio based on LLM clustering ($\mathcal P_{LLM}$). As before, both algorithms perform really well on ``seen'' data. However, different from before, the \textit{Greedy} algorithm works well also on the Training Split (which it was not trained on). More importantly, both algorithms do a great job in the test data. As we can see, both are able to achieve a consistent profile of earnings through the split. 
-
-The empirical analysis reveals notable consistency in the strategy's performance across different time periods. During the training and validation phases, the methodology demonstrates solid performance with annualized returns ranging from 16.0\% to 28.3\% and Sharpe ratios between 1.4 and 2.9. This performance strengthens in the test period, where returns increase to 30.8\%-37.2\% annually with Sharpe ratios of 4.3-4.4, indicating that the strategy's alpha-generating capability successfully generalizes to out-of-sample conditions. The distributional properties of returns provide evidence for the strategy's robustness. The test period maintains positive skewness (0.84 to 1.49) and moderate to high excess kurtosis (1.95 to 8.30), indicating an asymmetric return pattern with more frequent small losses offset by larger gains. This return distribution is complemented by contained maximum drawdowns (1.1\% to 1.5\%) and strong Calmar ratios (21.0 to 34.5) in the test period. The tail risk measures further support the strategy's risk management properties, with annualized 95\% VaR (-6.9\% to -9.5\%) and CVaR (-9.9\% to -11.3\%) in the test period. These statistical properties, combined with the strategy's ability to maintain and enhance its performance metrics out of sample, suggest that the LLM-based clustering approach captures persistent trading signals that transcend specific market regimes.
-
-
-%----------------------- PLOT ----------------------
-\inserthere{fig:LLM_portfolio_returns}
-\begin{figure}[H]
-  \centering
-    \caption{Cumulative Returns of $\mathcal P_{LLM}$ across data splits for LLM-based clustering}
-  \includegraphics[scale=0.58]{fig_LLAMA_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
-  \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L=4$ trading days and the number of traded clusters is  $\theta=\integer{0.5k}=10$, as now we have $k=20$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. 
+\mx
+\textbf{LLM}. 
+%In \cref{fig:portfolio_returns_comparison} Panel B we plot the cumulative returns of the portfolio based on LLM clustering ($\mathcal P_{LLM}$). 
+As before, both algorithms perform really well on ``seen'' data. However, different from before, the \textit{Greedy} algorithm works well also on the Training Split (which it was not trained on). More importantly, both algorithms do a great job in the test data. As we can see, both are able to achieve a consistent profile of earnings through the split. 
 %
-The strong out-of-sample performance of the trading strategy suggests that our proposed LLM-based clusters effectively provide insights for predicting market reactions to firm-specific economic shocks implied by news.
-}}
-  \label{fig:LLM_portfolio_returns}
-\end{figure}
-%----------------------------------------------------
+The portfolio statistics 
+%in Panel B of \cref{tab:portfolio_statistics_gross_comparison} 
+reveal notable consistency in the strategy's performance across different time periods. During the training and validation phases, the methodology demonstrates solid performance with annualized returns ranging from 16.0\% to 28.3\% and Sharpe ratios between 1.4 and 2.9. This performance strengthens in the test period, where returns increase to 30.8\%-37.2\% annually with Sharpe ratios of 4.3-4.4, indicating that the strategy's alpha-generating capability successfully generalizes to out-of-sample conditions. The distributional properties of returns provide evidence for the strategy's robustness. The test period maintains positive skewness (0.84 to 1.49) and moderate to high excess kurtosis (1.95 to 8.30), indicating an asymmetric return pattern with more frequent small losses offset by larger gains. This return distribution is complemented by contained maximum drawdowns (1.1\% to 1.5\%) and strong Calmar ratios (21.0 to 34.5) in the test period. The tail risk measures further support the strategy's risk management properties, with annualized 95\% VaR (-6.9\% to -9.5\%) and CVaR (-9.9\% to -11.3\%) in the test period. These statistical properties, combined with the strategy's ability to maintain and enhance its performance metrics out of sample, substantiate that the LLM-based clustering approach captures persistent trading signals that transcend specific market regimes.
 
-%--------------------- TABLE ------------------------
-%\input{tab_LLAMA_Portfolio_Statistics_(L=4,theta=0.5k).tex}
-\input{tab_LLAMA_Portfolio_Statistics_UPDATED.tex}
-%----------------------------------------------------
+
+%%----------------------- PLOT ----------------------
+%\inserthere{fig:LLM_portfolio_returns}
+%\begin{figure}[H]
+%  \centering
+%    \caption{Cumulative Gross Returns of $\mathcal P_{LLM}$ across data splits for LLM-based clustering}
+%  \includegraphics[scale=0.58]{fig_LLAMA_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
+%  \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L=4$ trading days and the number of traded clusters is  $\theta=\integer{0.5k}=10$, as now we have $k=20$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. 
+%%
+%The strong out-of-sample performance of the trading strategy suggests that our proposed LLM-based clusters effectively provide insights for predicting market reactions to firm-specific economic shocks implied by news.
+%}}
+%  \label{fig:LLM_portfolio_returns}
+%\end{figure}
+%%----------------------------------------------------
+
+
 

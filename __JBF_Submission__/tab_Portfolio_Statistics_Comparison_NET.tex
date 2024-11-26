@@ -1,0 +1,80 @@
+\inserthere{tab:portfolio_statistics_comparison_net}
+
+\begin{table}[H] 
+\caption{Portfolio Statistics Comparison: KMeans vs LLM Clustering | Net Returns} 
+\centering
+\label{tab:portfolio_statistics_comparison_net}
+
+\renewcommand{\arraystretch}{1.1}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+% Panel A: KMeans
+\begin{subtable}{\textwidth}
+\caption{Panel A: Statistics of $\mathcal{P}_{\text{KMeans}}$}
+\centering
+{\small
+\begin{tabular}{
+ P{1.28cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} 
+ P{0.9cm} P{1cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm}
+}
+\Xhline{2\arrayrulewidth}
+\textbf{Split} & \textbf{Algo.} & \textbf{Cum. Ret.} & \textbf{Avg. Ret.} & \textbf{St. Dev.} & \textbf{Sharpe Ratio} & \textbf{Sortino Ratio} & \textbf{Max. DD} & \textbf{Calmar Ratio} & \textbf{Skew.} & \textbf{Exc. Kurt.} & \textbf{VaR 95\%} & \textbf{CVaR 95\%} \\
+\Xhline{2\arrayrulewidth}
+\multirow{2}{*}{All} & \textit{Greedy} & 0.780 & -17.3 & 9.6 & -2.0 & -1.7 & -24.7 & -0.7 & -0.48 & 3.90 & -14.0 & -24.2 \\
+ & \textit{Stable} & 1.058 & 4.4 & 17.0 & 0.3 & 0.3 & -14.2 & 0.3 & 0.15 & 5.01 & -24.5 & -38.3 \\
+\hline
+\multirow{2}{*}{Train} & \textit{Greedy} & 0.823 & -25.6 & 11.6 & -2.5 & -2.0 & -18.2 & -1.4 & -0.51 & 2.71 & -19.4 & -29.9 \\
+ & \textit{Stable} & 1.057 & 8.7 & 19.9 & 0.4 & 0.4 & -14.2 & 0.6 & -0.25 & 3.21 & -31.9 & -46.0 \\
+\hline
+\multirow{2}{*}{Validation} & \textit{Greedy} & 1.000 & -0.0 & 7.5 & -0.0 & -0.0 & -5.8 & -0.0 & -0.50 & 0.95 & -12.1 & -17.9 \\
+ & \textit{Stable} & 1.050 & 14.7 & 13.4 & 1.0 & 1.0 & -5.3 & 2.8 & -0.27 & 1.99 & -20.6 & -30.9 \\
+\hline
+\multirow{2}{*}{Test} & \textit{Greedy} & 0.937 & -20.0 & 6.6 & -3.4 & -3.5 & -9.1 & -2.2 & 1.55 & 4.31 & -8.9 & -12.0 \\
+ & \textit{Stable} & 0.924 & -23.6 & 14.2 & -1.9 & -2.0 & -10.0 & -2.4 & 2.48 & 14.59 & -20.6 & -28.5 \\
+\Xhline{2\arrayrulewidth}
+\end{tabular}
+}
+\end{subtable}
+
+\vspace{0.5cm}
+
+% Panel B: LLM
+\begin{subtable}{\textwidth}
+\caption{Panel B: Statistics of $\mathcal{P}_{\text{LLM}}$}
+\centering
+{\small
+\begin{tabular}{
+ P{1.28cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} 
+ P{0.9cm} P{1cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm}
+}
+\Xhline{2\arrayrulewidth}
+\textbf{Split} & \textbf{Algo.} & \textbf{Cum. Ret.} & \textbf{Avg. Ret.} & \textbf{St. Dev.} & \textbf{Sharpe Ratio} & \textbf{Sortino Ratio} & \textbf{Max. DD} & \textbf{Calmar Ratio} & \textbf{Skew.} & \textbf{Exc. Kurt.} & \textbf{VaR 95\%} & \textbf{CVaR 95\%} \\
+\Xhline{2\arrayrulewidth}
+\multirow{2}{*}{All} & \textit{Greedy} & 0.891 & -8.5 & 9.7 & -0.9 & -1.0 & -12.3 & -0.7 & 1.44 & 9.81 & -15.7 & -21.2 \\
+ & \textit{Stable} & 0.928 & -5.6 & 8.6 & -0.7 & -0.7 & -11.7 & -0.5 & 0.31 & 2.18 & -12.9 & -18.7 \\
+\hline
+\multirow{2}{*}{Train} & \textit{Greedy} & 0.910 & -13.4 & 11.5 & -1.2 & -1.3 & -12.3 & -1.1 & 1.63 & 8.83 & -19.4 & -23.2 \\
+ & \textit{Stable} & 0.964 & -5.5 & 10.0 & -0.6 & -0.6 & -9.7 & -0.6 & 0.21 & 1.60 & -14.8 & -21.6 \\
+\hline
+\multirow{2}{*}{Validation} & \textit{Greedy} & 0.985 & -4.3 & 8.1 & -0.5 & -0.6 & -4.3 & -1.0 & 0.19 & 1.17 & -11.6 & -18.0 \\
+ & \textit{Stable} & 0.947 & -14.3 & 7.0 & -2.2 & -2.0 & -6.1 & -2.4 & 0.17 & 1.17 & -13.0 & -16.5 \\
+\hline
+\multirow{2}{*}{Test} & \textit{Greedy} & 0.995 & -1.5 & 6.2 & -0.2 & -0.3 & -1.9 & -0.8 & 1.02 & 6.91 & -8.2 & -12.1 \\
+ & \textit{Stable} & 1.009 & 3.1 & 7.0 & 0.4 & 0.5 & -1.8 & 1.7 & 0.91 & 1.98 & -10.8 & -12.4 \\
+\Xhline{2\arrayrulewidth}
+\end{tabular}
+}
+\end{subtable}
+
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+{\small\textit{Note:
+Portfolio statistics of trading strategies based on clusters obtained from KMeans (Panel A) and LLM (Panel B) approaches.
+The statistics provided include performance metrics (Cumulative Return, Average Return (\%)), risk measures (Standard Deviation (\%), Maximum Drawdown (\%), Value at Risk (\%), Conditional Value at Risk (\%)), risk-adjusted performance ratios (Sharpe Ratio, Sortino Ratio, Calmar Ratio), and return distribution characteristics (Skewness, Excess Kurtosis). These statistics are provided for both cluster-selection algorithms: Greedy and Stable.
+Except for the Cumulative Return, all returns are annualized. The Sharpe Ratio is computed using the daily returns, assuming 252 trading days in a year. The Sortino Ratio is calculated using the daily downside returns. The Maximum Drawdown is the maximum loss from a peak to a trough. The Calmar Ratio is the ratio of the annualized return to the maximum drawdown. Skewness measures the asymmetry of the return distribution, while Kurtosis quantifies the tails' thickness. The Value at Risk (VaR) and Conditional Value at Risk (CVaR) are calculated at a 95\% confidence level.
+The Greedy algorithm longs (shorts) clusters that maximize (minimize) the cluster-average-$SR$ in the validation sample subject to a positivity (negativity) constraint, while the Stable algorithm longs (shorts) clusters that minimize the rank difference between the training and validation rankings of the cluster-average-$SR$'s subject to a positivity (negativity) constraint, which is now imposed on both sample splits. In both algorithms, the cardinality of each leg is upper-bounded by a hyperparameter $\theta$.
+The holding period of the beta-neutral positions is set to $L$ = 4 trading days for both approaches. The number of traded clusters is $\theta = 0.5k=13$ for KMeans ($k^*=26$ clusters) and $\theta = 0.5k=10$ for LLM ($k^*=20$ clusters). The selection criteria for these hyperparameters ($L,\theta$) is based on maximizing the Sharpe Ratios of the train and validation samples.
+}}
+\end{minipage}
+\end{table}
