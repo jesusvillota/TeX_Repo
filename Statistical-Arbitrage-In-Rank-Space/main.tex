@@ -5,6 +5,7 @@
 
 \begin{document}
 
+\tableofcontents
 
 %\textbf{ChatGPT Prompt:}
 %
@@ -21,12 +22,11 @@
 %
 %
 %\Vhrulefill
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 In a market consisting of $N$ stocks, we denote the dividend-adjusted return on stock $i$ at trading day $t$ by $r_{i, t}$. We adopt a factor model for stock return,
 \begin{align}\label{eq:1}
 r_t- r_f = \beta_t F_t+ \epsilon_t, \quad t=1,2, \ldots, T 
@@ -502,7 +502,7 @@ $$\begin{array}{rl}
 
 \newpage
 \violet{
-\section{Fitting an Ornstein-Uhlenbeck (OU) Process}
+\chapter{Fitting an Ornstein-Uhlenbeck (OU) Process}
 
 The objective is to fit an Ornstein-Uhlenbeck (OU) process to the cumulative residual returns $x_t^L$ for each asset. The OU process is a continuous-time stochastic process exhibiting mean-reverting behavior, suitable for modeling financial time series that drift toward a long-term mean.
 
@@ -949,6 +949,12 @@ $$
 
 \item Model Validation: Check the residuals $\epsilon_t$ to ensure they are white noise and normally distributed.
 \end{enumerate}
+
+
+
+\newpage
+\chapter{Deep Neural Networks}
+
 
 
 \end{document}
