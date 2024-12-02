@@ -1,5 +1,5 @@
 \section{Data}
-\hspace{0.5cm} This paper employs a dataset of Spanish business news articles sourced from Dow Jones Newswires, covering the period from June 24, 2020, to September 30, 2021. The selection of this timeframe is deliberate, driven by two key considerations. 
+This paper employs a dataset of Spanish business news articles sourced from Dow Jones Newswires, covering the period from June 24, 2020, to September 30, 2021. The selection of this timeframe is deliberate, driven by two key considerations. 
 %
 First, given the substantial computational demands of LLM-based analysis, we strategically focus on a smaller, carefully curated dataset. This deliberate scope reduction allows us to thoroughly demonstrate our novel methodology's effectiveness in decoding market-news relationships while keeping computational costs manageable. Rather than pursuing a broad-scale analysis, we prioritize proving our approach's utility through a focused, computationally feasible study that can serve as a foundation for future expansions.
 %
@@ -23,7 +23,7 @@ Construction will take two years, and the Western Sydney airport is expected to 
 
 
 
-Our NER algorithm applied to  Article \ref{news:article-acs-acciona} successfully identifies the Spanish firms \texttt{ACS.MC} (Actividades de Construcción y Servicios SA) and \texttt{ANA.MC} (Acciona SA) while disregarding the Australian \texttt{CIM.AU} (CIMIC Groups Ltd). 
+Our NER algorithm applied to  Example \ref{news:article-acs-acciona} successfully identifies the Spanish firms \texttt{ACS.MC} (Actividades de Construcción y Servicios SA) and \texttt{ANA.MC} (Acciona SA) while disregarding the Australian \texttt{CIM.AU} (CIMIC Groups Ltd). 
 To further ensure the reliability of firm identification, we validate the extracted entities using a Large Language Model (LLM).
 In particular, we feed the articles to the LLM, which parses them according to a predefined schema. As we will see later, the first task in this schema 
 is to identify the listed Spanish firms directly affected by the events described in the article. Finally, the identified firms are filtered against a dynamic list of IBEX-35 members.
