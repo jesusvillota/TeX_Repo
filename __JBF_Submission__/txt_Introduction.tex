@@ -7,15 +7,31 @@ A substantial body of literature has endeavored to predict market reactions to n
 
 \mx 
 %----------------------------------------------------
-% <HOW CAN I INTRODUCE THIS? WE CANNOT PUT THREE DOTS IN ACADEMIA! PROPOSE A BETTER WAY TO INTRODUCE THIS, NOTE THAT WE ARE USING AN UNUSUAL FRAMEWORK TO EXPOSE THIS FIRST CRTIQUE USING THE QUOTE ENVIRONMENT>
 First, we examine the lack of economic focus in current methodological approaches to analyzing financial news. This limitation is evident across three main streams of literature.
 \begin{quote}
 \hspace{0.5cm} \textit{Sentiment Analysis.} 
-Traditional approaches frequently rely on sentiment analysis, reducing the richness of news content to binary classifications of positive or negative sentiment. The seminal work of Tetlock (2007) demonstrated the predictive power of media sentiment in financial markets, showing that negative media coverage leads to downward pressure on market prices, followed by a reversion to fundamentals. This finding sparked significant interest in sentiment-based approaches, with Tetlock et al. (2008) extending the analysis to firm-specific news and revealing that negative word content not only forecasts poor firm earnings but also indicates a temporary underreaction in stock prices.
+Traditional approaches frequently rely on sentiment analysis, reducing the richness of news content to binary classifications of positive or negative sentiment. The seminal work of 
+\cite{tetlock2007giving} % Tetlock (2007) 
+demonstrated the predictive power of media sentiment in financial markets, showing that negative media coverage leads to downward pressure on market prices, followed by a reversion to fundamentals. This finding sparked significant interest in sentiment-based approaches, with 
+\cite{tetlock2008more} % Tetlock et al. (2008) 
+extending the analysis to firm-specific news and revealing that negative word content not only forecasts poor firm earnings but also indicates a temporary underreaction in stock prices.
 Despite these early successes, the methodology of sentiment analysis has faced important challenges. 
-% <HERE, IT IS NOT CLEAR WHAT IS MEANT BY "leading them to develop specialized financial word lists". Please, rewrite that better. In order to help you with rewriting the Loughran MacDonald part, I will provide you some useful info about the paper as a JSON dictionary.>
-Loughran and McDonald (2011) highlighted a fundamental issue: general-purpose dictionaries often misclassify words in financial contexts, leading them to develop specialized financial word lists. Building on this insight, Jegadeesh and Wu (2013) demonstrated that the weighting scheme applied to these words is as crucial as the word lists themselves, introducing a more nuanced approach to content analysis.
-The emergence of social media and machine learning has driven further methodological innovations in sentiment analysis. Bollen et al. (2011) leveraged Twitter data to predict DJIA movements, while Garcia (2013) revealed that sentiment's predictive power is particularly pronounced during recessions, suggesting time-varying importance of news sentiment. Recent advances in machine learning have pushed the boundaries further, with Ke et al. (2019) developing a sophisticated supervised learning framework specifically designed for return prediction. The advent of transformer-based models has enabled even more sophisticated approaches, with Lee et al. (2020) and Wei and Nguyen (2020) applying BERT-based architectures to financial sentiment analysis.
+%
+\cite{loughran2011liability} % Loughran and McDonald (2011) 
+highlighted a fundamental issue: general-purpose dictionaries often misclassify words in financial contexts, leading them to develop specialized financial word lists. Building on this insight, 
+\cite{jegadeesh2013word} % Jegadeesh and Wu (2013) 
+demonstrated that the weighting scheme applied to these words is as crucial as the word lists themselves, introducing a more nuanced approach to content analysis.
+The emergence of social media and machine learning has driven further methodological innovations in sentiment analysis. 
+\cite{bollen2011twitter} % Bollen et al. (2011) 
+leveraged Twitter data to predict DJIA movements, while 
+\cite{garcia2013sentiment} % Garcia (2013) 
+revealed that sentiment's predictive power is particularly pronounced during recessions, suggesting time-varying importance of news sentiment. Recent advances in machine learning have pushed the boundaries further, with 
+\cite{ke2019predicting} % Ke et al. (2019) 
+developing a sophisticated supervised learning framework specifically designed for return prediction. The advent of transformer-based models has enabled even more sophisticated approaches, with 
+\cite{lee2020bert} % Lee et al. (2020) 
+and 
+\cite{wei2018stock} % Wei and Nguyen (2020) 
+applying BERT-based architectures to financial sentiment analysis.
 %
 However, despite their widespread adoption and continued methodological refinements, sentiment analysis approaches remain fundamentally limited. They often miss the intricacy inherent in news by focusing on linguistic patterns rather than economically relevant considerations. 
 

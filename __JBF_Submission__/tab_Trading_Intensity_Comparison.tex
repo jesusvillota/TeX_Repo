@@ -71,10 +71,13 @@ The metrics are computed at a daily frequency. The `\# Open Positions' columns r
 as a percentage; formally, $Turnover_t = 100 \times (\sum_i |w_{i,t} - w_{i,t-1}|)/(\sum_i |w_{i,t}|)$, where $w_{i,t}$ 
 represents the position size in asset $i$ at time $t$. `Changes/Pos.' represents the average number of modifications per 
 position per day, computed as the daily turnover divided by the average number of positions, providing insight into how 
-actively individual positions are managed. The `Trading Costs (\%)' section reports `Cost' as the average daily implementation 
-shortfall (computed as the difference between gross and net returns) expressed in percentage terms, while `Active' shows 
-the percentage of trading days with at least one open position. All metrics are first computed daily and then averaged 
-over their respective periods, except for Max and Min positions which represent the absolute extremes over each period.
+actively individual positions are managed. 
+The `Trading Costs (\%)' section reports `Cost' as the average daily implementation shortfall (computed as the product of daily turnover and a conservative transaction cost parameter of 30 basis points, representing both direct and indirect trading costs) expressed in percentage terms, while `Active' shows the percentage of trading days with at least one open position.
+%
+%The `Trading Costs (\%)' section reports `Cost' as the average daily implementation 
+%shortfall (computed as the difference between gross and net returns) expressed in percentage terms, while `Active' shows 
+%the percentage of trading days with at least one open position. 
+All metrics are first computed daily and then averaged over their respective periods, except for Max and Min positions which represent the absolute extremes over each period.
 }
 \end{minipage}
 \end{table}

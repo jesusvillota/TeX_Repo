@@ -1,7 +1,7 @@
 \inserthere{tab:portfolio_statistics_comparison_net}
 
 \begin{table}[H] 
-\caption{Portfolio Statistics Comparison: KMeans vs LLM Clustering | Net Returns} 
+\caption{Portfolio Statistics Comparison: KMeans vs LLM Clustering (net of Trading Costs)} 
 \centering
 \label{tab:portfolio_statistics_comparison_net}
 
@@ -73,6 +73,10 @@
 Portfolio statistics of trading strategies based on clusters obtained from KMeans (Panel A) and LLM (Panel B) approaches.
 The statistics provided include performance metrics (Cumulative Return, Average Return (\%)), risk measures (Standard Deviation (\%), Maximum Drawdown (\%), Value at Risk (\%), Conditional Value at Risk (\%)), risk-adjusted performance ratios (Sharpe Ratio, Sortino Ratio, Calmar Ratio), and return distribution characteristics (Skewness, Excess Kurtosis). These statistics are provided for both cluster-selection algorithms: Greedy and Stable.
 Except for the Cumulative Return, all returns are annualized. The Sharpe Ratio is computed using the daily returns, assuming 252 trading days in a year. The Sortino Ratio is calculated using the daily downside returns. The Maximum Drawdown is the maximum loss from a peak to a trough. The Calmar Ratio is the ratio of the annualized return to the maximum drawdown. Skewness measures the asymmetry of the return distribution, while Kurtosis quantifies the tails' thickness. The Value at Risk (VaR) and Conditional Value at Risk (CVaR) are calculated at a 95\% confidence level.
+%
+All returns are calculated net of transaction costs. We implement a conservative transaction cost estimate of 30 basis points (0.30\%) per trade, which accounts for both direct costs (commissions, fees) and indirect costs (bid-ask spreads, market impact). 
+%Transaction costs for each day are computed as the product of daily portfolio turnover and the transaction cost parameter ($TC = \text{turnover} \times 0.30\%$). Daily turnover is measured as the ratio of the absolute change in positions to the total portfolio size: $\text{Turnover} = \sum|Position_{t} - Position_{t-1}| / \sum|Position_{t}|$. This implementation follows standard practice in the literature (see, e.g., \citet{frazzini2012}) and provides a realistic assessment of strategy profitability in real market conditions.
+%
 The Greedy algorithm longs (shorts) clusters that maximize (minimize) the cluster-average-$SR$ in the validation sample subject to a positivity (negativity) constraint, while the Stable algorithm longs (shorts) clusters that minimize the rank difference between the training and validation rankings of the cluster-average-$SR$'s subject to a positivity (negativity) constraint, which is now imposed on both sample splits. In both algorithms, the cardinality of each leg is upper-bounded by a hyperparameter $\theta$.
 The holding period of the beta-neutral positions is set to $L$ = 4 trading days for both approaches. The number of traded clusters is $\theta = 0.5k=13$ for KMeans ($k^*=26$ clusters) and $\theta = 0.5k=10$ for LLM ($k^*=20$ clusters). The selection criteria for these hyperparameters ($L,\theta$) is based on maximizing the Sharpe Ratios of the train and validation samples.
 }}

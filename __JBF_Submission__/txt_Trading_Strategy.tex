@@ -101,19 +101,19 @@ $
 where $p_{d}^{j,\text{adj}}$ is the adjusted close price of firm $j$ at trading day $d$.
 }
 %----------------------------------------------------
-
-\mx 
+%
+%\mx 
 %----------------------------------------------------
-The notation overload in the regression coefficients $(\alpha^{(i,j)},\beta^{(i,j)})$ emphasizes the fact that $\alpha$ and $\beta$ are specific to each pair $(i,j)\in\mathcal B$ since the market model is computed for each firm $j\in\F_{\t{IBEX-35}}$ on some specific window of time $\mathcal{M}^i$, which is particular to each article $i\in\D$.
+The notation overload in the regression coefficients $(\alpha^{(i,j)},\beta^{(i,j)})$ emphasizes the fact that $\alpha$ and $\beta$ are specific to each pair $(i,j)\in\mathcal B$ since the market model is computed for each firm $j\in\F_{\t{IBEX-35}}$ on a window of time $\mathcal{M}^i$, which is particular to each article $i\in\D$.
 %----------------------------------------------------
 
 \mx 
 The reason why we fit a market model to each $(i,j)\in\mathcal B$ is to then apply a market-neutral strategy as in \cite{chan2003stock} and \cite{jiang2021pervasive}. This is an investment approach designed to minimize or eliminate exposure to overall market movements, isolating the performance of a specific firm. 
 % 
 In particular, we employ a beta-neutral strategy by buying one unit of firm $j$'s stock and shorting $\beta^{(i,j)}$ units of the market index (i.e.: an ETF replicating the IBEX-35). 
-
+%
 %----------------------------------------------------
-\mx
+%\mx
 This hedged position harvests the idiosyncratic returns from the market model and it only makes sense when firm $j$'s returns are expected to outperform or underperform the market.\footnote{
 For expected underperformance of firm $j$, reverse the beta neutral positions: 
 sell one unit of firm $j$ and buy $\beta^{(i,j)}$ units of the market index. However, note that this will be handled later by a Trading Rule $(TR)$.
@@ -139,10 +139,10 @@ d \in \tilde{\mathfrak{d}}
 $}
 %----------------------------------------------------
 The justification for this choice of $L$ is made in section A.2 of the Appendix. 
-
+%
 %----------------------------------------------------
-\mx 
-
+%\mx 
+%
 After having held the beta-neutral position over the holding period $\mathcal H^i$, we obtain a time series of abnormal returns $\{AR_{d}^{(i,j)}\}_{d\in\mathcal H^i}$ from where we can obtain the usual performance metrics. First, the average daily log returns are obtained as
 $$
 \mu^{(i,j)} = \frac{1}{{{L}}+1} 
@@ -201,6 +201,7 @@ The distribution of cluster-average Sharpe Ratios across the different clusters 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%   ALGORITHMS   %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mx
 We then focus on developing two algorithms that optimally leverage the cluster information for our trading strategy. Our approach draws parallels with traditional portfolio sorting methods, where assets are typically arranged into deciles based on specific characteristics, and trading positions are established by going long on top deciles and short on bottom ones. Similarly, our strategy will construct self-financing portfolios based on clusters rather than individual assets: taking long positions in clusters expected to outperform and short positions in those expected to underperform.
 %
 To identify the optimal clusters for trading, we propose two distinct algorithmic approaches. The first approach, which we term \qquote{greedy}, selects clusters by maximizing the Sharpe Ratio within the validation dataset. The second approach, termed \qquote{stable}, utilizes a broader information set by incorporating both training and validation data, aiming to identify clusters that maintain consistent performance across both splits. In both algorithms, we impose sign restrictions to ensure that our trading positions align with the expected direction of returns.
@@ -219,8 +220,8 @@ from where we compute the cluster-average $\overline{S R}_g^{val}$ for each $g\i
 %
 %----------------------------------------------------
 Define $\mathcal G_{SR^+}^{val}:=\{ g\in \mathcal G \mid \overline{SR}_g^{val} >0\}$ and $\mathcal G_{SR^-}^{val}:=\{ g\in \mathcal G \mid \overline{SR}_g^{val} <0\}$ as the sets of clusters with positive and negative Sharpe Ratios in the validation sample. Obviously, we will be interested in taking long positions when reading an article that is clustered in some $g\in \mathcal G_{SR^+}^{val}$, and short positions in clusters $g\in \mathcal G_{SR^+}^{val}$. 
-
-\mx 
+%
+%\mx 
 %----------------------------------------------------
 However, our trading strategy will not trade every cluster $g\in\G$. Instead, it will select the clusters from $\mathcal G_{SR^+}$ and $\mathcal G_{SR^-}$ that lead the to most profitable trades. 
 To identify such clusters, we rank them by their average Sharpe Ratio. Define the ranking function $\mathfrak{R}: \mathcal{G} \to \3{1, \ldots, k^*}$ such that
@@ -231,6 +232,7 @@ $$
 \mathbf{1}\1{
 \overline{S R}_h^{val} \geq \overline{S R}_g^{val} 
 }
+~,
 $$
 where $\mathbf{1}(\cdot)$ is the indicator function which equals 1 if the condition inside is true and 0 otherwise.
 
@@ -248,7 +250,7 @@ $
 .
 $
 %----------------------------------------------------
-The set of traded clusters $\mathcal G_{\theta}$ is defined as:
+The set of traded clusters $\mathcal G_{\theta}$ is defined as
 $$
 \G_\theta := 
 \3{
@@ -344,8 +346,8 @@ $$
 
 
 This approach ensures that we select the most stable clusters for trading, reducing the risk associated with rank variability between the training and validation samples, and ensuring that the direction of the signal is consistent across the two splits. The final output consists of the sets of long-traded and short-traded clusters, which are then used to implement the trading strategy.
-
-
+%
+%
 The implementation of the algorithm is methodically presented in the Appendix (\cref{alg:rank_stability}).
 
 
@@ -375,14 +377,16 @@ Additionally, some clusters are heavily built on specific events of the period o
 %\hspace{0.5cm}
 In contrast, our LLM-based clustering methodology offers significant advantages by focusing on the fundamental nature of economic shocks rather than historical patterns. This approach provides more robust and generalizable signals that are less susceptible to temporal changes in market conditions. Moreover, unlike the black box nature of vector embeddings, our methodology offers transparency and interpretability in signal generation. This is evident in how the \textit{Greedy} algorithm's cluster selection closely aligns with the direction of economic shocks: negative shocks typically correspond to price decreases and positive shocks to increases. 
 
-Looking at \cref{tab:LLM_cluster_mapping_extended}, we observe that both algorithms consistently short articles classified as policy shocks, regardless of direction, while going long on cluster 8, which contains approximately one-third of news articles (those categorized as undergoing financial minor and positive shocks). This consistent shorting of policy shocks likely reflects markets' general aversion to policy uncertainty, as policy changes - even positive ones - often create implementation uncertainty and take time for market participants to fully price in. Interestingly, both algorithms also exhibit seemingly counter-intuitive behavior by going long on negative major demand shocks and short on positive major demand shocks. This pattern might suggest a ``mean reversion'' expectation in the algorithms, where major demand shocks are viewed as temporary deviations that will eventually correct: negative shocks present buying opportunities, while positive shocks signal potential overvaluation.
+Looking at \cref{tab:LLM_cluster_mapping_extended}, we observe that both algorithms consistently short articles classified as policy shocks, regardless of direction, while going long on cluster 8, which contains approximately one-third of news articles (those categorized as undergoing financial minor and positive shocks). This consistent shorting of policy shocks likely reflects markets' general aversion to policy uncertainty, as policy changes --even positive ones-- often create implementation uncertainty and take time for market participants to fully price in. Interestingly, both algorithms also exhibit seemingly counter-intuitive behavior by going long on negative major demand shocks and short on positive major demand shocks. This pattern might suggest a ``mean reversion'' expectation in the algorithms, where major demand shocks are viewed as temporary deviations that will eventually correct: negative shocks present buying opportunities, while positive shocks signal potential overvaluation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Trading Rule \& Portfolio Construction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\hspace{0.5cm}For a given selection of clusters $\G_{\theta}^+$ and $\G_{\theta}^-$, we launch trades and hold them for $L\in\mathbb{N}$ trading days over a window $\mathcal H^i$.
+For a given selection of clusters $\G_{\theta}^+$ and $\G_{\theta}^-$, we launch trades and hold them for $L\in\mathbb{N}$ trading days over a window $\mathcal H^i$.
 %
-Formally, the trading rule $TR_{{{L}},\theta}\angl{(i,j),d}$ for a pair $(i,j)\in\mathcal{B}$ at trading day ${d}\in\tilde{\mathfrak d}$ is 
+Formally, the trading rule
+% $TR_{{{L}},\theta}\angl{(i,j),d}$ 
+ for a pair $(i,j)\in\mathcal{B}$ at trading day ${d}\in\tilde{\mathfrak d}$ is 
 %
 %----------------------------------------------------
 \begin{align*}
@@ -574,21 +578,10 @@ This figure presents the cumulative gross returns of trading strategies based on
 %%%%%%%%%%%%%%%%%%%  KMEANS %%%%%%%%%%%%%%%%%%%%%%%%%
 
 \textbf{KMeans}. 
-%In \cref{fig:portfolio_returns_comparison} Panel A we plot the cumulative returns of the portfolio constructed based on our KMeans clustering of embeddings. In Panel A of \cref{tab:portfolio_statistics_gross_comparison} we summarize the associated portfolio statistics. 
+In panel A of \cref{tab:portfolio_statistics_gross_comparison} we show the portfolio statistics of the benchmark model.
 As we can see, both algorithms work well on the data splits they were trained on: the Stable algorithm works well on both, training and validation data, while the Greedy algorithm does a good job only on validation data as expected. However, this doesn't say anything about any of these algorithms, as it is easy to make profitable trades \textit{in-sample}. 
 %
 The generalizability of the strategy is determined \textit{out-of-sample} in the test data. The empirical analysis reveals significant challenges in the strategy's ability to maintain consistent performance across different time periods. During the training and validation phases, the methodology shows promising results with annualized returns ranging from 26.6\% to 47.7\% and strong risk-adjusted performance metrics (Sharpe ratios between 2.0 and 3.2). However, this performance deteriorates substantially in the test period, where returns drop to modest levels (2.9\% to 4.9\% annually) with significantly lower Sharpe ratios (0.2 to 0.7), suggesting that the strategy's alpha-generating capability does not generalize well out of sample. The distributional properties of returns in the test period provide additional insights into the strategy's behavior under true out-of-sample conditions. The shift from negative to strongly positive skewness (1.85 to 2.46) coupled with high excess kurtosis (5.50 to 14.57) suggests that the strategy's return distribution has fundamentally changed, characterized by more frequent small losses offset by occasional large gains. This asymmetric return pattern, while potentially appealing from a risk preference perspective, differs markedly from the training period characteristics. The tail risk measures further illuminate the strategy's risk profile, with annualized 95\% VaR ranging from -7.8\% to -18.9\% and corresponding CVaR from -9.7\% to -26.8\% in the test period. These statistical properties, combined with the strong dependence on historical cluster-specific performance, indicate that the strategy fails to identify stable and generalizable trading signals, likely due to its reliance on firm and industry-specific clustering patterns that do not persist out of sample. As we can see in the plot, neither algorithm is able to generate a consistent profile of earnings, and the statistics confirm that profits are negligible, and would likely be eaten away by exogenous market frictions (e.g. trading costs).
-
-%%----------------------- PLOT ----------------------
-%\inserthere{fig:KMeans_Portfolio_Cum_Returns}
-%\begin{figure}[H]
-%  \centering
-%    \caption{Cumulative Gross Returns of $\mathcal{P}_{\t{KMeans}}$ across data splits for embeddings-based clustering}
-%  \includegraphics[scale=0.58]{fig_KMeans_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
-%  \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L$ = 4 trading days and the number of traded clusters is, $\theta = \integer{0.5k}=13$ as we have $k^*=26$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. The poor out-of-sample performance of the trading strategy indicates that the embeddings-based clusters lack robustness and fail to generalize effectively over time.}}
-%  \label{fig:KMeans_Portfolio_Cum_Returns}
-%\end{figure}
-
 
 %----------------------------------------------------
 \input{tab_Portfolio_Statistics_Comparison_GROSS.tex}
@@ -599,27 +592,19 @@ The generalizability of the strategy is determined \textit{out-of-sample} in the
 
 \mx
 \textbf{LLM}. 
-%In \cref{fig:portfolio_returns_comparison} Panel B we plot the cumulative returns of the portfolio based on LLM clustering ($\mathcal P_{LLM}$). 
+%In panel B of \cref{tab:portfolio_statistics_gross_comparison} we show the portfolio statistics of the LLM-based strategy.
+Panel B of \cref{tab:portfolio_statistics_gross_comparison} presents the performance metrics for our LLM-based approach.
 As before, both algorithms perform really well on ``seen'' data. However, different from before, the \textit{Greedy} algorithm works well also on the Training Split (which it was not trained on). More importantly, both algorithms do a great job in the test data. As we can see, both are able to achieve a consistent profile of earnings through the split. 
 %
 The portfolio statistics 
 %in Panel B of \cref{tab:portfolio_statistics_gross_comparison} 
-reveal notable consistency in the strategy's performance across different time periods. During the training and validation phases, the methodology demonstrates solid performance with annualized returns ranging from 16.0\% to 28.3\% and Sharpe ratios between 1.4 and 2.9. This performance strengthens in the test period, where returns increase to 30.8\%-37.2\% annually with Sharpe ratios of 4.3-4.4, indicating that the strategy's alpha-generating capability successfully generalizes to out-of-sample conditions. The distributional properties of returns provide evidence for the strategy's robustness. The test period maintains positive skewness (0.84 to 1.49) and moderate to high excess kurtosis (1.95 to 8.30), indicating an asymmetric return pattern with more frequent small losses offset by larger gains. This return distribution is complemented by contained maximum drawdowns (1.1\% to 1.5\%) and strong Calmar ratios (21.0 to 34.5) in the test period. The tail risk measures further support the strategy's risk management properties, with annualized 95\% VaR (-6.9\% to -9.5\%) and CVaR (-9.9\% to -11.3\%) in the test period. These statistical properties, combined with the strategy's ability to maintain and enhance its performance metrics out of sample, substantiate that the LLM-based clustering approach captures persistent trading signals that transcend specific market regimes.
+reveal notable consistency in the strategy's performance across different time periods. During the training and validation phases, the methodology demonstrates solid performance with annualized returns ranging from 16.0\% to 28.3\% and Sharpe ratios between 1.4 and 2.9. This performance strengthens in the test period, where returns increase to 30.8\%-37.2\% annually with Sharpe ratios of 4.3-4.4, indicating that the strategy's alpha-generating capability successfully generalizes to out-of-sample conditions. The distributional properties of returns provide evidence for the strategy's robustness. 
+%
+The test period maintains positive skewness (0.84 to 1.49) and moderate to high excess kurtosis (1.95 to 8.30), indicating an asymmetric return pattern with more frequent small losses offset by larger gains. This return distribution is complemented by contained maximum drawdowns (1.1\% to 1.5\%) and strong Calmar ratios (21.0 to 34.5) in the test period. The tail risk measures further support the strategy's risk management properties, with annualized 95\% VaR ranging from -6.9\% to -9.5\%, and CVaR ranging from -9.9\% to -11.3\% in the test period. 
+%
+Taken together, the strategy's ability to sustain consistent out-of-sample performance metrics demonstrates that the LLM-based clustering approach identifies enduring trading signals that transcend specific market regimes.
 
+% <I WROTE THE PARAGRAPH BELOW FAST. PLEASE REWRITE IT BETTER TO ENSURE CLARITY AND COHESION WITH THE REST OF THE TEXT. PLEASE FILL A SUMMARY OF THE RESULTS (I WILL PROVIDE YOU THE APPENDIX SECTION ON TRANSACTION COSTS FOR YOU TO HAVE A REFERENCE)>
+%Although the focus of this paper is to anticipate market reactions (that is, identify winners and losers to understand the predictability power of our novel LLM-based methodology), we can additionally perform an analysis of the trading intensity of the resulting strategy. The results from this exercise can be found in Appendix section A.7. For a conservative 0.3 bps transaction cost, we find that...
 
-%%----------------------- PLOT ----------------------
-%\inserthere{fig:LLM_portfolio_returns}
-%\begin{figure}[H]
-%  \centering
-%    \caption{Cumulative Gross Returns of $\mathcal P_{LLM}$ across data splits for LLM-based clustering}
-%  \includegraphics[scale=0.58]{fig_LLAMA_Portfolio_Cum_Returns_(L=4,theta=0.5k).pdf}
-%  \subcaption*{\textit{Note: The holding period of the beta-neutral strategies is set to $L=4$ trading days and the number of traded clusters is  $\theta=\integer{0.5k}=10$, as now we have $k=20$ clusters. The selection criteria for these parameters is based on maximizing the Sharpe Ratios of the train and validation samples. 
-%%
-%The strong out-of-sample performance of the trading strategy suggests that our proposed LLM-based clusters effectively provide insights for predicting market reactions to firm-specific economic shocks implied by news.
-%}}
-%  \label{fig:LLM_portfolio_returns}
-%\end{figure}
-%%----------------------------------------------------
-
-
-
+While our primary focus has been on developing a methodology to anticipate market reactions to news (i.e., identifying winners and losers to assess the predictive power of our LLM-based approach), we also analyze the trading intensity and implementation costs of the resulting strategies. The detailed examination in Appendix A.8 reveals that, under conservative transaction costs of 30 basis points per trade, the LLM-based approach maintains its superior performance relative to KMeans, though with attenuated profitability. Specifically, while KMeans strategies generate significant losses out-of-sample (-20.0\% to -23.6\% annually), our LLM-based approach achieves near-neutral to slightly positive net returns (-1.5\% to +3.1\%) in the test period, with notably lower risk metrics. These results underscore that while our methodology successfully captures predictable market reactions to news, practitioners implementing such strategies would benefit from incorporating transaction costs into their optimization framework.
