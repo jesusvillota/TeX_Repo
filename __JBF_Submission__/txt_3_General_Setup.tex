@@ -1,0 +1,98 @@
+\section{Mathematical Treatment of News Articles}
+
+Our dataset consists of $N=2,613$ Spanish business news articles 
+ sourced from DowJones and spanning the period from 2020/06/24 to 2021/09/30. 
+ We denote as $\mathcal D$ the set of all articles in our sample.
+ % from DowJones for the period 2020-6-24 to 2021-09-30. 
+ These articles have been specifically filtered to reference firms listed on the IBEX-35.
+% These articles have been specifically filtered to be explicitly referred to firms that are listed in the IBEX-35.
+ Let $\F_{\t{IBEX35}}$ denote the universe of such firms. 
+ Each article $i \in \mathcal{D}$ is a textual document detailing an event that directly pertains to a subset of firms $\mathcal{F}^i \subseteq \F_{\t{IBEX35}}$.
+% Each article $i\in \D$ is a textual document narrating an event that directly involves a set of firms %$\F^i \subseteq \F_{\t{IBEX35}}$.
+%
+The publication date and time of each article are represented as $\mathcal{Y}_0^i = \langle d_0^i, t_0^i \rangle$, where $d_0^i$ captures the date 
+(YYYY-MM-DD) 
+and $t_0^i$ captures the time
+ (HH:MM) 
+ of publication. 
+%This datetime representation emphasizes 
+Therefore we observe
+the moment at which $\mathcal{F}^i$ receives the \qquote{treatment} of public news dissemination. 
+%The information conveyed by an article can then be represented in a tuple 
+%$
+%\langle i, \F^i , \mathcal Y_0^i \rangle 
+%$
+
+%The article is published at some datetime represented by a tuple $\mathcal Y_0^i :=\angl{d_0^i, t_0^i}$, where $d_0^i$ represents the date component (YYYY-MM-DD) and $t_0^i$ represents the time component (HH:MM:SS.SSS). We use a 0-subscript to emphasize that $\mathcal Y_0^i$ is the day and time in which $\mathcal F^i$  receives  ``treatment'' (publication of a news article directly involving $\mathcal F^i$).
+%%``treatment date'' or day in which a news article is published regarding firm $j$ (firm $j$ receives treatment) 
+%
+
+%\mx 
+\subsubsection*{Data Splitting}
+For robust model development and evaluation, the dataset is partitioned into three sequential subsets: training, validation, and test:
+$
+\D := \D^{tr} \cup \D^{val} \cup \D^{test}.
+$
+Define $N_{split}:=|\D^{split}|$ for $split\in\3{tr,val,test}$, where $\abs{\cd}$ denotes the cardinality of a set. 
+%Then, it follows that
+%%with $N_{tr}:=\abs{\D^{tr}}, N_{val}:=\abs{\D^{val}}$, N_{test}:=\abs{\D^{test}}$ 
+%$\abs{\D}= N_{tr} + N_{val} + N_{test} = N$. 
+%----------------------------------------------------
+%The training and validation samples represent 80\% of the total sample $(\frac{N_{tr}+N_{val}}{N} = 0.8)$ and are used to design the optimal trading strategy, while the test sample represents the remaining 20\% $(\frac{N_{test}}{N} = 0.2)$ and is used to evaluate the \textit{out-of-sample} performance of the strategy. 
+%--------- CHAT GPT OPTION ---------%
+The training and validation sets collectively comprise 80\% of the total dataset $(\frac{N_{\text{tr}} + N_{\text{val}}}{N} = 0.8)$ and are instrumental in constructing and fine-tuning the trading strategy. The remaining 20\% $(\frac{N_{\text{test}}}{N} = 0.2)$ is reserved for out-of-sample testing to assess the performance and generalizability of the strategy under unseen conditions.
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection*{Effective treatment day}
+We are interested in examining the impact of each news article $i\in\D$ on the stock price of the firms that are affected directly (i.e.: all $j\in\F^i$). Since the publication datetime is not necessarily a trading datetime, we cannot directly gauge such an effect by looking at $\mathcal Y_0^i$. 
+For this reason, we need to work through some definitions. 
+%
+%$(\tilde{d}_0^i)$ as the date at which news article $i$ events can be incorporated into the stock prices of $\F^i$. 
+%
+Let $\T$ denote the set of all datetimes in the sample timeline and let $\widetilde{\T}\subset \T$ be the subset of Spanish trading datetimes associated to our sample.
+\begin{align*}
+\widetilde{\T} := 
+\3{\angl{d,t} \mid d \in \tilde{\mathfrak d} ~\wedge~ t\in \tilde{\mathfrak t}}
+,
+\end{align*}
+where 
+$
+\tilde{\mathfrak{d}}:=\{\tilde{\mathfrak{d}}_{[1]},\tilde{\mathfrak{d}}_{[2]}, \ldots \tilde{\mathfrak{d}}_{[n]}\}
+$
+is the ordered set of week and non-festive days according to the Spanish calendar in our data timeline,
+%, and $\tilde{\mathfrak t}$ are the trading hours 
+and 
+$\tilde{\mathfrak t}:=
+\{t \mid \t{09:30} \leq t \leq  \t{17:30}\}
+%\{t \mid t\in\t[\t{09:30}, \t{17:30}]\}
+$
+ are the Spanish stock market trading hours. 
+Note that we use tildes to emphasize that we are considering trading dates or times. 
+
+%We can now define a set of functions that will become useful as we work with trading days.
+%We now introduce some functions that will prove useful now and later on for easily handling trading days. 
+
+%%----------------------------------------------------
+%\input{tab_Functions_TradingDays.tex}
+%%----------------------------------------------------
+
+\bx 
+Throughout our analysis, we will work with daily stock market closing data for each trading day. However, we will exploit the time component of $\mathcal Y_0^i$ to assign an \qquote{effective treatment date} to each article. Namely, define $\tilde d_0^i$ as the day at which article $i$'s information can be incorporated into the stock market; then, $\tilde d_0^i$ is the publication date if the article was published on a trading day before the stock market was closed, and is equal to the next closest trading day otherwise. 
+To compute the next closest trading day to $d\in\mathfrak d$ within $\tilde{\mathfrak d}$, we need to work with a function $\Lambda:\mathfrak d \to \tilde{\mathfrak d}$ such that  
+$\Lambda(d) 
+:= 
+\min \{ \tilde{d} \in \tilde{\mathfrak{d}} \mid \tilde{d} \geq d \}$. 
+Thus, now we can define:
+\begin{align*}
+\tilde{d}_0^i :=
+\mycases{llll}{
+d_0^i & \IF & d_0^i \in \tilde{\mathfrak d} ~\wedge~t_0^i < \t{17:30}
+\\
+\Lambda(d_0^i)
+& \IF & d_0^i \not \in \tilde{\mathfrak d} ~\vee~t_0^i \geq  \t{17:30}
+}
+.
+\end{align*}
+

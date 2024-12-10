@@ -1,0 +1,83 @@
+\inserthere{tab:trading_intensity_comparison}
+
+\begin{table}[htbp] 
+\caption{Trading Intensity Analysis: Model Comparison} 
+\centering 
+\label{tab:trading_intensity_comparison}
+
+\begin{subtable}{\textwidth}
+\caption{Panel A: KMeans}
+\centering 
+{\small
+\begin{tabular}{lcccccccccc}
+\toprule
+\textbf{Split} & \textbf{Algorithm} & \multicolumn{4}{c}{\textbf{\# Open Positions}} & \multicolumn{2}{c}{\textbf{Trading Activity (\%)}} & \multicolumn{2}{c}{\textbf{Trading Costs (\%)}} \\
+\cmidrule(lr{0.6em}){3-6} \cmidrule(lr{0.6em}){7-8} \cmidrule(lr{0.6em}){9-10}
+& & \textbf{Avg}. & \textbf{Std}. & \textbf{Max} & \textbf{Min} & \textbf{Turnover} & \textbf{Changes/Pos.} & \textbf{Cost} & \textbf{Active} \\
+\midrule
+\multirow{2}{*}{All} & \textit{Greedy} & 40.1 & 18.59 & 105 & 6 & 32.03 & 0.798 & 0.0961 & 100.0 \\
+ & \textit{Stable} & 10.77 & 6.41 & 30 & 0 & 34.75 & 3.228 & 0.1042 & 99.1 \\
+\midrule
+\multirow{2}{*}{Train} & \textit{Greedy} & 36.4 & 19.33 & 88 & 7 & 30.59 & 0.840 & 0.0918 & 100.0 \\
+ & \textit{Stable} & 9.89 & 5.93 & 27 & 0 & 33.73 & 3.412 & 0.1012 & 98.2 \\
+\midrule
+\multirow{2}{*}{Validation} & \textit{Greedy} & 48.4 & 10.00 & 80 & 30 & 31.39 & 0.649 & 0.0942 & 100.0 \\
+ & \textit{Stable} & 12.34 & 6.05 & 30 & 1 & 33.42 & 2.708 & 0.1003 & 100.0 \\
+\midrule
+\multirow{2}{*}{Test} & \textit{Greedy} & 38.8 & 21.74 & 105 & 6 & 35.86 & 0.925 & 0.1076 & 100.0 \\
+ & \textit{Stable} & 10.84 & 7.47 & 28 & 1 & 39.30 & 3.626 & 0.1179 & 100.0 \\
+\bottomrule
+\end{tabular}
+}
+\end{subtable}
+
+\vspace{0.6cm}
+
+\begin{subtable}{\textwidth}
+\caption{Panel B: LLM}
+\centering
+{\small
+\begin{tabular}{lcccccccccc}
+\toprule
+\textbf{Split} & \textbf{Algorithm} & \multicolumn{4}{c}{\textbf{\# Open Positions}} & \multicolumn{2}{c}{\textbf{Trading Activity (\%)}} & \multicolumn{2}{c}{\textbf{Trading Costs (\%)}} \\
+\cmidrule(lr{0.6em}){3-6} \cmidrule(lr{0.6em}){7-8} \cmidrule(lr{0.6em}){9-10}
+& & \textbf{Avg}. & \textbf{Std}. & \textbf{Max} & \textbf{Min} & \textbf{Turnover} & \textbf{Changes/Pos.} & \textbf{Cost} & \textbf{Active} \\
+\midrule
+\multirow{2}{*}{All} & \textit{Greedy} & 31.8 & 14.84 & 75 & 4 & 39.21 & 1.234 & 0.1176 & 100.0 \\
+ & \textit{Stable} & 26.61 & 12.16 & 56 & 3 & 39.18 & 1.473 & 0.1175 & 100.0 \\
+\midrule
+\multirow{2}{*}{Train} & \textit{Greedy} & 29.9 & 16.34 & 75 & 4 & 40.42 & 1.351 & 0.1212 & 100.0 \\
+ & \textit{Stable} & 25.54 & 12.90 & 56 & 3 & 40.45 & 1.584 & 0.1213 & 100.0 \\
+\midrule
+\multirow{2}{*}{Validation} & \textit{Greedy} & 37.0 & 7.69 & 58 & 24 & 38.43 & 1.039 & 0.1153 & 100.0 \\
+ & \textit{Stable} & 31.38 & 6.82 & 50 & 17 & 37.95 & 1.209 & 0.1138 & 100.0 \\
+\midrule
+\multirow{2}{*}{Test} & \textit{Greedy} & 29.7 & 16.24 & 75 & 6 & 37.56 & 1.264 & 0.1127 & 100.0 \\
+ & \textit{Stable} & 23.43 & 13.71 & 54 & 3 & 37.85 & 1.615 & 0.1135 & 100.0 \\
+\bottomrule
+\end{tabular}
+}
+\end{subtable}
+
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note: 
+This table presents trading intensity metrics for both Greedy and Stable algorithms across different data splits for two different models: KMeans (Panel A) and LLM (Panel B). 
+The metrics are computed at a daily frequency. The `\# Open Positions' columns report position-related statistics: 
+`Avg.' shows the mean number of concurrent open positions per day, `Std.' represents their standard deviation, while 
+`Max' and `Min' indicate the maximum and minimum number of positions held simultaneously. Under `Trading Activity (\%)', 
+`Turnover' is calculated as the sum of absolute changes in position sizes divided by the total portfolio size, expressed 
+as a percentage; formally, $Turnover_t = 100 \times (\sum_i |w_{i,t} - w_{i,t-1}|)/(\sum_i |w_{i,t}|)$, where $w_{i,t}$ 
+represents the position size in asset $i$ at time $t$. `Changes/Pos.' represents the average number of modifications per 
+position per day, computed as the daily turnover divided by the average number of positions, providing insight into how 
+actively individual positions are managed. 
+The `Trading Costs (\%)' section reports `Cost' as the average daily implementation shortfall (computed as the product of daily turnover and a conservative transaction cost parameter of 30 basis points, representing both direct and indirect trading costs) expressed in percentage terms, while `Active' shows the percentage of trading days with at least one open position.
+%
+%The `Trading Costs (\%)' section reports `Cost' as the average daily implementation 
+%shortfall (computed as the difference between gross and net returns) expressed in percentage terms, while `Active' shows 
+%the percentage of trading days with at least one open position. 
+All metrics are first computed daily and then averaged over their respective periods, except for Max and Min positions which represent the absolute extremes over each period.
+}
+\end{minipage}
+\end{table}
