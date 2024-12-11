@@ -9,7 +9,7 @@ The contrasting patterns between the two clustering approaches suggest different
 \inserthere{fig:cluster-average-SR-by-split}
 
 \begin{figure}[htbp]
-\caption{Distribution of LLM-based Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
+\caption{Distribution of Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
 \label{fig:cluster-average-SR-by-split}
 
 \begin{subfigure}[t]{0.49\textwidth}
@@ -33,42 +33,3 @@ This figure presents the distribution of cluster-average Sharpe Ratios $(\overli
 \end{minipage}
 \end{figure}
 %----------------------------------------------------
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		% Below we have the old version %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%------- KMeans -------%
-%In Panel A we have the plot for KMeans. In the validation set, they are centered at 0, but we observe some outliers with unusually low and high average $SR$. On the other hand, the distributions in the train and test data are slightly skewed to the right and show no presence of substantial outliers.
-%%------- LLM -------%
-%In Panel B we have the ones for the LLM-based clustering. In this case, all distributions are left-skewed. The distribution in the training sample has fat tails which severely contrasts with the light-tailed distribution of the validation sample. In the test data, we observe a bell-shaped distribution with some accumulation of mass at high $SR$s (between 5 and 15), indicating stronger performance in some clusters.
-%
-%%%%%%%%%%%%%%%%%%%%   KMeans   %%%%%%%%%%%%%%%%%%%%%%%%
-%\inserthere{fig:KMeans_distr_avg_SR}
-%\begin{figure}[H]
-%  \centering
-%  \caption{Distribution of Embeddings-based Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
-%  \includegraphics[scale=0.45]{fig_KMeans_Cluster-Avg_SR_Distribution.pdf}
-%\label{fig:KMeans_distr_avg_SR}
-%\subcaption*{\textit{Note: This figure shows the distribution of cluster-average Sharpe Ratios $(\overline{SR}_g)$ for the embeddings-based KMeans clusters across the different data splits: training, validation, and test sets. Each Sharpe Ratio is computed as the average of beta-neutral positions associated with articles in a given cluster. In the validation set, the distribution is centered around 0, with a few outliers showing unusually high or low Sharpe Ratios. Conversely, the distributions in the training and test sets are slightly skewed to the right, suggesting better performance in certain clusters, with no significant presence of outliers.}}
-%\end{figure}
-%%----------------------------------------------------
-%
-%%%%%%%%%%%%%%%%%%%%   LLM   %%%%%%%%%%%%%%%%%%%%%%%%
-%\inserthere{fig:LLM_cluster-average-SR-by-split}
-%\begin{figure}[H]
-%  \centering
-%  \caption{Distribution of LLM-based Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
-%  \includegraphics[scale=0.5]{fig_LLAMA_Cluster-Avg_SR_Distribution.pdf}
-%  \label{fig:LLM_cluster-average-SR-by-split}
-% \subcaption*{\textit{Note: This figure presents the distribution of cluster-average Sharpe Ratios $(\overline{SR}_g)$ for the LLM-based clustering across the training, validation, and test data splits. All distributions exhibit left-skewness, indicating a higher frequency of lower Sharpe Ratios across clusters. The training data shows a distribution with fat tails, suggesting the presence of extreme values, while the validation data exhibits a much lighter-tailed distribution. In the test data, the distribution is more bell-shaped, with a notable concentration of Sharpe Ratios in the range of 5 to 15, indicating stronger performance in some clusters.}}
-%
-%\end{figure}
-%%----------------------------------------------------

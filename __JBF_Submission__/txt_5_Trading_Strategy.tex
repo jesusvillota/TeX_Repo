@@ -30,51 +30,8 @@ $
 where $\mathbb{I}_{\tilde{\mathfrak d}}$ maps an element $d\in\tilde{\mathfrak d}$ to its position in $\tilde{\mathfrak d}$ and $\mathbb{I}^{-1}_{\tilde{\mathfrak d}}$ does the inverse mapping. 
 }
 %
-%
-%\footnote{To rigorously define $\mathcal M^i$, we need to work with the index and inverse index functions. 
-%\begin{itemize}
-%  \item \textbf{Index Function}. 
-%Given a finite ordered set $\mathcal{Z}=\left\{z_1, z_2, \ldots, z_n\right\}$, the index function 
-%$\mathbb{I}_{\mathcal{Z}}: \mathcal{Z} \rightarrow\{1,2, \ldots,|\mathcal{Z}|\}$
-% maps an element $z\in\Z$ to its position in the ordered set $\mathcal{Z}$. Formally:
-%$
-%\mathbb{I}_{\mathcal{Z}}(z_{\ell})=\ell 
-%~ \text { for } ~ \ell \in\{1,2, \ldots,|\mathcal{Z}|\}
-%.
-%$
-%
-%\item \textbf{Inverse Index Function}. 
-%The inverse index function 
-%$\mathbb{I}_{\mathcal{Z}}^{-1}:\{1,2, \ldots,|\mathcal{Z}|\} \rightarrow \mathcal{Z}$
-% retrieves the element $z \in \mathcal{Z}$ corresponding to a given index ${\ell}$.
-%Formally:
-%$
-%\mathbb{I}_{\mathcal{Z}}^{-1}({\ell})=z_{\ell} ~\text { for } ~{\ell} \in\{1,2, \ldots,|\mathcal{Z}|\}
-%.$
-%\end{itemize}
-%For the market model window, we use $\mathbb{I}_{\tilde{\mathfrak{d}}}$ and $\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} $ applied to the set of trading days $\tilde{\mathfrak d}$. Namely:
-%$$
-%\mathcal{M}^i := 
-%\3{
-%d\in \tilde{\mathfrak{d}}
-%\c 
-%\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} 
-%\1{
-%\mathbb{I}_{\tilde{\mathfrak{d}}} (\tilde{d}_0^i) - {w}_b - {w}_m 
-%}
-%\leq d \leq 
-%\mathbb{I}^{-1}_{\tilde{\mathfrak{d}}} 
-%\1{ 
-%\mathbb{I}_{\tilde{\mathfrak{d}}} (\tilde{d}_0^i) - {w}_b 
-%}
-%}
-%,
-%$$
-%with a buffer of ${w}_b=10$ trading days before the effective treatment date, and a market model window length of ${w}_m=100$ trading days.
-%}
-%------------- END OF FOOTNOTE -----------------------
-%
 %----------------------------------------------------
+%
 $$
 r_{d}^{j} = \alpha^{(i,j)} + \beta^{(i,j)} r_{d}^M + \epsilon_{ d}^{(i,j)} 
 \qquad  
@@ -612,7 +569,6 @@ The test period maintains positive skewness (0.84 to 1.49) and moderate to high 
 %
 Taken together, the strategy's ability to sustain consistent out-of-sample performance metrics demonstrates that the LLM-based clustering approach identifies enduring trading signals that transcend specific market regimes.
 
-% <I WROTE THE PARAGRAPH BELOW FAST. PLEASE REWRITE IT BETTER TO ENSURE CLARITY AND COHESION WITH THE REST OF THE TEXT. PLEASE FILL A SUMMARY OF THE RESULTS (I WILL PROVIDE YOU THE APPENDIX SECTION ON TRANSACTION COSTS FOR YOU TO HAVE A REFERENCE)>
-%Although the focus of this paper is to anticipate market reactions (that is, identify winners and losers to understand the predictability power of our novel LLM-based methodology), we can additionally perform an analysis of the trading intensity of the resulting strategy. The results from this exercise can be found in Appendix section A.7. For a conservative 0.3 bps transaction cost, we find that...
+%----------------------------------------------------
 
 While our primary focus has been on developing a methodology to anticipate market reactions to news (i.e., identifying winners and losers to assess the predictive power of our LLM-based approach), we also analyze the trading intensity and implementation costs of the resulting strategies. The detailed examination in Appendix A.8 reveals that, under conservative transaction costs of 30 basis points per trade, the LLM-based approach maintains its superior performance relative to KMeans, though with attenuated profitability. Specifically, while KMeans strategies generate significant losses out-of-sample (-20.0\% to -23.6\% annually), our LLM-based approach achieves near-neutral to slightly positive net returns (-1.5\% to +3.1\%) in the test period, with notably lower risk metrics. These results underscore that while our methodology successfully captures predictable market reactions to news, practitioners implementing such strategies would benefit from incorporating transaction costs into their optimization framework.

@@ -98,20 +98,8 @@ The function calling schema is outlined in \cref{tab:function_calling_structure}
 Note that the firms identified by the LLM are used to validate the firms identified by the pattern recognition algorithm (those extracted with \texttt{regex} by exploiting the pattern \texttt{<WORD>.MC}). As mentioned earlier, given the high quality of the filtered dataset (the ticker of the firms that are actively involved in the article are explicitly stated), they are almost identical. Hence, we indistinctively use $\F_i$ to simplify notation.
 
 \mx 
-%The output provided by the LLM comprises two parts: a \qquote{Structured output}, and an \qquote{Unstructured output} justifying the choices made in the \qquote{Structured output}. The unstructured part is employed to validate the LLM's output. 
-% By manually reading a small random subsample of such unstructured outputs from the LLM, we can quickly determine whether the LLM has correctly understood the task. If the LLM exhibits confusion, hallucination patterns become apparent in the unstructured output, indicating the need to refine the system instructions and tool descriptions within the function-calling schema to clarify the task for the LLM.
-
-
-% << OPTION 1 >>
-%The LLM generates both a structured output and accompanying explanations that detail its reasoning process. These explanations serve as a validation mechanism for the structured output.
-%By reviewing a random sample of these explanations, we can assess whether the LLM has grasped the task correctly. When the LLM misinterprets instructions, its explanations reveal patterns of confusion or hallucination, signaling that we need to refine the system prompts and function descriptions to provide better guidance. The prompt refinement continues iteratively until the LLM reliably produces correct outputs across different test cases.
-
-% << OPTION 2 >>
 The LLM provides two outputs: structured data (\qquote{Structured Output}) and a explanatory text describing its reasoning (\qquote{Unstructured Ouptut}). The explanations help us verify if the model correctly understands how to use the function-calling schema and follow system instructions. 
 To assess the LLM's understanding, we review a random sample of these explanations and look for patterns of misinterpretation, confusion, or hallucination. If we identify such issues, we refine the system prompts and function descriptions to provide clearer guidance. This iterative prompt refinement continues until the LLM reliably generates correct outputs across multiple test scenarios. 
-%To check this, we examine a sample of explanations and see if the LLM correctly uses the schema's parameters and constraints. If we spot any misunderstandings, we improve the prompts and function descriptions. We repeat this process until the LLM reliably produces correct outputs across different test cases.
-
-%The LLM generates both a structured output and accompanying explanations that detail its reasoning process. These explanations serve as a critical validation mechanism, allowing us to verify whether the model correctly interprets the function-calling schema, adheres to the specified parameters and constraints, and follows the system instructions as intended. To assess the LLM's understanding, we review a random sample of these explanations and look for patterns of misinterpretation, confusion, or hallucination. If we identify such issues, we refine the system prompts and function descriptions to provide clearer guidance. This iterative prompt refinement continues until the LLM reliably generates correct outputs across multiple test scenarios
 
 \begin{quote}
 
@@ -185,7 +173,6 @@ In \cref{fig:LLM_cluster_distribution} we plot the distribution of news articles
 \mx 
 On the other hand, other clusters such as 16 (\textit{policy, minor, positive}) and 0 (\textit{demand, minor, positive}) also concentrate a big share of news. Note that no cluster has been assigned to cluster 13 (\textit{technology, minor, negative}).
 %
-%Different from KMeans clustering with embeddings, now the distribution profile of articles through clusters becomes very stable across data splits. This evidences that clustering based on a comprehensive analysis of the shocks implied by the article on the affected firms is really stable over time, which constitutes a promising result.
 Compared to KMeans clustering with embeddings, the distribution of articles across these refined clusters is now remarkably stable across different data splits. This consistency indicates that clustering based on a thorough analysis of the shocks implied by each article for the affected firms yields a robust, time-invariant categorization. This is an encouraging finding for subsequent research and applications.
 
 %----------------------------------------------------
