@@ -1,7 +1,7 @@
 
-\section{Robustness Checks}
+\section{Robustness Checks} \label{sec:6}
 
-In our applications we have worked with a holding period of $L=4$ trading days and an upper bound on traded clusters of $\theta=\integer{0.5k}$. As shown in section A.2 of the Appendix, such choices result from the maximization of the Sharpe Ratios in the train and validation samples. All that is left is to check whether our out-of-sample results are sensitive to the choice of hyperparameters ($L,\theta$). For this purpose, we evaluate the variability of the Sharpe Ratios of the test portfolio ($SR^{\mathcal P^{test}}$) to changes in $L$ and $\theta$. 
+In our applications we have worked with a holding period of $L=4$ trading days and an upper bound on traded clusters of $\theta=\integer{0.5k}$. As shown in \ref{sec:A2}, such choices result from the maximization of the Sharpe Ratios in the train and validation samples. All that is left is to check whether our out-of-sample results are sensitive to the choice of hyperparameters ($L,\theta$). For this purpose, we evaluate the variability of the Sharpe Ratios of the test portfolio ($SR^{\mathcal P^{test}}$) to changes in $L$ and $\theta$. 
 
 \bx 
 First, we focus on the holding period length of the beta-neutral strategy ($L$). For this purpose, we fix $\theta=\integer{0.5k}$ and, for each clustering method, obtain the series of Sharpe Ratios over a grid $\mbf L$ (which ranges from 1 to 20 trading periods). This delivers the series $\{SR^{\mathcal P ^{test}} (L)\}_{L\in\mbf L}$, which we then plot in two formats. On the left side of \cref{fig:LLM_Robustness_L} we plot the distribution of Sharpe Ratios in the grid, and in the right side, we show the mapping $L\mapsto SR^{\mathcal P ^{test}} (L)$ over $\mbf L$. 

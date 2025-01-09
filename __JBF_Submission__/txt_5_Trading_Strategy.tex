@@ -76,7 +76,7 @@ In particular, we employ a beta-neutral strategy by buying one unit of firm $j$'
 %----------------------------------------------------
 %\mx
 This hedged position harvests the idiosyncratic returns from the market model and it only makes sense when firm $j$'s returns are expected to outperform or underperform the market.\footnote{
-For expected underperformance of firm $j$, reverse the beta neutral positions: 
+For expected underperformance of firm $j$, reverse the beta-neutral positions: 
 sell one unit of firm $j$ and buy $\beta^{(i,j)}$ units of the market index. However, note that this will be handled later by a Trading Rule $(TR)$.
 \mx 
 }
@@ -99,7 +99,7 @@ d \in \tilde{\mathfrak{d}}
 \}
 $}
 %----------------------------------------------------
-The justification for this choice of $L$ is made in section A.2 of the Appendix. 
+The justification for this choice of $L$ results from the maximization of the Sharpe Ratio of the portfolio in the train and validation samples for both KMeans and LLM-based clustering \footnote{ The choice of $L$ is justified in detail in \ref{sec:A2}. The sensitivity of the trading strategy's out-of-sample performance to different values of $L$ is examined in Section \ref{sec:6} (\qquote{Robustness Checks}).}
 %
 %----------------------------------------------------
 %\mx 
@@ -201,7 +201,8 @@ where $\mathbf{1}(\cdot)$ is the indicator function which equals 1 if the condit
 %----------------------------------------------------
 The number of traded clusters on either side (long and short) will be upper-bounded by some hyperparameter of our choice $\theta \in \mathbb{N}$
 %$\theta \in \{2 m \mid m \in \mathbb{N}\}$ 
-which we set proportional to the number of clusters. Namely, $\theta =\integer{\rho k}$ for some $\rho\in(0,1)$, which has been set to $\rho=0.5$ (this choice is justified in section A.2. of the Appendix).
+which we set proportional to the number of clusters. Namely, $\theta =\integer{\rho k}$ for some $\rho\in(0,1)$, which has been set to $\rho=0.5$ to maximize the Sharpe Ratio of the trading strategy in the training and validation samples
+\footnote{ The choice of $\theta$ is justified in detail in \ref{sec:A2}. The sensitivity of the trading strategy's out-of-sample performance to different values of $\theta$ is examined in Section \ref{sec:6} (\qquote{Robustness Checks}).}.
 %
 The actual number of traded clusters will not be exactly $\theta$ as there is a natural bound coming from the cardinalities of $\mathcal G_{SR^+}$ and $\mathcal G_{SR^-}$. Hence, the actual number of long and short-traded clusters will be
 $
@@ -262,7 +263,7 @@ $
 and 
 $\abs{\G_\theta}=2\theta^*$.
 }
-In the appendix, we can find the formal design of this algorithm (\cref{alg:greedy_selection}).
+In Appendix \cref{alg:greedy_selection}, we can find the formal design of this algorithm.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Stable Algorithm}
@@ -309,7 +310,7 @@ $$
 This approach ensures that we select the most stable clusters for trading, reducing the risk associated with rank variability between the training and validation samples, and ensuring that the direction of the signal is consistent across the two splits. The final output consists of the sets of long-traded and short-traded clusters, which are then used to implement the trading strategy.
 %
 %
-The implementation of the algorithm is methodically presented in the Appendix (\cref{alg:rank_stability}).
+The implementation of the algorithm is methodically presented in Appendix \cref{alg:rank_stability}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,7 +319,7 @@ The implementation of the algorithm is methodically presented in the Appendix (\
 %----------------------------------------------------
 \input{table_3_KMeans_Cluster_Mapping_Traded_Clusters.tex}
 %----------------------------------------------------
-In Table \ref{tab:KMeans_Clusters_Signal} we show the 26 clusters with their proposed names (based on the articles they pool together as shown in \cref{tab:KMeans_Articles_3_English}) and the selection of long and short-traded clusters according to each algorithm: \qquote{greedy} and \qquote{stable}. We write ``\textsc{long}'' for those clusters $g\in\G_\theta^+$ and ``\textsc{short}'' for $g\in\G_\theta^-$. 
+In Table \ref{tab:KMeans_Clusters_Signal} we show the 26 clusters with their proposed names (based on the articles they pool together as shown in Appendix \cref{tab:KMeans_Articles_3_English}) and the selection of long and short-traded clusters according to each algorithm: \qquote{greedy} and \qquote{stable}. We write ``\textsc{long}'' for those clusters $g\in\G_\theta^+$ and ``\textsc{short}'' for $g\in\G_\theta^-$. 
 %
 %\mx 
 As we can see, trading clusters of news articles based on this procedure is quite risky, as there is a high reliance of the signal on the past performance of a cluster. For example, clusters 21 and 22 are linked to the financial performance of Repsol and Aena, respectively, during the training and validation samples. Evidently, the future performance of these firms can change, but the signal provided by the algorithm will still indicate ``\textsc{long}''. 
@@ -571,4 +572,4 @@ Taken together, the strategy's ability to sustain consistent out-of-sample perfo
 
 %----------------------------------------------------
 
-While our primary focus has been on developing a methodology to anticipate market reactions to news (i.e., identifying winners and losers to assess the predictive power of our LLM-based approach), we also analyze the trading intensity and implementation costs of the resulting strategies. The detailed examination in Appendix A.8 reveals that, under conservative transaction costs of 30 basis points per trade, the LLM-based approach maintains its superior performance relative to KMeans, though with attenuated profitability. Specifically, while KMeans strategies generate significant losses out-of-sample (-20.0\% to -23.6\% annually), our LLM-based approach achieves near-neutral to slightly positive net returns (-1.5\% to +3.1\%) in the test period, with notably lower risk metrics. These results underscore that while our methodology successfully captures predictable market reactions to news, practitioners implementing such strategies would benefit from incorporating transaction costs into their optimization framework.
+While our primary focus has been on developing a methodology to anticipate market reactions to news (i.e., identifying winners and losers to assess the predictive power of our LLM-based approach), we also analyze the trading intensity and implementation costs of the resulting strategies. The detailed examination in \ref{sec:A8} reveals that, under conservative transaction costs of 30 basis points per trade, the LLM-based approach maintains its superior performance relative to KMeans, though with attenuated profitability. Specifically, while KMeans strategies generate significant losses out-of-sample (-20.0\% to -23.6\% annually), our LLM-based approach achieves near-neutral to slightly positive net returns (-1.5\% to +3.1\%) in the test period, with notably lower risk metrics. These results underscore that while our methodology successfully captures predictable market reactions to news, practitioners implementing such strategies would benefit from incorporating transaction costs into their optimization framework.

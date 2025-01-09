@@ -1,11 +1,11 @@
 %----------------------------------------------------
 \section{Introduction}
 %----------------------------------------------------
-In financial markets, news play a pivotal role in shaping stock prices. Every day, market participants respond to a broad spectrum of news ranging from firm-specific announcements, such as earnings releases, to macroeconomic events, such as central bank interest rate announcements, or geopolitical developments, like international trade conflicts or political elections. The Efficient Market Hypothesis (EMH), introduced by 
+In financial markets, news play a pivotal role in shaping stock prices. Every day, market participants respond to a broad spectrum of news ranging from firm-specific announcements, such as earnings releases, to macroeconomic events, such as central bank interest rate announcements, or geopolitical developments, like international trade conflicts or political elections. The Efficient Market Hypothesis (EMH), formalized by 
 \cite{fama1970efficient} Fama (1970), 
 posits that markets efficiently incorporate new information almost instantaneously. Both theoretical perspectives and empirical observations indicate that markets do not always exhibit such efficiency, particularly when the information is complex or ambiguous. This discrepancy between theory and reality suggests significant room for improvement in understanding how news is processed by market participants and how it influences asset prices.
 %
-A substantial body of literature has endeavored to predict market reactions to news, yet three main gaps persist. Our review of the literature reveals three critical limitations in current approaches to analyzing financial news: a lack of economic focus in textual analysis methodology, insufficient attention to firm-specific effects, and over-reliance on headlines.
+A substantial body of literature has tried to predict market reactions to news, yet some important gaps persist. Our review of the literature reveals three critical limitations in current approaches to analyzing financial news: a lack of economic focus in textual analysis methodology, insufficient attention to firm-specific effects, and over-reliance on headlines.
 
 \mx 
 %----------------------------------------------------
@@ -47,7 +47,7 @@ used these techniques to analyze Federal Reserve communications, while
 \cite{bybee2021business}  Bybee et al. (2021) 
 developed a topic model analyzing over 800,000 Wall Street Journal articles to track news attention to different economic themes. 
 \cite{bybee2023narrative}  Bybee et al. (2023) 
-further integrated topic modeling with asset pricing models to derive systematic risk factors from news text.
+further integrated topic modeling with asset pricing models to derive systematic risk factors from news.
 %
 However, these models are limited in adapting to new and evolving information and lack the specificity needed to assess the precise impact of news on individual firms or sectors. While topic models can identify broad themes, they struggle to capture the changing context of financial news, particularly when new narratives emerge, such as unexpected geopolitical events or technological disruptions.
 
@@ -69,7 +69,7 @@ analyzed finance sentiment across multiple countries and centuries, while
 \cite{zhang2023feel}  Zhang (2023) 
 integrated sentiment analysis from GPT and BERT into traditional asset pricing models. 
 \cite{gabaix2023asset}  Gabaix et al. (2023) 
-introduced \qquote{asset embeddings}, showing how these techniques can uncover latent firm characteristics from investors' holdings data. However, even when fine-tuned with domain-specific training data (e.g: \texttt{FinBERT}), these methods cannot inherently incorporate economic structure, limiting their ability to comprehend the economic implications of news articles.
+introduced \qquote{asset embeddings}, showing how these techniques can uncover latent firm characteristics from investors' holdings data. However, even when fine-tuned with domain-specific training data (e.g: \texttt{FinBERT}), these methods cannot inherently incorporate economic structure, which limits their ability to comprehend the economic implications of news articles.
 \end{quote}
 
 \mx
@@ -93,7 +93,7 @@ constructed innovative news-based indices that have enhanced our understanding o
 While these and other similar studies provide valuable insights into market-wide reactions, they fall short in elucidating how specific firms are affected by news events. Firm-specific impacts are often masked when aggregated at the index level, leading to a loss of critical information about how particular entities are influenced by specific news. 
 For example, during the COVID-19 pandemic, market indices masked substantial heterogeneity in firm-level responses
  with some sectors like technology and healthcare experiencing positive returns, while others, such as hospitality, travel, and retail, experiencing significant negative impacts due to widespread lockdowns and reduced consumer spending. 
-Such nuanced differences are often obscured when focusing solely on market indices. Tools like Named Entity Recognition (NER), which could help identify firms impacted by particular events, remain underutilized in financial research, further contributing to the lack of firm-level granularity.
+Such differences are often obscured when focusing solely on market indices. Tools like Named Entity Recognition (NER), which could help identify firms impacted by particular events, remain underutilized in financial research, further contributing to the lack of firm-level granularity.
 
 
 \mx 
@@ -133,7 +133,7 @@ As our benchmark, we employ a vector-based approach that represents each news ar
 To evaluate the timing ability of our proposed methodology, we develop a trading strategy that builds on the traditional portfolio sorting approach. While conventional strategies sort stocks based on firm characteristics, we instead sort based on news clusters. For the benchmark (vector embeddings), we employ KMeans clustering, while our LLM methodology clusters articles by shock categories. We identify the best and worst-performing clusters by analyzing the stock price responses of affected firms, then construct a long-short portfolio strategy that takes long positions in the best-performing clusters and short positions in the worst-performing ones. The profitability of this strategy serves as a measure of each clustering methodology's ability to identify economically meaningful news patterns that translate into improved market timing abilities.
 %
 %----------------------------------------------------
-Our findings reveal that while the vector-based model successfully identifies firm- and industry-specific clusters, its trading signals lack persistence. The model's reliance on historical firm and industry performance patterns generates ephemeral signals that don't translate well to future market conditions. In contrast, our LLM-based methodology produces clusters based on economically meaningful shock classifications, resulting in more persistent trading signals. The superior out-of-sample performance of our LLM-based trading strategy demonstrates its enhanced capability to capture and interpret market reactions to news, underscoring the advantages of incorporating economic structure into news analysis.
+Our findings reveal that while the vector-based model successfully identifies firm- and industry-specific clusters, its trading signals lack persistence. The model's reliance on historical firm and industry performance patterns generates ephemeral signals that do not translate well to future market conditions. In contrast, our LLM-based methodology produces clusters based on economically meaningful shock classifications, resulting in more persistent trading signals. The superior out-of-sample performance of our LLM-based trading strategy demonstrates its enhanced capability to capture and interpret market reactions to news, underscoring the advantages of incorporating economic structure into news analysis.
 
 \mx 
 %----------------------------------------------------

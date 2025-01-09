@@ -43,15 +43,15 @@ demonstrated the potential of decoder-only models for generative tasks. In parti
 
 \mx 
 The trend towards open-source models like \texttt{BLOOM} 
-(\cite{le2023bloom} Le Scao et al., 2023), \texttt{Mixtral} and Meta's \texttt{LLaMA} series 
+(\cite{le2023bloom} Le Scao et al., 2023), \texttt{Mixtral} and Meta's \texttt{Llama} series 
 (\citep{touvron2023llama} Touvron et al., 2023)
-emphasizes accessibility and transparency in LLM development.  The latest models, including OpenAI's  \texttt{GPT-4o} and \texttt{GPT-o1}, Google's \texttt{Gemini} and \texttt{Mixtral} and \texttt{Gemma}, Anthropic's \texttt{Claude 3.5 Sonnet}, and Meta's \texttt{LLaMA-3} series
-% \texttt{LLaMA-3}, \texttt{LLaMA-3.1} and  \texttt{LLaMA-3.2} 
+emphasizes accessibility and transparency in LLM development.  The latest models, including OpenAI's  \texttt{GPT-4o} and \texttt{GPT-o1}, Google's \texttt{Gemini} and \texttt{Mixtral} and \texttt{Gemma}, Anthropic's \texttt{Claude 3.5 Sonnet}, and Meta's \texttt{Llama-3} series
+% \texttt{Llama-3}, \texttt{Llama-3.1} and  \texttt{Llama-3.2} 
 continue to push boundaries with improved accuracy, multimodal capabilities, and larger context windows.
 
-\subsubsection{Function Calling with LlaMA-3}
+\subsubsection{Function Calling with Llama-3}
 
-In our endeavor we will employ \texttt{LlaMA-3}, developed by Meta AI and released on April 18, 2024 %
+In our endeavor we will employ \texttt{Llama-3}, developed by Meta AI and released on April 18, 2024 %
 %
 \footnote{
 \href{https://ai.meta.com/blog/meta-llama-3/}
@@ -62,7 +62,7 @@ In our endeavor we will employ \texttt{LlaMA-3}, developed by Meta AI and releas
 . This model has been pre-trained on approximately 15 trillion tokens of text gathered from ``publicly available sources'' and it comes in two sizes: 8 billion and 70 billion parameters. In this application, we will employ the 70B version, which we will access through an API via \texttt{GroqCloud}.
 
 \mx 
-Moreover, we will employ a \textit{function calling} approach to streamline the process of interacting with the LLM. This implies prespecifying a set of functions to the LLM that will then be passed through our dataset of news articles to obtain a structured output in \texttt{JSON} format. The formal procedure is thoroughly described in the Appendix (\cref{alg:function_calling}).
+Moreover, we will employ a \textit{function calling} approach to streamline the process of interacting with the LLM. This implies prespecifying a set of functions to the LLM that will then be passed through our dataset of news articles to obtain a structured output in \texttt{JSON} format. The formal procedure is thoroughly described in Appendix \cref{alg:function_calling}
 
 \mx 
 Each article $i\in\D$ implies a conversation with the LLM. The structure of the conversation implies defining first a ``system message'', which provides a general context and purpose to the model. In our case:
@@ -164,7 +164,7 @@ $$
 ,
 $$
 and each cluster can then be mapped to a positive integer as $\mathcal G_{LLM}\to \{k\in \mathbb{N}_0 \mid 0\leq k\leq 19\}$.
-A representative sample of 3 articles from each cluster is provided in the Appendix \cref{tab:LLM_Articles_3_English}. 
+A representative sample of 3 articles from each cluster is provided in Appendix \cref{tab:LLM_Articles_3_English}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \mx 
