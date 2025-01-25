@@ -1,0 +1,99 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Macros}
+\usepackage[nomarkers, nolists, tablesfirst]{endfloat} % puts tables and figures at the end of the document
+\usepackage{authblk} % to write the title with the authors
+\usepackage{booktabs} % for better tables
+\usepackage{datetime}
+\newdateformat{mydate}{\ordinal{DAY} \monthname[\THEMONTH] \THEYEAR}
+
+
+%----------------------------------------------------
+\title{ 
+%\textsc{
+Synthetic Control Method in Asset Pricing
+%}
+}
+
+\author[1]{
+{ 
+Jesus Villota Miranda$^{\dagger}$
+%\footnote{
+%\scriptsize{
+%I am deeply grateful to 
+%I gratefully acknowledge financial support from ...
+%}}
+}
+
+\bx 
+{\small
+$\big{<}$
+\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
+$\big{>}$
+
+$\big{<}$
+Email: \href{mailto:jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
+$\big{>}$
+
+\textbf{This version: \mydate\today}
+}
+}
+\date{}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+%----------------------------------------------------
+\begin{abstract}
+This paper develops a novel framework for applying the Synthetic Control Method (SCM) to asset pricing and portfolio management. We extend the traditional SCM methodology by incorporating financial market features, including short-selling capabilities and regularization techniques to manage transaction costs and portfolio concentration. The framework is further enhanced through machine learning approaches that capture nonlinear relationships between financial instruments. We demonstrate the method's versatility through various applications, including statistical arbitrage, hedging of complex securities, ETF replication, and risk analysis. Our methodology provides practitioners with a systematic approach to construct synthetic portfolios that closely track target instruments while maintaining implementation feasibility through controlled trading costs and portfolio turnover. 
+%The empirical results suggest that our enhanced SCM framework outperforms traditional linear methods, particularly in markets characterized by complex, nonlinear relationships.
+
+\vspace{1cm}
+
+\noindent\textbf{JEL Codes:} C14, C45, G11, G12, G13
+
+\noindent\textbf{Keywords:} Synthetic Control Method; Machine Learning; Asset Pricing; Portfolio Management; Statistical Arbitrage; Risk Management; ETF Replication; Nonlinear Methods
+\end{abstract}
+%----------------------------------------------------
+
+\newpage
+%\tableofcontents % COMMMENT OUT EVENTUALLY
+\setcounter{page}{1}
+
+%%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%
+%\input{txt_Introduction.tex}
+
+%%%%%%%%%%%%%%%%%%%% DATA %%%%%%%%%%%%%%%%%%%%%%%%
+%\input{txt_Data.tex}
+
+%%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+\input{txt_myself.tex}
+\input{txt_Methodology.tex}
+%\input{txt_Statistical_Arbitrage.tex}
+%\input{txt_16_Dec.tex}
+
+
+%%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
+%\input{txt_Conclusion.tex}
+
+%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
+%\bibliography{bib_references_DOI.bib}
+%\bibliographystyle{plain}
+
+%----------------------------------------------------
+%\newpage
+%% To make sure all the tables/figures appear before the appendix
+%\processdelayedfloats 
+%% Reset the numbering for appendix figures and tables
+%\renewcommand{\thefigure}{A\arabic{figure}} 
+%\renewcommand{\thetable}{A\arabic{table}}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%% APPENDIX %%%%%%%%%%%%%%%%%%%%%%
+%\appendix
+%\section{Appendix}
+%\input{txt_Appendix.tex}
+
+\end{document}

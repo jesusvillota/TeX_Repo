@@ -1,0 +1,294 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{fama1970efficient}
+E.~F. Fama, \href{http://dx.doi.org/10.2307/2325486}{Efficient capital markets:
+  A review of theory and empirical work}, J. Finance 25~(2) (1970) 383.
+\newblock \href {https://doi.org/10.2307/2325486} {\path{doi:10.2307/2325486}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2307/2325486}
+
+\bibitem{tetlock2007giving}
+P.~C. Tetlock, \href{http://dx.doi.org/10.1111/j.1540-6261.2007.01232.x}{Giving
+  content to investor sentiment: The role of media in the stock market}, J.
+  Finance 62~(3) (2007) 1139--1168.
+\newblock \href {https://doi.org/10.1111/j.1540-6261.2007.01232.x}
+  {\path{doi:10.1111/j.1540-6261.2007.01232.x}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1111/j.1540-6261.2007.01232.x}
+
+\bibitem{tetlock2008more}
+P.~C. Tetlock, M.~Saar-Tsechansky, S.~Macskassy,
+  \href{http://dx.doi.org/10.1111/j.1540-6261.2008.01362.x}{More than words:
+  Quantifying language to measure firms' fundamentals}, J. Finance 63~(3)
+  (2008) 1437--1467.
+\newblock \href {https://doi.org/10.1111/j.1540-6261.2008.01362.x}
+  {\path{doi:10.1111/j.1540-6261.2008.01362.x}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1111/j.1540-6261.2008.01362.x}
+
+\bibitem{loughran2011liability}
+T.~Loughran, B.~McDonald,
+  \href{http://dx.doi.org/10.1111/j.1540-6261.2010.01625.x}{When is a liability
+  not a liability? textual analysis, dictionaries, and 10ks}, J. Finance 66~(1)
+  (2011) 35--65.
+\newblock \href {https://doi.org/10.1111/j.1540-6261.2010.01625.x}
+  {\path{doi:10.1111/j.1540-6261.2010.01625.x}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1111/j.1540-6261.2010.01625.x}
+
+\bibitem{jegadeesh2013word}
+N.~Jegadeesh, D.~Wu,
+  \href{http://dx.doi.org/10.1016/j.jfineco.2013.08.018}{Word power: A new
+  approach for content analysis}, J. Financ. Econ. 110~(3) (2013) 712--729.
+\newblock \href {https://doi.org/10.1016/j.jfineco.2013.08.018}
+  {\path{doi:10.1016/j.jfineco.2013.08.018}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1016/j.jfineco.2013.08.018}
+
+\bibitem{bollen2011twitter}
+J.~Bollen, H.~Mao, X.~Zeng,
+  \href{http://dx.doi.org/10.1016/j.jocs.2010.12.007}{Twitter mood predicts the
+  stock market}, J. Comput. Sci. 2~(1) (2011) 1--“8.
+\newblock \href {https://doi.org/10.1016/j.jocs.2010.12.007}
+  {\path{doi:10.1016/j.jocs.2010.12.007}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1016/j.jocs.2010.12.007}
+
+\bibitem{garcia2013sentiment}
+D.~Garcia, \href{http://dx.doi.org/10.1111/jofi.12027}{Sentiment during
+  recessions}, J. Finance 68~(3) (2013) 1267--1300.
+\newblock \href {https://doi.org/10.1111/jofi.12027}
+  {\path{doi:10.1111/jofi.12027}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1111/jofi.12027}
+
+\bibitem{ke2019predicting}
+Z.~T. Ke, B.~Kelly, D.~Xiu, \href{http://dx.doi.org/10.3386/w26186}{Predicting
+  returns with text data}, Tech. rep., National Bureau of Economic Research
+  (Aug. 2019).
+\newblock \href {https://doi.org/10.3386/w26186} {\path{doi:10.3386/w26186}}.
+\newline\urlprefix\url{http://dx.doi.org/10.3386/w26186}
+
+\bibitem{lee2020bert}
+C.-C. Lee, Z.~Gao, C.-L. Tsai,
+  \href{http://dx.doi.org/10.1109/icce-taiwan49838.2020.9258102}{Bert-based
+  stock market sentiment analysis}, in: 2020 IEEE International Conference on
+  Consumer Electronics - Taiwan (ICCE-Taiwan), IEEE, 2020, pp. 1--“2.
+\newblock \href {https://doi.org/10.1109/icce-taiwan49838.2020.9258102}
+  {\path{doi:10.1109/icce-taiwan49838.2020.9258102}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1109/icce-taiwan49838.2020.9258102}
+
+\bibitem{wei2018stock}
+F.~Wei, U.~Nguyen, \href{http://dx.doi.org/10.5220/0010172103190326}{Stock
+  trend prediction using financial market news and bert}, in: Proceedings of
+  the 12th International Joint Conference on Knowledge Discovery, Knowledge
+  Engineering and Knowledge Management, SCITEPRESS - Science and Technology
+  Publications, 2020, pp. 319--326.
+\newblock \href {https://doi.org/10.5220/0010172103190326}
+  {\path{doi:10.5220/0010172103190326}}.
+\newline\urlprefix\url{http://dx.doi.org/10.5220/0010172103190326}
+
+\bibitem{antweiler2006us}
+W.~Antweiler, M.~Z. Frank, \href{http://dx.doi.org/10.2139/ssrn.878091}{Do us
+  stock markets typically overreact to corporate news stories?}, SSRN Electron.
+  J. (2006).
+\newblock \href {https://doi.org/10.2139/ssrn.878091}
+  {\path{doi:10.2139/ssrn.878091}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2139/ssrn.878091}
+
+\bibitem{hansen2018transparency}
+S.~Hansen, M.~McMahon, A.~Prat,
+  \href{http://dx.doi.org/10.1093/qje/qjx045}{Transparency and deliberation
+  within the fomc: A computational linguistics approach}, Q. J. Econ. 133~(2)
+  (2018) 801--“870.
+\newblock \href {https://doi.org/10.1093/qje/qjx045}
+  {\path{doi:10.1093/qje/qjx045}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1093/qje/qjx045}
+
+\bibitem{bybee2021business}
+L.~Bybee, B.~Kelly, A.~Manela, D.~Xiu,
+  \href{http://dx.doi.org/10.1111/jofi.13377}{Business news and business
+  cycles}, J. Finance 79~(5) (2024) 3105--3147.
+\newblock \href {https://doi.org/10.1111/jofi.13377}
+  {\path{doi:10.1111/jofi.13377}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1111/jofi.13377}
+
+\bibitem{bybee2023narrative}
+L.~Bybee, B.~Kelly, Y.~Su,
+  \href{http://dx.doi.org/10.1093/rfs/hhad042}{Narrative asset pricing:
+  Interpretable systematic risk factors from news text}, The Rev. Financ. Stud.
+  36~(12) (2023) 4759--4787.
+\newblock \href {https://doi.org/10.1093/rfs/hhad042}
+  {\path{doi:10.1093/rfs/hhad042}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1093/rfs/hhad042}
+
+\bibitem{hoberg2016text}
+G.~Hoberg, G.~Phillips, \href{http://dx.doi.org/10.1086/688176}{Text-based
+  network industries and endogenous product differentiation}, J. Polit. Econ.
+  124~(5) (2016) 1423--1465.
+\newblock \href {https://doi.org/10.1086/688176} {\path{doi:10.1086/688176}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1086/688176}
+
+\bibitem{chen2021stock}
+Q.~Chen, \href{https://arxiv.org/abs/2107.08721}{Stock movement prediction with
+  financial news using contextualized embedding from bert}, arXiv preprint
+  arXiv:2107.08721 (2021).
+\newblock \href {https://doi.org/10.48550/ARXIV.2107.08721}
+  {\path{doi:10.48550/ARXIV.2107.08721}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2107.08721}
+
+\bibitem{benincasa2022different}
+E.~Benincasa, J.~Fu, M.~Mishra, A.~Paranjape,
+  \href{http://dx.doi.org/10.2139/ssrn.4198065}{Different shades of green:
+  Estimating the green bond premium using natural language processing}, SSRN
+  Electron. J. (2022).
+\newblock \href {https://doi.org/10.2139/ssrn.4198065}
+  {\path{doi:10.2139/ssrn.4198065}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2139/ssrn.4198065}
+
+\bibitem{jha2022does}
+M.~Jha, H.~Liu, A.~Manela, \href{http://dx.doi.org/10.2139/ssrn.3655263}{Does
+  finance benefit society? a language embedding approach}, Rev. Financ. Stud.,
+  Forthcoming (2024).
+\newblock \href {https://doi.org/10.2139/ssrn.3655263}
+  {\path{doi:10.2139/ssrn.3655263}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2139/ssrn.3655263}
+
+\bibitem{zhang2023feel}
+C.~L. Zhang, \href{http://dx.doi.org/10.2139/ssrn.4521946}{Feel the market: An
+  attempt to identify additional factor in the capital asset pricing model
+  (capm) using generative pre-trained transformer (gpt) and bidirectional
+  encoder representations from transformers (bert)}, SSRN Electron. J. (2023).
+\newblock \href {https://doi.org/10.2139/ssrn.4521946}
+  {\path{doi:10.2139/ssrn.4521946}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2139/ssrn.4521946}
+
+\bibitem{gabaix2023asset}
+X.~Gabaix, R.~S.~J. Koijen, M.~Yogo,
+  \href{http://dx.doi.org/10.2139/ssrn.4507511}{Asset embeddings}, SSRN
+  Electron. J. (2023).
+\newblock \href {https://doi.org/10.2139/ssrn.4507511}
+  {\path{doi:10.2139/ssrn.4507511}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2139/ssrn.4507511}
+
+\bibitem{cutler1988moves}
+D.~Cutler, J.~Poterba, L.~Summers, \href{http://dx.doi.org/10.3386/w2538}{What
+  Moves Stock Prices?}, 1988.
+\newblock \href {https://doi.org/10.3386/w2538} {\path{doi:10.3386/w2538}}.
+\newline\urlprefix\url{http://dx.doi.org/10.3386/w2538}
+
+\bibitem{mitchell1994impact}
+M.~L. Mitchell, J.~H. Mulherin, \href{http://dx.doi.org/10.2307/2329211}{The
+  impact of public information on the stock market}, J. Finance 49~(3) (1994)
+  923--950.
+\newblock \href {https://doi.org/10.2307/2329211} {\path{doi:10.2307/2329211}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2307/2329211}
+
+\bibitem{baker2016measuring}
+S.~R. Baker, N.~Bloom, S.~J. Davis,
+  \href{http://dx.doi.org/10.1093/qje/qjw024}{Measuring economic policy
+  uncertainty}, Q. J. Econ. 131~(4) (2016) 1593--1636.
+\newblock \href {https://doi.org/10.1093/qje/qjw024}
+  {\path{doi:10.1093/qje/qjw024}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1093/qje/qjw024}
+
+\bibitem{baker2021triggers}
+S.~Baker, N.~Bloom, S.~Davis, M.~Sammon,
+  \href{http://dx.doi.org/10.3386/w28687}{What Triggers Stock Market Jumps?},
+  2021.
+\newblock \href {https://doi.org/10.3386/w28687} {\path{doi:10.3386/w28687}}.
+\newline\urlprefix\url{http://dx.doi.org/10.3386/w28687}
+
+\bibitem{manela2017news}
+A.~Manela, A.~Moreira,
+  \href{http://dx.doi.org/10.1016/j.jfineco.2016.01.032}{News implied
+  volatility and disaster concerns}, J. Financ. Econ. 123~(1) (2017) 137--162.
+\newblock \href {https://doi.org/10.1016/j.jfineco.2016.01.032}
+  {\path{doi:10.1016/j.jfineco.2016.01.032}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1016/j.jfineco.2016.01.032}
+
+\bibitem{chan2003stock}
+W.~S. Chan, \href{http://dx.doi.org/10.1016/S0304-405X(03)00146-6}{Stock price
+  reaction to news and no-news: drift and reversal after headlines}, J. Financ.
+  Econ. 70~(2) (2003) 223--260.
+\newblock \href {https://doi.org/10.1016/s0304-405x(03)00146-6}
+  {\path{doi:10.1016/s0304-405x(03)00146-6}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1016/S0304-405X(03)00146-6}
+
+\bibitem{oncharoen2018deep}
+P.~Oncharoen, P.~Vateekul,
+  \href{http://dx.doi.org/10.1109/icaicta.2018.8541310}{Deep learning for stock
+  market prediction using event embedding and technical indicators}, in: 2018
+  5th International Conference on Advanced Informatics: Concept Theory and
+  Applications (ICAICTA), IEEE, 2018, pp. 19--“24.
+\newblock \href {https://doi.org/10.1109/icaicta.2018.8541310}
+  {\path{doi:10.1109/icaicta.2018.8541310}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1109/icaicta.2018.8541310}
+
+\bibitem{lopez2023can}
+A.~Lopez-Lira, Y.~Tang, \href{http://dx.doi.org/10.2139/ssrn.4412788}{Can
+  chatgpt forecast stock price movements? return predictability and large
+  language models}, SSRN Electron. J. (2023).
+\newblock \href {https://doi.org/10.2139/ssrn.4412788}
+  {\path{doi:10.2139/ssrn.4412788}}.
+\newline\urlprefix\url{http://dx.doi.org/10.2139/ssrn.4412788}
+
+\bibitem{chen2022expected}
+Y.~Chen, B.~T. Kelly, D.~Xiu,
+  \href{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4416687}{Expected
+  returns and large language models}, Available at SSRN 4416687 (2022).
+\newline\urlprefix\url{https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4416687}
+
+\bibitem{vaswani2017attention}
+A.~Vaswani, N.~Shazeer, N.~Parmar, J.~Uszkoreit, L.~Jones, A.~N. Gomez,
+  {\L}.~Kaiser, I.~Polosukhin,
+  \href{https://doi.org/10.48550/arxiv.1706.03762}{Attention is all you need},
+  Adv. Neural Inf. Process. Syst. 30 (2017).
+\newblock \href {https://doi.org/10.48550/ARXIV.1706.03762}
+  {\path{doi:10.48550/ARXIV.1706.03762}}.
+\newline\urlprefix\url{https://doi.org/10.48550/arxiv.1706.03762}
+
+\bibitem{devlin2018bert}
+J.~Devlin, M.-W. Chang, K.~Lee, K.~Toutanova,
+  \href{https://arxiv.org/abs/1810.04805}{Bert: Pre-training of deep
+  bidirectional transformers for language understanding}, arXiv preprint
+  arXiv:1810.04805 (2018).
+\newblock \href {https://doi.org/10.48550/ARXIV.1810.04805}
+  {\path{doi:10.48550/ARXIV.1810.04805}}.
+\newline\urlprefix\url{https://arxiv.org/abs/1810.04805}
+
+\bibitem{radford2018improving}
+A.~Radford, K.~Narasimhan, T.~Salimans, I.~Sutskever, et~al., Improving
+  language understanding by generative pre-training (2018).
+
+\bibitem{le2023bloom}
+T.~Le~Scao, A.~Fan, C.~Akiki, E.~Pavlick, S.~Ili, D.~Hesslow, R.~Castagn, A.~S.
+  Luccioni, F.~Yvon, M.~Gall, et~al.,
+  \href{https://arxiv.org/abs/2211.05100}{Bloom: A 176b-parameter open-access
+  multilingual language model} (2023).
+\newblock \href {https://doi.org/10.48550/ARXIV.2211.05100}
+  {\path{doi:10.48550/ARXIV.2211.05100}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2211.05100}
+
+\bibitem{touvron2023llama}
+H.~Touvron, T.~Lavril, G.~Izacard, X.~Martinet, M.-A. Lachaux, T.~Lacroix,
+  B.~Roziére, N.~Goyal, E.~Hambro, F.~Azhar, et~al., Llama: Open and efficient
+  foundation language models, arXiv preprint arXiv:2302.13971 (2023).
+
+\bibitem{jiang2021pervasive}
+H.~Jiang, S.~Z. Li, H.~Wang,
+  \href{http://dx.doi.org/10.1016/j.jfineco.2021.04.003}{Pervasive
+  underreaction: Evidence from high-frequency data}, J. Financ. Econ. 141~(2)
+  (2021) 573--599.
+\newblock \href {https://doi.org/10.1016/j.jfineco.2021.04.003}
+  {\path{doi:10.1016/j.jfineco.2021.04.003}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1016/j.jfineco.2021.04.003}
+
+\bibitem{jegadeesh1993returns}
+N.~Jegadeesh, S.~Titman,
+  \href{http://dx.doi.org/10.1111/j.1540-6261.1993.tb04702.x}{Returns to buying
+  winners and selling losers: Implications for stock market efficiency}, J.
+  Finance 48~(1) (1993) 65--91.
+\newblock \href {https://doi.org/10.1111/j.1540-6261.1993.tb04702.x}
+  {\path{doi:10.1111/j.1540-6261.1993.tb04702.x}}.
+\newline\urlprefix\url{http://dx.doi.org/10.1111/j.1540-6261.1993.tb04702.x}
+
+\end{thebibliography}

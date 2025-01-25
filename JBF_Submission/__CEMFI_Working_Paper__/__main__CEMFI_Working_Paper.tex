@@ -1,0 +1,125 @@
+\documentclass[11pt,a4paper]{article}
+
+%---------------------- MACROS -----------------------
+\usepackage{Author_Macros}
+%----------------------------------------------------
+
+\usepackage{authblk} % to write the title with the authors
+\usepackage{booktabs} % for better tables
+\usepackage[nomarkers, nolists, tablesfirst]{endfloat} % puts tables and figures at the end of the document
+\usepackage{etoolbox} % For \AtBeginEnvironment and \AtEndEnvironment
+\usepackage{indentfirst}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\textsc{
+{\huge Predicting Market Reactions to News:} 
+\\
+{\Large An LLM-Based Approach Using Spanish Business Articles }
+}}
+
+\author[1]{
+{ 
+\bx \bx
+\textbf{Jesus Villota Miranda}$^{\dagger}$\footnote{
+\scriptsize{
+I am deeply grateful to Enrique Sentana, Manuel Arellano, Dante Amengual, Rafael Repullo, Javier Suárez, David Martínez-Miera, Julio Crego, and Francisco Peñaranda for their comments. I am especially indebted to Nicolás Forteza and Matías Covarrubias, whose invaluable guidance and insights have greatly enriched this work. I also thank discussants for their helpful comments, as well as the participants of the Banking \& Finance Seminar (CEMFI), the Generative AI in Finance Conference (Concordia University), the Mirian Andrés Seminar (University of La Rioja) and the 3rd Contemporary Issues in Financial Markets and Banking (Nottingham Trent University). Finally, I gratefully acknowledge financial support from Banco de España (BdE).
+}
+}}
+
+\bx 
+{\small
+$\big{<}$
+\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
+$\big{>}$
+
+$\big{<}$
+Email: \href{jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
+$\big{>}$
+%
+%\mx 
+%\textbf{This version: 17th October 2024}
+%
+}
+}
+
+\date{}  % Remove date
+
+%\begin{document}
+%
+%\maketitle
+%\begin{abstract}
+%%----------------------------------------------------
+%\input{txt__ABSTRACT.tex}
+%%----------------------------------------------------
+%
+%\noindent\textbf{JEL Codes:} G12, G14, C45, C58, C63, D83
+%
+%\noindent\textbf{Keywords:} Large Language Models, Business News, Stock Market Reaction, Market Efficiency
+%\end{abstract}
+
+
+\begin{document}
+\maketitle
+%----------------------------------------------------
+\begin{abstract}
+\input{txt_0_Abstract.tex}
+
+\mx 
+\noindent\textbf{JEL Codes:} G12, G14, C45, C58, C63, D83
+
+\sx 
+\noindent\textbf{Keywords:} Large Language Models, Business News, Stock Market Reaction, Market Efficiency
+
+\end{abstract}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\setcounter{page}{1}
+
+%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%
+\input{txt_1_Introduction.tex}
+
+%%%%%%%%%%%%%%%%%%% DATA %%%%%%%%%%%%%%%%%%%%%%%%
+\input{txt_2_Data.tex}
+
+%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+\input{txt_3_General_Setup.tex}
+\input{txt_4_Clustering.tex}
+\input{txt_5_Trading_Strategy.tex}
+
+%%%%%%%%%%%%% ROBUSTNESS CHECKS %%%%%%%%%%%%%%%%%%
+\input{txt_6_Robustness_Checks.tex}
+
+%%%%%%%%%%%%%%% TRADING INTENSITY %%%%%%%%%%%%%%%%%%%%%
+%\input{txt_Trading_Intensity.tex}
+
+%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
+\input{txt_7_Conclusion.tex}
+
+%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
+\bibliography{bib_references_DOI.bib}
+%\bibliographystyle{plain}
+\bibliographystyle{elsarticle-num}
+%----------------------------------------------------
+\newpage
+% To make sure all the tables/figures appear before the appendix
+\processdelayedfloats 
+% Reset the numbering for appendix figures and tables
+\renewcommand{\thefigure}{A\arabic{figure}} 
+\renewcommand{\thetable}{A\arabic{table}}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%% APPENDIX %%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{Appendix}
+\input{txt_A0_Appendix.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

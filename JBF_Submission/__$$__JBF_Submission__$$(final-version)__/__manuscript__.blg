@@ -1,0 +1,67 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: __manuscript__.aux
+The style file: elsarticle-num.bst
+Database file #1: bib_references_DOI.bib
+Repeated entry---line 253 of file bib_references_DOI.bib
+ : @book{ke2019predicting
+ :                       , title={Predicting Returns With Text Data}, url={http://dx.doi.org/10.3386/w26186}, DOI={10.3386/w26186}, institution={National Bureau of Economic Research}, author={Ke, Zheng Tracy and Kelly, Bryan and Xiu, Dacheng}, year={2019}, month=aug }
+I'm skipping whatever remains of this entry
+You're missing a field name---line 264 of file bib_references_DOI.bib
+ : 
+ : % url = {https://arxiv.org/abs/1706.03762},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--I'm ignoring le2023bloom's extra "title" field
+--line 294 of file bib_references_DOI.bib
+I was expecting a `,' or a `}'---line 304 of file bib_references_DOI.bib
+ :   
+ :   doi = {10.48550/ARXIV.2302.13971},
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--empty publisher in cutler1988moves
+Warning--empty publisher in baker2021triggers
+Warning--empty journal in radford2018improving
+Warning--empty journal in le2023bloom
+You've used 36 entries,
+            2952 wiz_defined-function locations,
+            929 strings with 13159 characters,
+and the built_in function-call counts, 12081 in all, are:
+= -- 1190
+> -- 375
+< -- 3
++ -- 149
+- -- 113
+* -- 1040
+:= -- 1701
+add.period$ -- 69
+call.type$ -- 36
+change.case$ -- 35
+chr.to.int$ -- 0
+cite$ -- 40
+duplicate$ -- 383
+empty$ -- 1359
+format.name$ -- 143
+if$ -- 3149
+int.to.chr$ -- 0
+int.to.str$ -- 36
+missing$ -- 37
+newline$ -- 183
+num.names$ -- 36
+pop$ -- 232
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 684
+stack$ -- 0
+substring$ -- 435
+swap$ -- 152
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 4
+while$ -- 59
+width$ -- 38
+write$ -- 396
+(There were 3 error messages)

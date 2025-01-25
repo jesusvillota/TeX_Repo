@@ -1,0 +1,32 @@
+\begin{algorithm}[H]
+\caption{KMeans Clustering Algorithm}
+\label{alg:KMeans}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Embedding vectors $\{\mathbf{e}^1, \mathbf{e}^2, \ldots, \mathbf{e}^{N}\}$, number of clusters $k$
+\State \textbf{Output:} Cluster assignments $\{\D_1, \D_2, \ldots, \D_k\}$, centroids $\{\mathbf{c}_1, \mathbf{c}_2, \ldots, \mathbf{c}_k\}$
+
+\State \textbf{Initialize} centroids $\{\mathbf{c}_1, \mathbf{c}_2, \ldots, \mathbf{c}_k\}$ randomly
+
+\Repeat
+    \State \underline{\textit{Assignment Step:}}
+    \For{each vector $\mathbf{e}^i$}
+        \State Assign $\mathbf{e}^i$ to the nearest centroid:
+        \[
+        g = \arg \min_{\ell\in\{1,...,k\}} \|\mathbf{e}^i - \mathbf{c}_{\ell}\|_{2}^2
+        \]
+        \State Update cluster assignments: $\D_{g} \leftarrow \D_{g} \cup \{i\}$
+    \EndFor
+
+    \State \underline{\textit{Update Step:}}
+    \For{each cluster $\D_g$}
+        \State Recalculate centroid $\mathbf{c}_g$:
+        \[
+        \mathbf{c}_g = \frac{1}{|\D_g|} \sum_{i \in \D_g} \mathbf{e}^i
+        \]
+    \EndFor
+\Until{cluster assignments no longer change}
+
+\State \textbf{Return} cluster assignments $\{\D_1, \D_2, \ldots, \D_k\}$ and centroids $\{\mathbf{c}_1, \mathbf{c}_2, \ldots, \mathbf{c}_k\}$
+
+\end{algorithmic}
+\end{algorithm}

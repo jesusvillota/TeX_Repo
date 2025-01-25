@@ -1,0 +1,966 @@
+\documentclass[12pt,article]{memoir}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/$$JVM_Macros}
+\Subject{Statistical Arbitrage in Rank Space}
+\Arg{}
+
+\begin{document}
+
+\tableofcontents
+
+%\textbf{ChatGPT Prompt:}
+%
+%\bblue{
+%
+%In a market consisting of $N$ stocks, we denote the dividend-adjusted return on stock $i$ at trading day $t$ by $r_{i, t}$. We adopt a factor model for stock return,
+%\begin{align}\label{eq:1}
+%r_t- r_f = \beta_t F_t+ \epsilon_t, \quad t=1,2, \ldots, T 
+%\end{align}
+%
+%
+%}
+%
+%
+%
+%\Vhrulefill
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In a market consisting of $N$ stocks, we denote the dividend-adjusted return on stock $i$ at trading day $t$ by $r_{i, t}$. We adopt a factor model for stock return,
+\begin{align}\label{eq:1}
+r_t- r_f = \beta_t F_t+ \epsilon_t, \quad t=1,2, \ldots, T 
+\end{align}
+Here, $r_t=\left\{r_{i, t}\right\}_{i=1}^N \in \mathbb{R}^N$ are the dividend-adjusted daily return, $r_f \in \mathbb{R}$ is the risk-free rate, $F_t \in \mathbb{R}^{K \times 1}$ are the underlying factors, $\beta_t \in \mathbb{R}^{N \times K}$ are the corresponding loadings on $K$ factors, and $\epsilon_t \in \mathbb{R}^N$ are the residual returns. Factor candidates varies widely, ranging from economical-driven factors such as the Fama-French factors, to statistically-driven factors derived from PCA. In our approach, factors are selected as the leading eigenvectors in PCA. The number of factors $K$ is chosen based on the eigenvalue spectrum of the empirical correlation of daily returns.
+
+
+Without loss of generality, these factors can be interpreted as portfolios of stocks,
+\begin{equation}\label{eq:2}
+	F_t=\omega_t\left(r_t-r_f\right)
+\end{equation}
+where $\omega_t \in \mathbb{R}^{K \times N}$ contains corresponding portfolio weights. Combining \cref{eq:1} and \cref{eq:2} yields
+\begin{equation}\label{eq:3}
+	r_t-r_f=\beta_t \omega_t\left(r_t-r_f\right)+\epsilon_t \Rightarrow \epsilon_t=\left(I-\beta_t \omega_t\right)\left(r_t-r_f\right):=\Phi_t\left(r_t-r_f\right)
+\end{equation}
+
+Here,
+\begin{equation}\label{eq:4}
+	\Phi_t:=\left(I-\beta_t \omega_t\right)
+\end{equation}
+defines a linear transformation from $r_t$ to $\epsilon_t$. More importantly, $\epsilon_{i, t}$ can be viewed as the return of a tradable portfolio with weights specified by the $i$-th row of $\Phi_t$. Consequently, the investing universe spanned by $r_t$ is termed as name equity space, and that spanned by $\epsilon_t$ as name residual space.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We denote the portfolio weights in name equity space as $w_t^{R, \text { name }}$ and portfolio weights in name residual space as $w_t^{\epsilon, \text { name }}$. These weights are related by
+
+\begin{equation}\label{eq:5}
+	w_t^{R, \text { name }}=\Phi_t^T w_t^{\epsilon, \text { name }}
+\end{equation}
+, directly following the equality in portfolio return,
+
+\begin{equation}\label{eq:6}
+	\left(w_t^{\epsilon \text { name }}\right)^T \epsilon_t=\left(w_t^{\epsilon, \text { name }}\right)^T \Phi_t\left(r_t-r_f\right)=\left(w_t^{R, \text { name }}\right)^T\left(r_t-r_f\right)
+\end{equation}
+
+For factors derived by PCA, we have
+
+\begin{equation}\label{eq:7}
+	\Phi_t \beta_t=0 \Longrightarrow\left(w_t^{R, \text { name }}\right)^T \beta_t=\left(w_t^{\epsilon, \text { name }}\right)^T \Phi_t \beta_t=0, \quad \forall w_t^{\epsilon, \text { name }}
+\end{equation}
+with proof given in the appendix. It means that for any $w_t^{\epsilon \text {,name }}$, the $w_t^{R \text {,name }}$ calculated by \cref{eq:5} satisfy,
+
+\begin{equation}\label{eq:8}
+	\left(w_t^{R, \text { name }}\right)^T\left(r_t-r_f\right)=\left(w_t^{\epsilon, \text { name }}\right)^T \Phi_t\left(\beta_t F_t+\epsilon_t\right)=\left(w_t^{\epsilon, \text { name }}\right)^T \Phi_t \epsilon_t=\left(w_t^{R, \text { name }}\right)^T \epsilon_t
+\end{equation}
+
+It suggests that the return of our statistical arbitrage portfolios is independent of market factors and relies solely on residual returns, a property usually termed as market neutrality. Ideally, portfolios are also desired to have a zero net value, known as dollar neutrality. Empirical evidence suggests that market-neutral portfolios are also approximately dollar-neutral.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algorithm}[H]
+    \caption{Market decomposition (PCA) [Fig. 5, panel (c1, c2)]}
+    \begin{algorithmic}[1]
+        \Require $r_t$, $r_{f, t}$, $K$
+        \Ensure $\epsilon_t$, $\Phi_t$
+        \Function{market\_decomposition}{$r_t, r_{f, t}, K$}
+            \State Perform principal component analysis: $r_t - r_{f, t} = U \Sigma V^T$
+            \State $F_t \gets (v_1, v_2, \ldots, v_K)$, where $v_k$ is the $k$-th column of $V^T$
+            \State Calculate $\omega_t$ by solving $F_t = \omega_t (r_t - r_{f,t})$
+            \State Calculate $\beta_t$ as the coefficient of the linear regression $r_t - r_f \sim F_t$
+            \State $\Phi_t \gets I - \beta_t \omega_t$
+            \State $\epsilon_t \gets \Phi_t (r_t - r_{f, t})$
+            \State \Return $\epsilon_t, \Phi_t$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+% Input details:
+\textbf{Input:}
+\begin{itemize}
+    \item $r_t$: return in name space or transformed return in rank space.
+    \item $r_{f, t}$: risk-free rate at the end of trading day $t$.
+    \item $K$: number of market factors, predetermined by analyzing eigenvalue spectrum of the correlation matrix.
+\end{itemize}
+
+% Output details:
+\textbf{Output:}
+\begin{itemize}
+    \item $\epsilon_t$: residual returns in name space or rank space.
+    \item $\Phi_t$: transformation between residual space and equity space (Eq. 2.1.1 for name space and Eq. 2.1.10 for rank space).
+\end{itemize}
+
+% Notes:
+\textbf{Note:}
+\begin{itemize}
+    \item The algorithm realizes the formulation in section 2.1.
+    \item Factors $F_t$ and $\omega_t$ are calculated on a 252-day look-back window.
+    \item Loadings $\beta_t$ are calculated on a 60-day look-back window.
+    \item $F_t$, $\omega_t$, and $\beta_t$ are updated daily.
+    \item $K=5$ for name space and $K=1$ for rank space based on empirical eigenvalue spectrum of the correlation matrix (Fig. 6(c,d)).
+\end{itemize}
+
+
+\textbf{[Appendix]}:
+Here, we prove the equality $\Phi_t \beta_t=0$, crucial relationship for market neutrality. 
+
+We denote the return matrix $R_t=\left(r_{t-T+1}, r_{t-T+2}, \ldots, r_t\right) \in \mathbb{R}^{N \times T}$, \bblue{(where $T$ is a window of 252 days)}. Assume singular value decomposition of $R_t$,
+$$
+R_t-R_t^f=U \Sigma V^T
+$$
+where $R_t^f \in \mathbb{R}^{1 \times T}$ is the risk-free rate, $U \in \mathbb{R}^{N \times N}, \Sigma \in \mathbb{R}^{N \times T}$, and $V^T \in \mathbb{R}^{T \times T}$. Then, the factors and loadings in Eq. 2.1.1 and $\omega_t$ in Eq. 2.1.2 becomes
+$$F_t=\left(\begin{array}{c}v_1^T \\ v_2^T \\ \ldots \\ v_K^T\end{array}\right), \quad \beta_t=\left(u_1, u_2, \ldots, u_K\right)\left(\begin{array}{ccc}\sigma_1 & & \\ & \ldots & \\ & & \sigma_K\end{array}\right), \quad \omega_t=\left(\begin{array}{ccc}\sigma_1^{-1} & & \\ & \ldots & \\ & \ldots & \sigma_K^{-1}\end{array}\right)\left(\begin{array}{c}u_1^T \\ u_2^T \\ \ldots \\ \\ u_K^T\end{array}\right)$$
+where $u_i$ and $v_i$ are the $i$-th column of matrix $U$ and $V$. 
+Then, because $U$ and $V$ are orthogonal matrix,
+$$
+\begin{aligned}
+\beta_t \omega_t & =I \\
+\Longrightarrow \Phi_t \beta_t & =\left(I-\beta_t \omega_t\right) \beta_t=0
+\end{aligned}
+$$
+
+\Vhrulefill
+
+$$\begin{array}{lllll}
+\ub{F_t}{K \times T} 
+&= \ub{V_K}{K \times T} 
+%&= \ub{w_t}{K \times N} \ub{(R_t-R_t^f)}{N\times T}
+\\[2em]
+\ub{w_t}{K \times N} 
+&= \ub{\Sigma_K^+}{K\times K} \ub{U_K^T}{K\times N}
+&= \ub{F_t}{K\times T}\ub{R_t^+}{T\times N}
+\\[2em]
+\ub{\beta_t}{N\times K} &= \ub{U_K}{N\times K} \ub{\Sigma_K}{K\times K}
+&= (\ub{F_t^T F_t}{K\times K})^+ \ub{F_t}{K\times T} \ub{r_t}{T\times 1}
+\end{array}$$
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\red{\textbf{Potential Typo}: 
+If $\beta_t \omega_t = I$, then $\Phi_t := (I- \beta_t \omega_t) = I-I = 0$, which doesn't make sense.}
+
+\violet{
+
+Note that:
+
+$$\begin{array}{lllll}
+\beta_t 	&= U_K \Sigma_K
+\\
+\omega_t 	&= \Sigma_K^{-1} U_K\'
+\\
+\beta_t \omega_t &= U_K \Sigma_K \Sigma_K^{-1} U_K\' &= U_K U_K\' &= \sum_{i=1}^K \vec{u}_i \vec{u}_i^{\top}
+\\
+(\beta_t \omega_t) \beta_t &= (U_K U_K\')U_K \Sigma_K &= U_K \Sigma_K
+\\ 
+\Phi_t &= (I-\beta_t \omega_t) &= I - U_K U_K\' &= I_N - (I_N - \sum_{i=K+1}^N \vec{u}_i \vec{u}_i^{\top}) &= \sum_{i=K+1}^N \vec{u}_i \vec{u}_i^{\top}
+\\
+\Phi_t \beta_t &= (I-\beta_t \omega_t)\beta_t &= \beta_t - \beta_t \omega_t \beta_t &= \beta_t - \beta_t &= 0
+%&=  (I - U_K U_K\')U_K \Sigma_K &= U_K \Sigma_K - U_K \red{U_K\'U_K} \Sigma_K &= U_K \Sigma_K - U_K \Sigma_K &=0
+\end{array}$$
+}
+
+
+\bblue{
+
+\begin{itemize}
+
+\item Since $U$ and $V$ are orthogonal matrices from the Singular Value Decomposition (SVD), they satisfy $U^T U=I\in\R^{N\times N}$ and $V^T V=I\in\R^{T \times T}$. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \item $U \in \mathbb{R}^{N \times N}$ is an orthogonal matrix $\implies$
+$
+U^{\top} U=U U^{\top}=I_N,
+$
+where $I_N$ is the $N \times N$ identity matrix. Hence, the columns (and rows) of $U$ are orthonormal vectors in $\mathbb{R}^N$. 
+
+\begin{itemize}
+\item $U\'U = I_N$ can be seen from the inner product of the orthonormal vectors $\vec{u}_i$.
+$$
+U\'U 
+=
+\left[\begin{array}{c}
+\vec{u}_1^{\top} \\
+\vec{u}_2^{\top} \\
+\vdots \\
+\vec{u}_N^{\top}
+\end{array}\right]\left[\begin{array}{llll}
+\vec{u}_1 & \vec{u}_2 & \ldots & \vec{u}_N
+\end{array}\right]=\left[\begin{array}{cccc}
+\vec{u}_1^{\top} \vec{u}_1 & \vec{u}_1^{\top} \vec{u}_2 & \ldots & \vec{u}_1^{\top} \vec{u}_N \\
+\vec{u}_2^{\top} \vec{u}_1 & \vec{u}_2^{\top} \vec{u}_2 & \ldots & \vec{u}_2^{\top} \vec{u}_N \\
+\vdots & \vdots & \ddots & \vdots \\
+\vec{u}_N^{\top} \vec{u}_1 & \vec{u}_N^{\top} \vec{u}_2 & \ldots & \vec{u}_N^{\top} \vec{u}_N
+\end{array}\right] 
+= I_N
+$$
+
+\item $UU\' = I_N$ can be seen from the outer product of the orthonormal vectors $\vec{u}_i\vec{u}_i\' \in\R^N$
+$$
+UU\' 
+= 
+\left[\begin{array}{llll}
+\vec{u}_1 & \vec{u}_2 & \ldots & \vec{u}_N
+\end{array}\right]\left[\begin{array}{c}
+\vec{u}_1^{\top} \\
+\vec{u}_2^{\top} \\
+\vdots \\
+\vec{u}_N^{\top}
+\end{array}\right]
+=
+\sum_{i=1}^N \vec{u}_i \vec{u}_i^{\top}
+= I_N
+$$
+
+\end{itemize}
+
+%----------------------------------------------------
+\item The matrix $U_K \in \mathbb{R}^{N \times K}$ is formed by taking the first $K$ columns of $U$ ($K \leq N$)
+$$
+U_K=\left[\begin{array}{llll}
+\vec{u}_1 & \vec{u}_2 & \ldots & \vec{u}_K
+\end{array}\right],
+$$
+where $\vec{u}_i\in\R^N$ are the orthonormal columns of $U$. This means:
+$$
+\vec{u}_i^{\top} \vec{u}_j= \begin{cases}1 & \text { if } i=j \\ 0 & \text { if } i \neq j\end{cases}
+$$
+
+
+\item \textbf{Computing $U_K\' U_K$: }
+
+$U_K^{\top} \in \mathbb{R}^{K \times N}, U_K \in \mathbb{R}^{N \times K} \implies U_K^{\top} U_K \in \mathbb{R}^{K \times K}$. Computation:
+
+$$
+U_K^{\top} U_K
+=
+\left[\begin{array}{c}
+\vec{u}_1^{\top} \\
+\vec{u}_2^{\top} \\
+\vdots \\
+\vec{u}_K^{\top}
+\end{array}\right]\left[\begin{array}{llll}
+\vec{u}_1 & \vec{u}_2 & \ldots & \vec{u}_K
+\end{array}\right]=\left[\begin{array}{cccc}
+\vec{u}_1^{\top} \vec{u}_1 & \vec{u}_1^{\top} \vec{u}_2 & \ldots & \vec{u}_1^{\top} \vec{u}_K \\
+\vec{u}_2^{\top} \vec{u}_1 & \vec{u}_2^{\top} \vec{u}_2 & \ldots & \vec{u}_2^{\top} \vec{u}_K \\
+\vdots & \vdots & \ddots & \vdots \\
+\vec{u}_K^{\top} \vec{u}_1 & \vec{u}_K^{\top} \vec{u}_2 & \ldots & \vec{u}_K^{\top} \vec{u}_K
+\end{array}\right]
+= 
+I_K
+$$
+since the vectors $\vec{u}_i$ are orthonormal:
+
+
+\item \textbf{Computing $U_K U_K\'$ }
+
+$U_K \in \mathbb{R}^{N \times K}, U_K^{\top} \in \mathbb{R}^{K \times N} \implies U_K U_K^{\top} \in \mathbb{R}^{N \times N}$. Computation:
+$$
+U_K U_K^{\top}=\left[\begin{array}{llll}
+\vec{u}_1 & \vec{u}_2 & \ldots & \vec{u}_K
+\end{array}\right]\left[\begin{array}{c}
+\vec{u}_1^{\top} \\
+\vec{u}_2^{\top} \\
+\vdots \\
+\vec{u}_K^{\top}
+\end{array}\right]
+=
+\sum_{i=1}^K \vec{u}_i \vec{u}_i^{\top}
+$$
+Hence, $U_K U_K^{\top}$ is not the identity matrix $I_N$ unless $K=N$. Instead, $U_K U_K^{\top}$ is a projection matrix onto the column space of $U_K$. 
+\begin{itemize}
+\item \textbf{Incomplete Basis}:  The set $\left\{\vec{u}_1, \vec{u}_2, \ldots, \vec{u}_K\right\}$ spans a $K$-dimensional subspace $\mathcal{S}$ of $\mathbb{R}^N$. It does not form a complete basis for $\mathbb{R}^N$ when $K<N$.
+\item \textbf{Projection Operator}: $U_K U_K^{\top}$ is a projection matrix onto the subspace $\mathcal{S}$. This projection does not recover $\vec{x}$ unless $\vec{x} \in \mathcal{S}$. For any $\vec{x} \in \mathbb{R}^N$, the projection onto $\mathcal{S}$ is:
+$$
+U_K U_K^{\top} \vec{x}=\sum_{i=1}^K \vec{u}_i\left(\vec{u}_i^{\top} \vec{x}\right)
+$$
+\item Note that, since 
+$
+\sum_{i=1}^N \vec{u}_i \vec{u}_i^{\top} 
+= 
+(\sum_{i=1}^K \vec{u}_i \vec{u}_i^{\top})+(\sum_{i=K+1}^N \vec{u}_i \vec{u}_i^{\top})
+= 
+I_N
+$, then
+$$
+\sum_{i=1}^K \vec{u}_i \vec{u}_i^{\top} = I_N - \sum_{i=K+1}^N \vec{u}_i \vec{u}_i^{\top}
+$$
+\end{itemize}
+%----------------------------------------------------
+\item \textbf{Question}: Given:
+$
+\left(\beta_t \omega_t\right) \beta_t=\left(U_K U_K^{\top}\right) U_K \Sigma_K=U_K \Sigma_K
+$, does this imply that $U_K U_K^{\top}=I_N$ ?
+
+\textbf{Answer}: No, it does not imply that $U_K U_K^{\top}=I_N$. The equation shows that $U_K U_K^{\top}$ acts as an identity only on the vectors in the column space of $U_K \Sigma_K$.
+
+%----------------------------------------------------
+\textbf{Key Points:}
+\begin{enumerate}
+  \item $U_K U_K^{\top}$ is a Projection Matrix:
+It satisfies $\left(U_K U_K^{\top}\right)^2=U_K U_K^{\top}$.
+It projects any vector onto the column space of $U_K$.
+\item Acting on $U_K \Sigma_K$ :
+Since $U_K \Sigma_K\in\t{Col}(U_K)$, projecting it onto the column space throught the projection matrix  $U_K U_K^{\top}$ leaves it unchanged: 
+$
+(U_K U_K^{\top})(U_K \Sigma_K)=U_K \Sigma_K
+$
+\item Not Acting as Identity on Entire $\mathbb{R}^N$ :
+For $\vec{v}\not\in\t{Col}(U_K)$, the projection matrix $U_K U_K^{\top}$ does not act as the identity. \textit{Example:
+Let $\vec{v}$ be orthogonal to the column space of $U_K$ :
+$$
+U_K^{\top} \vec{v}=0
+$$
+Then:
+$$
+U_K U_K^{\top} \vec{v}=U_K\left(U_K^{\top} \vec{v}\right)=U_K(0)=0 \neq \vec{v}
+$$
+This shows that $U_K U_K^{\top}$ does not act as the identity on $\vec{v}$.
+}
+\end{enumerate}
+
+%----------------------------------------------------
+\textbf{Further Explanation with Mathematical Details}
+\begin{itemize}
+  \item \textbf{Rank considerations}. $U_K$ has dimensions $N \times K$. Then, $U_K^{\top} U_K=I_K$ because the columns of $U_K$ are orthonormal. However, $U_K U_K^{\top}$ is an $N \times N$ matrix, and $\operatorname{rank}(U_K U_K^{\top})=K$, since it's the product of an $N \times K$ matrix and a $K \times N$ matrix. Since the Identity Matrix $I_N$ has rank $N$ and $\operatorname{rank}(U_K U_K^{\top})=K<N$, it's clear that $U_K U_K^{\top}$ cannot be equal to $I_N$, as a matrix of rank $K$ cannot equal a matrix of rank $N$.
+
+\item \textbf{Projection onto Col($U_K$) considerations}. Any vector $\vec{x}$ in $\mathbb{R}^N$ can be decomposed as 
+$
+\vec{x}=\vec{x}_{\|}+\vec{x}_{\perp}
+$, where 
+$\vec{x}_{\|}$ is the component in the column space of $U_K$, and
+$\vec{x}_{\perp}$ is the component orthogonal to the column space of $U_K$.
+Applying $U_K U_K^{\top}$ to $\vec{x}$ :
+$$
+U_K U_K^{\top} \vec{x}
+=
+U_K U_K^{\top}(\vec{x}_{\|}+\vec{x}_{\perp})
+=
+U_K U_K^{\top} \vec{x}_{\|}+U_K U_K^{\top} \vec{x}_{\perp} 
+=
+\vec{x}_{\|} 
+$$
+because, since $U_K U_K^{\top}$ projects onto the column space, 
+$U_K U_K^{\top} \vec{x}_{\|}=\vec{x}_{\|}$ and
+$U_K U_K^{\top} \vec{x}_{\perp}=\overrightarrow{0}$.
+Therefore,
+$
+U_K U_K^{\top} \vec{x}=\vec{x}_{\|}
+$. In general, unless there is no component in $\vec{x}$ that is orthogonal to $\t{Col}(U_K)$; that is, if $\vec{x}_{\perp}=\overrightarrow{0}$ (i.e: $\vec{x}$ is in the column space), $U_K U_K^{\top} \vec{x} \neq \vec{x}$.
+\end{itemize}
+
+\end{itemize}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Why is $\omega_t=\Sigma_K^{-1}U_K\'$ implied by Algorithm 1?}
+
+According to Algorithm 1., $\omega_t$ can be computed by solving $F_t = \omega_t (r_t-r_{f,t})$. 
+
+\begin{itemize}
+\item \textbf{Truncated SVD with Top $K$ Components}. We can approximate $R_t-R_t^f$ using the top $K$ components:
+$$
+R_t-R_t^f \approx U_K \Sigma_K V_K^{\top}
+$$
+
+where $U_K \in \mathbb{R}^{N \times K}$ are the first $K$ columns of $U$, $\Sigma_K \in \mathbb{R}^{K \times K}$ are the top $K$ singular values, and $V_K^{\top} \in \mathbb{R}^{K \times T}$ are the first $K$ rows of $V^{\top}$.
+Define $F_t = V_K^{\top} \in \mathbb{R}^{K \times T}$.
+%$$
+%F_t=V_K^{\top}=\left[\begin{array}{c}
+%v_1^{\top} \\
+%v_2^{\top} \\
+%\vdots \\
+%v_K^{\top}
+%\end{array}\right]
+%$$
+\end{itemize}
+
+
+$$\begin{array}{lllll}
+\dot R_t &= U\Sigma V\' &\approx U_K\Sigma_K V_K\' 
+\\
+F_t &:=V_K &= \omega_t \dot R_t &\approx \omega_t U_K\Sigma_K V_K\'
+%\\
+%\omega_t &= F_t \dot{R}_t^{-1} &= V_K (U_K\Sigma_K V_K\')^{-1}
+\end{array}$$
+
+\begin{align*}
+F_t &\approx \omega_t U_K\Sigma_K V_K\'
+\\
+V_K^T &\approx \omega_t U_K\Sigma_K V_K\'
+\\
+V_K^T V_K &\approx  \omega_t U_K\Sigma_K V_K\'V_K
+\\
+I &\approx  \omega_t U_K\Sigma_K 
+\\
+\omega_t &\approx (U_K\Sigma_K)^{-1} 
+\\
+& \approx \Sigma_K^{-1} U_K\'
+\end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newpage
+\Vhrulefill \\
+My understanding of the algorithm:
+
+for $t$ in $timeline$:
+\begin{itemize}
+  \item $\dot{\mbf r}_{t-w_{pca}+1:t} - \t{TSmean}(\dot{\mbf r}_{t-w_{pca}+1:t})= \mbf{U \Sigma V\'}\in\R^{w_{pca}\times N}$ ~~~~focus on $\mbf V\in \R^{N \times N}$
+\begin{itemize}
+  \item $\t{TSmean}(\dot{\mbf r}^{(i)}_{t-w_{pca}+1:t})=\frac{1}{w_{pca}} \sum_{s=t-w_{pca}+1}^t \dot r_{s}^{(i)}$ ~~for $i$ in $firms$
+\end{itemize}
+
+  \item $\b \omega_t = \mbf V_{[1:K,:]} \in\R^{K\times N}$ 
+  \item $\mbf F_t = \b \omega_t [\dot{\mbf r_t} - \t{mean}(\dot{\mbf r}_{t-w_{pca}+1:t})] \in \R^{K\times 1}$
+  \item \green{Solution: Use $\t{TSmean}(\dot{\mbf r}_{t-w_{pca}+1:t})$ to center the returns in the regression}
+\begin{itemize}
+  \item $[\dot{\mbf r}^{(i)}_{t-w_{reg}+1:t} - \t{TSmean}(\dot{\mbf r}^{(i)}_{t-w_{pca}+1:t})] = \b \beta_t^{(i)} \mbf F_t + \b \epsilon^{(i)}_{t-w_{reg}+1:t}\in \R^{w_{reg}\times 1}$ ~~for each $i$ in $firms$
+  \item Extract the last TS element: $[\dot{\mbf r}^{(i)}_{t} - \t{TSmean}(\dot{\mbf r}^{(i)}_{t-w_{pca}+1:t})] = \b \beta_t^{(i)} \mbf F_t + \b \epsilon^{(i)}_{t}\in \R$
+  \item Stack them XS: $[\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{pca}+1:t})] = \b \beta_t \mbf F_t + \b \epsilon_{t}\in \R^{N\times 1}$
+
+Hence, now:
+$$\begin{array}{rl}
+\b \eps_t 
+&= [\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{pca}+1:t})] -  \b \beta_t \mbf F_t
+\\
+&= [\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{pca}+1:t})] -  \b \beta_t \b \omega_t [\dot{\mbf r_t} - \t{mean}(\dot{\mbf r}_{t-w_{pca}+1:t})]
+\\ &=
+(\mbf I - \b \beta_t \b \omega_t )[\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{pca}+1:t})] 
+\\ &=
+\mbf  \Phi_t [\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{pca}+1:t})] 
+\end{array}$$
+
+  
+\end{itemize}
+\end{itemize}
+
+
+
+
+\red{Problem: Inconsistent return centering $\implies$ we cannot compute $\mbf \Phi_t$}
+\begin{itemize}
+  \item $[\dot{\mbf r}^{(i)}_{t-w_{reg}+1:t} - \t{TSmean}(\dot{\mbf r}^{(i)}_{t-w_{reg}+1:t})] = \b \beta_t^{(i)} \mbf F_t + \b \epsilon^{(i)}_{t-w_{reg}+1:t}\in \R^{w_{reg}\times 1}$ ~~for each $i$ in $firms$
+  \item Extract the last TS element: $[\dot{\mbf r}^{(i)}_{t} - \t{TSmean}(\dot{\mbf r}^{(i)}_{t-w_{reg}+1:t})] = \b \beta_t^{(i)} \mbf F_t + \b \epsilon^{(i)}_{t}\in \R$
+  \item Stack them XS: $[\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{reg}+1:t})] = \b \beta_t \mbf F_t + \b \epsilon_{t}\in \R^{N\times 1}$
+\end{itemize}
+
+$$\begin{array}{rl}
+\b \eps_t 
+&= [\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{reg}+1:t})] -  \b \beta_t \mbf F_t
+\\
+&= [\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w_{reg}+1:t})] -  \b \beta_t \b \omega_t [\dot{\mbf r_t} - \t{mean}(\dot{\mbf r}_{t-w_{pca}+1:t})]
+\\ \\  < \t{if }w= w_{pca}=w_{reg}> 
+&=
+[\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w+1:t})] -  \b \beta_t \b \omega_t [\dot{\mbf r_t} - \t{mean}(\dot{\mbf r}_{t-w+1:t})]
+\\ &=
+(\mbf I - \b \beta_t \b \omega_t )[\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w+1:t})] 
+\\ &=
+\mbf  \Phi_t [\dot{\mbf r}_{t} - \t{TSmean}(\dot{\mbf r}_{t-w+1:t})] 
+\end{array}$$
+ 
+ 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Vhrulefill
+
+\newpage
+\violet{
+\chapter{Fitting an Ornstein-Uhlenbeck (OU) Process}
+
+The objective is to fit an Ornstein-Uhlenbeck (OU) process to the cumulative residual returns $x_t^L$ for each asset. The OU process is a continuous-time stochastic process exhibiting mean-reverting behavior, suitable for modeling financial time series that drift toward a long-term mean.
+
+\subsection{Definition of the Ornstein-Uhlenbeck Process}
+
+The OU process is governed by the stochastic differential equation (SDE):
+
+\begin{equation}
+dX_t = \frac{1}{\tau} (\mu - X_t) dt + \sigma dB_t
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $X_t$ is the state variable at time $t$.
+    \item $\mu$ is the long-term mean toward which the process reverts.
+    \item $\tau$ is the mean-reversion time (the speed of reversion).
+    \item $\sigma$ is the volatility parameter.
+    \item $dB_t$ is the increment of a standard Brownian motion.
+\end{itemize}
+
+\subsection{Discretization of the OU Process}
+
+To fit this continuous-time process to discrete data, we discretize the SDE using the Euler-Maruyama method with a time step $\Delta t = 1$:
+
+\begin{equation}
+X_{t+1} = X_t + \frac{1}{\tau} (\mu - X_t) \Delta t + \sigma \epsilon_t
+\end{equation}
+
+where $\epsilon_t \sim \mathcal{N}(0, \Delta t)$ is a standard normal random variable.
+
+Simplifying with $\Delta t = 1$:
+
+\begin{equation}
+X_{t+1} = X_t + \frac{1}{\tau} (\mu - X_t) + \sigma \epsilon_t
+\end{equation}
+
+\subsection{Rewriting the Equation}
+
+Rewriting the equation:
+
+\begin{equation}
+X_{t+1} = \left(1 - \frac{1}{\tau}\right) X_t + \frac{\mu}{\tau} + \sigma \epsilon_t
+\end{equation}
+
+Define:
+
+\begin{align}
+a &= 1 - \frac{1}{\tau} \\
+b &= \frac{\mu}{\tau}
+\end{align}
+
+The equation becomes:
+
+\begin{equation}
+X_{t+1} = a X_t + b + \sigma \epsilon_t
+\end{equation}
+
+This is a first-order autoregressive (AR(1)) process with an intercept term.
+
+\subsection{Estimating Parameters Using Linear Regression}
+
+We estimate the parameters $a$ and $b$ by performing linear regression on $X_t$ and $X_{t+1}$:
+
+\begin{equation}
+X_{t+1} = a X_t + b + \text{noise}
+\end{equation}
+
+\subsubsection{Linear Regression Model}
+
+We set up the linear regression model:
+
+\begin{equation}
+y_t^{(i)} = a_i x_t^{(i)} + b_i + \epsilon_t^{(i)}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $y_t^{(i)} = x_{\text{curr}}^{(i)}$
+    \item $x_t^{(i)} = x_{\text{lag}}^{(i)}$
+\end{itemize}
+
+\subsection{Estimating Coefficients}
+
+We use the Ordinary Least Squares (OLS) method to estimate $a_i$ and $b_i$ by minimizing the sum of squared residuals:
+
+\begin{equation}
+\min_{a_i, b_i} \sum_{t} \left( y_t^{(i)} - a_i x_t^{(i)} - b_i \right)^2
+\end{equation}
+
+This can be solved analytically using the normal equations:
+
+\begin{equation}
+\beta^{(i)} = \left( X^{(i)\top} X^{(i)} \right)^{-1} X^{(i)\top} y^{(i)}
+\end{equation}
+
+where:
+\begin{itemize}
+	\item $y^{(i)}=[x_0^{(i)}, x_1^{(i)}, ..., x_{T-1}^{(i)}]\'$
+	\item $X^{(i)}=[\mathbf{1}_{T-1}, x^{(i)}]$
+	\item $x^{(i)} = [x_1^{(i)}, x_2^{(i)}, ..., x_{T}^{(i)}]\'$
+    \item $\beta^{(i)} = \begin{bmatrix} a_i \\ b_i \end{bmatrix}$
+    \item $X^{(i)}$ is the design matrix for asset $i$, including an intercept term.
+\end{itemize}
+
+\subsection{Computing Residuals and Estimating Volatility}
+
+The residuals are computed as:
+
+\begin{equation}
+\epsilon_t^{(i)} = y_t^{(i)} - (a_i x_t^{(i)} + b_i)
+\end{equation}
+
+The volatility $\sigma_i$ is estimated as the standard deviation of the residuals:
+
+\begin{equation}
+\sigma_i = \sqrt{ \frac{1}{T - 2} \sum_{t=1}^{T-1} \left( \epsilon_t^{(i)} \right)^2 }
+\end{equation}
+
+\subsection{Recovering OU Process Parameters}
+
+From the estimated $a_i$ and $b_i$, we recover $\tau_i$ and $\mu_i$.
+
+\subsubsection{Mean-Reversion Time}
+
+\begin{equation}
+\tau_i = -\frac{1}{\ln(a_i)}
+\end{equation}
+
+\subsubsection{Long-Term Mean}
+
+\begin{equation}
+\mu_i = \frac{b_i}{1 - a_i}
+\end{equation}
+
+\subsection{Constraints on Parameter Estimates}
+
+\subsubsection{Why $a_i \leq 0$ and $a_i \geq 1$ Are Invalid}
+
+For the OU process:
+
+\begin{itemize}
+    \item The mean-reversion time $\tau > 0$, implying $a_i = 1 - \frac{1}{\tau} < 1$.
+    \item If $a_i \geq 1$, $\ln(a_i) \geq 0$, leading to $\tau_i \leq 0$, which is not meaningful.
+    \item If $a_i \leq 0$, $\ln(a_i)$ is undefined (complex), and $a_i$ implies explosive or oscillatory behavior, inconsistent with the OU process.
+\end{itemize}
+
+Therefore, valid estimates require $0 < a_i < 1$.
+
+\subsection{Maximum Likelihood Estimation and Log-Likelihood Optimization}
+
+Under the assumption of normally distributed residuals $\epsilon_t^{(i)}$, OLS estimation of the AR(1) model is equivalent to maximizing the log-likelihood function.
+
+\subsubsection{Log-Likelihood Function}
+
+The likelihood function for the AR(1) model is:
+
+\begin{equation}
+L(a_i, b_i, \sigma_i) = \prod_{t=1}^{T-1} \frac{1}{\sqrt{2\pi} \sigma_i} \exp\left( -\frac{ \left( y_t^{(i)} - a_i x_t^{(i)} - b_i \right)^2 }{2 \sigma_i^2} \right)
+\end{equation}
+
+Taking the natural logarithm:
+
+\begin{equation}
+\ln L(a_i, b_i, \sigma_i) = -\frac{(T - 1)}{2} \ln(2\pi \sigma_i^2) - \frac{1}{2 \sigma_i^2} \sum_{t=1}^{T-1} \left( y_t^{(i)} - a_i x_t^{(i)} - b_i \right)^2
+\end{equation}
+
+Maximizing the log-likelihood with respect to $a_i$ and $b_i$ is equivalent to minimizing the sum of squared residuals, which is what OLS achieves.
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
+
+\textbf{Discretization of an OU Process}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Vhrulefill 
+~~
+\href{https://mammouth.ai/app/a/default/c/82166}{[Claude Sonnet 3.5]}
+~~
+\Vhrulefill 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Let's derive the exact solution for the OU process. Here's the step-by-step derivation:
+First, let's rewrite our SDE: $$dX_t = \frac{1}{\tau}(\mu - X_t)dt + \sigma dB_t$$
+
+
+The key is to use Itô's lemma with a clever choice of function. Let's try: $$Y_t = X_t e^{t/\tau}$$
+
+
+Applying Itô's product rule: $d(XY) = Yd(X)+Xd(Y) + d(Y)d(X)$ $$dY_t = e^{t/\tau}dX_t + \frac{1}{\tau}X_te^{t/\tau}dt$$
+Substitute the original SDE for $dX_t$
+
+$$dY_t = e^{t/\tau}[\frac{1}{\tau}(\mu - X_t)dt + \sigma dB_t] + \frac{1}{\tau}X_te^{t/\tau}dt$$
+
+
+Simplify: $$dY_t = \frac{\mu}{\tau}e^{t/\tau}dt + \sigma e^{t/\tau}dB_t$$
+
+Integrate from s to t: 
+$$Y_t - Y_s = \frac{\mu}{\tau}\int_s^t e^{u/\tau}du + \sigma\int_s^t e^{u/\tau}dB_u$$
+
+
+Solve the deterministic integral: $$Y_t - Y_s = \mu(e^{t/\tau} - e^{s/\tau}) + \sigma\int_s^t e^{u/\tau}dB_u$$
+
+
+Substitute back $Y_t = X_t e^{t/\tau}$
+: $$X_t e^{t/\tau} - X_s e^{s/\tau} = \mu(e^{t/\tau} - e^{s/\tau}) + \sigma\int_s^t e^{u/\tau}dB_u$$
+Solve for $X_t$
+$$X_t = X_s e^{-(t-s)/\tau} + \mu(1-e^{-(t-s)/\tau}) + \sigma e^{-t/\tau}\int_s^t e^{u/\tau}dB_u$$
+
+
+The integral $\int_{s}^{t} e^{u/\tau} dB_u$
+ is normally distributed with mean 0 and variance $\frac{\tau}{2}\left(e^{2(t-s) / \tau}-1\right)$
+
+Therefore, setting $\Delta_t = t-s$
+
+$$X_{t+\Delta t} = X_t e^{-\Delta t/\tau} + \mu(1-e^{-\Delta t/\tau}) + \sigma\sqrt{\frac{1-e^{-2\Delta t/\tau}}{2/\tau}}\epsilon_t$$
+
+where $\eps_t$ is a standard normal random variable
+
+The variance of the stochastic integral term can be computed using Itô isometry: $E[(\int_s^t e^{u/\tau}dB_u)^2] = \int_s^t e^{2u/\tau}du = \frac{\tau}{2}(e^{2(t-s)/\tau}-1)$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Vhrulefill 
+~~
+\href{https://chatgpt.com/share/673478c9-072c-800d-91e0-ce3b3378d284}{[o1]} 
+~~
+\Vhrulefill
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Step 1: Rewrite the SDE in Standard Form
+First, rewrite the SDE to group like terms:
+
+$$
+d X_t=-\frac{1}{\tau} X_t d t+\frac{\mu}{\tau} d t+\sigma d B_t
+$$
+
+
+This rearranges the terms so that $X_t$ is isolated on one side.
+
+Step 2: Apply an Integrating Factor
+To solve this linear SDE, we'll use an integrating factor. The integrating factor $M_t$ is given by:
+$$
+M_t=\exp \left(-\int \frac{1}{\tau} d t\right)=\exp \left(-\frac{t}{\tau}\right) .
+$$
+
+Step 3: Multiply Both Sides by the Integrating Factor
+Multiply both sides of the SDE by $M_t$ :
+
+$$
+M_t d X_t=-\frac{1}{\tau} M_t X_t d t+\frac{\mu}{\tau} M_t d t+\sigma M_t d B_t .
+$$
+
+
+Substituting $M_t=e^{t / \tau}$, we have:
+
+$$
+e^{t / \tau} d X_t=-\frac{1}{\tau} e^{t / \tau} X_t d t+\frac{\mu}{\tau} e^{t / \tau} d t+\sigma e^{t / \tau} d B_t .
+$$
+
+Step 4: Simplify the Left-Hand Side
+Observe that:
+\begin{align*}
+d\left(e^{t / \tau} X_t\right)
+&= e^{t / \tau}d\1{X_t} + d\1{e^{t / \tau}} X_t + d\1{e^{t / \tau}}d\1{X_t}
+\\ &=
+e^{t / \tau} d X_t + \1{\frac{1}{\tau} e^{t/\tau} dt}X_t  - \red{ \frac{1}{\tau} e^{t/\tau} \ub{dt d X_t}{=0}}
+\\ &=
+e^{t / \tau} d X_t+\frac{1}{\tau} e^{t / \tau} X_t d t
+\end{align*}
+
+
+Rewriting:
+$$
+\violet{e^{t / \tau} d X_t=d\left(e^{t / \tau} X_t\right) -\frac{1}{\tau} e^{t / \tau} X_t d t}
+$$
+
+Step 5: Substitute Back into the Equation
+Substitute $e^{-t / \tau} d X_t$ from Step 4 back into the equation:
+$$
+\violet{
+d\left(e^{t / \tau} X_t\right) 
+-
+\frac{1}{\tau} e^{t / \tau} X_t d t
+}
+=
+-\frac{1}{\tau} e^{t / \tau} X_t d t
++
+\frac{\mu}{\tau} e^{t / \tau} d t+\sigma e^{t / \tau} d B_t .
+$$
+
+
+Simplify by canceling out the $\1{-\frac{1}{\tau} e^{t / \tau} X_t d t}$ terms on both sides:
+$$
+d\left(e^{t / \tau} X_t\right)=\frac{\mu}{\tau} e^{t / \tau} d t+\sigma e^{t / \tau} d B_t
+$$
+
+Step 6: Integrate both sides from 0 to $t$ :
+
+$$
+\int_0^t d\left(e^{s / \tau} X_s\right)=\int_0^t \frac{\mu}{\tau} e^{s / \tau} d s+\int_0^t \sigma e^{s / \tau} d B_s
+$$
+
+Compute the left-hand side:
+$$
+e^{t / \tau} X_t-e^{0 / \tau} X_0=e^{t / \tau} X_t-X_0
+$$
+
+Compute the first integral on the right-hand side:
+$$
+\int_0^t \frac{\mu}{\tau} e^{s / \tau} d s
+=
+\mu \int_{0}^t \frac{1}{\tau} e^{s/\tau}
+=
+\mu\left[e^{s / \tau}\right]_0^t
+=
+\mu\left(e^{t / \tau}-1\right)
+$$
+Step 8: Simplify the Equation
+Now, the equation becomes:
+$$
+e^{t / \tau} X_t-X_0
+=
+\mu\left(e^{t / \tau} - 1 \right)
++
+\sigma \int_0^t e^{s / \tau} d B_s
+$$
+Solve for $X_t$
+\begin{align*}
+X_t 
+&= X_0 e^{-t/\tau} +  \mu\left(e^{t / \tau} -1 \right) e^{-t/\tau} + e^{-t/\tau}\sigma \int_0^t e^{s / \tau} d B_s
+\\&=
+X_0 e^{-t/\tau} +  \mu\left(1-e^{-t / \tau}\right)
++
+\sigma \int_0^t e^{-(t-s) / \tau} d B_s
+\end{align*}
+where $X_0$ is the initial condition at $t=0$
+
+
+
+\subsubsection{Discretization Over Time Interval $\Delta t$}
+
+We aim to find the relationship between $X_t$ and $X_{t+\Delta t}$ over a discrete time step $\Delta t$.
+
+\textbf{Exact Discretization}
+
+The exact discretization for the OU process from $t$ to $t+\Delta t$ is:
+$$
+X_{t+\Delta t}=
+X_t e^{-\Delta t / \tau}
++
+\mu (1- e^{-\Delta t / \tau})+\epsilon_t,
+$$
+
+where:
+$e^{-\Delta t / \tau}$ is the decay factor,
+$\epsilon_t$ is a Gaussian random variable representing the stochastic component.
+
+\textbf{Variance of the Noise Term}
+
+The variance of $\epsilon_t$ is derived from the integral term in the continuous solution:
+$$
+\epsilon_t=\sigma \int_t^{t+\Delta t} e^{-(t+\Delta t-s) / \tau} d B_s
+$$
+
+Compute the variance $\sigma_\epsilon^2$ :
+$$
+\begin{aligned}
+\sigma_\epsilon^2 & =\operatorname{Var}\left(\epsilon_t\right) \\
+& =\sigma^2 \int_t^{t+\Delta t} e^{-2(t+\Delta t-s) / \tau} d s \\
+& =\sigma^2 \int_0^{\Delta t} e^{-2 u / \tau} d u \\
+& =\frac{\sigma^2 \tau}{2}\left(1-e^{-2 \Delta t / \tau}\right)
+\end{aligned}
+$$
+
+Combining the deterministic and stochastic components, the discrete-time OU process is:
+$$
+X_{t+\Delta t}=
+X_t  e^{-\Delta t / \tau}
++
+\mu (1-e^{-\Delta t / \tau})
++
+\epsilon_t,
+$$
+
+with $\epsilon_t \sim N\left(0, \sigma_\epsilon^2\right)$ where:
+$
+\sigma_\epsilon^2=\frac{\sigma^2 \tau}{2}\left(1-e^{-2 \Delta t / \tau}\right) .
+$
+The discretized OU process resembles an Autoregressive process of order 1 (AR(1)):
+$$
+X_{t+\Delta t}=a X_t+b+\epsilon_t
+$$
+where:
+$a=e^{-\Delta t / \tau}$ is the autoregressive coefficient,
+$b=\mu(1-a)$ is a constant drift term,
+$\epsilon_t$ is white noise with variance $\sigma_\epsilon^2$.
+
+\textbf{Modus Operandi: Fit the discretized OU process to discrete data:}
+
+\begin{enumerate}
+  \item Collect Data: Ensure your data $\left\{X_{t_i}\right\}$ is sampled at regular intervals $\Delta t$.
+  \item Estimate Parameters:
+\begin{itemize}
+  \item Use statistical methods (e.g., Maximum Likelihood Estimation or Least Squares) to estimate $a, b$, and $\sigma_\epsilon^2$ from the data.
+  \item Recover $\tau$ from $a$ :
+
+$$
+\tau=-\frac{\Delta t}{\ln a}
+$$
+
+\item Compute $\mu$ from $b$ and $a$ :
+
+$$
+\mu=\frac{b}{1-a}
+$$
+
+\item Estimate $\sigma_{\eps}$ as the empirical standard deviation of residuals
+
+
+$$\begin{array}{ll}
+\t{Residuals for Asset $i$}
+&
+\epsilon_t^{(i)}=x_{t+1}^{(i)}-(a_i x_t^{(i)}+b_i)
+\\
+\t{Empirical St.Dev.}
+&
+\sigma_\eps^{(i)}=\sqrt{\frac{1}{T-2} \sum_{t=1}^{T-1}\left(\epsilon_t^{(i)}\right)^2}
+\end{array}$$
+
+
+
+\item Estimate $\sigma$ from $\sigma_\epsilon^2$ :
+
+$$
+\sigma=\sqrt{\frac{2 \sigma_\epsilon^2}{\tau\left(1-e^{-2 \Delta t / \tau}\right)}}
+$$
+
+\end{itemize}
+
+\item Model Validation: Check the residuals $\epsilon_t$ to ensure they are white noise and normally distributed.
+\end{enumerate}
+
+
+
+\newpage
+\chapter{Deep Neural Networks}
+
+
+
+\end{document}
+
+
+
+
+
+

@@ -1,0 +1,148 @@
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Sharpe Ratios in the train and validation splits as a function of $L$ (KMeans)}
+  \centering
+
+  \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A1a_KMeans_SR_Train_vs_L.pdf}
+    \caption{Plot of $SR^{\mathcal P^{tr}}(L)$ over a grid of $L$}
+    \label{fig:K_hyp_1}
+  \end{subfigure}
+  \hspace{0.05\textwidth} % Add horizontal space between the subfigures
+  \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A1b_KMeans_SR_Validation_vs_L.pdf}
+    \caption{Plot of $SR^{\mathcal P^{val}}(L)$ over a grid of $L$}
+    \label{fig:K_hyp_2}
+  \end{subfigure}
+  \mx
+  \subcaption*{\textit{Note: This figure shows the Sharpe Ratios ($SR$) as a function of the holding period length ($L$) for the KMeans clustering method in the training (Panel a) and validation (Panel b) splits. In Panel (a), the Sharpe Ratios in the training set indicate that lower values of $L$ (less than 4) maximize performance. Conversely, in Panel (b), the validation set shows higher Sharpe Ratios for longer holding periods. The choice of $L=4$ represents a balanced compromise, providing a stable Sharpe Ratio profile across both splits, ensuring consistent in-sample performance without introducing lookahead bias.}}
+  \label{fig:KMeans_hyperparameter_justification_L}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Sharpe Ratios in the train and validation splits as a function of $\theta$ (KMeans)}
+  \centering
+    \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A2a_KMeans_SR_Train_vs_theta.pdf}
+    \caption{Plot of $SR^{\mathcal P^{tr}}(\theta)$ over a grid of $\theta$}
+    \label{fig:K_hyp_3}
+  \end{subfigure}
+  \hspace{0.05\textwidth} % Add horizontal space between the subfigures
+  \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A2b_KMeans_SR_Validation_vs_theta.pdf}
+    \caption{Plot of $SR^{\mathcal P^{val}}(\theta)$ over a grid of $\theta$}
+    \label{fig:K_hyp_4}
+  \end{subfigure}
+  \mx
+\subcaption*{\textit{Note: This figure illustrates the Sharpe Ratios ($SR$) as a function of $\theta$, the upper bound on the number of traded clusters, for the KMeans clustering method in the training (Panel a) and validation (Panel b) splits. In Panel (a), the Sharpe Ratios in the training set show a trend of increasing stability and maximizing performance as $\theta$ approaches its upper limit. Similarly, Panel (b) displays a consistent pattern in the validation set, where higher values of $\theta$ lead to convergence at the highest and most stable Sharpe Ratios. The choice of $\theta = 13$ (i.e: $\integer{0.5 \cdot 26}$) reflects this observed stability and optimization, providing a balanced and robust selection for the portfolio strategy.}}
+  \label{fig:KMeans_hyperparameter_justification_theta}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Sharpe Ratios in the train and validation splits as a function of hyperparameters (LLM)}
+  \centering
+
+  \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A3a_LLAMA_SR_Train_vs_L.pdf}
+    \caption{Plot of $SR^{\mathcal P^{tr}}(L)$ over a grid of $L$}
+    \label{fig:LLM_hyp_1}
+
+  \end{subfigure}
+  \hspace{0.05\textwidth} % Add horizontal space between the subfigures
+  \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A3b_LLAMA_SR_Validation_vs_L.pdf}
+    \caption{Plot of $SR^{\mathcal P^{val}}(L)$ over a grid of $L$}
+    \label{fig:LLM_hyp_2}
+  \end{subfigure}
+  \mx
+  \subcaption*{\textit{Note: This figure shows the Sharpe Ratios ($SR$) as a function of the holding period length ($L$) for the LLM clustering method, across the training (Panel a) and validation (Panel b) splits. In Panel (a), the Sharpe Ratios in the training set reach their maximum at $L=4$, suggesting shorter holding periods are more effective for maximizing performance. Conversely, Panel (b) illustrates that longer holding periods yield higher Sharpe Ratios in the validation set. The choice of $L=4$ serves as a compromise, balancing the trade-off between maximizing $SR$ in both splits and providing a stable and consistent holding period length for the strategy.}}
+  \label{fig:LLM_hyperparameter_justification_L}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+\caption{Sharpe Ratios in the train and validation splits as a function of $\theta$ (LLM)}
+  \centering
+
+    \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A4a_LLAMA_SR_Train_vs_theta.pdf}
+    \caption{Plot of $SR^{\mathcal P^{tr}}(\theta)$ over a grid of $\theta$}
+    \label{fig:LLM_hyp_3}
+  \end{subfigure}
+  \hspace{0.05\textwidth} % Add horizontal space between the subfigures
+  \begin{subfigure}[b]{0.46\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{fig_A4b_LLAMA_SR_Validation_vs_theta.pdf}
+    \caption{Plot of $SR^{\mathcal P^{val}}(\theta)$ over a grid of $\theta$}
+    \label{fig:LLM_hyp_4}
+  \end{subfigure}
+\mx
+\subcaption*{\textit{Note: This figure illustrates the Sharpe Ratios ($SR$) as a function of $\theta$, the upper bound on the number of traded clusters, for the LLM clustering method in the training (Panel a) and validation (Panel b) splits. In Panel (a), the Sharpe Ratios for the training set indicate a temporary dip at $\theta=10$ for the Greedy algorithm, yet this value still provides a relatively stable outcome. In contrast, Panel (b) shows that $\theta=10$ leads to a noticeable increase in Sharpe Ratios for the validation set, particularly benefiting the Greedy algorithm. The choice of $\theta = \integer{0.5k} = 10$ strikes a balance, confirming it as an effective hyperparameter selection for achieving stability in both the training and validation splits with LLM clustering.}}
+\label{fig:LLM_hyperparameter_justification_theta}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[htbp]
+\caption{Distribution of Cluster-Average Sharpe Ratios $(\overline{SR}_g)$ by Split}
+\label{fig:cluster-average-SR-by-split}
+
+\begin{subfigure}[t]{0.49\textwidth}
+\caption{Panel A: KMeans Clustering}
+\centering
+\includegraphics[width=\textwidth]{fig_A5a_KMeans_Cluster-Avg_SR_Distribution.pdf}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\caption{Panel B: LLM Clustering}
+\centering
+\includegraphics[width=\textwidth]{fig_A5b_LLAMA_Cluster-Avg_SR_Distribution.pdf}
+\end{subfigure}
+
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+{\footnotesize\textit{Note:
+This figure presents the distribution of cluster-average Sharpe Ratios $(\overline{SR}_g)$ across training, validation, and test data splits for both KMeans clustering (Panel A) and LLM clustering (Panel B). Each Sharpe Ratio is computed as the average of beta-neutral positions associated with articles in a given cluster. The KMeans approach (Panel A) shows distributions centered around 0 in the validation set, with some outliers exhibiting unusually high or low Sharpe Ratios. The training and test set distributions are slightly right-skewed, suggesting better performance in certain clusters, with no significant outliers. In contrast, the LLM clustering (Panel B) exhibits left-skewed distributions across all splits, indicating a higher frequency of lower Sharpe Ratios. The training data shows fat tails, suggesting extreme values, while the validation data has lighter tails. The test data distribution is more bell-shaped, with Sharpe Ratios concentrated between 5 and 15, indicating stronger performance in some clusters.
+}}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[htbp]
+\caption{Evolution of Open Positions: KMeans vs LLM Clustering}
+\label{fig:open_positions_comparison}
+
+% Panel A: KMeans
+\begin{subfigure}{\textwidth}
+\caption{Panel A: KMeans Clustering}
+\centering
+\includegraphics[scale=0.45]{fig_A6a_KMeans_Open_Positions.pdf}
+\end{subfigure}
+
+\vspace{0.7cm}
+
+% Panel B: LLM
+\begin{subfigure}{\textwidth}
+\caption{Panel B: LLM Clustering}
+\centering
+\includegraphics[scale=0.45]{fig_A6b_LLAMA_Open_Positions.pdf}
+\end{subfigure}
+
+\vspace{0.2cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+{\footnotesize\textit{Note:
+This figure shows the daily evolution of the number of open positions for both Greedy (blue) and Stable (green) algorithms across different data splits (Train, Validation, Test) using KMeans clustering (Panel A) and LLM clustering (Panel B). The time period spans from July 2020 to September 2021. Vertical dashed lines separate the different data splits. The Greedy algorithm selects clusters that maximize (minimize) the cluster-average-$SR$ for long (short) positions, while the Stable algorithm minimizes the rank difference between training and validation rankings. The number of traded clusters is $\theta = 0.5k=13$ for KMeans ($k^*=26$ clusters) and $\theta = 0.5k=10$ for LLM ($k^*=20$ clusters).
+}}
+\end{minipage}
+\end{figure}
