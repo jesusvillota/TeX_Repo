@@ -1,0 +1,292 @@
+\section{Copula Calibration}
+
+\subsection{Gaussian Copula}
+To express the normal copula density as a function of $(x_1, \ldots, x_n)$ we must proceed as follows:
+
+\begin{enumerate}
+    \item For the (not necessarily normal) marginals, set $u_i = F_i(x_i)$ for $i = 1, \ldots, n$;
+    \item Apply the inverse Gaussian distribution, $\xi_i = \Phi^{-1}(u_i)$ for $i = 1, \ldots, n$;
+    \item Use the correlation matrix $\Sigma$ and the vector $\xi$ in the copula density (II.6.32).
+\end{enumerate}
+
+In the case $n = 2$ the normal copula distribution is 
+\begin{align*}
+C(u_1, u_2; \rho) 
+&= \b \Phi(\Phi^{-1}(u_1), \Phi^{-1}(u_2))
+\\
+&= \int_0^1 \int_0^1 (2\pi)^{-1}(1 - \rho^2)^{-1/2} \exp\left(-\frac{x_1^2 - 2\rho x_1 x_2 + x_2^2}{2(1 - \rho^2)}\right) dx_1 dx_2
+\end{align*}
+
+where $\b \Phi$ is the bivariate standard normal distribution function and $\Phi$ is the univariate standard normal distribution function. The bivariate normal copula density is:
+\begin{align*}
+c(u_1, u_2; \rho) 
+&= \p{C(u_1,u_2;\rho)}{u_1 \partial u_2}
+\\
+&= (1 - \rho^2)^{-1/2} \exp\left(-\frac{\rho^2 \xi_1^2 \xi_2 + 2\rho \xi_1 \xi_2}{2(1 - \rho^2)}\right)
+\end{align*}
+
+where $\xi_1 = \Phi^{-1}(u_1)$ and $\xi_2 = \Phi^{-1}(u_2)$ are quantiles of standard normal variables. Since the correlation is the only parameter the bivariate normal copula is easy to calibrate.
+
+The normal family are symmetric copulas, i.e. $C(u_1, u_2) = C(u_2, u_1)$. They also have zero or very weak tail dependence unless the correlation is 1. This is not usually appropriate for modelling dependencies between financial assets. 
+
+
+\subsection{Student t Copula}
+
+The $2$-dimensional symmetric Student $t$ copula is another copula that is derived implicitly from a multivariate distribution function. It is defined by
+\begin{align*}
+C(u_1, u_2; \rho) &= \b t_v(t_{\nu}^{-1}(u_1), t_{\nu}^{-1}(u_2))
+\\
+%C(u_1, u_2; \rho) 
+&= \int_0^{\Phi^{-1}(u_1)} \int_0^{\Phi^{-1}(u_2)} (2\pi)^{-1} (1 - \rho^2)^{-1/2} \left[1 + v^{-1}(x_1^2 - 2\rho x_1 x_2 + x_2^2)\right]^{-(v+2)/2} dx_1 dx_2
+\end{align*}
+where $t_v$ and $t$ are multivariate and univariate Student $t$ distribution functions with $v$ degrees of freedom and $\rho$ denotes the correlation. Like the normal copula, the Student $t$ copula distribution cannot be written in a simple closed form.
+
+The corresponding bivariate $t$-copula density is
+\begin{align*}
+c(u_1, u_2; \rho) 
+&= \p{C(u_1,u_2;\rho)}{u_1 \partial u_2}
+\\
+&= K(1 - \rho^2)^{-1/2} \left[1 + v^{-1}(1 - \rho^2)^{-1} \left(\xi_1^2 -2\rho\xi_1 \xi_2+ \xi_2^2\right)\right]^{-(v+2)/2} \times
+\left[(1 + v^{-1} \xi_1^2)(1 + v^{-1} \xi_2^2)\right]^{(v+1)/2}
+\end{align*}
+
+where 
+$\xi_i=t_{\nu}^{-1}(u_i)$ is the student-t's realization
+and
+$
+K = \Gamma\left(\frac{v - n}{2}\right) \Gamma\left(\frac{v + n}{2}\right) \Gamma\left(\frac{v + n}{2}\right).
+$
+
+
+\Vhrulefill
+
+\textsc{Marginal Distributions}
+\begin{enumerate}
+\item Extreme value
+\item Generalized extreme value
+\item Logistic
+\item Normal distribution
+\end{enumerate}
+
+\Vhrulefill
+
+
+\textsc{Copula: CDFs}
+
+\begin{enumerate}
+
+
+\item \textbf{Independence copula}
+\begin{align*}
+C(u_1,u_2) = u_1u_2
+\end{align*}
+It connects the CDFs of two independent random variables
+
+\item \textbf{Gaussian}
+\begin{align*}
+C(u_1, u_2; \rho) 
+&= \b \Phi(\Phi^{-1}(u_1), \Phi^{-1}(u_2))
+\\
+&= \int_0^1 \int_0^1 (2\pi)^{-1}(1 - \rho^2)^{-1/2} \exp\left(-\frac{x_1^2 - 2\rho x_1 x_2 + x_2^2}{2(1 - \rho^2)}\right) dx_1 dx_2
+\end{align*}
+
+\begin{align*}
+c(u_1, u_2; \rho) 
+&= \p{C(u_1,u_2;\rho)}{u_1 \partial u_2}
+\\
+&= (1 - \rho^2)^{-1/2} \exp\left(-\frac{\rho^2 \xi_1^2 \xi_2 + 2\rho \xi_1 \xi_2}{2(1 - \rho^2)}\right)
+\end{align*}
+
+\item \textbf{Student-t}
+\begin{align*}
+C(u_1, u_2; \rho) &= \b t_v(t_{\nu}^{-1}(u_1), t_{\nu}^{-1}(u_2))
+\\
+%C(u_1, u_2; \rho) 
+&= \int_0^{\Phi^{-1}(u_1)} \int_0^{\Phi^{-1}(u_2)} (2\pi)^{-1} (1 - \rho^2)^{-1/2} \left[1 + v^{-1}(x_1^2 - 2\rho x_1 x_2 + x_2^2)\right]^{-(v+2)/2} dx_1 dx_2
+\end{align*}
+\begin{align*}
+c(u_1, u_2; \rho) 
+&= \p{C(u_1,u_2;\rho)}{u_1 \partial u_2}
+\\
+&= K(1 - \rho^2)^{-1/2} \left[1 + v^{-1}(1 - \rho^2)^{-1} \left(\xi_1^2 -2\rho\xi_1 \xi_2+ \xi_2^2\right)\right]^{-(v+2)/2} \times
+\left[(1 + v^{-1} \xi_1^2)(1 + v^{-1} \xi_2^2)\right]^{(v+1)/2}
+\end{align*}
+where 
+$\xi_i=t_{\nu}^{-1}(u_i)$ is the student-t's realization
+and
+$
+K = \Gamma\left(\frac{v - n}{2}\right) \Gamma\left(\frac{v + n}{2}\right) \Gamma\left(\frac{v + n}{2}\right).
+$
+
+
+\item \textbf{Normal Mixture}
+
+$
+c(u_1, u_2; \pi, \rho_1, \rho_2) = \pi c_N(u_1, u_2; \rho_1) + (1 - \pi) c_N(u_1, u_2; \rho_2) ,
+$
+
+where $ c_N $ is the bivariate normal copula density and the mixing law is $ (\pi, 1 - \pi) $. That is,
+
+$
+c(u_1, u_2; \pi, \rho_1, \rho_2) = \pi (1 - \rho_1^2)^{-1/2} \exp \left( -\frac{\rho_1^2 \xi_1^2 - 2\rho_1 \xi_1 \xi_2 + \rho_1^2 \xi_2^2}{2(1 - \rho_1^2)} \right)
++ (1 - \pi)(1 - \rho_2^2)^{-1/2} \exp \left( -\frac{\rho_2^2 \xi_1^2 - 2\rho_2 \xi_1 \xi_2 + \rho_2^2 \xi_2^2}{2(1 - \rho_2^2)} \right) .
+$
+
+\item \textbf{Clayton}
+
+$C(u_1, u_2; \theta) = \left( u_1^{-\alpha} + u_2^{-\theta} - n + 1 \right)^{-1/\theta} $
+
+$c(u_1, u_2) = (\theta + 1) \left( u_1^{-\theta} + u_2^{-\theta} - 1 \right)^{-2 - (1/\theta)} u_1^{-\theta - 1} u_2^{-\theta - 1} $
+
+\item \textbf{Gumbel}
+
+$C(u_1, u_2; \theta) = \exp \left( -\left[ (-\ln u_1)^{\theta} + (-\ln u_2)^{\theta} \right]^{1/\theta} \right)$
+
+$c(u_1, u_2; \theta) = (A + \theta - 1) A^{1 - 2\theta} \exp(-A) (u_1 u_2)^{-\frac{1}{\theta}} (-\ln u_1)^{\theta - 1} (-\ln u_2)^{\theta - 1} ,$
+
+where $A = \left( (-\ln u_1)^{\theta} + (-\ln u_2)^{\theta} \right)^{\frac{1}{\theta}}$
+
+\end{enumerate}
+
+\Vhrulefill
+
+\textsc{Copula: Conditional Probabilities $P(U_1 \leq u_1 | U_2 = u_2) = \p{C}{u_2}$}
+
+\begin{enumerate}
+
+\item \textbf{Gaussian}
+
+$C_{1|2}(u_1 | u_2) = \frac{\partial}{\partial u_2} \Phi(\Phi^{-1}(u_1), \Phi^{-1}(u_2)) = \Phi \left( \frac{\Phi^{-1}(u_2) - \rho \Phi^{-1}(u_1)}{\sqrt{1 - \rho^2}} \right)$
+
+\item \textbf{Gaussian mixture}
+
+$
+C_{1|2}(u_1 | u_2) = \pi \Phi\left(\frac{\Phi^{-1}(u_1) - Q_1 \Phi^{-1}(u_2)}{\sqrt{1 - Q_1^2}}\right) + (1 - \pi) \Phi\left(\frac{\Phi^{-1}(u_1) - Q_2 \Phi^{-1}(u_2)}{\sqrt{1 - Q_2^2}}\right).
+$
+
+
+\item \textbf{Student-t}
+
+$C_{1|2}(u_1 | u_2) = \frac{\partial}{\partial u_2} t_\nu(t_\nu^{-1}(u_1), t_\nu^{-1}(u_2)) =t_{\nu + 1} \left( \frac{\sqrt{\nu + 1}}{\sqrt{\nu + t_\nu^{-1}(u_1)^2}} \times \frac{t_\nu^{-1}(u_2) - \rho t_\nu^{-1}(u_1)}{\sqrt{1 - \rho^2}} \right)$
+
+\item \textbf{Clayton}
+
+$
+h(u_1, u_2; \theta) = u_2^{-(\theta + 1)} \left( u_1^{-\theta} + u_2^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 1}
+$
+
+$\theta > 0$
+
+\item \textbf{Rotated Clayton}
+
+$
+h(u_1, u_2; \theta) = 1 - \left( (1 - u_2)^{-(\theta + 1)} \left( (1 - u_1)^{-\theta} + (1 - u_2)^{-\theta} - 1 \right)^{-\frac{1}{\theta} - 1} \right)
+$
+
+$\theta > 0$
+
+\item \textbf{Gumbel}
+
+$
+h(u_1, u_2; \theta) = C_\theta(u_1, u_2) \left[ (-\ln u_1)^{\theta} + (-\ln u_2)^{\theta} \right]^{\frac{1 - \theta}{\theta}}  (-\ln u_2)^{\theta-1} \frac{1}{u_2}
+$
+
+$
+C_\theta(u_1, u_2) = \exp \left( -\left[ (-\ln u_1)^{\theta} + (-\ln u_2)^{\theta} \right]^{\frac{1}{\theta}} \right)
+$
+
+\item \textbf{Rotated Gumbel}
+
+$
+h(u_1, u_2; \theta) = 1 - C_\theta(1 - u_1, 1 - u_2) * \left[ (-\ln(1 - u_1))^{\theta} + (-\ln(1 - u_2))^{\theta} \right]^{\frac{1 - \theta}{\theta}}
+(-\ln(1-u_2))^{\theta-1}
+\frac{1}{1 - u_2}
+$
+
+$
+C_\theta(u_1, u_2) = \exp \left( -\left[ (-\ln u_1)^{\theta} + (-\ln u_2)^{\theta} \right]^{\frac{1}{\theta}} \right)
+$
+
+$\theta > 0$
+
+
+\item \textbf{Frank}
+
+$
+h(u_1, u_2; \theta) =
+\frac{e^{-\theta v} \left( e^{-\theta u} - 1 \right)}{(e^{-\theta} - 1) + \left( e^{-\theta u} - 1 \right) \left( e^{-\theta v} - 1 \right)}
+$
+
+\end{enumerate}
+
+\Vhrulefill
+
+\textsc{Copula: Conditional Expectations $E[V|U=u]$}
+
+\begin{enumerate}
+
+\item \textbf{Gaussian}
+\begin{align*}
+E[V|U=u] &= \Phi\left(\rho \Phi^{-1}(u)\right)
+\end{align*}
+where $\Phi$ is the standard normal CDF and $\rho$ is the correlation parameter.
+
+\item \textbf{Gaussian mixture}
+\begin{align*}
+E[V|U=u] &= \pi\Phi(\rho_1\Phi^{-1}(u)) + (1-\pi)\Phi(\rho_2\Phi^{-1}(u))
+\end{align*}
+where $\pi$ is the mixture weight and $\rho_1$, $\rho_2$ are the correlation parameters.
+
+
+
+\item \textbf{Student-t}
+\begin{align*}
+E[V|U=u] &= t_{\nu+1}\left(\frac{\rho t_\nu^{-1}(u)}{\sqrt{\frac{\nu + (t_\nu^{-1}(u))^2}{\nu+1}}}\right)
+\end{align*}
+where $t_\nu$ is the Student-t CDF with $\nu$ degrees of freedom.
+
+
+\item \textbf{Clayton}
+\begin{align*}
+E[V|U=u] &= u^{-\theta} \int_0^u t^{\theta}(1-t^{\theta})^{-1/\theta-1} dt \quad \text{(Requires numerical integration)}
+\end{align*}
+
+
+
+\item \textbf{Rotated Clayton}
+\begin{align*}
+E[V|U=u] &= 1 - ((1-u)^{-\theta-1} * ((1-u)^{-\theta} + (1-u)^{-\theta} - 1)^{-1/\theta - 1})
+\end{align*}
+
+\item \textbf{Gumbel}
+\begin{align*}
+E[V|U=u] &= C(u,u) * ((-\ln u)^\theta + (-\ln u)^\theta)^{(1-\theta)/\theta} * (-\ln u)^{\theta-1} / u
+\end{align*}
+where $C(u,u)$ is the Gumbel copula CDF.
+
+\item \textbf{Rotated Gumbel}
+\begin{align*}
+E[V|U=u] &= 1 - C(1-u,1-u) * ((-\ln(1-u))^\theta + (-\ln(1-u))^\theta)^{(1-\theta)/\theta} * (-\ln(1-u))^{\theta-1} / (1-u)
+\end{align*}
+where $C(u,u)$ is the Gumbel copula CDF.
+\item \textbf{Frank}
+\begin{align*}
+E[V|U=u] &= -\frac{1}{\theta}\ln\left[1 + \frac{e^{-\theta u}(e^{-\theta} - 1)}{1 - e^{-\theta}}\right]
+\end{align*}
+
+\end{enumerate}
+
+
+
+References:
+\begin{itemize}
+\item Vidyamurthy, G., Pairs Trading: Quantitative Methods and Analysis, (2004)
+\item {Market Risk Analysis, Volume II. Practical Financial Econometrics, Carol Alexander [Introduction to copulas]} (2005 or 2006)
+\item Pairs trading: A copula approach. Journal of Derivatives \& Hedge Funds (2013)
+\item The profitability of pairs trading strategies:
+distance, cointegration and copula methods. Hossein Rad, Rand Kwong Yew Low \& Robert Faff (2016)
+\item \href{https://hal.science/hal-01294274/document}{Modeling dependence between error components of the stochastic frontier model using copula: Application to intercrop coffee production in Northern Thailand}
+\item Conditional expectation formulae for copulas. Glenis Crane, John van der Hoek
+\end{itemize}
+
+

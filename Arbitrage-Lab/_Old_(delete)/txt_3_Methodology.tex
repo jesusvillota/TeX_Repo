@@ -1,0 +1,333 @@
+
+\maketitle
+
+\section*{METHODOLOGY}
+
+\subsection*{Overview}
+In this section, we describe the procedure used to construct a synthetic asset via cardinality-constrained regression and then employ a copula-based pairs trading approach. This allows us to generate optimal weights for a synthetic reference asset that tracks a target asset over a training window. Subsequently, we use a selection of copula families to capture the dependence structure between the target and its synthetic counterpart, build trading rules, and evaluate the performance on an out-of-sample testing horizon.
+
+\subsection*{Data and Notation}
+We are given price time series (either log prices or raw close prices) of multiple assets. For concreteness, let:
+$
+\mathcal{T} = \{ t_1, t_2, \ldots, t_{T}\}
+$
+denote the ordered set of all timestamps in the sample. We partition $\mathcal{T}$ into a training period $\mathcal{T}_{\text{train}}$ and a testing period $\mathcal{T}_{\text{test}}$, with 
+$
+\mathcal{T} = \mathcal{T}_{\text{train}} \cup \mathcal{T}_{\text{test}}, 
+\quad \mathcal{T}_{\text{train}} \cap \mathcal{T}_{\text{test}} = \emptyset.
+$
+We assume that our goal is to track a target asset $A_1$. Let $A_1$ have price series
+$
+\{P_{A_1}(t) : t\in \mathcal{T}\},
+$
+and let there be $N$ other candidate assets (the \emph{donor pool}), each with price series 
+$
+\{P_{j}(t) : t\in \mathcal{T}\}, \quad j = 2,3,\ldots, N+1.
+$
+We employ a logarithmic transform so that $\log P_{A_1}$ and $\log P_j$ are the log prices. We write
+$
+X_{A_1}(t) := \log P_{A_1}(t), 
+\quad 
+X_{j}(t) := \log P_j(t).
+$
+All series are assumed to be aligned in time.
+
+\subsection*{Constructing a Synthetic Reference Asset}
+To create a synthetic asset that replicates the target $A_1$, we solve an optimization problem in two stages:
+
+\paragraph{Stage 1 (Unconstrained L2 minimization).}
+Define the \emph{training log-price matrices}:
+$
+X_{\text{train}} = 
+\begin{bmatrix}
+X_{2}(t_1) & X_{3}(t_1) & \cdots & X_{N+1}(t_1) \\
+X_{2}(t_2) & X_{3}(t_2) & \cdots & X_{N+1}(t_2) \\
+\vdots & \vdots & \ddots & \vdots \\
+X_{2}(t_{T_{\text{train}}}) & X_{3}(t_{T_{\text{train}}}) & \cdots & X_{N+1}(t_{T_{\text{train}}})
+\end{bmatrix}
+$
+and
+$
+y_{\text{train}} = 
+\begin{bmatrix}
+X_{A_1}(t_1) \\
+X_{A_1}(t_2) \\
+\vdots \\
+X_{A_1}(t_{T_{\text{train}}})
+\end{bmatrix},
+$
+where $T_{\text{train}}$ is the number of time points in the training period. We first solve the unconstrained problem
+$
+\min_w \, \sum_{k=1}^{T_{\text{train}}} \Bigl(X_{A_1}(t_k) - \sum_{j=2}^{N+1} w_j \,X_{j}(t_k)\Bigr)^2 
+\quad 
+\text{subject to} \quad 
+\sum_{j=2}^{N+1} w_j = 1.
+$
+Equivalently, in matrix form:
+$
+\min_{w} \quad \|\,y_{\text{train}} - X_{\text{train}}\,w\|_2^2,\quad \text{subject to} \quad \mathbf{1}^\top w = 1,
+$
+where $w = [w_2, w_3, \ldots, w_{N+1}]^\top$, and $\mathbf{1}$ is the all-ones vector of compatible dimension. This provides a preliminary set of weights, $\{w_j\}$, possibly non-sparse.
+
+\paragraph{Stage 2 (Cardinality constraints).}
+In practice, we often desire to use only a small subset of the donor pool. Let $\max_{\text{assets}}$ denote the desired number of active positions. We pick the top $\max_{\text{assets}}$ weights by absolute value. Let 
+$
+\mathcal{I}^{\ast} := 
+\text{the subset of indices corresponding to the $\max_{\text{assets}}$ largest $|w_j|$}.
+$
+We then solve the restricted problem
+$
+\min_
+{\tilde{w}}
+\,\|\,y_{\text{train}} - X_{\text{train}}(\mathcal{I}^{\ast})\,\tilde{w}\|_2^2,\quad
+\text{subject to}
+\quad 
+\sum_{j \in \mathcal{I}^{\ast}} \tilde{w}_j = 1,
+$
+where $X_{\text{train}}(\mathcal{I}^{\ast})$ is the reduced matrix including only the columns in $\mathcal{I}^{\ast}$. The resulting $\tilde{w}_j$ are then mapped back into the full weight vector (non-selected entries are set to zero). This yields a \emph{cardinality-constrained synthetic asset}, designed to mimic the log price of $A_1$ while only using a small set of donors.
+
+Denoting the final weights as $w_j^{\star}$, the synthetic log-price at time $t$ is then:
+$
+\text{SYN}(t) = \sum_{j=2}^{N+1} w_j^{\star} \, X_j(t).
+$
+Hence, the \emph{synthetic asset price} in log scale is $\text{SYN}(t)$.
+
+\subsection*{Pairs Construction and Return Series}
+Given the target asset $A_1$ and the synthetic asset $\text{SYN}$, we then define our \emph{pairs} for the subsequent copula analysis:
+$
+(\text{A1}, \text{A2}) := (X_{A_1}(t), \text{SYN}(t)).
+$
+We can also study the pairs in terms of raw (log) returns. For day-to-day differences, define
+$
+R_{A_1}(t_k) = X_{A_1}(t_k) - X_{A_1}(t_{k-1}), \quad 
+R_{\text{SYN}}(t_k) = \text{SYN}(t_k) - \text{SYN}(t_{k-1}).
+$
+In the code, these returns were computed via differences or ratio-based transformations, depending on whether they are raw prices or log prices.
+
+\subsection*{Empirical Distribution Functions}
+To prepare for copula fitting, let $R_{A_1}$ and $R_{\text{SYN}}$ be the return series in the training window, of length $T_{\text{train}}$. We build an \emph{empirical cumulative distribution function} (CDF) for each:
+$
+\hat{F}_{A_1}(x) = \frac{1}{T_{\text{train}}} \sum_{k=1}^{T_{\text{train}}} \mathbf{1}\bigl\{R_{A_1}(t_k) \le x \bigr\},
+$
+$
+\hat{F}_{\text{SYN}}(y) = \frac{1}{T_{\text{train}}} \sum_{k=1}^{T_{\text{train}}} \mathbf{1}\bigl\{R_{\text{SYN}}(t_k) \le y \bigr\}.
+$
+In the code, we interpolate these step functions linearly, but the conceptual meaning remains the same: 
+$
+u_k = \hat{F}_{A_1}\bigl(R_{A_1}(t_k)\bigr),\quad
+v_k = \hat{F}_{\text{SYN}}\bigl(R_{\text{SYN}}(t_k)\bigr).
+$
+Hence, $(u_k,v_k)$ are pseudo-samples from an unknown underlying copula in $[0,1]^2$.
+
+\subsection*{Copula Estimation and Fitting}
+A \emph{copula} $C(u,v)$ is a distribution function on $[0,1]^2$ that captures the dependence structure between two variables $U$ and $V$. By Sklar's theorem, any joint distribution of \((X,Y)\) can be written as
+\[
+F_{X,Y}(x,y) = C\bigl(F_X(x), F_Y(y)\bigr).
+\]
+We fit various copula families to \((u_k, v_k)\). In particular, the code includes:
+
+\begin{itemize}
+\item \textbf{Archimedean Copulas:} Gumbel, Frank, Clayton, Joe, and the more general N14 family. Each has a generator function \(\varphi\) such that 
+\[
+C(u,v) = \varphi^{-1}\bigl(\varphi(u) + \varphi(v)\bigr),
+\]
+with different forms for \(\varphi\).
+\item \textbf{Elliptical Copulas:} GaussianCopula and StudentCopula. The Gaussian version uses a correlation parameter \(\rho\) and is
+\[
+C_{\text{Gauss},\rho}(u,v) = \Phi_\rho(\Phi^{-1}(u), \Phi^{-1}(v)),
+\]
+where \(\Phi_\rho\) is the bivariate normal distribution with correlation \(\rho\). The Student Copula uses a correlation \(\rho\) and degrees of freedom \(\nu\).
+\end{itemize}
+
+The code calls:
+\[
+(\hat{\theta}, \hat{\rho}) \;\;=\;\; \arg\max_{\theta, \rho}\;\; \ell(\theta,\rho; \{u_k,v_k\}_{k=1}^{T_{\text{train}}}),
+\]
+where \(\ell\) is the log-likelihood derived from the chosen parametric family and the empirical data \(\{(u_k,v_k)\}\). The best-fit parameters are found by numerical optimization.
+
+\subsection*{MPI Copula Trading Rule}
+Following the copula fitting, the \emph{Mispricing Index (MPI)} approach compares the actual pair of returns \((R_{A_1}, R_{\text{SYN}})\) to the copula's implied dependence structure. In its simplest form, if we denote
+$
+U_t = \hat{F}_{A_1}\bigl(R_{A_1}(t)\bigr), \quad
+V_t = \hat{F}_{\text{SYN}}\bigl(R_{\text{SYN}}(t)\bigr),
+$
+the MPI-based strategy compares whether the pair $\bigl(U_t, V_t\bigr)$ is \emph{unusually far} from the typical region of the fitted copula. Some versions accumulate a measure of mispricing over several days.  
+
+Concretely, let $\text{MPI}_t$ be a function of the difference between the observed $(U_t, V_t)$ and the copula's \emph{center} or implied conditional location. For example, an extreme left tail co-occurrence might trigger certain trades if the copula suggests a mismatch. The user defines thresholds for opening positions and thresholds for stopping out or closing. In code:
+\begin{enumerate}
+\item $\text{MPI}_t \approx \text{(discrepancy measure)}$.
+\item If $\text{MPI}_t$ exceeds an upper threshold $b$, we take a position in one direction (e.g., buy $A_1$, sell $\text{SYN}$).  
+\item If $\text{MPI}_t$ goes below a lower threshold $-b$, we take the opposite position (sell $A_1$, buy $\text{SYN}$).
+\item Additional logic or an \emph{exit rule} (like crossing back through zero or exceeding a stop) closes positions.
+\end{enumerate}
+The code includes parameters $(\text{opening\_triggers}, \text{stop\_loss\_positions})$ and open/exit logic such as \emph{OR-OR} vs.\ \emph{AND-OR}. These specify precisely how to interpret extreme mispricings (often measured by local or cumulative signals).
+
+\subsection*{Positions, P\&L, and Equity Curves}
+We maintain a \emph{dollar-neutral} trading strategy by ensuring that our total capital is invariant to direction. Hence, if we go long \(A_1\) and short \(\text{SYN}\), we do so with approximately equal dollar amounts. Formally, let \(Q_{A_1}(t)\) and \(Q_{\text{SYN}}(t)\) denote the quantity (number of shares) held at time \(t\). In a dollar-neutral setup:
+\[
+Q_{A_1}(t) \,P_{A_1}(t) \;+\; Q_{\text{SYN}}(t)\, P_{\text{SYN}}(t) = 0,
+\]
+where \(P_{\text{SYN}}\) is the exponential of \(\text{SYN}\) if the synthetic is in log scale, or simply the synthetic close price if it was kept in price form. This implies
+\[
+Q_{\text{SYN}}(t) \;=\; -\,Q_{A_1}(t)\,\frac{ P_{A_1}(t) }{ P_{\text{SYN}}(t) }.
+\]
+The total incremental profit or loss from day \(t-1\) to \(t\) is
+\[
+\Pi_t = Q_{A_1}(t-1)\,\Delta P_{A_1}(t) \;+\; Q_{\text{SYN}}(t-1)\,\Delta P_{\text{SYN}}(t),
+\]
+where \(\Delta P_{\text{A1}}(t) := P_{A_1}(t) - P_{A_1}(t-1)\), and likewise for \(\text{SYN}\). Summing \(\Pi_t\) over \(t\) in \(\mathcal{T}_{\text{test}}\) yields the cumulative P\&L. Equivalently, one can transform this to a returns perspective and integrate or sum those returns to form an \emph{equity curve} for the strategy.
+
+\subsection*{Summary of the Trading Workflow}
+\begin{enumerate}
+\item \textbf{Split Data:} Define training period \(\mathcal{T}_{\text{train}}\) and test period \(\mathcal{T}_{\text{test}}\).  
+\item \textbf{Compute Synthetic Asset:}  
+\begin{enumerate}
+    \item Solve unconstrained L2 problem.  
+    \item Impose cardinality constraint to restrict the donor assets.  
+    \item Construct synthetic log-price track.  
+\end{enumerate}
+\item \textbf{Prepare the Pairs:} Let \(\{R_{A_1}(t), R_{\text{SYN}}(t)\}\) be the training returns. Convert them to pseudo-samples \((u_k,v_k)\) using empirical CDFs.  
+\item \textbf{Estimate Copulas:} Fit chosen copula families (e.g., Student-t, Gaussian, Gumbel, N14, etc.) via maximum likelihood. Select the best fit or multiple fits for comparative study.  
+\item \textbf{Trading Rule (MPI):} 
+\begin{itemize}
+    \item For each new day in \(\mathcal{T}_{\text{test}}\), compute the pair \((R_{A_1}(t), R_{\text{SYN}}(t))\).  
+    \item Convert to the copula domain \((U_t, V_t)\).  
+    \item Evaluate a mispricing index \(\text{MPI}_t\).  
+    \item Open or close positions based on threshold logic.  
+\end{itemize}
+\item \textbf{Construct Equity Curves:} Compute daily P\&L for the resulting trades. Integrate or sum over time to obtain final performance measures.
+\end{enumerate}
+
+\subsection*{Remarks on Model Extensions}
+The approach described can be extended by:
+\begin{itemize}
+\item Using rolling windows for constant re-estimation of weights and copula parameters.
+\item Incorporating transaction costs, liquidity constraints, or additional risk constraints.
+\item Generalizing to a multi-asset setting or a variety of correlation/volatility modeling frameworks.
+\end{itemize}
+
+Within this general methodology, the heart of the strategy remains the combination of (i) a well-constructed synthetic reference asset via optimization, and (ii) a robust copula framework for describing the joint distribution of returns and signaling departures from an expected dependence structure.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Methodology}
+\subsection{Synthetic Asset Formation via Regularized Synthetic Control}
+Let $Y_{1t}$ denote the log-price of the target asset at time $t$ and $\mathbf{Y}_{t} = (Y_{2t},...,Y_{Nt})^\top$ represent the vector of log-prices from the donor pool of $N-1$ assets. We construct a synthetic asset $\hat{Y}_{1t}$ through a sparse convex combination of donor assets:
+
+\begin{equation}
+\hat{Y}_{1t} = \sum_{i=2}^N w_i Y_{it},\quad \text{where } \mathbf{w} \in \Delta^{N-1} \text{ and } \|\mathbf{w}\|_0 \leq K
+\end{equation}
+
+where $\Delta^{N-1}$ is the $(N-1)$-dimensional simplex and $K$ is the cardinality constraint. The weight vector $\mathbf{w}^*$ is determined through a two-stage regularized optimization:
+
+\textbf{Stage 1:} Solve the unconstrained convex problem:
+\begin{equation}
+\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \Delta^{N-1}} \sum_{t=1}^T \left(Y_{1t} - \sum_{i=2}^N w_i Y_{it}\right)^2
+\end{equation}
+
+\textbf{Stage 2:} Let $\mathcal{S} = \{i : |w_i^{(1)}| \geq \tau\}$ be the support set of the $K$ largest weights. Solve the restricted problem:
+\begin{equation}
+\mathbf{w}^{(2)} = \argmin_{\mathbf{w} \in \Delta^{N-1}_{\mathcal{S}}} \sum_{t=1}^T \left(Y_{1t} - \sum_{i \in \mathcal{S}} w_i Y_{it}\right)^2
+\end{equation}
+
+where $\Delta^{N-1}_{\mathcal{S}} = \{\mathbf{w} \in \Delta^{N-1} : w_i = 0\ \forall i \notin \mathcal{S}\}$. The final synthetic asset is given by $\hat{Y}_{1t} = \sum_{i \in \mathcal{S}} w_i^{(2)} Y_{it}$.
+
+\subsection{Copula Model Specification}
+Let $X_t = \Delta Y_{1t}$ and $Z_t = \Delta \hat{Y}_{1t}$ be the log-returns of the target and synthetic assets respectively. We model their joint distribution using a copula framework:
+
+\begin{equation}
+F_{X,Z}(x,z) = C(F_X(x), F_Z(z))
+\end{equation}
+
+where $F_X$ and $F_Z$ are the marginal distributions and $C:[0,1]^2 \rightarrow [0,1]$ is the copula function. The empirical CDFs are constructed via:
+
+\begin{equation}
+\hat{F}_X(x) = \frac{1}{T+1}\sum_{t=1}^T \mathbb{I}_{\{X_t \leq x\}},\quad \hat{F}_Z(z) = \frac{1}{T+1}\sum_{t=1}^T \mathbb{I}_{\{Z_t \leq z\}}
+\end{equation}
+
+We consider a family $\mathcal{C}$ of parametric copulas:
+\begin{equation}
+\mathcal{C} = \{C_\theta : \theta \in \Theta\} \cup \{C_{\nu,\rho} : \nu > 2, \rho \in (-1,1)\}
+\end{equation}
+including Archimedean (Gumbel, Clayton, Frank, Joe, N14) and elliptical (Gaussian, Student-t) copulas.
+
+Parameters are estimated via maximum likelihood:
+\begin{equation}
+\hat{\theta} = \argmax_{\theta \in \Theta} \sum_{t=1}^T \ln c_\theta(\hat{F}_X(X_t), \hat{F}_Z(Z_t))
+\end{equation}
+where $c_\theta(u,v) = \frac{\partial^2 C_\theta(u,v)}{\partial u \partial v}$ is the copula density.
+
+\subsection{Mispricing Index and Trading Rules}
+Define the conditional mispricing indices (MPI) as:
+
+\begin{align}
+MPI_{t|Z} &= \mathbb{P}(U_t \leq u_t | V_t = v_t) = \frac{\partial C(u_t,v_t)}{\partial v} \\
+MPI_{t|X} &= \mathbb{P}(V_t \leq v_t | U_t = u_t) = \frac{\partial C(u_t,v_t)}{\partial u}
+\end{align}
+
+where $u_t = \hat{F}_X(X_t)$, $v_t = \hat{F}_Z(Z_t)$. Trading signals are generated through threshold crossing rules:
+
+\begin{equation}
+\tau_t = 
+\begin{cases}
+1 & \text{if } MPI_{t|Z} < l^- \text{ or } MPI_{t|X} < l^- \\
+-1 & \text{if } MPI_{t|Z} > l^+ \text{ or } MPI_{t|X} > l^+ \\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+
+Position sizing follows a dollar-neutral strategy:
+\begin{equation}
+\begin{aligned}
+Q_{1t} &= \frac{\tau_t}{P_{1t}} \cdot \frac{1}{\sigma_{1|2}} \\
+Q_{2t} &= -\frac{\tau_t}{P_{2t}} \cdot \frac{1}{\sigma_{2|1}}
+\end{aligned}
+\end{equation}
+
+where $\sigma_{i|j}$ is the conditional volatility estimated via:
+\begin{equation}
+\sigma_{i|j}^2 = \frac{1}{T-1}\sum_{t=1}^T \left(\Delta Y_{it} - \beta_{ij}\Delta Y_{jt}\right)^2
+\end{equation}
+
+\subsection{Strategy Implementation}
+The complete trading algorithm executes as:
+
+\begin{enumerate}
+\item \textbf{Training Phase:}
+\begin{itemize}
+\item Estimate synthetic control weights $\mathbf{w}^*$ via regularized SCM
+\item Compute residual series $X_t = Y_{1t} - \hat{Y}_{1t}$
+\item Fit copula $C_\theta$ to $(X_t, Z_t)$ where $Z_t = \hat{Y}_{1t}$
+\item Calibrate thresholds $l^-, l^+$ via quantiles of MPI series
+\end{itemize}
+
+\item \textbf{Trading Phase:}
+\begin{itemize}
+\item Compute real-time MPI using incoming price data
+\item Generate trading signals $\tau_t$ via threshold rules
+\item Calculate hedge ratios and position sizes
+\item Execute dollar-neutral portfolio rebalancing
+\item Monitor for stop-loss triggers and position reset events
+\end{itemize}
+\end{enumerate}
+
+\subsection{Model Selection and Risk Management}
+Copula selection is performed via the Bayesian Information Criterion:
+\begin{equation}
+BIC_C = -2 \sum_{t=1}^T \ln c_\theta(u_t,v_t) + k_C \ln T
+\end{equation}
+where $k_C$ is the number of copula parameters.
+
+Stop-loss triggers are implemented through position limits:
+\begin{equation}
+\tau_t = 0 \quad \text{if } |\sum_{s=1}^t \tau_s| \geq L_{\max}
+\end{equation}
+with $L_{\max}$ calibrated to historical maximum drawdown levels.
+\end{enumerate}

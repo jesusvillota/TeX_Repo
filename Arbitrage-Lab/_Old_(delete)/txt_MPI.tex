@@ -1,0 +1,282 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Trading Strategy Construction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Given the estimated copula structure between target and synthetic returns, we now develop a pairs trading strategy based on cumulative conditional probabilities as proposed by \cite{xie2016}. The core insight is to leverage the estimated dependence structure to generate trading signals by tracking how far returns cumulatively drive prices apart, indicating potential mean reversion opportunities.
+
+\subsubsection{Mispricing Index}
+
+We define the Mispricing Index (MPI) as the conditional probability of returns computed through the fitted copula. For observed returns $(r_t, r_t^*)$ of the target and synthetic assets at time $t$, the MPIs are given by:
+%
+\begin{equation*}
+\begin{array}{lll}
+MI_t &= P(R_t < r_t \mid R_t^* = r_t^*) &= \left.\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_{R^*}(r_t^*)}\right|_{r_t,r_t^*}
+\\[1em]
+MI_t^* &= P(R_t^* < r_t^* \mid R_t = r_t) &= \left.\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_R(r_t)}\right|_{r_t,r_t^*}
+\end{array}
+\end{equation*}
+%
+where $C_{\hat{\theta}}$ is the fitted copula with estimated parameter $\hat{\theta}$, and $F_R$, $F_{R^*}$ are the empirical marginal distributions.
+
+\subsubsection{Cumulative Mispricing Flags}
+
+To capture the cumulative effect of return divergences, we construct flag series that aggregate the daily mispricing indices. The raw flag series are defined as:
+%
+\begin{equation*}
+\begin{array}{lll}
+Flag_t^{raw} &= Flag_{t-1}^{raw} + (MI_t - 0.5), &\quad Flag_0^{raw} = 0
+\\[0.5em]
+Flag_t^{*,raw} &= Flag_{t-1}^{*,raw} + (MI_t^* - 0.5), &\quad Flag_0^{*,raw} = 0
+\end{array}
+\end{equation*}
+%
+or equivalently in cumulative form:
+%
+\begin{equation*}
+\begin{array}{ll}
+Flag_t^{raw} = \sum_{s=1}^t (MI_s - 0.5)
+\\[0.5em]
+Flag_t^{*,raw} = \sum_{s=1}^t (MI_s^* - 0.5)
+\end{array}
+\end{equation*}
+
+The actual trading flags $(Flag_t, Flag_t^*)$ track these cumulative measures but are reset to zero whenever trading positions are closed, as detailed in the following trading rules.
+
+\subsubsection{Trading Rules}
+
+We implement a dollar-neutral trading scheme where equal dollar amounts are invested in long and short positions. Let $D > 0$ denote the entry threshold and $S > D$ the stop-loss threshold. The complete trading logic is as follows:
+
+\paragraph{Entry Rules:}
+\begin{itemize}
+\item When $Flag_t$ reaches $D$: Short the target asset and long the synthetic asset
+\item When $Flag_t$ reaches $-D$: Long the target asset and short the synthetic asset
+\item When $Flag_t^*$ reaches $D$: Long the target asset and short the synthetic asset  
+\item When $Flag_t^*$ reaches $-D$: Short the target asset and long the synthetic asset
+\end{itemize}
+
+\paragraph{Exit Rules:}
+\begin{itemize}
+\item For positions opened on $Flag_t$: Close when $Flag_t$ returns to zero or reaches $\pm S$
+\item For positions opened on $Flag_t^*$: Close when $Flag_t^*$ returns to zero or reaches $\pm S$
+\item Upon position closure: Reset both $Flag_t$ and $Flag_t^*$ to zero
+\end{itemize}
+
+Following \cite{xie2016}, we set $D = 0.6$ and $S = 2$ in our empirical implementation. The dollar-neutral design ensures that the strategy's returns are driven purely by the relative price movements between the target and synthetic assets, abstracting from directional market exposure.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%`
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Trading Strategy Construction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Given the estimated copula structure between target and synthetic returns, we now develop a pairs trading strategy based on cumulative conditional probabilities as proposed by \cite{xie2016}. The core insight is to leverage the estimated dependence structure to generate trading signals by tracking how far returns cumulatively drive prices apart, indicating potential mean reversion opportunities.
+
+\subsubsection{Mispricing Index}
+
+We define the Mispricing Index (MPI) as the conditional probability of returns computed through the fitted copula. For observed returns $(r_t, r_t^*)$ of the target and synthetic assets at time $t$, the MPIs are given by:
+%
+\begin{equation*}
+\begin{array}{lll}
+MI_t &= P(R_t < r_t \mid R_t^* = r_t^*) 
+&= \left.\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_{R^*}(r_t^*)}\right|_{r_t,r_t^*}
+\\[1em]
+MI_t^* &= P(R_t^* < r_t^* \mid R_t = r_t) 
+&
+= \left.\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_R(r_t)}\right|_{r_t,r_t^*}
+\end{array}
+\end{equation*}
+%
+where $C_{\hat{\theta}}$ is the fitted copula with estimated parameter $\hat{\theta}$, and $F_R$, $F_{R^*}$ are the empirical marginal distributions.
+
+\subsubsection{Cumulative Mispricing Flags}
+
+To capture the cumulative effect of return divergences, we construct flag series that aggregate the daily mispricing indices. The raw flag series are defined as:
+%
+\begin{equation*}
+\begin{array}{lll}
+Flag_t^{raw} &= Flag_{t-1}^{raw} + (MI_t - 0.5), &\quad Flag_0^{raw} = 0
+\\[0.5em]
+Flag_t^{*,raw} &= Flag_{t-1}^{*,raw} + (MI_t^* - 0.5), &\quad Flag_0^{*,raw} = 0
+\end{array}
+\end{equation*}
+%
+or equivalently in cumulative form:
+%
+\begin{equation*}
+\begin{array}{ll}
+Flag_t^{raw} = \sum_{s=1}^t (MI_s - 0.5)
+\\[0.5em]
+Flag_t^{*,raw} = \sum_{s=1}^t (MI_s^* - 0.5)
+\end{array}
+\end{equation*}
+
+The actual trading flags $(Flag_t, Flag_t^*)$ track these cumulative measures but are reset to zero whenever trading positions are closed, as detailed in the following trading rules.
+
+\subsubsection{Trading Rules}
+
+We implement a dollar-neutral trading scheme where equal dollar amounts are invested in long and short positions. Let $D > 0$ denote the entry threshold and $S > D$ the stop-loss threshold. The complete trading logic is as follows:
+
+\paragraph{Entry Rules:}
+\begin{itemize}
+\item When $Flag_t$ reaches $D$: Short the target asset and long the synthetic asset
+\item When $Flag_t$ reaches $-D$: Long the target asset and short the synthetic asset
+\item When $Flag_t^*$ reaches $D$: Long the target asset and short the synthetic asset  
+\item When $Flag_t^*$ reaches $-D$: Short the target asset and long the synthetic asset
+\end{itemize}
+
+\paragraph{Exit Rules:}
+\begin{itemize}
+\item For positions opened on $Flag_t$: Close when $Flag_t$ returns to zero or reaches $\pm S$
+\item For positions opened on $Flag_t^*$: Close when $Flag_t^*$ returns to zero or reaches $\pm S$
+\item Upon position closure: Reset both $Flag_t$ and $Flag_t^*$ to zero
+\end{itemize}
+
+Following \cite{xie2016}, we set $D = 0.6$ and $S = 2$ in our empirical implementation. The dollar-neutral design ensures that the strategy's returns are driven purely by the relative price movements between the target and synthetic assets, abstracting from directional market exposure. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Pairs Trading Strategy via Mispricing Indices (MPI)} \label{sec:mpi_strategy}
+
+In this section, we adapt the mispricing index (MPI) strategy from \cite{xie2016mpi} to our setting, wherein we trade a target asset (with returns $R_t$) against its synthetic counterpart (with returns $R_t^*$). While the strategy might initially appear unconventional, it hinges on interpreting conditional probabilities of daily returns as an evolving measure of relative mispricing. Below, we detail the essential components of the approach and how trading positions are opened and closed.
+
+\subsection{Mispricing Index (MPI)}
+
+On each trading day $t$, let $r_t$ and $r_t^*$ respectively denote the realized returns for the target and synthetic assets. We define two conditional mispricing indices,
+\begin{align*}
+%MI_t
+MI_t^{R \mid R^*} 
+&= \mathbb{P}(R_t \leq r_t \mid R_t^* = r_t^*)
+= \left.\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_{R^*}(r_t^*)}\right|_{r_t,r_t^*}
+,
+\\[0.4em]
+%MI_t^*
+MI_t^{R^* \mid R} 
+&= \mathbb{P}(R_t^* \leq r_t^* \mid R_t = r_t)
+= \left.\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_R(r_t)}\right|_{r_t,r_t^*}
+.
+\end{align*}
+
+The quantity $MI_t^{R \mid R^*}$ measures how ``mispriced'' the target asset appears when conditioned on that day's synthetic return, whereas $MI_t^{R^* \mid R}$ does the same for the synthetic asset when conditioned on the target return.
+
+\subsection{Flag and Raw Flag}
+
+Since a single day's mispricing index reflects only an instantaneous view, we accumulate daily signals over time to gauge how much the returns have gradually driven prices apart (or together). We define a \emph{flag} series for each asset, defined as a running sum of daily deviations from $0.5$\footnote{The subtraction of $0.5$ centers the cumulative sum so that deviations from zero reflect mispricing}
+\begin{equation}
+\label{eq:FlagRstar}
+\text{Flag}_{R}(t) = \text{Flag}_{R}(t-1) + (MI_t^{R \mid R^*} - 0.5),
+\quad \text{Flag}_{R}(0) = 0,
+\end{equation}
+\begin{equation}
+\label{eq:FlagR}
+\text{Flag}_{R^*}(t) = \text{Flag}_{R^*}(t-1) + (MI_t^{R^* \mid R} - 0.5),
+\quad \text{Flag}_{R^*}(0) = 0.
+\end{equation}
+%Equivalently, each raw flag is a cumulative sum over the trading horizon:
+%\begin{equation}
+%\text{Flag}_{R}(t) = \sum_{s=1}^t (MI_s^{R \mid R^*} - 0.5),
+%\qquad
+%\text{Flag}_{R^*}(t) = \sum_{s=1}^t (MI_s^{R^* \mid R} - 0.5).
+%\end{equation}
+Similar to plotting cumulative returns, these raw flags track the net effect of mispricing signals over time. 
+%However, the \emph{real flag} series, $\text{CMI}_R$ and $\text{CMI}_{R^*}$, will be \emph{reset to zero} whenever an open position is fully closed (i.e., after an exit signal). This reset ensures that newly detected mispricings are measured from a fresh baseline rather than mixing with completed trades.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\paragraph{Cumulative Mispricing Index (CMI).}
+To prevent the compounding of stale mispricing signals, we formally define a Cumulative Mispricing Index (CMI) as the reset-adjusted flag series through the recursive relationship:
+$$
+\mathrm{CMI}_R(t) =
+\begin{cases}
+\mathrm{CMI}_R(t-1) + \bigl(MI_t^{R\mid R^*} - 0.5\bigr), & \text{if no position reset occurs at time } t,\\
+0, & \text{if a position is closed at } t,
+\end{cases}
+$$
+$$
+\mathrm{CMI}_{R^*}(t) =
+\begin{cases}
+\mathrm{CMI}_{R^*}(t-1) + \bigl(MI_t^{R^*\mid R} - 0.5\bigr), & \text{if no position reset occurs at time } t,\\
+0, & \text{if a position is closed at } t,
+\end{cases}
+$$
+where \(\mathrm{CMI}_R(0)= \mathrm{CMI}_{R^*}(0)=0\). Unlike the raw flags that accrue continuously, each CMI absorbs daily mispricing signals only until a trade is exited, at which point it is reset to zero. This mechanism ensures that any fresh mispricing accumulates from a ``clean slate,'' thereby preventing the influence of past, already-traded mispricing from compounding future signals.
+%----------------------------------------------------
+% To track active mispricing signals, we introduce the Cumulative Mispricing Index (CMI), which resets upon trading activity. Let $\tau_k$ denote the sequence of times when trades are closed (with $\tau_0 = 0$). For any time $t \in [\tau_k, \tau_{k+1})$, the CMIs are defined as:
+%
+%\begin{equation*}
+%\text{CMI}_{R}(t) = \sum_{s=\tau_k + 1}^t (MI_s^{R \mid R^*} - 0.5),
+%\end{equation*}
+%
+%\begin{equation*}
+%\text{CMI}_{R^*}(t) = \sum_{s=\tau_k + 1}^t (MI_s^{R^* \mid R} - 0.5).
+%\end{equation*}
+%
+%These indices maintain a running tally of mispricing signals since the most recent trade closure, providing a cleaner measure of emerging price divergences.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Trading Logic}
+
+Consistent with \cite{xie2016mpi}, we consider a dollar-neutral scheme. 
+%Let $\text{CMI}_R$ and $\text{CMI}_{R^*}$ be the real (non-star) flags for the target and synthetic assets, each subject to intermittent resets upon exiting positions. 
+Denote by $D$ a threshold for opening a position (e.g., $D=0.6$ in \cite{xie2016mpi}), and by $S$ a stop-loss boundary (e.g., $S=2$).
+%
+When $\text{CMI}_R$ \emph{rises to} $D$, the strategy short-sells the target asset and buys the synthetic asset in equal amounts. Conversely, if $\text{CMI}_R$ \emph{falls to} $-D$, the strategy buys the target asset and shorts the synthetic. Analogously, when $\text{CMI}_{R^*}$ rises to $D$, the strategy shorts the synthetic and buys the target; if $\text{CMI}_{R^*}$ falls to $-D$, it buys the synthetic and shorts the target. All trades are thus kept dollar-neutral.
+
+Exiting a position opened based on $\text{CMI}_R$ occurs if one of the following conditions is met: $\text{CMI}_R$ returns to zero, $\text{CMI}_R$ exceeds $S$, or $\text{CMI}_R$ goes below $-S$. Similarly, positions opened on a signal from $\text{CMI}_{R^*}$ are closed upon $\text{CMI}_{R^*}$ returning to zero, surpassing $S$, or falling below $-S$. Once a position is closed, $\text{CMI}_R$ \emph{and} $\text{CMI}_{R^*}$ are both reset to zero, ensuring a clean slate for subsequent mispricing detection.
+
+The intuition behind these rules is that the cumulative mispricing captured by the flag series reflects how returns may drive prices apart or together over time. Because trading is ultimately conducted on prices, it becomes necessary to integrate the daily return information in a cumulative measure and to reset it upon entering a new trade.
+
+%The rationale behind dollar-neutrality and resetting the flags is that any persistent accumulation of mispricing risk is removed once a position is opened and subsequently closed. The daily returns driving the mispricing indices are thereby ``restarted'', consistent with the idea that each completed trade's profit or loss should not affect how one perceives new mispricings. 
+%As the results in \cite{xie2016mpi} suggest, this design improves interpretability and reduces the compounding of stale signals in pairs trading applications.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Trading Strategy}
+Following the approach in \cite{XieEtAl2016}, we construct a trading strategy for the pair formed by the target asset and its synthetic counterpart. Although the original MPI strategy in \cite{XieEtAl2016} was developed for two traded stocks, its underlying principles carry over naturally when one of the assets is synthetic. In our setting, the target asset is characterized by its log-return series $\{r_t\}$ and the synthetic asset by $\{r_t^*\}$.
+
+\subsection{Mispricing Index}
+Let $R_t$ and $R_t^*$ denote the random variables representing the returns of the target and synthetic assets at time $t$, with observed values $r_t$ and $r_t^*$ respectively. Following the rationale of conditional probability as a distance measure on the spread, we define the mispricing indices (MPI) as
+$$
+MI_t^{\mathrm{target}\mid\mathrm{synthetic}} = \mathbb{P}(R_t < r_t \mid R_t^* = r_t^*)
+$$
+and
+$$
+MI_t^{\mathrm{synthetic}\mid\mathrm{target}} = \mathbb{P}(R_t^* < r_t^* \mid R_t = r_t).
+$$
+These indices quantify, on a given day $t$, the extent to which each asset is mispriced relative to the other based solely on that day's return.
+
+\subsection{Flag and Raw Flag Series}
+Since trading decisions are executed at the price level rather than directly on returns, we accumulate the daily mispricing signals over time. To this end, we first define the raw flag series, which serve as a cumulative mispricing index. For the target asset, we set
+$$
+\mathrm{FlagT}^*(t) = \sum_{s=1}^{t} ( MI_s^{\mathrm{target}\mid\mathrm{synthetic}} - 0.5 ), \quad \mathrm{FlagT}^*(0) = 0,
+$$
+and for the synthetic asset,
+$$
+\mathrm{FlagS}^*(t) = \sum_{s=1}^{t} ( MI_s^{\mathrm{synthetic}\mid\mathrm{target}} - 0.5 ), \quad \mathrm{FlagS}^*(0) = 0.
+$$
+The subtraction of $0.5$ centers the cumulative sum so that deviations from zero reflect mispricing. In practice, the raw flag series often mimic the behavior of cumulative returns. Thus, we define the actual flag series, $\mathrm{FlagT}(t)$ and $\mathrm{FlagS}(t)$, which are identical to the raw flag series except that they are reset to zero each time a trading signal is executed.
+
+\subsection{Trading Logic}
+The strategy is implemented within a dollar-neutral framework, ensuring equal dollar exposure to both the target and synthetic assets. The trading rules are driven by the flag series using threshold parameters $D>0$ for signal generation and $S>D$ for stop-loss or exit conditions.
+
+\textbf{Opening Rules:}  
+$$
+\begin{array}{rcl}
+\text{If } \mathrm{FlagT}(t) \geq D, & \text{then} & \text{short the target asset and long the synthetic asset in equal amounts,} \\
+\text{If } \mathrm{FlagT}(t) \leq -D, & \text{then} & \text{long the target asset and short the synthetic asset in equal amounts,} \\
+\text{If } \mathrm{FlagS}(t) \geq D, & \text{then} & \text{long the target asset and short the synthetic asset in equal amounts,} \\
+\text{If } \mathrm{FlagS}(t) \leq -D, & \text{then} & \text{short the target asset and long the synthetic asset in equal amounts.}
+\end{array}
+$$
+
+\textbf{Exiting Rules:}  
+Once a position is opened based on either $\mathrm{FlagT}(t)$ or $\mathrm{FlagS}(t)$, it is maintained until the corresponding flag series reverts to zero or reaches a stop-loss level of $S$ (or $-S$). Upon triggering an exit, both flag series are reset to zero, effectively ``refreshing'' the cumulative mispricing information.
+
+The intuition behind these rules is that the cumulative mispricing captured by the flag series reflects how returns may drive prices apart or together over time. Because trading is ultimately conducted on prices, it becomes necessary to integrate the daily return information in a cumulative measure and to reset it upon entering a new trade. This approach leverages the dependence structure modeled via copulas while enabling a systematic, dollar-neutral trading strategy.

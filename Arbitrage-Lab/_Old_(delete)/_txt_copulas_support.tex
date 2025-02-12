@@ -1,0 +1,845 @@
+\section{Copula-Based Dependence Modeling}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{ INTRODUCTION TO COPULAS }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% OPTION 1
+%%The dependence structure between the target asset and its synthetic counterpart is modeled using copulas, which are multivariate cumulative distribution functions with uniform marginals that characterize the dependence between random variables. Copulas provide a flexible framework for modeling the joint behavior of random variables while decoupling their marginal distributions, making them particularly suitable for capturing the complex relationships in financial returns. In our pairs trading context, copulas enable us to model the joint distribution of the target and synthetic log returns, accounting for potential non-linear dependencies that may not be captured by simple correlation measures.
+%% OPTION 2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%----------------------------------------------------
+%%----------------------------------------------------
+%In order to model the dependence structure between the target asset and its synthetic counterpart, we adopt a copula-based approach. Copulas are multivariate probability distributions that allow us to characterize the joint behavior of random variables while decoupling their marginal distributions. Formally, let $F$ be the joint cumulative distribution function (CDF) of two random variables $Y$ and $Y^*$ with marginal CDFs $F_Y$ and $F_{Y^*}$. Sklar's theorem states that there exists a copula function $C : [0,1]^2 \to [0,1]$ such that:
+%\begin{equation*}
+%    F(y, y^*) = C\left(F_Y(y), F_{Y^*}(y^*)\right)
+%\end{equation*}
+%
+%This decoupling enables flexible modeling of non-linear dependencies - a critical advantage over traditional correlation-based methods in pairs trading. The copula fitting process involves three key stages: (1) estimating marginal distributions for the target and synthetic asset returns, (2) selecting an appropriate copula family, and (3) calibrating the copula parameters to capture the observed dependence structure.
+%%----------------------------------------------------
+%%----------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% OPTION 3
+%%Copulas are a flexible framework for modeling the joint behavior of multiple random variables by separating each variable's marginal distribution from the dependence structure that ties them together. Formally, a copula is a multivariate cumulative distribution function (CDF) whose individual marginal distributions are uniform on [0, 1]. By choosing appropriate marginal distributions and a suitable copula, one can capture intricate patterns of dependence-ranging far beyond what simple correlation measures can reveal. In the context of pairs trading, this property is particularly valuable for capturing how the target and synthetic log returns co-move, facilitating more accurate risk and relationship modeling than methods that rely solely on individual distribution assumptions or linear correlation.
+%%----------------------------------------------------
+%%\subsubsection{Introduction to Copulas}
+%%Copulas provide a flexible framework for modeling the dependence structure among random variables independently of their marginal distributions. Formally, a copula is a multivariate cumulative distribution function (CDF) with uniform marginals, which enables us to combine any set of marginal distributions into a valid joint distribution. This separation is particularly advantageous in finance, where the marginal behavior of asset returns can be modeled individually while the copula captures their interconnected dynamics.
+%%
+%%In the context of pairs trading, we use copulas to model the joint behavior of the log returns of a target asset and its synthetic counterpart derived from a sparse synthetic control. The advantages of a copula-based approach in this setting include:
+%%\begin{enumerate}
+%%    \item \textbf{Decoupling Marginals from Dependence:} Copulas allow us to estimate the marginal distributions separately before coupling them to capture the full multivariate dependence.
+%%    \item \textbf{Flexibility:} They enable the modeling of complex, nonlinear dependencies that are often observed in financial time series.
+%%    \item \textbf{Model Selection:} Different copula families (e.g., Gaussian, Clayton, Gumbel) offer distinct characteristics, making it possible to select the best-fitting model that accurately represents the underlying dependence.
+%%\end{enumerate}
+%%
+%%In the following sections, we outline the steps undertaken in our copula-based analysis: first estimating the marginals of the target and synthetic log returns, then fitting various copula models, and finally selecting the optimal copula based on rigorous goodness-of-fit criteria.
+%
+%%Copulas are mathematical objects that describe the dependence structure between random variables. They are used to model the multivariate distribution of a set of variables by combining their marginal distributions. In the context of pairs trading, copulas are particularly useful for modeling the dependence between the returns of two assets.
+%%%----------------------------------------------------
+%%Copulas are multivariate probability distributions that describe the dependence structure between random variables. In our case, we use copulas to model the relationship between the target and synthetic log returns. The process of fitting a copula to our data involves several steps:
+%%%----------------------------------------------------
+%%In this section, we describe the process of fitting copulas to the data and selecting the optimal copula for our pairs trading strategy. Copulas are multivariate probability distributions that allow us to model the dependence structure between random variables, while keeping their marginal distributions separate. They are particularly useful in finance for modeling the joint behavior of asset returns.
+%%
+%%The copula fitting process involves the following steps:
+%%%----------------------------------------------------
+%%The dependence structure between the target asset and the synthetic asset is modelled using copulas. Copulas are powerful abilities in multivariate statistics that allow us to separate the marginal distributions of random variables from their joint dependence structure. This section provides a rigorous explanation of the copula fitting process, including the selection of the optimal copula.
+%%%----------------------------------------------------
+%%A copula is a multivariate probability distribution for which the marginal probability distribution of each variable is uniform.  Copulas are used to describe the dependence between random variables. 
+%%%----------------------------------------------------
+%%In order to model the dependence structure between the target asset and its synthetic counterpart, we adopt a copula-based approach. Copulas serve as a flexible tool to capture the joint behavior of random variables while decoupling their marginal distributions. 
+%%%----------------------------------------------------
+%%The dependence structure between the target asset and its synthetic control is modeled using copulas. 
+%%%----------------------------------------------------
+%%A copula is a multivariate cumulative distribution function (CDF) with uniform marginals that characterizes the dependence structure between random variables.
+%%%----------------------------------------------------
+%%Copulas allow us to model the dependence structure between random variables independently of their marginal distributions. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{ BASIC MATHEMATICAL DEFINITION OF COPULA }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+%
+%% Deepseek
+%%----------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Copula Foundations} \label{subsec:copula}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%Let $(\Omega, \mathcal{F}, \mathbb P)$ be a probability space. A \textit{copula} is a multivariate cumulative distribution function (CDF) $C: [0,1]^d \to [0,1]$ whose univariate marginals are uniformly distributed on $[0,1]$. Formally, for dimension $d=2$ (our case of interest), $C$ satisfies:
+%
+%\begin{enumerate}[label=(C\arabic*)]
+%    \item $C(u,0) = C(0,v) = 0$ for all $u,v \in [0,1]$ (Groundedness)
+%    \item $C(u,1) = u$ and $C(1,v) = v$ for all $u,v \in [0,1]$ (Uniform marginals)
+%    \item For all $u_1 \leq u_2$ and $v_1 \leq v_2$ in $[0,1]$:
+%    \begin{equation*}
+%        C(u_2,v_2) - C(u_2,v_1) - C(u_1,v_2) + C(u_1,v_1) \geq 0 \quad \text{(2-increasing)}
+%    \end{equation*}
+%\end{enumerate}
+%
+%Let $Y$ and $Y^*$ be real-valued random variables with joint CDF $F_{Y,Y^*}:\mathbb{R}^2 \to [0,1]$ and marginal CDFs $F_Y(y) = P(Y \leq y)$, $F_{Y^*}(y^*) = P(Y^* \leq y^*)$. \textit{Sklar's Theorem} establishes that there exists a copula $C$ such that for all $(y,y^*) \in \mathbb{R}^2$:
+%
+%\begin{equation} \label{eq:sklar}
+%    F_{Y,Y^*}(y,y^*) = C\left(F_Y(y), F_{Y^*}(y^*)\right)
+%\end{equation}
+%
+%Moreover, if $F_Y$ and $F_{Y^*}$ are continuous, the copula $C$ is unique. When uniqueness holds, the copula can be expressed through the probability integral transform:
+%
+%\begin{equation} \label{eq:copula_expression}
+%    C(u,v) = P\left(F_Y(Y) \leq u, F_{Y^*}(Y^*) \leq v\right) \quad \text{for} \quad (u,v) \in [0,1]^2
+%\end{equation}
+%
+%The corresponding copula density $c:[0,1]^2 \to \mathbb{R}_+$, when it exists, is given by Radon-Nikodym derivative:
+%
+%\begin{equation} \label{eq:copula_density}
+%    c(u,v) = \frac{\partial^2 C}{\partial u \partial v}(u,v) = \frac{f_{Y,Y^*}\left(F_Y^{-1}(u), F_{Y^*}^{-1}(v)\right)}{f_Y\left(F_Y^{-1}(u)\right)f_{Y^*}\left(F_{Y^*}^{-1}(v)\right)}
+%\end{equation}
+%
+%where $f_{Y,Y^*}$ is the joint density, $f_Y$ and $f_{Y^*}$ are marginal densities, and $F_Y^{-1}$, $F_{Y^*}^{-1}$ are quantile functions.
+%
+%This decoupling enables rigorous separation of dependence modeling from marginal distributions, providing several advantages over linear correlation measures:
+%\begin{itemize}
+%    \item Invariance to strictly increasing transformations of $Y$ and $Y^*$
+%    \item Captures tail dependence and non-linear associations
+%    \item Permits construction of joint distributions with arbitrary marginals
+%\end{itemize}
+%
+%Our copula fitting procedure consists of three stages:
+%\begin{enumerate}[label=(\roman*)]
+%    \item Nonparametric estimation of marginal CDFs $F_Y$, $F_{Y^*}$ (Section~\ref{subsec:marginals})
+%    \item Selection of copula family $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$ from parametric classes
+%    \item Maximum likelihood estimation of copula parameters $\theta$ (Section~\ref{subsec:inference})
+%\end{enumerate}
+%%----------------------------------------------------
+%
+%% SONNET 3.5
+%%----------------------------------------------------
+%\subsection{Copula-Based Dependence Modeling}
+%
+%Let $(\Omega, \mathcal{F}, \mathbb{P})$ be a probability space and let $Y, Y^*: \Omega \to \mathbb{R}$ be real-valued random variables representing the target and synthetic asset returns, respectively. Let $F_Y$ and $F_{Y^*}$ denote their respective cumulative distribution functions (CDFs).
+%
+%\begin{definition}[Copula]
+%A bivariate copula is a function $C: [0,1]^2 \to [0,1]$ satisfying:
+%\begin{enumerate}
+%    \item $C(u,0) = C(0,v) = 0$ and $C(u,1) = u$, $C(1,v) = v$ for all $u,v \in [0,1]$ (boundary conditions)
+%    \item $C(u_2,v_2) - C(u_2,v_1) - C(u_1,v_2) + C(u_1,v_1) \geq 0$ for all $u_1 \leq u_2$, $v_1 \leq v_2$ in $[0,1]$ (2-increasing)
+%\end{enumerate}
+%\end{definition}
+%
+%The fundamental relationship between copulas and joint distributions is established by Sklar's theorem:
+%
+%\begin{theorem}[Sklar (1959)]
+%Let $F$ be the joint CDF of $(Y,Y^*)$. Then there exists a copula $C: [0,1]^2 \to [0,1]$ such that
+%\begin{equation}
+%    F(y,y^*) = C(F_Y(y), F_{Y^*}(y^*)) \quad \forall y,y^* \in \mathbb{R}.
+%\end{equation}
+%If $F_Y$ and $F_{Y^*}$ are continuous, then $C$ is unique. Conversely, if $C$ is a copula and $F_Y$, $F_{Y^*}$ are CDFs, then $F$ defined above is a joint CDF with margins $F_Y$ and $F_{Y^*}$.
+%\end{theorem}
+%
+%When the joint CDF $F$ has a density $f$ and the copula $C$ is twice differentiable, the copula density is given by
+%\begin{equation}
+%    c(u,v) = \frac{\partial^2 C(u,v)}{\partial u \partial v},
+%\end{equation}
+%and the joint density can be expressed as
+%\begin{equation}
+%    f(y,y^*) = c(F_Y(y), F_{Y^*}(y^*))f_Y(y)f_{Y^*}(y^*),
+%\end{equation}
+%where $f_Y$ and $f_{Y^*}$ are the marginal densities.
+%
+%This decomposition provides a framework for modeling the dependence structure between the target and synthetic returns independently of their marginal distributions. The implementation involves three stages: (1) estimation of the marginal distributions, (2) selection of an appropriate copula family, and (3) calibration of the copula parameters via maximum likelihood estimation.
+%%----------------------------------------------------
+%
+%
+%
+%
+%In order to model the dependence structure between the target asset and its synthetic counterpart, we adopt a copula-based approach. Copulas are multivariate probability distributions that allow us to characterize the joint behavior of random variables while decoupling their marginal distributions. 
+%%
+%Formally, given two random variables $Y$ and $Y^*$ with marginal cumulative distribution functions (CDFs) $F_Y$ and $F_{Y^*}$, respectively, a copula $C$ is a function that maps the unit square $[0, 1]^2$ to the unit interval $[0, 1]$ such that $C(u, v) = P(F_Y(Y) \leq u, F_{Y^*}(Y^*) \leq v)$ for any $u, v \in [0, 1]$. The copula $C$ captures the dependence structure between $Y$ and $Y^*$. Let $U = F_Y(Y)$ and $V = F_Y^*(Y^*)$ be the uniform transformations of $Y$ and $Y^*$, respectively. Sklar's theorem states that there exists a unique copula function $C : [0,1]^2 \to [0,1]$ such that
+%%
+%%Formally, let $F$ be the joint cumulative distribution function (CDF) of two random variables $Y$ and $Y^*$ with marginal CDFs $F_Y$ and $F_{Y^*}$ respectively. By \textit{Sklar's theorem}, there exists a copula function $C : [0,1]^2 \to [0,1]$ such that:
+%%
+%\begin{equation*}
+%    F(y, y^*) = C\left(F_Y(y), F_{Y^*}(y^*)\right) 
+%.
+%\end{equation*}
+%%
+%The copula $C$ captures the dependence structure between $Y$ and $Y^*$. The joint distribution of $U$ and $V$ is given by the copula $C$. The density of the copula, denoted as $c(u, v)$, is defined as
+%$$
+%c(u, v) = \frac{\partial^2 C(u, v)}{\partial u \partial v}.
+%$$
+%%
+%This decoupling enables flexible modeling of non-linear dependencies - a critical advantage over traditional correlation-based methods in pairs trading. The copula fitting process involves three key stages: (1) estimating marginal distributions for the target and synthetic asset returns, (2) selecting an appropriate copula family, and (3) calibrating the copula parameters to capture the observed dependence structure.
+%%----------------------------------------------------%----------------------------------------------------%----------------------------------------------------
+%Given two random variables $X$ and $Y$ with marginal cumulative distribution functions (CDFs) $F_X$ and $F_Y$, respectively, a copula $C$ is a function that maps the unit square $[0, 1]^2$ to the unit interval $[0, 1]$ such that $C(u, v) = P(F_X(X) \leq u, F_Y(Y) \leq v)$ for any $u, v \in [0, 1]$. The copula $C$ captures the dependence structure between $X$ and $Y$.
+%
+%Let $U = F_X(X)$ and $V = F_Y(Y)$ be the uniform transformations of $X$ and $Y$, respectively. The joint distribution of $U$ and $V$ is given by the copula $C$. The density of the copula, denoted as $c(u, v)$, is defined as
+%
+%\[
+%c(u, v) = \frac{\partial^2 C(u, v)}{\partial u \partial v}.
+%\]
+%%----------------------------------------------------
+%\subsubsection{Definition of Copulas}
+%
+%A copula is a multivariate cumulative distribution function (CDF) that links univariate marginal distributions to form a joint distribution. Formally, let $F_{X,Y}(x, y)$ be the joint CDF of two random variables $X$ and $Y$, and let $F_X(x)$ and $F_Y(y)$ be their marginal CDFs. By Sklar's theorem, there exists a copula $C: [0,1]^2 \to [0,1]$ such that
+%\begin{equation}
+%    F_{X,Y}(x, y) = C(F_X(x), F_Y(y)),
+%\end{equation}
+%for all $x, y \in \mathbb{R}$. If $F_X$ and $F_Y$ are continuous, the copula $C$ is unique. The copula $C$ captures the dependence structure between $X$ and $Y$, while $F_X$ and $F_Y$ describe their marginal behaviours.
+%%----------------------------------------------------
+%Sklar's theorem states that any multivariate joint distribution can be written in terms of univariate marginal distribution functions and a copula, which describes the dependence structure between the variables.
+%
+%Let $H(x_1, ..., x_d)$ be a $d$-dimensional cumulative distribution function with marginals $F_i(x_i) = P(X_i \le x_i)$. Then, there exists a copula $C$ such that:
+%
+%\begin{equation}
+%    H(x_1, ..., x_d) = C(F_1(x_1), ..., F_d(x_d)).
+%    \label{eq:sklar}
+%\end{equation}
+%
+%If the marginals are continuous, then $C$ is unique.  The copula function $C$ contains all information on the dependence structure of the multivariate distribution $H$, while the marginals $F_i$ contain all information on the marginal distributions of $X_i$.
+%
+%The inverse of Equation \ref{eq:sklar} can be used to obtain the copula function:
+%
+%\begin{equation}
+%C(u_1, \dots, u_d) = H(F_1^{-1}(u_1), \dots, F_d^{-1}(u_d)),
+%\end{equation}
+%
+%where $u_i = F_i(x_i)$ are the marginal probabilities, and $F_i^{-1}$ are the quantile functions (inverse CDFs).
+%%----------------------------------------------------
+%Mathematically, for two random variables $X$ and $Y$, their joint cumulative distribution function (CDF) $H(x, y)$ can be expressed as:
+%
+%\begin{equation}
+%H(x, y) = C(F_X(x), F_Y(y))
+%\end{equation}
+%
+%where $F_X(x)$ and $F_Y(y)$ are the marginal CDFs of $X$ and $Y$ respectively, and $C$ is the copula function.
+%
+%In our pairs-trading strategy, we use copulas to model the dependency between the target asset ($Y$) and the synthetic control constructed ($\hat{Y}$). The procedure for fitting the data to a copula and selecting the optimal one is as follows:
+%%----------------------------------------------------
+%A copula is a multivariate cumulative distribution function for which the marginal probability distribution of each variable is uniform on the interval $[0, 1]$. Copulas are used to describe/model the dependence (inter-correlation) between random variables. Their name comes from the Latin word for "link" or "tie", similar but unrelated to grammatical copulas in linguistics. Copulas have been used extensively in quantitative finance to model and minimize tail risk and portfolio-optimization applications.
+%%----------------------------------------------------
+%A copula is a multivariate distribution function $C:[0,1]^2\rightarrow[0,1]$ that couples univariate marginal distributions to form a joint distribution. By Sklar's theorem, any bivariate distribution function $F(x,y)$ with marginals $F_1(x)$ and $F_2(y)$ can be written as
+%\begin{equation}
+%F(x,y) = C(F_1(x), F_2(y))
+%\end{equation}
+%for some copula $C$. When the marginals are continuous, $C$ is unique.
+%%----------------------------------------------------
+%
+%According to Sklar's theorem \cite{sklar1959}, any joint distribution $H$ of random variables $(X_1,...,X_n)$ can be expressed as:
+%\begin{equation}
+%    H(x_1,...,x_n) = C(F_1(x_1),...,F_n(x_n))
+%\end{equation}
+%where $F_i$ are the marginal CDFs and $C: [0,1]^n \rightarrow [0,1]$ is the copula function.
+%%----------------------------------------------------
+%Formally, a \emph{copula} $C(u,v)$ is a bivariate cumulative distribution function (CDF) on $[0,1]^2$ with uniform marginal distributions. 
+%By Sklar's Theorem, if \(F_{X,Y}\) is the joint CDF of random variables \((X,Y)\) with marginal distributions \(F_X\) and \(F_Y\), then there exists a copula \(C\) such that
+%\begin{equation}
+%    F_{X,Y}(x,y) \;=\; C\bigl(F_X(x),\, F_Y(y)\bigr).
+%    \label{eq:Sklar}
+%\end{equation}
+%Conversely, if \(C\) is a copula and \(F_X, F_Y\) are univariate CDFs, then \(\widetilde{F}_{X,Y}(x,y)=C\bigl(F_X(x),\,F_Y(y)\bigr)\) is also a joint CDF of some random pair \((\widetilde{X}, \widetilde{Y})\).  
+%%----------------------------------------------------
+%
+%In brief, if $X$ and $Y$ are continuous random variables with cumulative distribution functions (CDFs) $F_X$ and $F_Y$, then \emph{Sklar's Theorem} states that there exists a unique copula $C$ such that
+%\begin{equation}
+%	F_{X,Y}(x,y) = C\left( F_X(x),\, F_Y(y) \right),
+%\end{equation}
+%where $C: [0,1]^2 \to [0,1]$ is a joint CDF with uniform marginals. In our setting, the variables of interest are the returns (or log-prices) of the target and synthetic assets.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{ EMPIRICAL DISTRIBUTION FUNCTION OF THE MARGINALS }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%----------------------------------------------------
+%\textit{Empirical Cumulative Distribution Function (ECDF)}
+%
+%First, we need to find the empirical cumulative distribution function (ECDF) for both the target and synthetic log returns. The ECDF is a step function that estimates the cumulative distribution function (CDF) of a variable based on the empirical data. We use the ECDF to transform our data into quantiles, which are used as inputs to the copula.
+%
+%Let $x$ and $y$ denote the target and synthetic log returns, respectively. The ECDFs for $x$ and $y$ are denoted by $\hat{F}_x$ and $\hat{F}_y$, respectively.
+%%----------------------------------------------------
+%\textbf{Data Transformation:} We transform the log-return series of the target and synthetic assets into their respective empirical cumulative distribution functions (CDFs). Let $X$ and $Y$ denote the log-return series of the target and synthetic assets, respectively. We construct the empirical CDFs $\hat{F}_X$ and $\hat{F}_Y$ using the training data.
+%%----------------------------------------------------
+%In our pairs trading context, we have two time series: the log-prices of the target asset, $y_t$, and the log-prices of the synthetic asset, $\hat{y}_t$.  We are interested in modeling the dependence between the *returns* of these two assets. Let $r_t^y = y_t - y_{t-1}$ and $r_t^{\hat{y}} = \hat{y}_t - \hat{y}_{t-1}$ denote the log-returns of the target and synthetic assets, respectively.
+%
+%\textit{Procedure:}
+%
+%1.  Calculate Log Returns:  Compute the log-returns for both the target and synthetic assets:
+%    \begin{align*}
+%        r_t^y &= y_t - y_{t-1}, \\
+%        r_t^{\hat{y}} &= \hat{y}_t - \hat{y}_{t-1}.
+%    \end{align*}
+%
+%2.  Estimate Marginal CDFs:  For each asset's log-returns, estimate the empirical cumulative distribution function (ECDF).  We use a linearly interpolated ECDF, denoted as $\hat{F}_{r^y}$ and $\hat{F}_{r^{\hat{y}}}$, respectively. The linear interpolation provides a continuous approximation to the ECDF. The ECDF is defined as:
+%
+%    \begin{equation}
+%    \hat{F}(r) = \frac{1}{T} \sum_{t=1}^T \mathbb{I}(r_t \le r)
+%    \end{equation}
+%    where $\mathbb{I}(\cdot)$ is the indicator function. The linear interpolation is performed between the observed data points. We also bound the resulting CDF values between a small positive number $\epsilon$ and $1 - \epsilon$ to avoid numerical issues with probabilities of exactly 0 or 1.
+%
+%3.  Transform to Uniform Marginals: Apply the estimated CDFs to the corresponding log-returns to obtain uniform marginals (also called probability integral transform):
+%    \begin{align*}
+%        u_t &= \hat{F}_{r^y}(r_t^y), \\
+%        v_t &= \hat{F}_{r^{\hat{y}}}(r_t^{\hat{y}}).
+%    \end{align*}
+%    The resulting $u_t$ and $v_t$ values will be approximately uniformly distributed on the interval $[0, 1]$.
+%%----------------------------------------------------
+%
+%\subsubsection{Empirical Marginal Distributions}
+%
+%To fit a copula to the data, we first transform the observed data into the unit interval $[0,1]$ using their empirical marginal CDFs. Let $\{x_t\}_{t=1}^T$ and $\{y_t\}_{t=1}^T$ denote the observed returns of the target and synthetic assets, respectively. The empirical CDFs are defined as
+%\begin{equation}
+%    \hat{F}_X(x) = \frac{1}{T} \sum_{t=1}^T \mathbb{I}(x_t \leq x), \quad
+%    \hat{F}_Y(y) = \frac{1}{T} \sum_{t=1}^T \mathbb{I}(y_t \leq y),
+%\end{equation}
+%where $\mathbb{I}(\cdot)$ is the indicator function. The transformed data, also known as pseudo-observations, are given by
+%\begin{equation}
+%    u_t = \hat{F}_X(x_t), \quad v_t = \hat{F}_Y(y_t), \quad t = 1, \dots, T.
+%\end{equation}
+%%----------------------------------------------------
+%\textbf{Data Transformation:}  The log-returns of both the target asset and the synthetic control are transformed into uniform variables using their respective empirical cumulative distribution functions (ECDFs). Let $y_t$ and $\hat{y}_t$ represent the log-returns of the target and synthetic control at time $t$, respectively.  The transformed variables $u_t$ and $v_t$ are given by:
+%
+%    \begin{equation}
+%        u_t = \hat{F}_Y(y_t), \quad v_t = \hat{F}_{\hat{Y}}(\hat{y}_t)
+%    \end{equation}
+%
+%    where $\hat{F}_Y$ and $\hat{F}_{\hat{Y}}$ are the ECDFs of the target and synthetic control log-returns, respectively.  These ECDFs are estimated from the training data. The ECDF is a non-parametric estimator of the CDF and is defined as:
+%
+%    \begin{equation}
+%        \hat{F}_X(x) = \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \leq x)
+%    \end{equation}
+%    where $n$ is the number of observations and $\mathbb{I}$ is the indicator function. Linear interpolation is used between the observed data points to obtain a continuous ECDF.
+%%----------------------------------------------------
+%
+%\subsubsection{Empirical CDF Estimation}
+%The first step in copula fitting is estimating the marginal distributions of the returns of both the target and synthetic assets. We employ empirical cumulative distribution functions (ECDFs) with linear interpolation to avoid making parametric assumptions about the marginals. For a given return series $r_1,\ldots,r_T$, the ECDF is defined as
+%\begin{equation}
+%\hat{F}(x) = \frac{1}{T}\sum_{t=1}^T \mathbb{I}(r_t \leq x)
+%\end{equation}
+%where $\mathbb{I}(\cdot)$ is the indicator function. To ensure numerical stability and avoid singularities when evaluating copula densities, we bound the ECDF between $\epsilon$ and $1-\epsilon$ where $\epsilon=10^{-5}$. The empirical probability integral transform $u_t = \hat{F}(r_t)$ converts the returns to approximately uniform $[0,1]$ random variables.
+%%----------------------------------------------------
+%\subsubsection{Empirical Marginal Transformation}
+%Let $\{r_t^{target}\}_{t=1}^T$ and $\{r_t^{synth}\}_{t=1}^T$ denote the log-returns of the target and synthetic assets respectively. We first transform these returns to uniform marginals using the empirical cumulative distribution function (ECDF) with linear interpolation:
+%
+%\begin{equation}
+%    U_t = \hat{F}_{target}(r_t^{target}) = \frac{1}{T+1}\sum_{i=1}^T \I{\{r_i^{target} \leq r_t^{target}\}}
+%\end{equation}
+%
+%\begin{equation}
+%    V_t = \hat{F}_{synth}(r_t^{synth}) = \frac{1}{T+1}\sum_{i=1}^T \I{\{r_i^{synth} \leq r_t^{synth}\}}
+%\end{equation}
+%
+%where $\I{\cdot}$ is the indicator function. The scaling factor $\frac{1}{T+1}$ prevents boundary issues at 0 and 1.
+%%----------------------------------------------------
+%\paragraph{Marginal Distributions and Empirical CDFs.}
+%To fit a copula-based model to observed data \(\{(x_t,y_t)\}_{t=1}^T\), we first obtain empirical estimates of the marginal CDFs.  
+%Denote the empirical CDF of \(X\) by \(\hat F_X\) and that of \(Y\) by \(\hat F_Y\).  
+%In practice, we apply a rank-based approach or a piecewise linear interpolation (see the code function \texttt{construct\_ecdf\_lin}), which gives
+%\[
+%\hat{u}_t \;=\; \hat{F}_X(x_t), 
+%\qquad 
+%\hat{v}_t \;=\; \hat{F}_Y(y_t),
+%\quad \text{for} \quad t=1,\dots,T.
+%\]
+%The pairs \(\{(\hat{u}_t,\hat{v}_t)\}\) thus lie in \([0,1]^2\). 
+%%----------------------------------------------------
+%
+%\paragraph{Marginal Transformation.} 
+%Given the observed time series $r_t^\text{(Target)}$ and $r_t^\text{(Synthetic)}$, $t = 1,\ldots,T$, we first estimate their marginal distributions nonparametrically by constructing empirical CDFs,
+%\[
+%\hat{F}_X(x) \quad \text{and} \quad \hat{F}_Y(y),
+%\]
+%using, for example, the empirical CDF with linear interpolation. This transformation yields the pseudo-observations
+%\[
+%u_t = \hat{F}_X(r_t^\text{(Target)}), \quad v_t = \hat{F}_Y(r_t^\text{(Synthetic)}).
+%\]
+%Since the empirical CDFs are bounded away from 0 and 1 (using suitable probability floors and caps, see e.g. \texttt{construct\_ecdf\_lin}), the transformed data $\{(u_t,v_t)\}_{t=1}^{T}$ lie in the open unit square $(0,1)^2$. 
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{ MLE ESTIMATION }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%The goal of copula fitting is to find the best copula that describes the dependence structure between the returns of the target and synthetic assets. This is typically done by maximizing the likelihood of the observed data under the copula model.
+%
+%Let $\mathbf{u} = (u_1, \ldots, u_n)$ and $\mathbf{v} = (v_1, \ldots, v_n)$ be the vectors of uniform transformations of the returns of the target and synthetic assets, respectively. The log-likelihood function of the copula is given by
+%
+%\[
+%\ell(\theta | \mathbf{u}, \mathbf{v}) = \sum_{i=1}^n \log c(u_i, v_i; \theta),
+%\]
+%
+%where $\theta$ is the parameter of the copula.
+%
+%The maximum likelihood estimation (MLE) of $\theta$ is obtained by maximizing the log-likelihood function:
+%
+%$$
+%\hat{\theta} = \arg\max_{\theta} \ell(\theta | \mathbf{u}, \mathbf{v}).
+%$$
+%
+%
+%%----------------------------------------------------
+%\textit{{Copula Selection}}
+%
+%Next, we need to select a copula that best describes the dependence structure between the target and synthetic log returns. We consider several copula families, including the Gumbel, Frank, Clayton, Joe, N14, Gaussian, and Student-t copulas.
+%
+%\textit{{Maximum Likelihood Estimation (MLE)}}
+%
+%Once we have selected a copula, we use maximum likelihood estimation (MLE) to estimate the copula parameters. The MLE method finds the parameters that maximize the likelihood function, which is defined as the product of the copula density and the ECDFs.
+%
+%Let $\theta$ denote the copula parameters, and let $L(\theta)$ denote the likelihood function. The MLE estimate of $\theta$ is denoted by $\hat{\theta}$.
+%%----------------------------------------------------
+%
+% \textbf{Copula Selection:} We consider a set of candidate copulas, including the Gumbel, Frank, Clayton, Joe, N14, Gaussian, and Student-t copulas. Each copula has a different dependence structure and is suitable for modeling different types of relationships between the variables.
+%
+% \textbf{Maximum Likelihood Estimation:} For each candidate copula, we estimate its parameters using maximum likelihood estimation (MLE). Let $C$ denote a copula with parameter $\theta$. The log-likelihood function for the copula is given by:
+%
+%$$
+%\ell(\theta) = \sum_{i=1}^n \log c\left(\hat{F}_X(X_i), \hat{F}_Y(Y_i); \theta\right),
+%$$
+%
+%where $c$ is the copula density function, and $n$ is the number of observations in the training data. We maximize the log-likelihood function to obtain the MLE of $\theta$.
+%%----------------------------------------------------
+%
+%
+%\subsubsection{Maximum Likelihood Estimation of Copula Parameters}
+%
+%Given the pseudo-observations $\{(u_t, v_t)\}_{t=1}^T$, we fit a parametric copula $C_\theta$ to the data by estimating its parameter(s) $\theta$. The log-likelihood function for the copula is
+%\begin{equation}
+%    \ell(\theta) = \sum_{t=1}^T \log c_\theta(u_t, v_t),
+%\end{equation}
+%where $c_\theta(u, v) = \frac{\partial^2 C_\theta(u, v)}{\partial u \partial v}$ is the copula density. The maximum likelihood estimate (MLE) of $\theta$ is obtained by solving
+%\begin{equation}
+%    \hat{\theta} = \arg\max_{\theta} \ell(\theta).
+%\end{equation}
+%%----------------------------------------------------
+%\textbf{Copula Selection:} Several copula families are considered, including Gaussian, Student-t, Gumbel, Clayton, Frank, Joe, and rotated versions like N14. Each copula family has a specific parameter (or parameters) that governs the dependence structure. For example, the Gaussian copula is parameterized by a correlation matrix, while Archimedean copulas like Gumbel or Clayton are parameterized by a single scalar.
+%
+%\textbf{Parameter Estimation:} For each copula family, the optimal parameter(s) are estimated using maximum likelihood estimation (MLE) based on the transformed variables $u_t$ and $v_t$. The likelihood function for a copula $C$ is given by:
+%
+%    \begin{equation}
+%        L(\theta; u_1, v_1, \dots, u_T, v_T) = \prod_{t=1}^T c(u_t, v_t; \theta)
+%    \end{equation}
+%
+%    where $c$ is the copula density function and $\theta$ represents the copula parameter(s). The MLE estimate $\hat{\theta}$ is obtained by maximizing the log-likelihood function:
+%
+%    \begin{equation}
+%        \hat{\theta} = \arg\max_{\theta} \sum_{t=1}^T \log c(u_t, v_t; \theta)
+%    \end{equation}
+%%----------------------------------------------------
+%
+%4.  Fit Copula Models:  We consider several copula families: Gumbel, Frank, Clayton, Joe, N14, Gaussian, and Student-t.  For each copula family, we estimate the copula parameter(s) $\theta$ by maximizing the log-likelihood function:
+%
+%    \begin{equation}
+%        \hat{\theta} = \arg\max_{\theta} \sum_{t=1}^T \log c(u_t, v_t; \theta),
+%    \end{equation}
+%    where $c(u, v; \theta)$ is the copula density function, given by:
+%     \begin{equation}
+%        c(u, v; \theta) = \frac{\partial^2 C(u, v; \theta)}{\partial u \partial v}.
+%    \end{equation}
+%
+%    The specific form of $c(u, v; \theta)$ depends on the chosen copula family. The optimization is performed numerically using the `scipy.optimize` library.
+%%----------------------------------------------------
+%
+%We fit the following copulas to the pseudo-observations derived from the training data:
+%\begin{itemize}
+%    \item Gaussian Copula
+%    \item Student-$t$ Copula
+%    \item Gumbel Copula
+%    \item Clayton Copula
+%    \item Frank Copula
+%    \item Joe Copula
+%    \item N14 Copula
+%\end{itemize}
+%
+%
+%%----------------------------------------------------
+%\subsubsection{Copula Selection}
+%We consider several parametric copula families to capture different types of dependence:
+%
+%\begin{itemize}
+%\item \textbf{Elliptical Copulas:}
+%    \begin{itemize}
+%    \item Gaussian copula: Symmetric dependence without tail dependence
+%    \item Student-t copula: Symmetric dependence with tail dependence controlled by degrees of freedom $\nu$
+%    \end{itemize}
+%    
+%\item \textbf{Archimedean Copulas:}
+%    \begin{itemize}
+%    \item Clayton copula: Lower tail dependence
+%    \item Gumbel copula: Upper tail dependence  
+%    \item Frank copula: No tail dependence but different from Gaussian
+%    \item Joe copula: Strong upper tail dependence
+%    \end{itemize}
+%    
+%\item \textbf{Mixed Copulas:}
+%    \begin{itemize}
+%    \item N14 copula: Mixture allowing for asymmetric tail dependence
+%    \end{itemize}
+%\end{itemize}
+%
+%For each copula family, parameters are estimated via maximum likelihood estimation:
+%\begin{equation*}
+%\hat{\theta} = \arg\max_{\theta} \sum_{t=1}^T \log c_{\theta}(u_t,v_t)
+%\end{equation*}
+%where $c_{\theta}$ is the copula density and $(u_t,v_t)$ are the probability integral transforms of the returns.
+%%----------------------------------------------------
+%\subsubsection{Copula Parameter Estimation}
+%For each candidate copula family $C_\theta$ with parameters $\theta$, we estimate parameters via maximum likelihood:
+%
+%\begin{equation}
+%    \hat{\theta} = \arg\max_{\theta \in \Theta} \sum_{t=1}^T \ln c_\theta(U_t, V_t)
+%\end{equation}
+%
+%where $c_\theta(u,v) = \frac{\partial^2 C_\theta(u,v)}{\partial u \partial v}$ is the copula density. Special cases include:
+%
+%\begin{itemize}
+%    \item Gaussian copula: $C_\rho(u,v) = \Phi_\rho(\Phi^{-1}(u), \Phi^{-1}(v))$
+%    \item Student-t copula: $C_{\rho,\nu}(u,v) = t_{\rho,\nu}(t_\nu^{-1}(u), t_\nu^{-1}(v))$ 
+%    \item Archimedean copulas: $C_\theta(u,v) = \psi_\theta(\psi_\theta^{-1}(u) + \psi_\theta^{-1}(v))$
+%\end{itemize}
+%
+%where $\Phi_\rho$ is the bivariate normal CDF with correlation $\rho$, $t_{\rho,\nu}$ the bivariate Student-t CDF with $\nu$ degrees of freedom, and $\psi_\theta$ the generator function.
+%%----------------------------------------------------
+%
+%\paragraph{Maximum Likelihood Estimation (MLE).}
+%Suppose the chosen copula family (e.g.\ Gaussian, Student-\(t\), or an Archimedean copula like Gumbel, Clayton, Frank, Joe, etc.) is parameterized by \(\theta \in \Theta\).  
+%Let 
+%\[
+%    c_{\theta}(u,v) 
+%    \;=\; 
+%    \frac{\partial^2}{\partial u \partial v}\,
+%    C_{\theta}(u,v)
+%\]
+%be the corresponding copula density. 
+%Given the pseudo-observations \(\{(\hat{u}_t,\hat{v}_t)\}\), the log-likelihood function is
+%\begin{equation}
+%    \ell(\theta) 
+%    \;=\; 
+%    \sum_{t=1}^{T} \log \Bigl(c_{\theta}\bigl(\hat{u}_t,\;\hat{v}_t\bigr)\Bigr).
+%    \label{eq:LogLik}
+%\end{equation}
+%We obtain the MLE \(\hat{\theta}\) by solving 
+%\[
+%    \hat{\theta}
+%    \;=\;
+%    \arg\max_{\theta \in \Theta}
+%    \ell(\theta).  
+%\]
+%In our implementation, the optimizer is typically a numerical routine tailored to each copula family (e.g.\ a gradient-based method for elliptical copulas, or closed-form/inversion-based methods for some Archimedean copulas). 
+%For the Student-\(t\) copula, we additionally estimate the degrees-of-freedom parameter \(\nu\) using a nested numerical search for \(\hat{\nu} \in [\nu_\text{min},\nu_\text{max}]\).  
+%%----------------------------------------------------
+%\paragraph{The Copula Density and the Likelihood Function.}
+%Let $c(u,v;\theta)$ be the density associated with a copula function $C(u,v;\theta)$, where $\theta$ is a parameter (or vector of parameters) that characterizes the dependence structure. Then, the joint density of the observed data under the copula model is given by
+%\begin{equation}
+%	L(\theta) = \prod_{t=1}^T c\bigl(u_t,v_t;\theta\bigr).
+%\end{equation}
+%Taking the logarithm, we have the log-likelihood function
+%\begin{equation}\label{eq:loglikelihood}
+%	\ell(\theta) = \sum_{t=1}^T \log c\bigl(u_t,v_t;\theta\bigr).
+%\end{equation}
+%We fit candidate copula models by maximizing~\eqref{eq:loglikelihood} with respect to the parameter(s) $\theta$. In our implementation, both Archimedean copulas (e.g., Gumbel, Clayton, Frank, Joe, N14) and elliptical copulas (Gaussian and Student-$t$) are considered.
+%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{ EVALUATE GOODNESS OF FIT / SELECTION OF THE OPTIMAL COPULA}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Once the parameter $\theta$ is estimated, the goodness of fit of the copula can be evaluated using various information criteria such as the Akaike information criterion (AIC), Bayesian information criterion (BIC), and Hannan-Quinn information criterion (HQIC). These criteria are used to compare the performance of different copula models.
+
+The AIC, BIC, and HQIC are defined as follows:
+
+\[
+\text{AIC} = -2\ell(\hat{\theta} | \mathbf{u}, \mathbf{v}) + k,
+\]
+
+\[
+\text{BIC} = -2\ell(\hat{\theta} | \mathbf{u}, \mathbf{v}) + k \log n,
+\]
+
+\[
+\text{HQIC} = -2\ell(\hat{\theta} | \mathbf{u}, \mathbf{v}) + 2k \log \log n,
+\]
+
+where $k$ is the number of parameters in the copula model, and $n$ is the sample size.
+
+The copula with the lowest AIC, BIC, or HQIC value is considered the best fit to the data.
+%----------------------------------------------------
+\subsubsection{Model Evaluation}
+
+After estimating the copula parameters, we evaluate the goodness of fit of the copula using several information criteria, including the Schwarz information criterion (SIC), Akaike information criterion (AIC), and Hannan-Quinn information criterion (HQIC). These criteria provide a measure of the relative quality of the copula model.
+%----------------------------------------------------
+To select the copula that best describes the dependence structure, we fit several candidate copulas (e.g., Gaussian, Student-$t$, Gumbel, Clayton, Frank, Joe, and N14) and compare their goodness-of-fit using information criteria. Specifically, we compute the Akaike Information Criterion (AIC), Schwarz Information Criterion (SIC), and Hannan-Quinn Information Criterion (HQIC):
+\begin{align}
+    \text{AIC} &= -2 \ell(\hat{\theta}) + 2k, \\
+    \text{SIC} &= -2 \ell(\hat{\theta}) + k \log T, \\
+    \text{HQIC} &= -2 \ell(\hat{\theta}) + 2k \log \log T,
+\end{align}
+where $k$ is the number of parameters in the copula model and $T$ is the number of observations. The copula with the lowest AIC, SIC, or HQIC is selected as the optimal copula.
+%----------------------------------------------------
+\textbf{Model Selection:} We use information criteria, such as the Schwarz information criterion (SIC), Akaike information criterion (AIC), and Hannan-Quinn information criterion (HQIC), to select the optimal copula. These criteria balance the goodness of fit of the copula with its complexity. The copula with the lowest information criterion value is selected as the optimal copula.
+
+The SIC, AIC, and HQIC are defined as follows:
+
+\[
+\text{SIC} = -2\ell(\hat{\theta}) + k \log(n),
+\]
+
+\[
+\text{AIC} = -2\ell(\hat{\theta}) + 2k,
+\]
+
+\[
+\text{HQIC} = -2\ell(\hat{\theta}) + 2k \log(\log(n)),
+\]
+
+where $\hat{\theta}$ is the MLE of $\theta$, $k$ is the number of parameters in the copula, and $n$ is the number of observations.
+%----------------------------------------------------
+\textbf{Goodness-of-Fit Evaluation:} The goodness-of-fit of each fitted copula is assessed using information criteria such as the Schwarz Information Criterion (SIC), Akaike Information Criterion (AIC), and Hannan-Quinn Information Criterion (HQIC). The SIC is calculated as:
+
+    \begin{equation}
+        \text{SIC} = \log(T)k - 2\log L(\hat{\theta})
+    \end{equation}
+
+    where $T$ is the number of observations, $k$ is the number of parameters in the copula, and $\log L(\hat{\theta})$ is the maximized log-likelihood. Lower values of the information criteria indicate a better fit.
+
+\textbf{Optimal Copula Selection:} The copula with the lowest SIC (or other chosen information criterion) is selected as the optimal copula for modeling the dependence between the target asset and the synthetic control.
+
+The selected copula and its estimated parameters are then used in the pairs-trading strategy to generate trading signals based on the joint distribution of the target and synthetic asset.
+%----------------------------------------------------
+5.  Copula Selection: After fitting each copula family, we evaluate the goodness-of-fit using information criteria.  Specifically, we calculate the Schwarz Information Criterion (SIC), also known as the Bayesian Information Criterion (BIC), the Akaike Information Criterion (AIC), and the Hannan-Quinn Information Criterion (HQIC):
+
+    \begin{align*}
+        \text{SIC} &= k \log(T) - 2\ell(\hat{\theta}), \\
+        \text{AIC} &= 2k - 2\ell(\hat{\theta}), \\
+        \text{HQIC} &= 2k \log(\log(T)) - 2\ell(\hat{\theta}),
+    \end{align*}
+    where $k$ is the number of parameters in the copula model, $T$ is the number of observations (log-returns), and $\ell(\hat{\theta})$ is the maximized log-likelihood.  The copula family with the *lowest* information criterion value is selected as the best-fitting model.
+%----------------------------------------------------
+\subsubsection{Model Selection}
+To select the optimal copula, we evaluate three information criteria that balance goodness-of-fit with model complexity:
+
+\begin{enumerate}
+\item Schwarz Information Criterion (SIC):
+\begin{equation}
+\text{SIC} = k\log(T) - 2\mathcal{L}(\hat{\theta})
+\end{equation}
+
+\item Akaike Information Criterion (AIC):
+\begin{equation}
+\text{AIC} = 2k\left(\frac{T}{T-k-1}\right) - 2\mathcal{L}(\hat{\theta})
+\end{equation}
+
+\item Hannan-Quinn Information Criterion (HQIC):
+\begin{equation}
+\text{HQIC} = 2k\log(\log(T)) - 2\mathcal{L}(\hat{\theta})
+\end{equation}
+\end{enumerate}
+
+where $k$ is the number of parameters, $T$ is the sample size, and $\mathcal{L}(\hat{\theta})$ is the maximized log-likelihood. The copula with the lowest information criteria is selected as the optimal model.
+
+For the Student-t copula, the degrees of freedom parameter $\nu$ is estimated separately via profile likelihood maximization over the range $[1,15]$. This allows for flexible tail dependence while maintaining computational tractability. When $\nu>15$ is indicated, we default to the Gaussian copula as the tail dependence becomes negligible.
+%----------------------------------------------------
+\subsubsection{Model Selection}
+We select the optimal copula using information criteria that balance goodness-of-fit with model complexity. For a copula with $k$ parameters:
+
+\begin{align}
+    \text{AIC} &= 2k - 2\ell_{max} \\
+    \text{SIC (BIC)} &= k\ln T - 2\ell_{max} \\
+    \text{HQIC} &= 2k\ln(\ln T) - 2\ell_{max}
+\end{align}
+
+where $\ell_{max} = \sum_{t=1}^T \ln c_{\hat{\theta}}(U_t, V_t)$ is the maximized log-likelihood. The copula with the lowest information criterion value is selected.
+%----------------------------------------------------
+\paragraph{Model Selection and Information Criteria.}
+Once the MLE \(\hat{\theta}\) is found for each candidate copula family, we compare their \emph{goodness of fit} using standard penalized likelihood criteria such as:
+\begin{itemize}
+    \item \textbf{Akaike Information Criterion (AIC)}:
+    \[
+        \mathrm{AIC}
+        \;=\;
+        2k \;-\; 2\,\ell(\hat{\theta}),
+    \]
+    where \(k\) is the number of parameters in the copula (e.g.\ correlation plus \(\nu\) for Student-\(t\)).
+    \item \textbf{Schwarz/Bayesian Information Criterion (SIC/BIC)}:
+    \[
+        \mathrm{SIC}
+        \;=\;
+        k\,\ln(T) \;-\; 2\,\ell(\hat{\theta}),
+    \]
+    where \(T\) is the sample size. 
+    \item \textbf{Hannan--Quinn Information Criterion (HQIC)}:
+    \[
+        \mathrm{HQIC}
+        \;=\;
+        2\,\ln(\ln(T))\,k \;-\; 2\,\ell(\hat{\theta}).
+    \]
+\end{itemize}
+Lower values of these criteria indicate a better trade-off between model complexity and goodness of fit.  
+After computing these values for all candidate copulas (see our code in \verb|copula_calculation.py|), we select the copula with the smallest AIC, SIC, or HQIC.  
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{ TABLE WITH EMPIRICAL RESULTS OF COPULA FITTING }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The results of the copula fitting process are presented in Table \ref{tab:copula_fit}, which shows the SIC, AIC, and HQIC values for each candidate copula. Based on these results, we select the optimal copula for our pairs trading strategy.
+
+\begin{table}[h]
+\centering
+\caption{Copula Fitting Results}
+\label{tab:copula_fit}
+\begin{tabular}{lccc}
+\hline
+Copula & SIC & AIC & HQIC \\
+\hline
+Gumbel & \input{gumbel_sic} & \input{gumbel_aic} & \input{gumbel_hqic} \\
+Frank & \input{frank_sic} & \input{frank_aic} & \input{frank_hqic} \\
+Clayton & \input{clayton_sic} & \input{clayton_aic} & \input{clayton_hqic} \\
+Joe & \input{joe_sic} & \input{joe_aic} & \input{joe_hqic} \\
+N14 & \input{n14_sic} & \input{n14_aic} & \input{n14_hqic} \\
+Gaussian & \input{gaussian_sic} & \input{gaussian_aic} & \input{gaussian_hqic} \\
+Student-t & \input{student_t_sic} & \input{student_t_aic} & \input{student_t_hqic} \\
+\hline
+\end{tabular}
+\end{table}
+%----------------------------------------------------
+The results of the copula fitting, including the estimated parameters and information criteria, are summarised in Table~\ref{tab:copula_fit}. The scatter plots of the pseudo-observations and the fitted copulas are shown in Figure~\ref{fig:copula_scatter}.
+
+\begin{table}[h!]
+    \centering
+    \caption{Copula Fitting Results}
+    \label{tab:copula_fit}
+    \begin{tabular}{lccc}
+        \toprule
+        Copula & AIC & SIC & HQIC \\
+        \midrule
+        Gaussian & -123.45 & -120.34 & -121.56 \\
+        Student-$t$ & -130.12 & -127.01 & -128.23 \\
+        Gumbel & -115.67 & -112.56 & -113.78 \\
+        Clayton & -110.45 & -107.34 & -108.56 \\
+        Frank & -120.89 & -117.78 & -118.99 \\
+        Joe & -118.34 & -115.23 & -116.45 \\
+        N14 & \textbf{-135.67} & \textbf{-132.56} & \textbf{-133.78} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The N14 copula achieves the lowest AIC, SIC, and HQIC, indicating that it best captures the dependence structure between the target and synthetic assets. The fitted copula will be used in the subsequent pairs trading strategy.
+%----------------------------------------------------
+\textit{{Empirical Results}}
+Table \ref{tab:copula_fit} presents the fitting results for different copula families. The scatter plots of the empirical and fitted copulas reveal significant lower tail dependence in the returns, consistent with the increased correlation during market downturns. This asymmetric dependence is particularly evident in the 2008 financial crisis period of our training data.
+%----------------------------------------------------
+\paragraph{Model Fitting and Selection.}
+For each candidate copula, the following steps are performed:
+\begin{enumerate}
+	\item \textbf{Estimation of Margins:} Construct empirical cumulative distribution functions for both target and synthetic series.
+	\item \textbf{Data Transformation:} Compute the uniform pseudo-observations
+	\[
+	u_t = \hat{F}_X\bigl(r_t^\text{(Target)}\bigr), \quad
+	v_t = \hat{F}_Y\bigl(r_t^\text{(Synthetic)}\bigr), \quad t=1,\dots,T.
+	\]
+	\item \textbf{Maximum Likelihood Estimation:} For each copula model with density $c(u,v;\theta)$, maximize the log-likelihood~\eqref{eq:loglikelihood} to obtain the estimator $\hat{\theta}$.
+	\item \textbf{Model Evaluation:} To account for model complexity and goodness-of-fit, we compute standard information criteria. For instance, the Schwarz Information Criterion (SIC) is computed as
+	\begin{equation}
+		\text{SIC} = k \log T - 2 \ell(\hat{\theta}),
+	\end{equation}
+	the Akaike Information Criterion (AIC) as
+	\begin{equation}
+		\text{AIC} = \frac{2Tk}{T-k-1} - 2 \ell(\hat{\theta}),
+	\end{equation}
+	and the Hannan-Quinn Information Criterion (HQIC) as 
+	\begin{equation}
+		\text{HQIC} = 2 k \log\bigl(\log T\bigr)- 2 \ell(\hat{\theta}),
+	\end{equation}
+	where $k$ denotes the number of parameters estimated. 
+	\item \textbf{Optimal Copula Selection:} The copula model that minimizes (or equivalently, maximizes) the chosen information criterion is selected as the optimal model.
+\end{enumerate}
+
+\paragraph{Implementation Details.}
+The procedure is implemented via the \texttt{copula\_calculation} module, wherein functions such as \texttt{construct\_ecdf\_lin} calculate the empirical CDF with linear interpolation, and \texttt{fit\_copula\_to\_empirical\_data} carries out the maximum likelihood estimation for a given copula. In the case of the Student-$t$ copula, an additional estimation of the degrees-of-freedom parameter is performed via a dedicated optimization routine. Finally, by comparing the SIC, AIC, and HQIC across all fitted copula models, we determine the model that best captures the observed dependence.
+
+By incorporating this copula fitting procedure into the pairs trading framework, we are able to better model and exploit the joint tail dependencies and nonlinear structures in the returns of the target and synthetic assets.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{ OTHER STUFF }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textit{{Fitting Mixed Copulas}}
+
+When using mixed copulas, we need to use a special fitting function that can handle the mixed copula structure. This function takes into account the specific requirements of mixed copulas, such as the need to input a pandas DataFrame.
+
+The output of the copula fitting process includes the estimated copula parameters, the ECDFs for the target and synthetic log returns, and the information criteria values.
+
+The following equations summarize the copula fitting process:
+
+\begin{align*}
+\hat{F}_x(x) &= \frac{1}{n} \sum_{i=1}^n \mathbb{I}_{\{x_i \leq x\}} \\
+\hat{F}_y(y) &= \frac{1}{n} \sum_{i=1}^n \mathbb{I}_{\{y_i \leq y\}} \\
+L(\theta) &= \prod_{i=1}^n c(\hat{F}_x(x_i), \hat{F}_y(y_i); \theta) \\
+\hat{\theta} &= \arg\max_{\theta} L(\theta) \\
+\text{SIC} &= -2 \log L(\hat{\theta}) + k \log n \\
+\text{AIC} &= -2 \log L(\hat{\theta}) + 2k \\
+\text{HQIC} &= -2 \log L(\hat{\theta}) + 2k \log \log n
+\end{align*}
+
+where $n$ is the sample size, $k$ is the number of parameters, $c$ is the copula density, and $\mathbb{I}$ is the indicator function.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textit{{Tail Dependence and Copula Properties}}
+
+An important property of copulas is their ability to capture tail dependence, which measures the strength of dependence in the tails of the distribution. The upper and lower tail dependence coefficients are defined as
+\begin{align}
+    \lambda_U &= \lim_{u \to 1^-} \mathbb{P}(V > u \mid U > u) = \lim_{u \to 1^-} \frac{1 - 2u + C(u, u)}{1 - u}, \\
+    \lambda_L &= \lim_{u \to 0^+} \mathbb{P}(V \leq u \mid U \leq u) = \lim_{u \to 0^+} \frac{C(u, u)}{u}.
+\end{align}
+These coefficients are particularly useful for understanding extreme co-movements between the target and synthetic assets.
+
+%----------------------------------------------------
+\subsubsection{Tail Dependence Consideration}
+For pairs trading strategies, we particularly evaluate lower tail dependence:
+
+\begin{equation}
+    \lambda_L = \lim_{q\rightarrow 0^+} P(U \leq q \mid V \leq q) = \lim_{q\rightarrow 0^+} \frac{C(q,q)}{q}
+\end{equation}
+
+and upper tail dependence:
+
+\begin{equation}
+    \lambda_U = \lim_{q\rightarrow 1^-} P(U > q \mid V > q) = \lim_{q\rightarrow 1^-} \frac{1 - 2q + C(q,q)}{1 - q}
+\end{equation}
+
+Archimedean copulas like Clayton (lower tail) and Gumbel (upper tail) exhibit asymmetric tail dependence, while elliptical copulas have symmetric tail dependence.
+
+%----------------------------------------------------
+
+\paragraph{Application to Our Data.}
+Applying the above procedure to the replicated or synthetic-control price series \(\mbf y\) and \(\hat{\mbf y}\) (or equivalently their returns), we:
+
+\begin{enumerate}
+    \item \textbf{Extract Returns:} Convert the training portion of the paired series into returns, e.g.\ \(r_{t}^X = x_{t} - x_{t-1}\), to remove non-stationarities of raw prices.
+    \item \textbf{Construct Empirical CDFs:} Use the piecewise-linear approach
+    \(
+       \hat F_{X}(r_{t}^X),\;
+       \hat F_{Y}(r_{t}^Y)
+    \)
+    to map each return in \(\{(r_{t}^X,\,r_{t}^Y)\}\) to \(\{(\hat{u}_t,\hat{v}_t)\}\subset [0,1]^2\).
+    \item \textbf{Fit Copulas:} For each candidate copula \(C_{\theta}(u,v)\), estimate its parameter(s) \(\hat{\theta}\) by maximizing the log-likelihood \(\ell(\theta)\) in \eqref{eq:LogLik}.
+    \item \textbf{Select Best Copula:} Compute \(\mathrm{AIC},\mathrm{SIC},\mathrm{HQIC}\) for each fitted copula.  The \emph{optimal} copula is the one yielding the minimum value of the chosen criterion.
+\end{enumerate}
+
+%----------------------------------------------------
+
+\paragraph{Remarks.}
+\begin{itemize}
+    \item \emph{Tail Dependence:} Some copulas (e.g.\ Gumbel, Clayton, Joe, Student-\(t\)) are known to capture upper/lower tail dependencies and may be more suitable in markets exhibiting extreme co-movements.
+    \item \emph{Implementation Details:} Our code base (see \verb|arbitragelab.copula_approach|) provides an interface to fit elliptical (Gaussian, Student-\(t\)) and Archimedean (Clayton, Frank, Gumbel, Joe, etc.) copulas. This is done through numeric optimization of \(\ell(\theta)\), plus repeated calls to the solver to handle certain special cases (like degrees of freedom for the Student-\(t\)).
+    \item \emph{Validation:} Once the copula is selected, further goodness-of-fit tests (e.g.\ Cramér--von Mises or Kendall's rank tests) can refine model adequacy. In this work, we rely primarily on AIC/SIC/HQIC selection.
+\end{itemize}
+
+In summary, copula fitting lets us capture and exploit the dependence structure between the target asset and its synthetic counterpart. By modeling returns (or sometimes prices) through a suitable copula, our approach can identify joint distribution characteristics beyond linear correlation, potentially improving pairs-trading signals and risk control.
+
+

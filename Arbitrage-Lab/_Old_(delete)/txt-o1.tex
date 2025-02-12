@@ -1,0 +1,81 @@
+\section{Econometric Setup}
+
+Consider a set of $p$ time series variables, gathered in a vector $\mathbf{y}_t = (y_{1,t}, y_{2,t}, \ldots, y_{p,t})^\top$, which we observe for $t = 1, 2, \ldots, T$. We say that $\mathbf{y}_t$ is \textit{cointegrated} if there exists a vector $\boldsymbol{\beta} = (\beta_1, \beta_2, \ldots, \beta_p)^\top$ such that
+
+\begin{equation}
+    \boldsymbol{\beta}^\top \mathbf{y}_t 
+    = \beta_1 y_{1,t} + \beta_2 y_{2,t} + \cdots + \beta_p y_{p,t}
+\end{equation}
+
+is stationary, even though the individual components of $\mathbf{y}_t$ may be nonstationary. Typically, one element of $\boldsymbol{\beta}$ is normalized (often $\beta_1 = 1$). For expositional simplicity, let us fix $\beta_1 = 1$ without loss of generality.\footnote{One can decide on a different normalization depending on the context or the identification problem, but the essence remains unchanged.}
+
+
+\vspace{1em}
+\noindent
+\textbf{Connection to Synthetic Controls.}
+Consider the first series $y_{1,t}$ to be our \textit{target} or \textit{treated} variable, while the remaining $p-1$ series, $y_{2,t}, \dots, y_{p,t}$, form the \textit{donor pool}. In the cointegration framework, we can write
+\begin{equation}
+    y_{1,t} = - \sum_{j=2}^{p} \beta_j y_{j,t} + \epsilon_t,
+    \label{eq:synth_setup}
+\end{equation}
+where $\epsilon_t$ represents the stationary component of the linear combination $\beta_1 y_{1,t} + \beta_2 y_{2,t} + \cdots + \beta_p y_{p,t}$ (once normalized by $\beta_1 = 1$). Rearranging \eqref{eq:synth_setup}, we obtain
+\begin{equation}
+    y_{1,t} = \sum_{j=2}^{p} \left( -\beta_j \right) y_{j,t} + \epsilon_t.
+\end{equation}
+
+
+Define the ``synthetic'' series $\widetilde{y}_{1,t}$ as the linear combination of the donor pool:
+\begin{equation}
+    \widetilde{y}_{1,t} \;=\; \sum_{j=2}^{p} w_j \, y_{j,t},
+    \quad \text{where} \quad w_j = -\beta_j.
+\end{equation}
+From an econometric perspective, $w_j$ are derived from the cointegrating vector $(\beta_1, \beta_2, \ldots, \beta_p)$ and represent the relative ``weights'' or contributions of each donor variable $y_{j,t}$ to match $y_{1,t}$ over the long run. This is conceptually analogous to synthetic controls, where one constructs a weighted combination of other units (or variables) to replicate the characteristics of a treated unit.
+
+\subsection{Statistical Assumptions}
+
+To establish a formal connection between cointegration and synthetic controls, let us outline the standard assumptions required in a cointegrated system:
+
+\begin{enumerate}
+    \item \textbf{Nonstationarity:} Each $y_{i,t}$ is integrated of order one, denoted $I(1)$.
+    \item \textbf{Existence of a cointegrating vector:} There exists a nontrivial linear combination of the $y_{i,t}$ that is $I(0)$, i.e., stationary.
+    \item \textbf{Normalization:} Without loss of generality, set $\beta_1 = 1$. This makes $y_{1,t}$ our ``target'' variable.
+    \item \textbf{Stationary combination:} The disturbance term
+    $
+    \epsilon_t \;=\; y_{1,t} + \sum_{j=2}^{p} \beta_j y_{j,t}
+    $
+    is an $I(0)$ process.
+\end{enumerate}
+
+
+Under these assumptions, if we estimate the cointegrating vector $(1, \widehat{\beta}_2, \ldots, \widehat{\beta}_p)$, then the corresponding combination,
+$
+    \widetilde{y}_{1,t} = \sum_{j=2}^{p} \left(-\widehat{\beta}_j\right) y_{j,t},
+$
+serves as a synthetic counterpart to $y_{1,t}$. Furthermore, the gap
+\begin{equation*}
+    y_{1,t} - \widetilde{y}_{1,t} 
+    \;=\; -\sum_{j=2}^{p} \left(\beta_j - \widehat{\beta}_j \right) \, y_{j,t} \;+\;\text{(stationary term)},
+\end{equation*}
+can be interpreted analogously to the ``treatment effect'' perspective in synthetic control methods, with the key difference being that here the relationship is dictated by a cointegrating link rather than an assumed parallel-trends or predictive relationship.
+
+
+
+\subsection{Estimation and Identification}
+
+To estimate the cointegrating vector, one might use methods such as Engle-Granger two-step or Johansen's maximum likelihood procedure. Specifically:
+
+
+\begin{enumerate}
+    \item Regress $y_{1,t}$ on $y_{2,t}, \dots, y_{p,t}$ (without a time trend if a zero-drift cointegrating relationship is assumed).
+    \item Obtain the residuals, $\widehat{\epsilon}_t$, and test for stationarity (e.g., via an ADF test).
+    \item If stationarity is confirmed, $\widehat{\epsilon}_t$ is the estimated cointegrating relationship, and $(-\widehat{\beta}_2, \dots, -\widehat{\beta}_p)$ provides the synthetic weights for the donor pool.
+\end{enumerate}
+
+In short, once the cointegrating relationship is established, the target $y_{1,t}$ can be seen as matched by a long-run ``synthetic control'' $\widetilde{y}_{1,t}$, with mismatch $\epsilon_t$ expected to be mean-reverting or stationary over time.
+
+
+\subsection{Discussion of the Theoretical Framework}
+
+The core idea is that, just as synthetic control aims to replicate the evolution of a treated series using a weighted combination of control series, cointegration posits a (long-run) equilibrium relationship that ties multiple time series together. By normalizing the cointegrating vector to have the first variable's coefficient as 1, we effectively designate $y_{1,t}$ as the treated variable and the others as controls. In doing so, we obtain a synthetic version of $y_{1,t}$, one that should track the long-run behavior of $y_{1,t}$ (up to some stationary deviation).
+
+This perspective offers both a richer econometric underpinning of synthetic-type methods (through the lens of integration and cointegration) and a practical approach to identifying meaningful long-run relationships in observational data, bridging the concepts introduced by \cite{Abadie2003} and the cointegration literature pioneered by \cite{Engle1987} and \cite{Johansen1988}.

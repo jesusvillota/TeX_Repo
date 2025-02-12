@@ -1,0 +1,115 @@
+\section{Methodology}
+Let $(\Omega,\mathcal{F},\mathbb{P})$ be a probability space. Consider two asset return processes $(X_t)_{t\geq0}$ and $(Y_t)_{t\geq0}$ adapted to the filtration $\mathcal{F}$.
+
+\subsection{Copula Theory Foundations}
+A 2-copula is a function $C:[0,1]^2\rightarrow[0,1]$ satisfying:
+\begin{enumerate}
+    \item $C(u,0)=C(0,v)=0$
+    \item $C(u,1)=u$ and $C(1,v)=v$
+    \item $\forall u_1\leq u_2, v_1\leq v_2: C(u_2,v_2)-C(u_2,v_1)-C(u_1,v_2)+C(u_1,v_1)\geq0$
+\end{enumerate}
+
+By Sklar's theorem, the joint distribution $H$ of $(X_t,Y_t)$ can be expressed as:
+\begin{equation}
+    H(x,y) = C(F_X(x), F_Y(y))
+\end{equation}
+where $F_X,F_Y$ are marginal distributions.
+
+\subsection{Copula Selection Protocol}
+Given return series $\{r_t^{(1)}\}_{t=1}^T$ and $\{r_t^{(2)}\}_{t=1}^T$, the selection process follows:
+\begin{enumerate}
+    \item Transform to uniform margins via empirical CDF:
+    \begin{equation}
+        \hat{U}_t = \frac{1}{T+1}\sum_{i=1}^T \mathbb{I}_{\{r_i^{(1)} \leq r_t^{(1)}\}}, \quad \hat{V}_t = \frac{1}{T+1}\sum_{i=1}^T \mathbb{I}_{\{r_i^{(2)} \leq r_t^{(2)}\}}
+    \end{equation}
+    
+    \item For candidate copula $\mathscr{C}_\theta$ with density $c_\theta$, compute:
+    \begin{equation}
+        \hat{\theta} = \underset{\theta}{\text{argmax}} \sum_{t=1}^T \ln c_\theta(\hat{U}_t, \hat{V}_t)
+    \end{equation}
+
+    \item Select optimal copula using Bayesian Information Criterion:
+    \begin{equation}
+        \mathscr{C}^* = \underset{\mathscr{C} \in \mathfrak{C}}{\text{argmin}} \left( -2\mathcal{L}(\hat{\theta}) + k\ln T \right)
+    \end{equation}
+    where $\mathfrak{C}$ is the copula family space and $k$ the parameter count.
+\end{enumerate}
+
+\subsection{Conditional Expectation Computation}
+The trading signal derives from the conditional expectation:
+\begin{equation}
+    \mathbb{E}[V|U=u] = \int_0^1 (1 - H(v|u))dv
+\end{equation}
+where $H(v|u)=\partial_u C(u,v)$. Implemented numerically via adaptive quadrature:
+\begin{equation}
+    \hat{\mathbb{E}}[V|U=u] = \sum_{i=1}^N w_i(1 - H(v_i|u))
+\end{equation}
+with weights $w_i$ and nodes $v_i$ from Gauss-Legendre quadrature.
+
+\subsection{Dynamic Threshold Mechanism}
+Define the mispricing residual process:
+\begin{equation}
+    \epsilon_t = V_t - \mathbb{E}[V_t|U_t]
+\end{equation}
+
+Thresholds adapt via rolling statistics:
+\begin{align}
+    \mu_t &= \frac{1}{\tau}\sum_{i=t-\tau}^{t-1} \epsilon_i \\
+    \sigma_t^2 &= \frac{1}{\tau-1}\sum_{i=t-\tau}^{t-1} (\epsilon_i - \mu_t)^2 \\
+    \text{Upper}_t &= \mu_t + z_\alpha\sigma_t \\
+    \text{Lower}_t &= \mu_t - z_\alpha\sigma_t
+\end{align}
+
+\subsection{Trading Signal Generation}
+Define position process $\pi_t$:
+\begin{equation}
+    \pi_t = \begin{cases}
+        1 & \epsilon_t < \text{Lower}_t \quad (\text{Long }Y, \text{Short }X) \\
+        -1 & \epsilon_t > \text{Upper}_t \quad (\text{Short }Y, \text{Long }X) \\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+Portfolio value $P_t$ evolves as:
+\begin{equation}
+    P_t = P_0 \prod_{i=1}^t \left(1 + \pi_{i-1}\left(r_i^{(Y)} - r_i^{(X)}\right)\right)
+\end{equation}
+
+\subsection{Performance Metrics}
+\begin{itemize}
+    \item Sharpe Ratio:
+    \begin{equation}
+        SR = \sqrt{252}\frac{\mathbb{E}[r_p]}{\sqrt{\mathbb{V}[r_p]}}
+    \end{equation}
+    
+    \item Maximum Drawdown:
+    \begin{equation}
+        MDD = \sup_{t \in [0,T]} \left( \sup_{s \in [0,t]} P_s - P_t \right)
+    \end{equation}
+
+    \item Conditional Entropy Risk:
+    \begin{equation}
+        CER_\alpha = -\frac{1}{\alpha T}\sum_{t=1}^T \ln\left(\frac{P_t}{P_{t-1}}\right)\mathbb{I}_{\{P_t/P_{t-1} \leq q_\alpha\}}
+    \end{equation}
+\end{itemize}
+
+
+\section{Algorithmic Implementation}
+\begin{algorithm}
+\caption{Trading Strategy Implementation}
+\begin{algorithmic}[1]
+    \Require Return series $r^{(X)},r^{(Y)}$, copula family set $\mathcal{C}$
+    \State Transform to uniform margins via Eq. (2)
+    \For{$C\in\mathcal{C}$}
+        \State Estimate $\hat{\theta}$ via MLE in Eq. (3)
+        \State Compute BIC score via Eq. (4)
+    \EndFor
+    \State Select optimal copula $C^*$
+    \State Compute conditional expectations via Eq. (5)
+    \State Calculate residuals $\epsilon_t$ via Eq. (6)
+    \State Compute dynamic thresholds via Eqs. (7-9)
+    \State Generate trading signals via Eq. (10)
+    \State Calculate portfolio evolution via Eq. (11)
+    \State Evaluate performance metrics via Eqs. (12-14)
+\end{algorithmic}
+\end{algorithm}

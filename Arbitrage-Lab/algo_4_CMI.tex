@@ -1,0 +1,122 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algorithm}[H]
+\caption{Update Cumulative Mispricing Index (CMI)}
+\label{alg:cmi_update}
+\begin{algorithmic}[1]
+%----------------------------------------------------
+\Require
+    \State Mispricing indices: $(\text{MI}_t^{R|R^*}, \text{MI}_t^{R^*|R})$
+    \State Previous CMIs: $(\text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*})$
+    \State Reset flag: $\texttt{reset}$
+
+%----------------------------------------------------
+\mx 
+\Ensure Updated CMIs: $(\text{CMI}_t^R, \text{CMI}_t^{R^*})$
+%----------------------------------------------------
+\mx 
+\Function{UpdateCMI}{$\text{MI}_t^{R|R^*}, \text{MI}_t^{R^*|R}, \text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}, \texttt{reset}$}
+    \If{$\texttt{reset}$}
+        \State $\text{CMI}_t^R \gets 0$, $\text{CMI}_t^{R^*} \gets 0$
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Reset the CMIs to 0}}} 
+    \Else
+        \State $\text{CMI}_t^R \gets \text{CMI}_{t-1}^R + (\text{MI}_t^{R|R^*} - 0.5)$
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Update target CMIs with new realization of MI}}} 
+        \State $\text{CMI}_t^{R^*} \gets \text{CMI}_{t-1}^{R^*} + (\text{MI}_t^{R^*|R} - 0.5)$
+    \EndIf
+%----------------------------------------------------
+\mx 
+    \State \Return $(\text{CMI}_t^R, \text{CMI}_t^{R^*})$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{algorithm}
+%\caption{Update Cumulative Mispricing Index}
+%\label{alg:update_cmi}
+%\begin{algorithmic}[1]
+%\Require 
+%    \State Current mispricing indices $MI_t^{R|R^*}, MI_t^{R^*|R} \in [0,1]$
+%    \State Previous CMI values $\text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*} \in \mathbb{R}$
+%    \State Reset flag $\text{reset} \in \{\text{true}, \text{false}\}$
+%\Ensure 
+%    \State Updated CMI values $\text{CMI}_t^R, \text{CMI}_t^{R^*} \in \mathbb{R}$
+%\Statex
+%\Function{UpdateCMI}{$MI_t^{R|R^*}, MI_t^{R^*|R}, \text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}, \text{reset}$}
+%    \If{reset} \Comment{Position was closed}
+%        \State $\text{CMI}_t^R \gets 0$ \Comment{Reset target CMI}
+%        \State $\text{CMI}_t^{R^*} \gets 0$ \Comment{Reset synthetic CMI}
+%    \Else \Comment{Update cumulative indices}
+%        \State $\text{CMI}_t^R \gets \text{CMI}_{t-1}^R + (MI_t^{R|R^*} - 0.5)$
+%        \State $\text{CMI}_t^{R^*} \gets \text{CMI}_{t-1}^{R^*} + (MI_t^{R^*|R} - 0.5)$
+%    \EndIf
+%    \State \Return $\text{CMI}_t^R, \text{CMI}_t^{R^*}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}
+%\caption{UpdateCMI: Refresh the Cumulative Mispricing Signal}
+%\label{alg:UpdateCMI}
+%\begin{algorithmic}[1]
+%\Require Current mispricing indices $MI_t^{R\mid R^*}$ and $MI_t^{R^*\mid R}$, previous CMI values $\text{CMI}_{t-1}^R$ and $\text{CMI}_{t-1}^{R^*}$, and a Boolean flag \texttt{reset} indicating if a trade closure occurred.
+%\Ensure Updated CMI values $\text{CMI}_t^R$ and $\text{CMI}_t^{R^*}$
+%\Statex
+%\Function{UpdateCMI}{$MI_t^{R\mid R^*}, MI_t^{R^*\mid R}, \text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}, \texttt{reset}$}
+%    \If{\texttt{reset} is true}
+%         \State $\text{CMI}_t^R \gets 0$
+%         \State $\text{CMI}_t^{R^*} \gets 0$
+%    \Else
+%         \State $\text{CMI}_t^R \gets \text{CMI}_{t-1}^R + \bigl(MI_t^{R\mid R^*}-0.5\bigr)$
+%         \State $\text{CMI}_t^{R^*} \gets \text{CMI}_{t-1}^{R^*} + \bigl(MI_t^{R^*\mid R}-0.5\bigr)$
+%    \EndIf
+%    \State \Return $\text{CMI}_t^R,\ \text{CMI}_t^{R^*}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}
+%\caption{UpdateCMI}
+%\label{alg:update_cmi}
+%\begin{algorithmic}[1]
+%\Function{UpdateCMI}{$MI_t^{R \mid R^*}, MI_t^{R^* \mid R}, \text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}, \text{reset}$}
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Update or reset CMI at time $t$}}}
+%    \If{\text{reset = True}}
+%        \State \(\text{CMI}_t^R \gets 0,\quad \text{CMI}_t^{R^*} \gets 0\)
+%    \Else
+%        \State \(\text{CMI}_t^R \gets \text{CMI}_{t-1}^R + (MI_t^{R \mid R^*} - 0.5)\)
+%        \State \(\text{CMI}_t^{R^*} \gets \text{CMI}_{t-1}^{R^*} + (MI_t^{R^* \mid R} - 0.5)\)
+%    \EndIf
+%    \State \Return \(\text{CMI}_t^R, \text{CMI}_t^{R^*}\)
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}
+%\caption{Update Cumulative Mispricing Index (CMI)}
+%\label{alg:update_cmi}
+%\begin{algorithmic}[1]
+%\Require
+%    \State Mispricing indices $MI_t^{R|R^*}, MI_t^{R^*|R}$
+%    \State Previous CMIs $\text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}$
+%    \State Reset flag
+%
+%\Ensure Updated CMIs $\text{CMI}_t^R, \text{CMI}_t^{R^*}$
+%
+%\Function{UpdateCMI}{$MI_t^{R|R^*}, MI_t^{R^*|R}, \text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}, \text{reset}$}
+%    \If{reset}
+%        \State $\text{CMI}_t^R \gets 0$, $\text{CMI}_t^{R^*} \gets 0$
+%    \Else
+%        \State $\text{CMI}_t^R \gets \text{CMI}_{t-1}^R + (MI_t^{R|R^*} - 0.5)$
+%        \State $\text{CMI}_t^{R^*} \gets \text{CMI}_{t-1}^{R^*} + (MI_t^{R^*|R} - 0.5)$
+%    \EndIf
+%    \State \Return $\text{CMI}_t^R, \text{CMI}_t^{R^*}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}

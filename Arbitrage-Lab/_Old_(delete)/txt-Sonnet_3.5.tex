@@ -1,0 +1,85 @@
+\section{Econometric Framework}
+
+\subsection{Setup and Notation}
+
+Consider a set of $k$ time series variables observed over time period $t = 1,\ldots,T$. Let $\mathbf{y}_t = (y_{1t}, y_{2t},\ldots,y_{kt})'$ denote the $k \times 1$ vector of observations at time $t$. We assume that these variables are integrated of order one, denoted as $I(1)$. Formally:
+
+\begin{assumption}[Integration Order]
+For each series $y_{it}$, $i=1,\ldots,k$, the first difference $\Delta y_{it} = y_{it} - y_{it-1}$ is strictly stationary and ergodic with mean zero, while $y_{it}$ is not stationary.
+\end{assumption}
+
+The classical cointegration framework posits that there exists a linear combination of these variables that is stationary. In our setup, we specifically focus on the case where we normalize the coefficient of the first variable to unity, yielding:
+
+\begin{equation}
+y_{1t} + \boldsymbol{\beta}'\mathbf{y}_{-1,t} = u_t
+\end{equation}
+
+where $\mathbf{y}_{-1,t} = (y_{2t},\ldots,y_{kt})'$ is the $(k-1) \times 1$ vector excluding the first variable, $\boldsymbol{\beta}$ is a $(k-1) \times 1$ vector of cointegration coefficients, and $u_t$ is a stationary process.
+
+\subsection{Synthetic Control Interpretation}
+
+The key insight of our paper is that this normalization can be reinterpreted through the lens of synthetic control methodology. Specifically:
+
+\begin{equation}
+y_{1t} = -\boldsymbol{\beta}'\mathbf{y}_{-1,t} + u_t
+\end{equation}
+
+where:
+\begin{itemize}
+\item $y_{1t}$ is the "target" variable
+\item $-\boldsymbol{\beta}'\mathbf{y}_{-1,t}$ represents the "synthetic control"
+\item $u_t$ captures the stationary deviations between the target and its synthetic counterpart
+\end{itemize}
+
+This reinterpretation leads to the following parallel with the synthetic control literature:
+
+\begin{proposition}[Synthetic Control Equivalence]
+Under cointegration with normalized vector $(1, \boldsymbol{\beta}')$, the negative of the cointegrating coefficients $-\boldsymbol{\beta}$ represent the weights that construct the optimal synthetic control for $y_{1t}$ in the sense that:
+\begin{equation}
+\mathbb{E}[(y_{1t} + \boldsymbol{\beta}'\mathbf{y}_{-1,t})^2] = \min_{\mathbf{w}} \mathbb{E}[(y_{1t} - \mathbf{w}'\mathbf{y}_{-1,t})^2]
+\end{equation}
+subject to the constraint that $u_t$ is stationary.
+\end{proposition}
+
+\subsection{Estimation Framework}
+
+To formalize the connection between cointegration estimation and synthetic control construction, we consider the following estimation problem:
+
+\begin{equation}
+\hat{\boldsymbol{\beta}} = \argmin_{\boldsymbol{\beta}} \sum_{t=1}^T (y_{1t} + \boldsymbol{\beta}'\mathbf{y}_{-1,t})^2
+\end{equation}
+
+subject to the constraint that the residual series is stationary. This leads to our main theoretical result:
+
+\begin{theorem}[Synthetic Cointegration]
+Under standard regularity conditions for cointegrated systems:
+\begin{enumerate}
+\item The estimator $\hat{\boldsymbol{\beta}}$ is super-consistent, converging at rate $T$ rather than $\sqrt{T}$
+\item The synthetic control $-\hat{\boldsymbol{\beta}}'\mathbf{y}_{-1,t}$ provides optimal tracking of $y_{1t}$ in the sense of minimizing the variance of stationary deviations
+\item The synthetic relationship preserves the long-run properties of the target variable while allowing for short-run deviations
+\end{enumerate}
+\end{theorem}
+
+\section{Asymptotic Theory}
+
+To establish the theoretical properties of our synthetic cointegration framework, we make the following additional assumptions:
+
+\begin{assumption}[Invariance Principle]
+The partial sum process of $\Delta \mathbf{y}_t$ satisfies a multivariate invariance principle:
+\begin{equation}
+T^{-1/2}\sum_{t=1}^{\lfloor Tr \rfloor} \Delta \mathbf{y}_t \Rightarrow \mathbf{B}(r)
+\end{equation}
+where $\mathbf{B}(r)$ is a $k$-dimensional Brownian motion with covariance matrix $\boldsymbol{\Omega}$.
+\end{assumption}
+
+Under these conditions, we can establish the following asymptotic distribution theory:
+
+\begin{theorem}[Asymptotic Distribution]
+For the synthetic cointegration estimator $\hat{\boldsymbol{\beta}}$:
+\begin{equation}
+T(\hat{\boldsymbol{\beta}} - \boldsymbol{\beta}) \Rightarrow \left(\int_0^1 \mathbf{B}_{-1}(r)\mathbf{B}_{-1}(r)' dr\right)^{-1}\left(\int_0^1 \mathbf{B}_{-1}(r)dB_1(r)\right)
+\end{equation}
+where $\mathbf{B}_{-1}(r)$ is the Brownian motion corresponding to $\mathbf{y}_{-1,t}$ and $B_1(r)$ corresponds to $y_{1t}$.
+\end{theorem}
+
+This distribution theory allows us to conduct inference about the synthetic control weights and construct confidence intervals for the synthetic control estimates.

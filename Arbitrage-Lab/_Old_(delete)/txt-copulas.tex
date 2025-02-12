@@ -1,0 +1,129 @@
+\section{Copula-Based Pairs Trading Strategy}
+
+\subsection{Mathematical Framework}
+
+Let $\{X_t\}_{t=1}^T$ and $\{Y_t\}_{t=1}^T$ denote the log-returns of two financial assets (in our implementation, AAPL and MSFT respectively) over time horizon $T$. We assume these time series are strictly stationary and their joint distribution can be modeled using copulas.
+
+\subsubsection{Copula Specification}
+
+By Sklar's theorem, there exists a copula function $C: [0,1]^2 \rightarrow [0,1]$ such that the joint distribution $F$ of $(X_t, Y_t)$ can be written as:
+\begin{equation*}
+F(x,y) = C(F_X(x), F_Y(y))
+\end{equation*}
+
+where $F_X$ and $F_Y$ are the marginal cumulative distribution functions of $X_t$ and $Y_t$ respectively.
+
+We consider five different copula specifications:
+
+\begin{itemize}
+\item \textsc{Elliptical Copulas}
+
+\begin{itemize}
+    \item \textbf{Gaussian Copula:}
+\begin{equation*}
+	C_{\rho}(u,v) = \Phi_{\rho}(\Phi^{-1}(u), \Phi^{-1}(v))
+\end{equation*}
+    where $\Phi_{\rho}$ is the bivariate standard normal CDF with correlation $\rho$ and $\Phi^{-1}$ is the inverse standard normal CDF.
+    \item \textbf{Student-t Copula:}
+\begin{equation*}
+	C_{\rho,\nu}(u,v) = t_{\rho,\nu}(t_{\nu}^{-1}(u), t_{\nu}^{-1}(v))
+\end{equation*}
+    where $t_{\rho,\nu}$ is the bivariate Student-t CDF with correlation $\rho$ and $\nu$ degrees of freedom.
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+	\item \textsc{Archimedean Copulas}
+\begin{itemize}
+    \item \textbf{Clayton Copula:}
+\begin{equation*}
+	C_{\theta}(u,v) = (u^{-\theta} + v^{-\theta} - 1)^{-1/\theta}, \quad \theta > 0
+\end{equation*}
+
+    \item \textbf{Gumbel Copula:}
+\begin{equation*}
+	C_{\theta}(u,v) = \exp\{-[(-\ln u)^{\theta} + (-\ln v)^{\theta}]^{1/\theta}\}, \quad \theta \geq 1
+\end{equation*}
+
+    \item \textbf{Frank Copula:}
+\begin{equation*}
+	C_{\theta}(u,v) = -\frac{1}{\theta}\ln\left(1 + \frac{(e^{-\theta u}-1)(e^{-\theta v}-1)}{e^{-\theta}-1}\right), \quad \theta \neq 0
+\end{equation*}
+\end{itemize}
+\end{itemize}
+
+
+\subsubsection{Model Selection}
+
+For model selection, we employ information criteria to choose the most appropriate copula specification. Given a fitted copula with parameter(s) $\boldsymbol{\theta}$, we compute:
+\begin{align*}
+\text{AIC} &= -2\ln L(\boldsymbol{\theta}) + 2k \\
+\text{BIC} &= -2\ln L(\boldsymbol{\theta}) + k\ln(n) \\
+\text{HQIC} &= -2\ln L(\boldsymbol{\theta}) + 2k\ln(\ln(n))
+\end{align*}
+
+where $L(\boldsymbol{\theta})$ is the likelihood function, $k$ is the number of parameters, and $n$ is the sample size.
+
+\subsubsection{Trading Strategy}
+The trading strategy is based on the conditional expectation of one asset's returns given the other's. For a given copula $C$, we define:
+\begin{equation*}
+	\mathbb{E}[V|U=u] = \int_0^1 h(v|u)dv
+\end{equation*}
+
+where $h(v|u)$ is the conditional density derived from the copula:
+\begin{equation*}
+	h(v|u) = \frac{\partial C(u,v)}{\partial u} = c(u,v)
+\end{equation*}
+
+For specific copulas, this conditional expectation has closed forms. For example, for the Clayton copula:
+\begin{equation*}
+	\mathbb{E}[V|U=u] = (1 + \theta u^{-\theta})^{-1/\theta}
+\end{equation*}
+
+
+The trading signals are generated based on the deviation from this conditional expectation. Let $\epsilon_t$ denote the normalized residual at time $t$:
+
+\red{This introuces lookahead bias! -> at time $t$, you don't know what the maximum or minimum of the whole residual series is going to be! In other words, 
+
+$$\begin{array}{ll}
+\max(residuals), \min(residuals)\in \F_T
+\\
+\eps_t = f(v_t, \E[V|U=u_t]) \in \F_t
+\end{array}$$
+
+}
+\begin{equation*}
+	\epsilon_t = \frac{v_t - \mathbb{E}[V|U=u_t] - \min(\text{residuals})}{\max(\text{residuals}) - \min(\text{residuals})}
+\end{equation*}
+
+For a given threshold $\alpha$, the trading signals $s_t$ are defined as:
+\begin{equation*}
+	s_t = \begin{cases}
+1 & \text{if } \epsilon_t < \alpha \\
+-1 & \text{if } \epsilon_t > 1-\alpha \\
+0 & \text{otherwise}
+\end{cases}
+\end{equation*}
+
+where $s_t = 1$ indicates a long position in MSFT and short in AAPL, and $s_t = -1$ indicates the opposite position.
+
+\red{
+Important: check that you're not introducing Lookahead bias in the computation!
+Note that $s_t$ requires information up to time $t$ to be computed. In other words, $s_t\in \F_t$. Thus, we cannot get $r_t$ since $r_t$ is produced by taking a position at time $t-1$ and cancelling it at time $t$ (i.e: $r_t = P_t/P_{t-1} -1$. Therefore, if I oberve $s_t$ at time $t$, I cannot possibly receive $r_t$, as this means that I took a position at time $t-1$, that is, before even observing the signal!. That is wrong. 
+Hence, a $s_t$ observed signal should translate into getting $r_{t+1}$, as you: 
+\begin{enumerate}
+	\item Observe $s_t$ at time $t$	
+	\item Place a trade at the closing price of $t$ or at the open price of $t+1$
+	\item Close the trade at the closing price of $t+1$
+\end{enumerate}
+
+}
+
+
+\subsubsection{Portfolio Value and Performance Metrics}
+
+The portfolio value $P_t$ evolves according to:
+\begin{equation*}
+	P_t = P_{t-1}(1 + s_{t-1}(r_{Y,t} - r_{X,t}))
+\end{equation*}
+where $r_{X,t}$ and $r_{Y,t}$ are the returns of AAPL and MSFT respectively at time $t$.

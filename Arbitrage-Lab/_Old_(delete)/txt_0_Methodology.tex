@@ -1,0 +1,393 @@
+%%\documentclass[12pt]{article}
+%%\usepackage{amsmath,amssymb,amsfonts}
+%%\begin{document}
+%%
+%\section*{Cardinality-Constrained Synthetic Control: Two-Step Procedure}
+%
+%Let us denote by:
+%\[
+%X \in \mathbb{R}^{T \times N} 
+%\quad\text{and}\quad
+%y \in \mathbb{R}^{T},
+%\]
+%where each column of \(X\) represents one potential donor (or asset), and \(y\) is the target series we wish to approximate.
+%
+%\subsection*{Step 1: Initial Unconstrained Fit}
+%We first solve the following (unconstrained-in-cardinality) optimization problem:
+%\[
+%\min_{w \in \mathbb{R}^N}
+%\;\; \|y - Xw\|_2^2
+%\quad\text{subject to}\quad
+%\sum_{i=1}^N w_i \;=\; 1.
+%\]
+%In code, this corresponds to:
+%\[
+%\begin{aligned}
+%& w = \mathrm{Variable}(N),\\
+%& \min_{w} \quad \|y - Xw\|_2^2,\\
+%& \text{subject to } \sum_{i=1}^N w_i = 1.
+%\end{aligned}
+%\]
+%We solve this using a suitable solver (e.g., OSQP).
+%
+%From the optimal solution \(w^*\), we then identify the indices of the largest components by absolute value:
+%\[
+%\text{Let } \pi \text{ be a permutation of } \{1,\ldots,N\} 
+%\text{ such that } 
+%|w_{\pi(1)}^*| \ge |w_{\pi(2)}^*| \ge \cdots \ge |w_{\pi(N)}^*|.
+%\]
+%Given a desired maximum number of assets \(K\), we select the first \(K\) indices:
+%\[
+%\mathcal{I} = \{\pi(1), \pi(2), \ldots, \pi(K)\}.
+%\]
+%
+%\subsection*{Step 2: Restricted Optimization}
+%We then restrict our problem to only the selected columns, forming the matrix \(X_{\mathcal{I}} \in \mathbb{R}^{T \times K}\) by choosing the columns of \(X\) indexed by \(\mathcal{I}\). We solve:
+%\[
+%\min_{w_{\mathcal{I}} \in \mathbb{R}^K}
+%\;\; \|y - X_{\mathcal{I}}w_{\mathcal{I}}\|_2^2
+%\quad\text{subject to}\quad
+%\sum_{i \in \mathcal{I}} w_i = 1.
+%\]
+%In code, this is:
+%\[
+%\begin{aligned}
+%& w_{\mathcal{I}} = \mathrm{Variable}(K), \\
+%& \min_{w_{\mathcal{I}}} \quad \|y - X_{\mathcal{I}}w_{\mathcal{I}}\|_2^2, \\
+%& \text{subject to } \sum_{i=1}^K w_{\mathcal{I},i} = 1.
+%\end{aligned}
+%\]
+%We obtain the optimal solution \(w^*_{\mathcal{I}}\) for the reduced problem and then embed it back into the original \(N\)-dimensional weight vector by setting the non-selected components to zero. Formally,
+%\[
+%w_{\mathrm{final},j} =
+%\begin{cases}
+%w^*_{\mathcal{I},i} & \text{if } j = \mathcal{I}[i],\\
+%0 & \text{otherwise.}
+%\end{cases}
+%\]
+%Hence, our final solution respects the cardinality constraint (at most \(K\) non-zero entries) by construction, and it still satisfies the simplex constraint \(\sum_i w_{\mathrm{final},i} = 1\).
+%
+%%\end{document}
+%%\documentclass{article}
+%%\usepackage{amsmath, amssymb, amsthm}
+%%\usepackage{algorithmic}
+%%\title{Synthetic Control with Cardinality Constraints: Mathematical Formulation}
+%%\author{Instructor: Your Name}
+%%\date{Optimization Course - MSc Mathematics}
+%%
+%%\begin{document}
+%
+%\maketitle
+%
+%\section{Problem Setup}
+%Given:
+%\begin{itemize}
+%    \item Target vector $y \in \mathbb{R}^T$ (outcome variable)
+%    \item Feature matrix $X \in \mathbb{R}^{T \times N}$ (donor assets)
+%    \item Cardinality constraint $K \in \mathbb{N}$ (max assets)
+%\end{itemize}
+%
+%Find sparse weights $w \in \mathbb{R}^N$ such that:
+%\begin{enumerate}
+%    \item $\|w\|_0 \leq K$ (at most $K$ non-zero weights)
+%    \item $\sum_{i=1}^N w_i = 1$ (convex combination)
+%    \item $\|y - Xw\|_2^2$ is minimized (least squares fit)
+%\end{enumerate}
+%
+%\section{Two-Step Approximation Algorithm}
+%The NP-hard cardinality constraint is approximated through:
+%
+%\subsection{Step 1: Initial Convex Relaxation}
+%Solve the unconstrained convex problem:
+%\begin{equation*}
+%    \begin{aligned}
+%        \underset{w \in \mathbb{R}^N}{\text{minimize}} & \quad \|y - Xw\|_2^2 \\
+%        \text{subject to} & \quad \mathbf{1}^\top w = 1
+%    \end{aligned}
+%\end{equation*}
+%
+%Let $w^{(1)}$ be the optimal solution. This gives:
+%\begin{equation*}
+%    w^{(1)} = \argmin_{\substack{w \in \mathbb{R}^N \\ \mathbf{1}^\top w = 1}} \|y - Xw\|_2^2
+%\end{equation*}
+%
+%\subsection{Step 2: Support Selection}
+%Identify the most significant weights using:
+%\begin{equation*}
+%    \mathcal{S} = \underset{\substack{S \subseteq \{1,\dots,N\} \\ |S| = K}}{\text{argmax}} \sum_{i \in S} |w_i^{(1)}|
+%\end{equation*}
+%
+%This selects indices with largest absolute weights.
+%
+%\subsection{Step 3: Restricted Optimization}
+%Solve the constrained problem on support $\mathcal{S}$:
+%\begin{equation*}
+%    \begin{aligned}
+%        \underset{w_{\mathcal{S}} \in \mathbb{R}^K}{\text{minimize}} & \quad \|y - X_{\mathcal{S}}w_{\mathcal{S}}\|_2^2 \\
+%        \text{subject to} & \quad \mathbf{1}^\top w_{\mathcal{S}} = 1
+%    \end{aligned}
+%\end{equation*}
+%
+%\subsection{Final Solution}
+%Construct sparse weights:
+%\begin{equation*}
+%    w^*_i = \begin{cases}
+%        w_{\mathcal{S},j}^* & \text{if } i = \mathcal{S}_j \\
+%        0 & \text{otherwise}
+%    \end{cases}
+%\end{equation*}
+%
+%\section{Theoretical Considerations}
+%\begin{itemize}
+%    \item \textbf{Convex Relaxation}: Step 1 ignores cardinality constraint but provides a continuous solution
+%    \item \textbf{Greedy Selection}: Step 2 uses magnitude heuristic for sparsity pattern
+%    \item \textbf{Suboptimality}: Two-step approach may not find global optimum but is computationally tractable
+%    \item \textbf{Convergence}: Both optimization problems are convex QPs with guaranteed convergence (when using appropriate solvers)
+%\end{itemize}
+%
+%\section{Implementation Notes}
+%\begin{itemize}
+%    \item Uses OSQP solver for quadratic programs
+%    \item Maintains scikit-learn API compatibility
+%    \item Handles potential solver failures through status checks
+%    \item Runtime complexity dominated by $O(N^3)$ initial solve and $O(K^3)$ restricted solve
+%\end{itemize}
+%%
+%
+%
+%%\section{Methodology}
+%%\subsection{Synthetic Asset Formation via Sparse Synthetic Control}
+%%Let $Y_{1t}$ denote the log-price of the target asset at time $t$ and $\mathbf{Y}_{t} = (Y_{2t},...,Y_{Nt})^\top$ represent the vector of log-prices from the donor pool of $N-1$ assets. We construct a synthetic asset $\hat{Y}_{1t}$ through a sparse convex combination of donor assets:
+%%
+%%\begin{equation}
+%%\hat{Y}_{1t} = \sum_{i=2}^N w_i Y_{it},\quad \text{where } \mathbf{w} \in \Delta^{N-1} \text{ and } \|\mathbf{w}\|_0 \leq K
+%%\end{equation}
+%%
+%%where $\Delta^{N-1}$ is the $(N-1)$-dimensional simplex and $K$ is the cardinality constraint. The weight vector $\mathbf{w}^*$ is determined through a two-stage regularized optimization:
+%%
+%%\textbf{Stage 1:} Solve the unconstrained convex problem:
+%%\begin{equation}
+%%\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \Delta^{N-1}} \sum_{t=1}^T \left(Y_{1t} - \sum_{i=2}^N w_i Y_{it}\right)^2
+%%\end{equation}
+%%
+%%\textbf{Stage 2:} Let $\mathcal{S} = \{i : |w_i^{(1)}| \geq \tau\}$ be the support set of the $K$ largest weights. Solve the restricted problem:
+%%\begin{equation}
+%%\mathbf{w}^{(2)} = \argmin_{\mathbf{w} \in \Delta^{N-1}_{\mathcal{S}}} \sum_{t=1}^T \left(Y_{1t} - \sum_{i \in \mathcal{S}} w_i Y_{it}\right)^2
+%%\end{equation}
+%%
+%%where $\Delta^{N-1}_{\mathcal{S}} = \{\mathbf{w} \in \Delta^{N-1} : w_i = 0\ \forall i \notin \mathcal{S}\}$. The final synthetic asset is given by $\hat{Y}_{1t} = \sum_{i \in \mathcal{S}} w_i^{(2)} Y_{it}$.
+%%
+%
+%%\documentclass{article}
+%%\usepackage{amsmath, amssymb}
+%%\usepackage{algorithm, algorithmic}
+%%\begin{document}
+%
+%\section*{Sparse Synthetic Control via Two-Stage Optimization}
+%
+%We consider the problem of approximating a target vector \( y \in \mathbb{R}^{T} \) using a linear combination of columns from a data matrix \( X \in \mathbb{R}^{T \times N} \). The goal is to enforce sparsity so that only a limited number of assets (columns of \(X\)) receive a nonzero weight. In our procedure, the sparsity is indirectly imposed by selecting the \(\texttt{max\_assets}\) largest weights after a first unconstrained optimization.
+%
+%\subsection*{Stage 1: Unconstrained Optimization}
+%
+%First, we solve the least squares problem without explicit cardinality constraints. Formally, we aim to determine a full weight vector \( w \in \mathbb{R}^N \) by solving
+%
+%\[
+%\begin{aligned}
+%\min_{w \in \mathbb{R}^N} \quad & \|y - Xw\|_2^2 \quad = \quad \sum_{t=1}^{T} \Bigl(y_t - \sum_{i=1}^{N} X_{ti} w_i\Bigr)^2, \\
+%\text{subject to} \quad & \sum_{i=1}^{N} w_i = 1.
+%\end{aligned}
+%\]
+%
+%The constraint \( \sum_{i=1}^{N} w_i = 1 \) is typically used in synthetic control methods to ensure that the weights form a convex combination of the donor pool.
+%
+%Let \( w^{\ast} \) denote the optimal solution of this problem.
+%
+%\subsection*{Selecting the Largest Weights}
+%
+%Once \( w^{\ast} \) is obtained, let
+%\[
+%\mathcal{I} = \left\{ i_1, i_2, \dots, i_k \right\}
+%\]
+%be the set of indices corresponding to the \( k = \texttt{max\_assets} \) largest (in absolute value) components of \( w^{\ast} \). That is, we choose \( \mathcal{I} \) such that
+%\[
+%|w^{\ast}_{i_1}| \geq |w^{\ast}_{i_2}| \geq \cdots \geq |w^{\ast}_{i_k}|,
+%\]
+%and for any \( j \notin \mathcal{I} \), it holds that
+%\[
+%|w^{\ast}_j| \le |w^{\ast}_{i_k}|.
+%\]
+%
+%\subsection*{Stage 2: Restricted Optimization on the Selected Assets}
+%
+%Next, we restrict our attention to the columns of \( X \) corresponding to \( \mathcal{I} \). Define the submatrix \( X_{\mathcal{I}} \in \mathbb{R}^{T \times k} \) and let \( w_{\mathcal{I}} \in \mathbb{R}^{k} \) denote the weight vector for the selected assets. We then solve
+%
+%\[
+%\begin{aligned}
+%\min_{w_{\mathcal{I}} \in \mathbb{R}^{k}} \quad & \| y - X_{\mathcal{I}} w_{\mathcal{I}} \|_2^2, \\
+%\text{subject to} \quad & \sum_{j=1}^{k} \left(w_{\mathcal{I}}\right)_j = 1.
+%\end{aligned}
+%\]
+%
+%Let \( w_{\mathcal{I}}^{\ast} \) denote the solution of this restricted problem. This step refines the weights now tailored only to the selected assets, thus implicitly imposing a cardinality constraint.
+%
+%\subsection*{Reconstructing the Full Weight Vector}
+%
+%Finally, we construct the full weight vector \( \tilde{w} \in \mathbb{R}^{N} \) by embedding the optimized restricted weights back into the original \( N \)-dimensional space. Define
+%\[
+%\tilde{w}_i =
+%\begin{cases}
+%\left( w_{\mathcal{I}}^{\ast} \right)_j, & \text{if } i = i_j \in \mathcal{I}, \\
+%0, & \text{if } i \notin \mathcal{I}.
+%\end{cases}
+%\]
+%
+%Thus, the final predictor is given by
+%\[
+%\hat{y} = X \tilde{w},
+%\]
+%ensuring that at most \( \texttt{max\_assets} \) of the weights are nonzero.
+%
+%\subsection*{Summary of the Procedure}
+%
+%\begin{enumerate}
+%    \item Solve the full least squares problem:
+%    \[
+%    \min_{w \in \mathbb{R}^N} \|y - Xw\|_2^2 \quad \text{s.t.} \quad \mathbf{1}^\top w=1.
+%    \]
+%    \item Select the \( k \) largest weights (in absolute value) from \( w^{\ast} \) to index set \( \mathcal{I} \).
+%    \item Solve the reduced problem:
+%    \[
+%    \min_{w_{\mathcal{I}} \in \mathbb{R}^{k}} \| y - X_{\mathcal{I}} w_{\mathcal{I}} \|_2^2 \quad \text{s.t.} \quad \mathbf{1}^\top w_{\mathcal{I}}=1.
+%    \]
+%    \item Embed \( w_{\mathcal{I}}^{\ast} \) into the full space to get the final solution \( \tilde{w} \).
+%\end{enumerate}
+%
+%This two-stage procedure provides a practical approximation to imposing an explicit cardinality constraint, which is typically nonconvex and NP-hard to enforce directly.
+
+%\end{document}
+%----------------------------------------------------
+
+\section{Methodology}
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g: AAPL) using a combination of assets from a donor pool. 
+Let $\mbf y = \{y_{t}\}_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = \{x_{1t}, ..., x_{Nt}\}_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool. We construct a synthetic asset $\hat{\mbf y}$ through a sparse linear combination
+\begin{equation}
+\hat{y}_{t} = \sum_{i=1}^N w_i^* x_{it},
+%\quad \text{with} \quad 
+%\sum_{i=1}^N w_i = 1
+%\qquad 
+%\mathbf{w}^* \in \mathcal{W} := \left\{\mathbf{w} \in \mathbb{R}^{N-1} \,\bigg|\, \sum_{i=1}^N w_i = 1\right\}
+\end{equation}
+%\begin{equation}
+%\hat{y}_{1t} = \sum_{i=2}^N w_i Y_{it},\quad \text{where } \mathbf{w} \in \mathcal{W} := \left\{\mathbf{w} \in \mathbb{R}^{N-1} \,\bigg|\, \sum_{i=2}^N w_i = 1\right\}
+%\end{equation}
+%\begin{equation*}
+%	\hat{\mbf y} = \mbf X {\mbf w}
+%	,
+%\end{equation*}
+where the weight vector is determined via a cardinality-constrained quadratic program:
+%\begin{equation*}
+%	\tilde{\mbf w} = \arg \min_{\mbf w\in\mathcal W} \norm{\mbf y - {\mbf w} \mbf X }_{2}^{2}
+%\end{equation*}
+\begin{equation}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 
+\quad \text{s.t.} \quad 
+\left|
+\begin{array}{ll}
+	\mbf 1\' \mbf w &= 1 \\
+	\norm{\mathbf{w}}_0 &\leq K
+\end{array}
+\right
+.
+\end{equation}
+%The set $\mathcal W:=\{\mbf w\in\R^{N}\mid \mbf 1'\mbf w = 1\}$ defines the universe of weights that add up to 1, and 
+where $\|\mathbf{w}\|_0:=\sum_{i=1}^N \I{w_i\neq 0}$ counts the non-zero elements in $\mbf w$. The goal is to enforce sparsity so that only a limited number of assets receive a nonzero weight. The NP-hard cardinality constraint is approximated by the following procedure: 
+\begin{enumerate}
+%    \item \textbf{Initial Unconstrained Optimization:} Solve the convex optimization problem:
+%
+\item Solve the full least squares problem
+\begin{equation}
+\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \mathbb{R}^{N}} \norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2
+\quad \text{s.t.} \quad \mathbf{1}^\top \mbf w=1.
+\end{equation}
+%
+\item Select the $K$ largest weights (in absolute value) from $\mbf w^{(1)}$ into
+$$\mathcal I:=\{i : |w_i^{(1)}| \t{~among $K$ largests}\}$$
+%
+\item Solve the restricted program on support $\mathcal I$
+\begin{equation*}
+	\mbf w^{(2)} = \arg \min_{\mbf w_{\mathcal I}\in \mathbb{R}^K} \norm{\mbf y - \mbf X_{\mathcal I}\mbf w_{\mathcal I}}_{2}^{2}
+\quad \text{s.t.} \quad 
+\mbf 1\' \mbf w_{\mathcal I} = 1
+\end{equation*}
+where $\mbf X_{\mathcal{I}} \in \mathbb{R}^{T \times K}$ is the resricted design matrix and $\mbf w_{\mathcal{I}} \in \mathbb{R}^{K}$ is the weight vector for the selected assets
+
+
+\item Construct the full weight vector $\mbf w^* \in \mathbb{R}^{N}$ by embedding the optimized restricted weights back into the original $N$-dimensional space. 
+$$
+w^*_i = 
+\mycases{llll}{
+w^{(2)}_j & \IF  i = \mathcal I_j
+\\
+0 & \text{otherwise}
+}
+$$
+\end{enumerate}
+%
+%Thus, the final predictor is given by
+%\[
+%\hat{y} = X \tilde{w},
+%\]
+%ensuring that at most \( \texttt{max\_assets} \) of the weights are nonzero.
+%
+%
+%
+%%\item \textbf{Cardinality-Constrained Refinement:} Define the set $\mathcal K=\{i : |w_i^{(1)}| \t{~among $K$ largests} \} $ with the top $K$ assets with largest absolute weights from the initial solution and then resolve the optimization problem restricted to these $K$ assets. 
+%%$$
+%%\mbf w^{(2)} = \arg \min_{\mbf w} \norm{\mbf y - \mbf X_{\mathcal K}\mbf w_{\mathcal K}}_{2}^{2}
+%%$$
+%%The optimal $K$ is determined through time-series cross-validation with 5 splits, minimizing mean squared error.
+%%\end{enumerate}
+%%
+%%The final synthetic asset price series $ S_t $ is computed as:
+%%\begin{equation}
+%%    S_t = \sum_{i=1}^k w_i^* x_{i,t}^*
+%%\end{equation}
+%%where $ w_i^* $ are the optimized weights and $ x_{i,t}^* $ the selected donor assets' log-prices.
+%%----------------------------------------------------
+%
+%
+%\newpage
+%
+%
+%Let $D=\{Y_{it}\}_{i=1}^N$ be a universe of $N$ financial assets where $Y_{1t}$ is the target asset and $\{Y_{it}\}_{i=2}^N$ form the donor pool. We construct a synthetic asset $\hat{Y}_{1t}$ through sparse affine combinations:
+%
+%\begin{equation}
+%\hat{Y}_{1t} = \sum_{i=2}^N w_i Y_{it},\quad \text{where } \mathbf{w} \in \mathcal{W} := \left\{\mathbf{w} \in \mathbb{R}^{N-1} \,\bigg|\, \sum_{i=2}^N w_i = 1\right\}
+%\end{equation}
+%
+%The weight vector $\mathbf w$ is determined via a cardinality-constrained quadratic program:
+%
+%\begin{equation}
+%\mathbf{w}^* = \argmin_{\mathbf{w} \in \mathcal{W}} \sum_{t=1}^T \left(Y_{1t} - \sum_{i=2}^N w_i Y_{it}\right)^2 \quad \text{s.t.} \quad \norm{\mathbf{w}}_0 \leq K
+%\end{equation}
+%
+%where $\|\mathbf{w}\|_0=\sum_{i=2}^N \mathbb{I}\{w_i\neq 0\}$ counts non-zero weights. We solve this via a two-stage approximate procedure:
+%
+%\textbf{Stage 1: Unconstrained Optimization}
+%\begin{equation}
+%\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \mathcal{W}} |\mathbf{y}_1 - \mathbf{D}\mathbf{w}|_2^2
+%\end{equation}
+%where $\mathbf{y}_1\in\mathbb{R}^T$ contains target log-prices and $\mathbf{D}\in\mathbb{R}^{T\times(N-1)}$ the donor pool.
+%
+%\textbf{Stage 2: Cardinality-Restricted Optimization}
+%
+%Let $\mathcal{S}=\text{supp}_K(\mathbf{w}^{(1)})=\{i:|w_i^{(1)}|\text{ among }K\text{-largest}\}$ be the support of $K$ largest magnitude weights. Solve:
+%\begin{equation}
+%\mathbf{w}^{(2)} = \argmin_{\mathbf{w} \in \mathcal{W}_{\mathcal{S}}} |\mathbf{y}_1 - \mathbf{D}_{\mathcal{S}}\mathbf{w}_{\mathcal{S}}|_2^2
+%\end{equation}
+%
+%where $\mathcal{W}_{\mathcal{S}}=\{\mathbf{w}\in\mathbb{R}^{N-1}:\text{supp}(\mathbf{w})\subseteq\mathcal{S},\sum_{i=2}^N w_i=1\}$ and $\mathbf{D}_{\mathcal{S}}$ is the column-restricted design matrix.
+%
+%
+%
+%\Vhrulefill

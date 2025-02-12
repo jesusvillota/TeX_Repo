@@ -1,0 +1,36 @@
+\subsection{Assumptions}
+To ensure transparency in our empirical analysis, we explicitly outline the critical assumptions underlying the implementation of our proposed pairs trading strategy. These assumptions reflect idealized market conditions necessary for theoretical feasibility and reproducibility of results.
+%To be transparent about the procedures implemented in this application, we need to set forward a set of assumptions that are crucial for the feasibility of the proposed trading strategy and to obtain our results.
+
+
+\begin{assumption}[Price Execution] \label{assum:execution}
+All trades are executed at daily adjusted closing prices. This assumption requires sufficient market liquidity and depth to accommodate position entries and exits without significant price impact or execution delays.
+\end{assumption}
+
+\begin{assumption}[Short Selling Access] \label{assum:shorting}
+Unrestricted short selling is permitted for all assets, including the ability to maintain leveraged short positions. This encompasses having reliable access to securities lending facilities and the capacity to meet associated margin requirements.
+\end{assumption}
+
+\begin{assumption}[Leverage Capacity] \label{assum:leverage}
+Trading positions can employ substantial leverage on both long and short sides. This assumes access to margin facilities that permit position sizes meaningfully larger than the allocated capital base, subject to prevailing broker and regulatory requirements.
+%Investors may employ leveraged positions up to a 200:1 leverage factor. This allows increasing exposure to mispricing opportunities but amplifies potential losses.
+%Trading positions can be leveraged up to 4:1 on both long and short sides. This leverage constraint aligns with standard margin requirements for US equity trading while maintaining reasonable risk management practices.
+\end{assumption}
+
+%\begin{assumption}
+%Trades are executed at (adjusted) closing prices (this implicitly embeds assumptions about the liquidity of the traded assets and the order of their trade book).
+%\end{assumption}
+%
+%\begin{assumption}
+%High leverage positionsa are allowed (specify leverage factor).
+%\end{assumption}
+%
+%\begin{assumption}
+%Short selling and leveraged short selling is allowed.
+%\end{assumption}
+
+While these assumptions may appear restrictive, recent developments in financial technology and market structure have made such trading conditions increasingly accessible. Modern electronic trading platforms like Alpaca, Interactive Brokers, and similar services now offer retail investors sophisticated capabilities previously reserved for institutional traders. These platforms provide programmatic trading interfaces, competitive margin rates, and extensive short-selling facilities that may align with our implementation requirements.
+
+
+%==============[	  CAUTION PARAGRAPH  ]==============
+\textbf{Cautionary note.} \textit{This paper is intended for academic and informational purposes only and does not constitute financial advice. The strategies and methodologies discussed involve significant risks, including the potential loss of capital. Past performance is not indicative of future results, and the authors assume no liability for decisions made by individuals or entities based on the content of this research. Readers are advised to consult qualified financial professionals before engaging in trading activities.}

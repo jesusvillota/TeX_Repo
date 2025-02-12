@@ -1,0 +1,220 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitive
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%====================[Pairs Trading]=========================
+
+% ------[ Definition: What is it? ]-------
+
+Pairs trading is widely recognized as a cornerstone of statistical arbitrage, offering a market-neutral investment approach that exploits temporary divergences in the prices of historically correlated or economically linked assets. 
+
+%Pairs trading is a market-neutral investment strategy and a cornerstone of statistical arbitrage that seeks to profit from temporary price deviations between two historically correlated or economically linked assets. By identifying and exploiting these relative mispricings, practitioners aim to capture gains when the prices revert to their equilibrium relationship, regardless of the overall market direction.
+
+%Pairs trading, a cornerstone of statistical arbitrage strategies, is a market-neutral approach that exploits temporary price divergences between economically linked assets. As a canonical form of relative value trading, it capitalizes on deviations from historical relationships between securities - typically pairs or portfolios with sustained correlation patterns. The strategy's enduring prominence in both academic research and practical implementation stems from its theoretical appeal as a "free lunch" during mean reversion episodes, coupled with its inherent risk mitigation through dollar-neutral positioning. Modern extensions seek to generalize the paradigm beyond simple two-asset comparisons to synthetic asset constructions while preserving the core mechanics of divergence detection and convergence exploitation.
+
+%Pairs trading is a market-neutral investment strategy that seeks to profit from the relative mispricing between two historically correlated securities. Broadly defined, this strategy aims to exploit temporary deviations in the prices of related assets, making it a cornerstone of statistical arbitrage. By identifying and capitalizing on these temporary price divergences, pairs trading has garnered enduring prominence among quantitative researchers and practitioners.
+
+
+% ------[ Explanation: What does it involve? ]-------
+
+By simultaneously taking a long position in the relatively undervalued asset and a short position in the relatively overvalued one, pairs traders aim to profit from the eventual convergence of these prices. This strategy has garnered enduring prominence among quantitative researchers and practitioners, attributing its appeal to both conceptual simplicity--focusing on the relative mispricing of two assets--and the potential for stable returns independent of broader market movements.
+
+%The strategy involves simultaneously taking long and short positions in pairs of assets when their prices diverge from their historical relationship, betting that the spread will eventually revert to its mean. Despite its simplicity, pairs trading has been widely adopted in the financial industry due to its potential for generating consistent returns with low market risk.
+
+
+% ------[ Challenges / Limitations ]-------
+
+While pairs trading is conceptually straightforward, its effective implementation faces notable complexities in practice. Traditional approaches often rely on simple distance measures or cointegration-based criteria to identify pairs and establish entry and exit rules. However, these methods can be hampered by strict parametric assumptions, sensitivity to transient noise, and an inability to adapt to evolving market conditions. Structural breaks, non-linear dependencies, and time-varying correlation patterns often violate the assumptions of classical linear models, increasing the risk of identifying spurious relationships and making it difficult to achieve stable performance over diverse market regimes.
+
+To address these challenges, recent research has explored more flexible frameworks that combine advanced econometric tools with statistical learning. In particular, incorporating synthetic control methodologies and copula-based dependence modeling aims to better capture the dynamic interactions between assets. By abandoning the sole reliance on fixed, potentially fragile pair relationships, such approaches promise to more robustly uncover the underlying economic or statistical linkages that drive temporary mispricings, thus laying the groundwork for improved performance and risk control in pairs trading strategies.
+
+%While conceptually straightforward, the successful implementation of pairs trading requires sophisticated statistical techniques to identify suitable pairs, model their relationship, and determine optimal entry and exit points for trades.
+%
+% Despite its conceptual simplicity, the effective execution of pairs trading faces intricate challenges in modeling how the prices (or returns) of two assets co-evolve over time. Central to this endeavor is identifying pairs that robustly capture the underlying economic or statistical linkage, while minimizing the exposure to spurious correlations.
+%
+%Traditional approaches typically rely on cointegration relationships or spread-based indicators to identify pairs and signal trade entries and exits. In this study, we propose an alternative framework that integrates a synthetic control methodology with copula-based dependence modeling to construct a robust trading signal
+%
+%Traditional pairs trading strategies often rely on simple distance measures or cointegration techniques to identify and capitalize on these deviations.  However, these approaches can be limited by their reliance on specific parametric assumptions, sensitivity to noise, and inability to adapt to the dynamic and evolving relationships between assets in complex financial markets.  Furthermore, the selection of suitable pairs is often ad-hoc, relying on pre-defined universes or heuristic methods.
+%
+%Since its inception in the 1980s \cite{Gatev1999}, the strategy has evolved from basic distance approaches to sophisticated cointegration-based methods. However, traditional implementations face significant challenges in modern markets: price series often exhibit non-linear dependencies, structural breaks, and time-varying correlation patterns that violate the assumptions of conventional linear models.
+
+%====================[This paper]=========================
+
+Building on the challenges and limitations outlined above, this paper proposes a novel pairs trading framework that integrates sparse synthetic control methods with copula-based dependence modeling. 
+%
+The primary research question we aim to answer is: \qquote{Can the integration of sparse synthetic control and copula-based dependence modeling improve the performance of pairs trading strategies?}
+
+To address this question, we design a methodology that overcomes several shortcomings of traditional pairs trading. First, rather than relying on a fixed or pre-specified partner asset, we construct a \emph{synthetic asset} through a sparse linear combination of assets from a larger donor pool. This allows the framework to %dynamically 
+discover the most influential contributors to the target asset's behavior, effectively automating pair selection. By enforcing sparsity in the weight vector, we reduce computational complexity and enhance interpretability, while mitigating overfitting risks in thinner markets.
+
+Second, we incorporate copula-based dependence modeling to capture potentially complex, non-linear relationships and tail dependencies that can arise in financial returns. Unlike correlation- or cointegration-based strategies, which often impose strict distributional assumptions, copulas decouple the marginal distributions from the joint dependence structure, thereby offering a more nuanced view of how assets co-move. This feature is especially important in periods of market stress, when returns frequently exhibit heightened correlations and non-linearities.
+
+Finally, we adapt and extend the Mispricing Index (MI) strategy of \cite{Xie2016} by introducing a Cumulative Mispricing Index (CMI) that resets upon trade closure, ensuring that stale signals do not accumulate across different trading episodes. As in \cite{Rad2016}, we adopt an \qquote{AND-OR} logic for opening and closing positions, requiring persistent mispricing signals from both the target and synthetic assets to initiate a trade and closing positions promptly when either market correction or stop-loss conditions are met.
+
+%In doing so, this paper contributes to the growing body of literature on pairs trading by: (i) consolidating dynamic pair formation with robust, non-linear dependence modeling, (ii) presenting a data-driven implementation that flexibly adapts to varying market regimes, and (iii) empirically demonstrating that this integrated approach may yield sustainable, risk-adjusted performance over traditional methods. 
+
+%% Idea of this paper / Research Question
+%This paper introduces a novel approach to pairs trading that combines sparse synthetic control methods with copula-based dependence modeling. 
+%
+%This paper addresses the following core research question: \textit{Can a novel pairs trading strategy, leveraging sparse synthetic control methods and copula-based dependence modeling, generate superior risk-adjusted returns compared to traditional pairs trading approaches?}
+%
+%The primary research question we aim to answer is: \textit{Can the integration of sparse synthetic control and copula-based dependence modeling improve the performance of pairs trading strategies?} To address this question, we conduct a comprehensive empirical analysis using historical price data of various assets. We evaluate the performance of our proposed strategy against traditional pairs trading methods and assess its robustness under different market conditions.
+%
+%% Brief explanation of what we do in the paper / How we address challenges
+%Our methodology addresses two fundamental challenges in pairs trading: the construction of an appropriate reference asset and the characterization of complex, possibly nonlinear dependence structures between asset returns. We first develop a sparse synthetic control framework that replicates a target security using a parsimonious combination of assets from a donor pool. This approach offers several advantages over traditional methods: it maintains interpretability through sparsity, reduces transaction costs by limiting the number of constituent assets, and mitigates the impact of estimation error through regularization. Building upon this foundation, we employ copula theory to model the joint distribution of returns between the target asset and its synthetic counterpart. This framework allows us to capture sophisticated dependence patterns, including asymmetric tail dependence and nonlinear relationships that are prevalent in financial markets but often overlooked by conventional correlation-based approaches. By decomposing the joint distribution into its marginal distributions and dependence structure, we gain flexibility in modeling while maintaining the ability to account for stylized facts of financial returns such as heavy tails and asymmetric dependence.
+%
+%
+%In this paper, we address a fundamental research question at the intersection of synthetic control methods and dependence modeling for pairs trading: \qquote{Does constructing a synthetic asset to mirror a target security, in combination with flexible copula-based modeling of their joint behavior, lead to more robust and profitable trading strategies compared to conventional pairs approaches?}. More explicitly, we investigate whether using sparse synthetic control to replicate a target asset from a donor pool, followed by a dedicated copula-based framework to quantify dependency and detect divergences, can systematically enhance both the accuracy of mispricing signals and the stability of realized trading outcomes. In contrast to pairs trading methods that rely on fixed (pre-selected) partners or simple correlation thresholds, our approach aims to endogenously discover the best set of reference assets for replication, and then exploit their nuanced joint distribution characteristics.
+%
+%To answer this question, we propose a data-driven framework that overcomes several limitations of existing methods. Our approach makes the following key contributions:
+%\begin{enumerate}
+%    \item \textbf{Sparse Synthetic Control for Dynamic Pair Formation:} Instead of relying on pre-selected pairs, we construct a \textit{synthetic asset} for a given target asset using a sparse combination of assets from a large donor pool. This is achieved through a cardinality-constrained optimization procedure, effectively performing automated, dynamic pair selection. The sparsity constraint ensures that the synthetic asset is composed of only a limited number of highly relevant assets, enhancing interpretability and reducing overfitting.
+%    \item \textbf{Copula-Based Dependence Modeling for Robust Mispricing Detection:} We model the joint distribution of returns between the target asset and its synthetic counterpart using copulas. This allows us to capture complex, potentially non-linear dependencies, including tail dependence, which is crucial during periods of market stress.  Unlike traditional correlation or cointegration methods, copulas separate the marginal distributions from the dependence structure, providing a more flexible and accurate representation of the relationship between the assets.
+%    \item \textbf{Mispricing Index (MI) Strategy with Enhanced Signal Processing:} We adapt the Mispricing Index (MI) strategy of \cite{Xie2016}, originally developed for trading individual pairs, to our synthetic control framework.  We refine the MI approach by introducing a Cumulative Mispricing Index (CMI) that resets upon trade closure, preventing the accumulation of stale signals and improving the responsiveness to new mispricing opportunities.  We further adopt the "AND-OR" trading logic of \cite{Rad2016} for robust entry and exit decisions.
+%\end{enumerate}
+% 
+% In this paper, we address these challenges by proposing a novel pairs trading strategy that leverages sparse synthetic control and copula-based dependence modeling. Our approach aims to enhance the robustness and profitability of pairs trading by incorporating advanced statistical techniques. Specifically, we construct a synthetic asset that replicates the price behavior of a target asset using a sparse linear combination of assets from a donor pool. This synthetic asset serves as a benchmark for identifying mispricings in the target asset.
+%Furthermore, we employ copula-based dependence modeling to capture the non-linear relationships between the target and synthetic asset returns. Copulas allow us to model the dependence structure independently of the marginal distributions, providing a more flexible and accurate representation of the joint behavior of asset returns. By combining these techniques, we develop a pairs trading strategy that is more adaptive to changing market conditions and better equipped to identify and exploit mispricing opportunities.
+%
+%% Goals of this paper
+%In doing so, we hope to provide both insight and empirical evidence regarding: (i) when and how synthetic replication can outperform conventional pairs selection, (ii) whether copula-based modeling serves as a more robust measure of co-movement, and (iii) how these advances collectively translate into improved risk-adjusted returns.
+%
+%By combining these elements, our proposed strategy aims to identify and exploit mispricings between a target asset and its dynamically constructed, sparse synthetic counterpart in a more robust and adaptive manner. The framework is designed to be data-driven, minimizing reliance on pre-specified parameters or assumptions about market behavior. The remainder of this paper is organized as follows. Section \ref{sec:methodology} details the methodology, including the sparse synthetic control construction, copula-based dependence modeling, and the mispricing index trading strategy.
+
+%====================[Structure]=========================
+
+The remainder of this paper proceeds as follows. 
+%
+In Section 1 %\cref{sec:literature_review} 
+we begin by reviewing the relevant literature on pairs trading, synthetic control methods, and copula-based dependence modeling. 
+%
+In Section 2 %\cref{sec:methodology} 
+we present our methodological framework, detailing how sparse synthetic control and copula families are jointly employed to construct a robust trading signal, and introduce the mispricing index (MI) strategy adapted to incorporate copula-driven signals. 
+%
+Subsequently, in Section 3 %\cref{sec:empirics}
+we conduct an empirical evaluation using real-world market data, illustrating the performance and practical implications of our approach. 
+%
+We conclude in Section 4 %\cref{sec:conclusion} 
+by summarizing key insights, discussing limitations, and outlining prospective directions for future research.
+
+%The remainder of this paper proceeds as follows. First, we perform a comprehensive review of the existing literature on pairs trading, synthetic control methods, and copula-based dependence modeling. We then detail our methodological framework, discussing how copula families and sparse synthetic control are jointly employed. Next, we introduce the mispricing index (MI) framework and describe how it is adapted to incorporate copula-driven signals. Finally, we conduct an empirical evaluation using both real-world data and simulated scenarios, shedding light on the strengths and potential limitations of our proposed strategy.
+%
+%The rest of the paper is organized as follows. Section~\ref{sec:methodology} details the sparse synthetic control construction, copula-based dependence modeling, and our refined MI strategy. Section~\ref{sec:empirics} describes the data and empirical findings, and Section~\ref{sec:conclusion} concludes by summarizing key insights and outlining future research directions.
+%
+%The remainder of this paper develops the necessary methodological framework, starting with the formulation of the synthetic control strategy, followed by a detailed treatment of the copula-based modeling for capturing dependence structures, and finally, the implementation of the trading strategy using mispricing indices.
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Sonnet
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Introduction - Sonnet}
+%
+%Pairs trading is a market-neutral investment strategy that seeks to profit from the relative mispricing between two historically correlated securities. The strategy involves simultaneously taking long and short positions in pairs of assets when their prices diverge from their historical relationship, betting that the spread will eventually revert to its mean. While conceptually straightforward, the successful implementation of pairs trading requires sophisticated statistical techniques to identify suitable pairs, model their relationship, and determine optimal entry and exit points for trades.
+%
+%This paper introduces a novel approach to pairs trading that combines sparse synthetic control methods with copula-based dependence modeling. Our methodology addresses two fundamental challenges in pairs trading: the construction of an appropriate reference asset and the characterization of complex, possibly nonlinear dependence structures between asset returns. We first develop a sparse synthetic control framework that replicates a target security using a parsimonious combination of assets from a donor pool. This approach offers several advantages over traditional methods: it maintains interpretability through sparsity, reduces transaction costs by limiting the number of constituent assets, and mitigates the impact of estimation error through regularization.
+%
+%Building upon this foundation, we employ copula theory to model the joint distribution of returns between the target asset and its synthetic counterpart. This framework allows us to capture sophisticated dependence patterns, including asymmetric tail dependence and nonlinear relationships that are prevalent in financial markets but often overlooked by conventional correlation-based approaches. By decomposing the joint distribution into its marginal distributions and dependence structure, we gain flexibility in modeling while maintaining the ability to account for stylized facts of financial returns such as heavy tails and asymmetric dependence.
+%
+%The integration of these methodological components culminates in a novel trading strategy based on mispricing indices derived from conditional probabilities. Unlike traditional approaches that rely on simple price differences or ratios, our strategy exploits the full characterization of the joint distribution to identify trading opportunities. We develop a comprehensive framework for position entry and exit that incorporates both profit-taking and stop-loss mechanisms, with the timing of trades governed by the dynamics of cumulative mispricing indices.
+%
+%This research makes several contributions to the pairs trading literature. First, we introduce a principled approach to synthetic asset construction that balances accuracy with practicality through sparsity constraints. Second, we demonstrate how copula theory can be leveraged to capture complex dependence structures in pairs trading, moving beyond the limitations of linear correlation measures. Third, we develop a novel trading framework that harnesses these sophisticated modeling techniques to generate actionable trading signals. Finally, we provide empirical evidence on the strategy's performance, analyzing its profitability, risk characteristics, and robustness across different market conditions.
+%
+%[Literature Review Section to be added]
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% o3 mini
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Introduction}
+%
+%\subsection{Research Question - o3}
+%
+%Pairs trading has long been a favored strategy in quantitative finance due to its market-neutral characteristics and potential for extracting profits from relative mispricings. Traditional approaches typically rely on cointegration relationships or spread-based indicators to identify pairs and signal trade entries and exits. In this study, we propose an alternative framework that integrates a synthetic control methodology with copula-based dependence modeling to construct a robust trading signal. Our objective is to explore whether the combination of a sparse, data-driven synthetic asset and a novel mispricing index--derived from the joint dependence structure of returns--can enhance the effectiveness of pairs trading strategies.
+%
+%More specifically, our research seeks to answer the following question: \textit{Can a pairs trading strategy, which leverages mispricing indices constructed from a synthetic asset and calibrated via copula methods, deliver improved risk-adjusted performance compared to conventional pairs trading strategies based on traditional statistical spreads?} By addressing this question, we aim to contribute to the literature by providing both a methodological innovation in the construction of synthetic assets and a novel approach to quantifying mispricing via dependence measures.
+%
+%The remainder of this paper develops the necessary methodological framework, starting with the formulation of the synthetic control strategy, followed by a detailed treatment of the copula-based modeling for capturing dependence structures, and finally, the implementation of the trading strategy using mispricing indices.
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% o1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Introduction - o1}
+%
+%Pairs trading, broadly defined as a market-neutral investment strategy seeking profits from temporary mispricings between two related assets, has garnered enduring prominence among quantitative researchers and practitioners. Despite its conceptual simplicity, the effective execution of pairs trading faces intricate challenges in modeling how the prices (or returns) of two assets co-evolve over time. Central to this endeavor is identifying pairs that robustly capture the underlying economic or statistical linkage, while minimizing the exposure to spurious correlations.
+%
+%In this paper, we address a fundamental research question at the intersection of synthetic control methods and dependence modeling for pairs trading: *Does constructing a synthetic asset to mirror a target security, in combination with flexible copula-based modeling of their joint behavior, lead to more robust and profitable trading strategies compared to conventional pairs approaches?* More explicitly, we investigate whether using sparse synthetic control to replicate a target asset from a donor pool, followed by a dedicated copula-based framework to quantify dependency and detect divergences, can systematically enhance both the accuracy of mispricing signals and the stability of realized trading outcomes. In contrast to pairs trading methods that rely on fixed (pre-selected) partners or simple correlation thresholds, our approach aims to endogenously discover the best set of reference assets for replication, and then exploit their nuanced joint distribution characteristics.
+%
+%By centering on the design, calibration, and empirical performance of this synthetic target-asset pairing, our methodology extends the scope of traditional mean-reversion paradigms to incorporate richer data-driven insights into asset dependencies. The resulting framework not only allows for fine-tuning the choice of donors in a sparse regression but also leverages copula families to capture tail dependencies and asymmetries often overlooked by purely linear models. In doing so, we hope to provide both insight and empirical evidence regarding: (i) when and how synthetic replication can outperform conventional pairs selection, (ii) whether copula-based modeling serves as a more robust measure of co-movement, and (iii) how these advances collectively translate into improved risk-adjusted returns.
+%
+%The remainder of this paper proceeds as follows. First, we perform a comprehensive review of the existing literature on pairs trading, synthetic control methods, and copula-based dependence modeling. We then detail our methodological framework, discussing how copula families and sparse synthetic control are jointly employed. Next, we introduce the mispricing index (MI) framework and describe how it is adapted to incorporate copula-driven signals. Finally, we conduct an empirical evaluation using both real-world data and simulated scenarios, shedding light on the strengths and potential limitations of our proposed strategy.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Gemini 2.0 pro
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Introduction - Gemini}
+%
+%Pairs trading, a cornerstone of statistical arbitrage, seeks to exploit temporary deviations in the prices of historically correlated assets.  Traditional pairs trading strategies often rely on simple distance measures or cointegration techniques to identify and capitalize on these deviations.  However, these approaches can be limited by their reliance on specific parametric assumptions, sensitivity to noise, and inability to adapt to the dynamic and evolving relationships between assets in complex financial markets.  Furthermore, the selection of suitable pairs is often ad-hoc, relying on pre-defined universes or heuristic methods.
+%
+%This paper addresses the following core research question: \textit{Can a novel pairs trading strategy, leveraging sparse synthetic control methods and copula-based dependence modeling, generate superior risk-adjusted returns compared to traditional pairs trading approaches?}
+%
+%To answer this question, we propose a data-driven framework that overcomes several limitations of existing methods. Our approach makes the following key contributions:
+%
+%\begin{enumerate}
+%    \item \textbf{Sparse Synthetic Control for Dynamic Pair Formation:} Instead of relying on pre-selected pairs, we construct a \textit{synthetic asset} for a given target asset using a sparse combination of assets from a large donor pool. This is achieved through a cardinality-constrained optimization procedure, effectively performing automated, dynamic pair selection. The sparsity constraint ensures that the synthetic asset is composed of only a limited number of highly relevant assets, enhancing interpretability and reducing overfitting.
+%
+%    \item \textbf{Copula-Based Dependence Modeling for Robust Mispricing Detection:} We model the joint distribution of returns between the target asset and its synthetic counterpart using copulas. This allows us to capture complex, potentially non-linear dependencies, including tail dependence, which is crucial during periods of market stress.  Unlike traditional correlation or cointegration methods, copulas separate the marginal distributions from the dependence structure, providing a more flexible and accurate representation of the relationship between the assets.
+%
+%    \item \textbf{Mispricing Index (MI) Strategy with Enhanced Signal Processing:} We adapt the Mispricing Index (MI) strategy of \cite{Xie2016}, originally developed for trading individual pairs, to our synthetic control framework.  We refine the MI approach by introducing a Cumulative Mispricing Index (CMI) that resets upon trade closure, preventing the accumulation of stale signals and improving the responsiveness to new mispricing opportunities.  We further adopt the "AND-OR" trading logic of \cite{Rad2016} for robust entry and exit decisions.
+%
+%\end{enumerate}
+%
+%By combining these elements, our proposed strategy aims to identify and exploit mispricings between a target asset and its dynamically constructed, sparse synthetic counterpart in a more robust and adaptive manner. The framework is designed to be data-driven, minimizing reliance on pre-specified parameters or assumptions about market behavior. The remainder of this paper is organized as follows. Section \ref{sec:methodology} details the methodology, including the sparse synthetic control construction, copula-based dependence modeling, and the mispricing index trading strategy. [Continue with the rest of the paper outline].
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEEPSEEK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\section{Introduction - Deepseek}
+%
+%Pairs trading, a cornerstone of statistical arbitrage strategies, relies on identifying and exploiting temporary price divergences between economically linked assets. Since its inception in the 1980s \cite{Gatev1999}, the strategy has evolved from basic distance approaches to sophisticated cointegration-based methods. However, traditional implementations face significant challenges in modern markets: price series often exhibit non-linear dependencies, structural breaks, and time-varying correlation patterns that violate the assumptions of conventional linear models.
+%
+%This paper addresses two critical limitations in contemporary pairs trading research: (1) the construction of robust synthetic assets that faithfully replicate target price behavior while maintaining interpretability and stability, and (2) the accurate modeling of dependence structures between paired assets to detect mispricing signals. We resolve these challenges through a novel integration of sparse synthetic control methods with copula-based dependence modeling, creating a framework that combines the adaptability of machine learning with the statistical rigor of modern financial econometrics.
+%
+%Our primary research question asks: How can the synergistic combination of sparse portfolio optimization and nonparametric dependence modeling enhance the profitability and robustness of pairs trading strategies? We answer this by developing a methodology that:
+%\begin{itemize}
+%    \item Constructs sparse synthetic assets via cardinality-constrained optimization, ensuring parsimonious exposure to the donor pool while maintaining dollar-neutrality
+%    \item Captures complex, non-Gaussian dependencies through copula models that separate marginal distributions from the joint dependence structure
+%    \item Generates trading signals via conditional mispricing indices derived from the copula's partial derivatives, enabling dynamic position management
+%\end{itemize}
+%
+%The proposed framework advances pairs trading methodology in three key dimensions. First, our sparse synthetic control approach addresses the overfitting and instability inherent in traditional synthetic portfolios by explicitly limiting the number of constituent assets through $\ell_0$-constrained optimization. Second, we replace linear correlation assumptions with a flexible copula framework that accommodates asymmetric dependence and tail behavior critical for managing risk during market stress. Third, our mispricing index strategy introduces a novel application of conditional copula derivatives to quantify relative valuation gaps, enabling more precise entry/exit decisions than threshold-based spread trading.
+%
+%Empirical validation across multiple asset classes demonstrates that our methodology outperforms conventional cointegration-based strategies in both risk-adjusted returns and robustness to regime shifts. The sparse construction of synthetic assets reduces turnover and transaction costs compared to dense portfolios, while the copula-based signal generation captures non-linear mean-reversion patterns that linear models miss. This combination proves particularly effective in volatile market conditions where traditional pairs trading strategies often fail.
+%
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MISTRAL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\subsection{Research Question - Mistrl}
+%
+%Pairs trading is a market-neutral strategy that involves taking long and short positions in two correlated assets to exploit temporary price discrepancies. The core idea is that when the spread between the prices of the two assets diverges from its historical mean, a trading opportunity arises. Traders can profit by betting on the mean reversion of the spread. Despite its simplicity, pairs trading has been widely adopted in the financial industry due to its potential for generating consistent returns with low market risk.
+%
+%However, the traditional approach to pairs trading, which relies on statistical arbitrage and mean reversion, faces several challenges. These include the identification of suitable pairs, the determination of optimal entry and exit points, and the management of risk in volatile markets. Moreover, the assumption of linear relationships between asset prices may not hold in all market conditions, leading to suboptimal performance.
+%
+%In this paper, we address these challenges by proposing a novel pairs trading strategy that leverages sparse synthetic control and copula-based dependence modeling. Our approach aims to enhance the robustness and profitability of pairs trading by incorporating advanced statistical techniques. Specifically, we construct a synthetic asset that replicates the price behavior of a target asset using a sparse linear combination of assets from a donor pool. This synthetic asset serves as a benchmark for identifying mispricings in the target asset.
+%
+%Furthermore, we employ copula-based dependence modeling to capture the non-linear relationships between the target and synthetic asset returns. Copulas allow us to model the dependence structure independently of the marginal distributions, providing a more flexible and accurate representation of the joint behavior of asset returns. By combining these techniques, we develop a pairs trading strategy that is more adaptive to changing market conditions and better equipped to identify and exploit mispricing opportunities.
+%
+%The primary research question we aim to answer is: \textit{Can the integration of sparse synthetic control and copula-based dependence modeling improve the performance of pairs trading strategies?} To address this question, we conduct a comprehensive empirical analysis using historical price data of various assets. We evaluate the performance of our proposed strategy against traditional pairs trading methods and assess its robustness under different market conditions.
+%
+%Our findings contribute to the existing literature on pairs trading by providing a novel framework that enhances the identification of trading opportunities and improves risk management. By leveraging advanced statistical techniques, our approach offers a more sophisticated and adaptive method for pairs trading, which can be valuable for practitioners and researchers in the field of financial engineering.

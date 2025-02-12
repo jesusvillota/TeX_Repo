@@ -1,0 +1,655 @@
+\section{Experiments}
+\begin{enumerate}
+  \item Do an experiment by increaseing the frequency of trades (i.e: reduce the entry bands for the tracking error to force the algorithm to generate more frequent entry and exit signals). This allows us to explore Lopez De Prado's observation that the Sharpe Ratio is increasing in the amount of trading (see Chapter 15 of \qquote{Advances in Financial Machine Learning, Lopez de Prado})
+
+  \item Test your trading strategy using the Combinatorial Purged Cross Validation method (see section 12.4 in Chapter 12 of \qquote{Advances in Financial Machine Learning, Lopez de Prado})
+\end{enumerate}
+
+
+
+
+\section{Methodology}
+
+This section presents our methodological framework for implementing statistical arbitrage using synthetic control methods. 
+
+\subsection{Theoretical Framework}
+
+%Let $r_{t}^{i}$ denote the return of cryptocurrency $i$ at time $t$. We designate by $r_t^*$ the target cryptocurrency return and by $\mathbf{r}_t^{\mathcal{J}}\in \mathbb{R}^{|\mathcal{J}|}$ the vector of cryptocurrency returns from  donor pool $\J$.
+
+Let $p_{t}^{i}$ denote the log price of cryptocurrency $i$ at time $t$. We designate by $p_t^*$ the target log price and by $\mathbf{p}_t^{\mathcal{J}}\in \mathbb{R}^{\card{\mathcal{J}}}$ the vector of log prices from the members of the donor pool $j\in \J$.
+
+
+\mx 
+Our empirical strategy employs $N$ non-disjoint rolling window samples $\mathcal{T} = \{\mathcal{T}_1, \ldots, \mathcal{T}_N\}$, where each window $\mathcal{T}_{\ell}$ is partitioned into training and testing periods:
+$$
+\mathcal{T}_{\ell} := \mathcal{T}^{train}_{\ell} \cup \mathcal{T}^{test}_{\ell}
+, \quad \ell=1, \ldots, N
+$$
+
+We set $\card{\mathcal{T}^{train}_{\ell}} = 252$ days for the training period and $\card{\mathcal{T}^{test}_{\ell}} = 21$ days for the testing period, corresponding to approximately one year of training data and one month of out-of-sample testing. %\footnote{We will use $\abs{\cdot}$ indistinctively to denote the cardinality of a set and the absolute value of a number. The meaning can be understood from the context.}
+
+
+
+\subsection{Implementation Strategy}
+
+For each rolling window $\mathcal{T}_{\ell}\in \mathcal T$, our methodology proceeds in four steps:
+
+\subsubsection*{Step 1: Synthetic Control Estimation} 
+We begin by constructing a synthetic control that mimics the behavior of the target cryptocurrency. This process involves three key components:
+
+\paragraph{Donor Pool Selection.} We first establish the donor pool $\mathcal{J}$ by selecting cryptocurrencies that satisfy specific eligibility criteria during the training period ($\T_\ell^{train}$). We filter potential donors based on liquidity and trading activity metrics:
+$$
+\mathcal{J} = 
+\3{i
+\c
+%:
+%\begin{array}{l}
+i \neq 0
+,~
+%~\wedge~
+% \\
+V_i > Q_v(\nu) 
+,~
+%~\wedge~
+%\\
+N_i > Q_n(\nu) 
+%\end{array}
+}
+,
+$$
+where $V_i$ and $N_i$ represent, respectively, the in-sample average trading volume, and average number of trades, and $Q_v(\nu)$, $Q_n(\nu)$ are the respective in-sample $\nu$-quantiles of the volume and trade count distributions. In our application we set $\nu = 0.2$.
+
+\paragraph{Synthetic Weight Estimation.} We estimate in-sample the optimal weights by solving a synthetic control program with elastic net regularization 
+%in the training sample
+
+%%%%%%%%%%%%%%%%%% VERSION WITH PRICES %%%%%%%%%%%%%%%%%%
+$$
+\widehat{\mathbf{w}} := \left[
+\begin{array}{rlll}
+\underset{\mathbf{w}}{\arg\min} & 
+\sum_{t \in \mathcal{T}^{train}_{\ell}}
+(
+p_t^* - 
+%\angl{\mathbf{r}_t^{\mathcal{J}},\mathbf{w}}
+%\mathbf{w}^{\top} \mathbf{r}_t^{\mathcal{J}}
+\mathbf{w}' \mathbf{p}_t^{\mathcal{J}}
+)^2
++ 
+\mathcal{R}(\mathbf{w}; \boldsymbol{\theta})
+\\[1em]
+\text{s.t.} &
+    \left\{
+    \begin{array}{rl}
+    \mathbf{w} &\geq 0 \\
+    \mathbf{1}^{\top} \mathbf{w} &= 1
+    \end{array}
+    \right\}
+\end{array}
+\right]
+,
+$$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%% VERSION WITH RETURNS %%%%%%%%%%%%%%%%%%
+%$$
+%\widehat{\mathbf{w}} := \left[
+%\begin{array}{rlll}
+%\underset{\mathbf{w}}{\arg\min} & 
+%\sum_{t \in \mathcal{T}^{train}_{\ell}}
+%(
+%r_t^* - 
+%%\angl{\mathbf{r}_t^{\mathcal{J}},\mathbf{w}}
+%%\mathbf{w}^{\top} \mathbf{r}_t^{\mathcal{J}}
+%\mathbf{w}' \mathbf{r}_t^{\mathcal{J}}
+%)^2
+%+ 
+%\mathcal{R}(\mathbf{w}; \boldsymbol{\theta})
+%\\[1em]
+%\text{s.t.} &
+%    \left\{
+%    \begin{array}{rl}
+%    \mathbf{w} &\geq 0 \\
+%    \mathbf{1}^{\top} \mathbf{w} &= 1
+%    \end{array}
+%    \right\}
+%\end{array}
+%\right]
+%,
+%$$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+where $\mathcal{R}(\mathbf{w}; \boldsymbol{\theta}) := \alpha(\gamma ||\mathbf{w}||_1 + (1-\gamma)||\mathbf{w}||_2^2)$ represents the elastic net regularization term. The hyperparameters $\boldsymbol{\theta} := (\alpha, \gamma)$ are selected through cross-validation, with $\alpha$ controlling overall regularization strength and $\gamma$ determining the balance between L1 (LASSO) and L2 (Ridge) penalties. 
+\bblue{In the code (see \texttt{SyntheticControlElasticNet} class), we pass the training log prices through \texttt{GridSearchCV} with a \texttt{TimeSeriesSplit} cross-validation routine to find the best $\alpha,\gamma$. The optimization program is solved using the \texttt{CVXPY} package (cite Diamond, Boyd, \ldots).
+}
+
+
+\paragraph{Synthetic Control Extrapolation.}
+ Given the optimal in-sample weights $\widehat{\mathbf{w}}$, we compute the synthetic control log prices in the test sample as the dot product between the donor returns and the weights:
+$$
+\widehat{p}_t^* = 
+%\mathbf{r}_t^{\mathcal{J}} \cdot \widehat{\mathbf{w}}
+%\angl{\mathbf{r}_t^{\mathcal{J}} ,\widehat{\mathbf{w}}}
+\widehat{\mathbf{w}}' \mathbf{p}_t^{\mathcal{J}} 
+,  
+\quad 
+t\in\mathcal{T}^{test}_{\ell}
+$$
+\bblue{In the code, this corresponds to calling $\texttt{best\_model.predict}()$.}
+
+
+\subsubsection*{Step 2: Statistical Arbitrage Strategy}
+
+We exploit deviations between the target and synthetic returns through a mean-reversion trading strategy.
+
+\paragraph{Tracking Error.} We compute the tracking error as:
+$
+TE_t = p_t^* - \widehat{p}_t^*
+$. The sample mean and variance of $\{TE_t\}_{t\in\T_{\ell}^{train}}$ is
+$$
+\begin{array}{ll}
+\mu_{TE}
+&=
+%|\mathcal{T}_{\ell}^{train}|^{-1}
+\frac{1}{\card{\mathcal{T}_{\ell}^{train}}}
+\sum_{t\in\mathcal{T}_{\ell}^{train}}
+TE_{t}
+\\[1em]
+\sigma_{TE}
+&=
+\sqrt{
+%(|\mathcal{T}_{\ell}^{train}|-1)^{-1}
+\frac{1}{\card{\mathcal{T}_{\ell}^{train}}-1}
+\sum_{t\,\in\,\mathcal{T}_{\ell}^{train}}(TE_{t}\;-\;\mu_{TE})^{2}
+}
+\end{array}
+$$.
+%The tracking error's statistical properties are characterized by its mean $\mu_{TE}$ and standard deviation $\sigma_{TE}$, estimated over the training period.
+
+\paragraph{Trading Signal Generation.}
+Since we expect the traking error to be \emph{stationary} around zero if the synthetic is well-fit, we design a mean-reversion strategy on $TE_{t}$. 
+%We choose thresholds, e.g.\ $\pm \kappa_{entry}\sigma_{TE}$ for entry and $\pm \kappa_{exit}\sigma_{TE}$ for exit, to produce a trading rule:
+
+for $t\in \T_{\ell}^{test} \equiv \{t_0, \ldots, T\}$:
+\begin{align*}
+t=t_0: \quad  s_{t_0} &= 0 ~~(\t{no position at start})
+\\[1em]
+t_0<t<T: \quad s_t &=
+%TR(TE_t) = 
+\left\{
+\begin{array}{rllll}
+-1 & \text{if} & TE_t > \mu_{TE} + \kappa_{entry}\sigma_{TE} && \text{(short entry)} \\
++1 & \text{if} & TE_t < \mu_{TE} - \kappa_{entry}\sigma_{TE} && \text{(long entry)} \\
+0 & \text{if} & \t{either} 
+	\left\{
+	\begin{array}{lll}
+		|TE_t| <  \mu_{TE} + \kappa_{exit}\sigma_{TE}
+%		\\ \t{or} 
+		\\
+		|TE_t| >\mu_{TE}+\kappa_{stop}\sigma_{TE}
+	\end{array}
+	\right.
+	&& \text{(exit)}
+	\\
+%0 & \text{if} & |TE_t - \mu_{TE}| < \kappa_{exit}\sigma_{TE} && \text{(exit)} \\
+s_{t-1}
+%TR(TE_{t-1})
+ & & \text{otherwise} && \text{(hold position)}
+\end{array}
+\right.
+\\[1em]
+t=T: \quad s_T &= 0 ~~(\t{no position at end})
+\end{align*}
+
+where $\kappa_{entry} = 5.0$ is the entry threshold, $\kappa_{exit} = 0.25$ is the exit threshold and $\kappa_{stop}=6$ is the stop-loss threshold (which amounts to $\ln(1)$ US dollars of loss per coin per side). The Trading Rule is forced to start and end at 0 (no trade).
+
+
+\bblue{This is realized in the \texttt{MeanReversionStrategy.generate\_signals} method, which tags each timestamp as $\pm1$ or $0$.}
+
+\subsubsection*{Step 3: Portfolio Construction}
+Upon generating these signals, the code opens a \emph{paired trade} (long target, short synthetic) when $TE_{t}$ is below the negative threshold, and closes or reverses that position when $TE_{t}$ crosses back above the exit boundary. Vice versa for short target, long synthetic. \bblue{The \emph{PairsTradingAgent} (in \texttt{src/models.py}) handles the exact details}.
+Hence, in each backtest ($\T_{\ell}^{train}$) a set of paired trades $\mathcal{PT} = \{ \mathcal{PT}_1, \ldots, \mathcal{PT}_K\}$ will take place. 
+
+\bx 
+\noindent for $\mathcal{PT}_k \in \mathcal{PT}$:
+
+\begin{itemize}
+\item Each paired trade ($\mathcal{PT}_k$) occurs between some interval 
+$\{\underline{\mathfrak t},\ldots, \overline{\mathfrak t}\}\subset \T^{test}$  
+and is identified by a sequence of signals 
+$(
+s_{\underline{\mathfrak{t}}-1},
+s_{\underline{\mathfrak{t}}},
+\ldots,
+s_{\overline{\mathfrak{t}}-1},
+s_{\overline{\mathfrak{t}}} 
+)
+\in 
+\9{ 
+\ub{(0,1,\ldots,1,0)}{\t{\qquote{Long}}~\mathcal{PT}}
+~\cup~
+\ub{(0,-1,\ldots,-1,0)}{\t{\qquote{Short}}~\mathcal{PT}}
+}$. 
+
+\item \textit{Entry Transaction costs}. For available cash $C_{\underline{\mathfrak{t}}}$ at time $\underline{\mathfrak{t}}$, we allocate the paired trade positions by devoting half of the cash to the target cryptocurrency and the other half to the synthetic cryptocurrency. We pay entry transaction costs $\tau$ proportionally to the traded amount
+$$
+\begin{array}{rlll}
+\text{\textit{target:}} 
+&&
+\tau C_{\underline{\mathfrak{t}}} / 2
+\\[1em]
+\text{\textit{synth:}} 
+&&
+\sum_{j\in\J}\tau w_j^* C_{\underline{\mathfrak{t}}}/2 = \tau C_{\underline{\mathfrak{t}}} / 2
+%\quad \forall j \in \mathcal{J}_\ell
+\end{array}
+$$ 
+
+
+\item \textit{Position Sizing.} After paying the entry transaction costs, we buy cryptocurrency at entry price $P_{\underline{\mathfrak{t}}}^i, ~\forall i$.
+%for $i\in \{*\}\cup\J$
+$$
+\begin{array}{rlll}
+\text{\textit{target:}} 
+&&
+Q^* = s_{\underline{\mathfrak{t}}} (1-\tau) \frac{C_{\underline{\mathfrak{t}}}/2}{P_{\underline{\mathfrak{t}}}^*}
+\\[1em]
+\text{\textit{synth:}} 
+&&
+Q^j = s_{\underline{\mathfrak{t}}} w_j^*(1-\tau)\frac{C_{\underline{\mathfrak{t}}}/2}{P_{\underline{\mathfrak{t}}}^j} 
+\quad \forall j \in \mathcal{J}_\ell
+\end{array}
+$$
+where $P_t^i$ represents the hourly price of asset $i$ at time $t$, estimated as the half bid-ask spread.
+
+
+\item \textit{Exit transaction costs}. The paired trade is closed at $\overline{\mathfrak{t}}$ with a price $P_{\overline{\mathfrak{t}}}^i,~\forall i$.
+%for $i\in\{0\}\cup \J$. 
+To exit the position we must pay exit transaction costs proportional to the traded value. 
+$$
+\begin{array}{rlll}
+\text{\textit{target:}} 
+&&
+\tau | Q^* P_{\overline{\mathfrak{t}}}^* |
+\\[1em]
+\text{\textit{synth:}} 
+&&
+\tau \sum_{j\in\J}  |Q^j P_{\overline{\mathfrak{t}}}^j|
+\end{array}
+$$
+
+
+\item \textit{PnL.} Once the paired trade is closed, we can compute the PnL as: 
+$$
+\begin{array}{lll}
+&\t{PnL}^{target} 
+&= Q^*(P_{\overline{\mathfrak{t}}}^*-P_{\underline{\mathfrak{t}}}^*) - \tau | Q^* P_{\overline{\mathfrak{t}}}^* |
+\\[0.3em]
++ &\t{PnL}^{synth} 
+&= \sum_{j\in\J} Q^j(P_{\overline{\mathfrak{t}}}^j-P_{\underline{\mathfrak{t}}}^j)
+- \tau |Q^j P_{\overline{\mathfrak{t}}}^j|
+\\[0.3em]\hline 
+&\t{PnL}^{total} 
+\end{array}
+$$
+%where $\tau |Q^i P_{\overline{\mathfrak{t}}}^i|$ are the exit transaction costs from the position in cryptocurrency $i$.
+
+\item \textit{Total Transaction Costs}. The total transaction costs paid thoughout the paired trade are:
+$$
+TC = 
+\tau 
+\5{
+C_{\underline{\mathfrak{t}}} + 
+\4{
+| Q^* P_{\overline{\mathfrak{t}}}^* | + 
+\sum_{j\in\J}  |Q^j P_{\overline{\mathfrak{t}}}^j|
+}
+}
+$$
+where $C_{\underline{\mathfrak{t}}}$ is the traded amount when entering the paired trade and $| Q^* P_{\overline{\mathfrak{t}}}^* | + 
+\sum_{j\in\J}  |Q^j P_{\overline{\mathfrak{t}}}^j|$ is the traded amount when exiting the paired trade.
+
+%\item \textit{Return Computation.} The strategy's return incorporates both the target and synthetic components:
+%$$\begin{array}{lll}
+%& R^{target} &= \frac{\t{PnL}^{target}}{Q^* P_{\underline{\mathfrak{t}}}^*}
+%\\[0.5em]
+%+ & R^{synth} &= \frac{\t{PnL}^{synth}}{Q^* P_{\underline{\mathfrak{t}}}^*}
+%\\[0.3em] \hline 
+%& R^{total} 
+%\end{array}$$
+\end{itemize}
+
+
+%Finally, if we add all the PnL of all the paired trades $\mathcal{PT}_k\in \mathcal{PT}$ we get: 
+%$$
+%\t{PnL} = \sum_{\mathcal{PT}_k \in \mathcal PT}\t{PnL}^{total} (\mathcal{PT}_k)
+%$$
+%and therefore, the return from our trading strategy is: 
+%$$
+%R = \frac{\t{PnL}}{C}
+%$$
+%where $C$ denotes the initial cash at the beginning of the backtest. At this point, we can compute performance and trading intensity metrics. 
+
+
+\noindent \textbf{Balance Account dynamics}. 
+$$\begin{array}{llllllllll}
+s_{t-1}=0  &\to &s_t=\pm 1 &&& C_{t-1}\neq 0\to C_t=0 &&& E_{t-1} = 0\to E_t=C_{t-1}
+\\
+s_{t-1}=\pm 1 &\to &s_t= \pm 1 &&& C_{t-1}=0\to C_t = 0 &&& E_{t-1} \neq 0 \to E_{t} = E_{t-1} \neq 0
+\\
+s_{t-1}=\pm 1 &\to &s_t=0 &&& C_{t-1}=0 \to C_t = E_{t-1} &&& E_{t-1} \neq 0 \to E_{t} = 0
+\end{array}$$
+
+The equity dynamics are as follows: 
+\begin{itemize}
+  \item During a paired trade starting at $\underline{\mathfrak{t}}$: 
+$
+E_t = C_{\underline{\mathfrak{t}}} + \t{PnL}_t
+$
+  \item Rest of the time: $E_t = 0$
+\end{itemize}
+
+\noindent \textbf{Net Liquidation Value}. Define the Net Liquidation Value of the trading account as: 
+$$
+NLV _t = C_t + E_t
+$$
+where $C_t$ and $E_t$ represent the cash and equity accounts at time $t$. 
+Hence, the time series of returns in the backtest is given by: 
+$$
+R_t := \frac{NLV_t}{C}
+$$
+where $C$ indicates the initial cash with which we started the trading strategy.
+
+\subsubsection{Step 4: Risk Management}
+
+We implement several risk management protocols:
+
+\begin{itemize}
+\item Maximum position size: $|Q_t^i| \leq Q_{max}$
+\item Stop-loss triggers: Exit if $R_t < -\delta_{SL}$
+\item Maximum holding period: $t - t_{entry} \leq T_{max}$
+\end{itemize}
+
+These constraints ensure prudent risk management while maintaining strategy effectiveness.
+
+
+% \Vhrulefill
+% \subsection{Step 1: Synthetic Control Estimation}
+
+% \paragraph{1) Donor Pool Selection.}
+% In each training window $\mathcal{T}_{\ell}^{train}$, we construct an \emph{eligible donor pool} $\mathcal{J}$. This pool is determined by liquidity thresholds (e.g., minimal rolling volume or trade count), and excludes the target coin $i=0$. Formally:
+% $$
+% \mathcal{J} \;=\;
+% \left\{\;
+% i\;\Bigg|\;
+% i\neq 0,\;\text{symbol $i$ has no missing data over } \mathcal{T}_{\ell}^{train},\;\text{and meets volume/trade-count quantiles}
+% \right\}.
+% $$
+
+% \paragraph{2) Synthetic Weights Estimation.}
+% Given the donor pool $\mathcal{J}$, our code solves the following \emph{elastic net} regularized Synthetic Control (SC) problem on the training window:
+% $$
+% \mathbf w^* :=
+% % \left[
+% % \begin{array}{rlll}
+% % \underset{\mathbf w}{\arg \min}  & ||\mathbf y - \mathbf X \mathbf w||_2^2 + \mathcal P(\mathbf w; \boldsymbol\theta)
+% % % \alpha (\gamma ||\mathbf w||_1 + (1 - \gamma)||\mathbf w||_2^2)
+% % \\[1em]
+% % \operatorname{s.t.} &
+% %     \left\{
+% %     \begin{array}{rl}
+% %     \mathbf w &\geq 0
+% %     \\
+% %     \mathbf 1^{\top} \mathbf w  &= 1
+% %     \end{array}
+% %     \right\}
+% % \end{array}
+% % \right]
+% % = 
+% \left[
+% \begin{array}{rlll}
+% \underset{\mathbf w}{\arg \min}  & 
+% \sum_{t \in \mathcal T^{train}_{\ell}}(r_t^* - \mathbf w^{\top} \mathbf r_t^{\mathcal{J}})^2
+% + \mathcal P(\mathbf w; \boldsymbol\theta)
+% \\[1em]
+% \operatorname{s.t.} &
+%     \left\{
+%     \begin{array}{rl}
+%     \mathbf w &\geq 0
+%     \\
+%     \mathbf 1^{\top} \mathbf w  &= 1
+%     \end{array}
+%     \right\}
+% \end{array}
+% \right]
+% $$
+% Here, $\mathbf{r}_{t}^{\mathcal{J}}\in\mathbb{R}^{|\mathcal{J}|}$ denotes the stacked donor returns at time $t$, and the elastic net penalty is given by
+% $
+% \mathcal{P}\bigl(\mathbf{w};\,\boldsymbol{\theta}\bigr)
+% \;:=\;
+% \alpha\;\Bigl(\;\gamma\,\|\mathbf{w}\|_{1}
+% \;+\;(1-\gamma)\,\|\mathbf{w}\|_{2}^{2}\Bigr),
+% $
+% with $\alpha$ (overall amplitude of the penalty) and $\gamma$ (the L1-ratio) selected by cross-validation over a predefined grid. In code (see \texttt{SyntheticControlElasticNet} class), we pass the training returns through \texttt{GridSearchCV} with a \texttt{TimeSeriesSplit} cross-validation routine to find the best $\alpha,\gamma$.
+
+% \paragraph{3) Synthetic Control Extrapolation.}
+% Once the weights $\widehat{\mathbf{w}}$ are fitted in the training window $\mathcal{T}_{\ell}^{train}$, we then \emph{immutably} fix these weights for the test window $\mathcal{T}_{\ell}^{\text{test}}$. The synthetic return at time $t\in\mathcal{T}_{\ell}^{\text{test}}$ is:
+% $
+% \widehat{r}_{t}^{0}
+% \;=\;
+% \mathbf{r}_{t}^{\mathcal{J}}\;\cdot\;\widehat{\mathbf{w}}.
+% $
+% In the code, this corresponds to calling $\texttt{best\_model.predict}(\cdot)$ on the donor returns from the test period.
+
+% \subsection{Step 2: Statistical Arbitrage via Tracking Error}
+
+% \paragraph{1) Tracking Error.}
+% We define the out-of-sample tracking error (\texttt{TE}) at time $t$ as
+% $
+% TE_{t}
+% \;=\;
+% r_{t}^{0} \;-\; \widehat{r}_{t}^{0}.
+% $
+% The code computes this for each $t\in\mathcal{T}_{\ell}^{\text{test}}$. The sample mean and variance of $TE_{t}$ can be estimated from the in-sample (training) residuals or via a rolling window that updates over time:
+% $
+% \mu_{TE}
+% \;=\;
+% \frac{1}{|\mathcal{T}_{\ell}^{train}|}
+% \sum_{t\,\in\,\mathcal{T}_{\ell}^{train}}TE_{t},
+% \qquad
+% \sigma_{TE}^{2}
+% \;=\;
+% \frac{1}{|\mathcal{T}_{\ell}^{train}|\!-\!1}
+% \sum_{t\,\in\,\mathcal{T}_{\ell}^{train}}\bigl(TE_{t}\;-\;\mu_{TE}\bigr)^{2}.
+% $
+% In code, we typically collect these statistics right after fitting in-sample, and then the code uses them to form thresholds for trade signals.
+
+% \paragraph{2) Mean-Reversion Boundaries and Trade Signals.}
+% Since we expect $TE_{t}$ to be \emph{stationary} around zero if the synthetic is well-fit, we design a mean-reversion strategy on $TE_{t}$. We choose thresholds, e.g.\ $\pm 2\,\sigma_{TE}$ for entry and $\pm 0.5\,\sigma_{TE}$ for exit, to produce a trading rule:
+% $$
+% \mathrm{sign}\bigl(TE_{t}\bigr)
+% \;=\;
+% \begin{cases}
+% +1, & TE_{t} \le \mu_{TE} - 2\sigma_{TE}, \\
+% -1, & TE_{t} \ge \mu_{TE} + 2\sigma_{TE}, \\
+% 0,  & \text{otherwise}.
+% \end{cases}
+% $$
+
+% In practice, the code uses more refined logic: if the position was previously long and $TE_{t}$ reverts above $\mu_{TE} - 0.5\,\sigma_{TE}$, we exit the trade (similarly for short). This is realized in the \texttt{MeanReversionStrategy.generate\_signals} method, which tags each timestamp as $\pm1$ or $0$.
+
+% \paragraph{3) Execution and PnL.}
+% Upon generating these signals, the code opens a \emph{paired trade} (long target, short synthetic) when $TE_{t}$ is below the negative threshold, and closes or reverses that position when $TE_{t}$ crosses back above the exit boundary. Vice versa for short target, long synthetic. The \emph{PairsTradingAgent} (in \texttt{src/models.py}) handles the exact details:
+
+% \begin{itemize}
+%     \item Splits capital: 50\% allocated to the target side, 50\% to the synthetic side.  
+%     \item Scales the donor pool side by $\widehat{\mathbf{w}}$.  
+%     \item Tracks transaction costs $\mathrm{TC}$ = $\mathrm{notional}\,\times\,\texttt{transaction\_cost\_pct}$.  
+%     \item Updates the PnL from the difference $TE_{t}$.  
+% \end{itemize}
+% After each rolling window $\mathcal{T}_{\ell}$, the code logs the out-of-sample performance ($\mathrm{MSE}$, $\mathrm{Sharpe Ratio}$, etc.), then proceeds to $\mathcal{T}_{\ell+1}$ until all windows are processed.
+
+
+
+
+% \Vhrulefill
+
+
+% 2) **Statistical Arbitrage bounds**. Since, by construction, the synthetic control approximates the target asset's returns, we expect the tracking error to exhibit mean-reverting properties. We exploit this feature by implementing a mean-reversion trading strategy based on statistical bounds of the tracking error. The trading rule is as follows:
+
+% $$
+% TR(TE_t) = 
+% \left\{
+% \begin{array}{llll}
+% -1 & \text{if} & TE_t > \mu_{TE} + \kappa_{entry}\sigma_{TE} & \text{(short signal)} \\
+% 1 & \text{if} & TE_t < \mu_{TE} - \kappa_{entry}\sigma_{TE} & \text{(long signal)} \\
+% 0 & \text{if} & |TE_t - \mu_{TE}| < \kappa_{exit}\sigma_{TE} & \text{(exit signal)} \\
+% \text{prev} & & \text{otherwise} & \text{(maintain previous position)}
+% \end{array}
+% \right.
+% $$
+
+% where $\kappa_{entry}$ and $\kappa_{exit}$ are the entry and exit thresholds respectively, calibrated to $\kappa_{entry}=2.0$ and $\kappa_{exit}=0.5$ in our implementation.
+
+%  *STEP 3: Portfolio Construction*
+
+% 1) **Position Sizing**. For a given capital $K_t$ at time $t$, we allocate:
+
+% $$
+% \begin{array}{ll}
+% \text{Target Position:} & Q_t^0 = \pm\frac{K_t/2}{P_t^0} \\[1em]
+% \text{Synthetic Position:} & Q_t^i = \mp\frac{K_t/2 \cdot w_i^*}{P_t^i}, \quad \forall i \in \mathcal{J}_\ell
+% \end{array}
+% $$
+
+% where $P_t^i$ denotes the price of asset $i$ at time $t$, and the signs $\pm$ depend on the trading signal $TR(TE_t)$.
+
+% 2) **Transaction Costs**. For each trade, we account for transaction costs proportional to the notional value:
+
+% $$
+% TC_t^i = \tau |Q_t^i P_t^i|
+% $$
+
+% where $\tau$ represents the transaction cost rate (set to 15 basis points in our implementation).
+
+% 3) **Portfolio Return**. The strategy's return at time $t$ is composed of the target and synthetic components:
+
+% $$
+% R_t = R_t^{target} + R_t^{synthetic}
+% $$
+
+% where:
+% $$
+% \begin{array}{ll}
+% R_t^{target} = TR(TE_t) \cdot r_t^* - TC_t^0 \\[1em]
+% R_t^{synthetic} = -TR(TE_t) \cdot \sum_{i \in \mathcal{J}_\ell} w_i^* r_t^i - \sum_{i \in \mathcal{J}_\ell} TC_t^i
+% \end{array}
+% $$
+
+% *STEP 4: Risk Management*
+
+% 1) **Donor Pool Quality**. For each rolling window $\mathcal{T}_\ell$, we filter the donor pool based on:
+
+% $$
+% \mathcal{J}_\ell = \left\{i: \begin{array}{l}
+% V_i > Q_v(\nu) \\
+% N_i > Q_n(\nu) \\
+% i \neq 0
+% \end{array}
+% \right\}
+% $$
+
+% where:
+% - $V_i$ is the average trading volume of asset $i$
+% - $N_i$ is the average number of trades
+% - $Q_v(\nu)$ and $Q_n(\nu)$ are the $\nu$-quantiles of volume and trade count distributions
+% - $\nu$ is the minimum quantile threshold (set to 0.2 in our implementation)
+
+% \Vhrulefill
+
+% 2) **Statistical Arbitrage bounds**. Since, by construction, the tracking error should exhibit mean-reversion properties, we implement a mean-reversion trading strategy based on the following signal function:
+
+% $
+% s_t = 
+% \left\{
+% \begin{array}{llll}
+% 1 & \text{if} & TE_t < \mu_{TE} - \sigma_{entry} \cdot \sigma_{TE} & \text{(Long Entry)}
+% \\
+% 0 & \text{if} & \mu_{TE} - \sigma_{exit} \cdot \sigma_{TE} < TE_t < \mu_{TE} + \sigma_{exit} \cdot \sigma_{TE} & \text{(Exit)}
+% \\
+% -1 & \text{if} & TE_t > \mu_{TE} + \sigma_{entry} \cdot \sigma_{TE} & \text{(Short Entry)}
+% \end{array}
+% \right.
+% $
+
+% where $\sigma_{entry}$ and $\sigma_{exit}$ are threshold parameters that control the entry and exit points of the trading strategy. In our implementation, we set $\sigma_{entry} = 2.0$ and $\sigma_{exit} = 0.5$.
+
+% 3) **Position Sizing**. For each trade signal $s_t$, we allocate capital according to:
+
+% $
+% \begin{array}{llll}
+% \text{Target Position:} & Q_t^0 = \pm \frac{K}{2P_t^0} & \text{where} & 
+% \left\{
+% \begin{array}{l}
+% + \text{ if } s_t = 1 \\
+% - \text{ if } s_t = -1
+% \end{array}
+% \right.
+% \\[1em]
+% \text{Synthetic Position:} & Q_t^i = \mp \frac{K w_i^*}{2P_t^i}, & i \in \mathcal{J}_\ell
+% \end{array}
+% $
+
+% where:
+% - $K$ is the total capital allocated to the strategy
+% - $P_t^i$ is the price of asset $i$ at time $t$
+% - $w_i^*$ are the optimal synthetic control weights
+% - The synthetic positions take opposite signs to the target position
+
+% 4) **Transaction Costs**. For each trade, we incorporate transaction costs as:
+
+% $
+% TC_t^i = \tau |Q_t^i P_t^i|
+% $
+
+% where $\tau$ is the transaction cost rate (set to 15 basis points in our implementation).
+
+% 5) **Portfolio Value**. The total portfolio value at time $t$ is given by:
+
+% $
+% V_t = C_t + \sum_{i \in \{0\} \cup \mathcal{J}_\ell} Q_t^i P_t^i
+% $
+
+% where $C_t$ represents the cash position.
+
+% 6) **Trade Returns**. For a completed trade from $t$ to $T$, the return components are:
+
+% $
+% \begin{array}{llll}
+% \text{Target Return:} & r_t^* = Q_t^0(P_T^0 - P_t^0) - TC_t^0 - TC_T^0
+% \\[1em]
+% \text{Synthetic Return:} & R_T^{\mathcal{J}} = \sum_{i \in \mathcal{J}_\ell} \left[Q_t^i(P_T^i - P_t^i) - TC_t^i - TC_T^i\right]
+% \\[1em]
+% \text{Total Return:} & R_T = r_t^* + R_T^{\mathcal{J}}
+% \end{array}
+% $
+
+% 7) **Performance Metrics**. We evaluate the strategy using the following metrics:
+
+% $
+% \begin{array}{llll}
+% \text{Sharpe Ratio:} & SR = \sqrt{252} \cdot \frac{\mathbb{E}[R_t]}{\sigma(R_t)}
+% \\[1em]
+% \text{Calmar Ratio:} & CR = \frac{\text{Annualized Return}}{\text{Maximum Drawdown}}
+% \\[1em]
+% \text{Information Ratio:} & IR = \sqrt{252} \cdot \frac{\mathbb{E}[TE_t]}{\sigma(TE_t)}
+% \end{array}
+% $
+
+% where the maximum drawdown is defined as:
+
+% $
+% MDD = \max_{t,\tau \leq t} \left(\frac{\max_{s \leq t} V_s - V_t}{\max_{s \leq t} V_s}\right)
+% $
+
+
+% \Vhrulefill

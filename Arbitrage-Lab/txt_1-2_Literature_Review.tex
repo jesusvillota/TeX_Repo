@@ -1,0 +1,77 @@
+%Your task will be to help me generate a literature review for the paper. I will provide you a JSON schema with information extracted from each of the references I wish to review. In each schema, there is a "citation" field, which you will use to cite each of the papers when you generate the literature review. You will produce a literature revision following the guidelines of this document, such guidelines will be written as latex comments (starting with a %). The literature revision will be structured in paragraphs, and each paragraph corresponds to a thematic revision (classics, cointegration-based, empirical investigation, didactic sources, copula-based, other approaches, index-tracking). Use the JSON schema with the information of each paper to produce an informed revision, note that the field "citation" provides the bibtex reference that will allow you to map each reference to the ones provided here. Produce your literature revision in tex code. 
+
+
+%----------------------------------------------------
+% Here, I just want to refer to some of the pioneering work in pairs trading. Your revision here should be focused on referring to this papers as foundational or as key references in the development of reserach in pairs trading.
+\qquote{Pairs Trading Classics}
+\begin{itemize}
+  \item \cite{Gatev2006}
+  \item \cite{Elliott2005}
+\end{itemize}
+
+%----------------------------------------------------
+\qquote{Cointegration-based} % here just mention that traditionally, a propular approach has been to approach pairs trading from a cointegration approach. 
+\begin{itemize}
+  \item \cite{vidyamurthy2004pairs} % you should mention that this book is a foundational reference in the application of cointegration analysis to pairs trading. and then, review the following papers in order (note that it is chronological). give a one liner for each paper (note that we don't care per se about the results of these papers, we just want to mention them as evidence that there is a strand of literature devoted to exploring cointegration-based pairs trading) 
+  \item \cite{Caldeira2013}
+  \item \cite{Huck2014}
+  \item \cite{Cartea2015}
+  \item \cite{Lintilhac2016}
+\end{itemize}
+
+%----------------------------------------------------
+\qquote{Empirical investigations of pairs trading} % these are papers that study the profitability of the pairs trading strategy. simply say that these papers have investigated the profitability of pairs trading and give a one or two liner about the specifics of each paper.
+\begin{itemize}
+  \item \cite{Chen2019}
+  \item \cite{Do2010}
+  \item \cite{Bowen2014}
+  \item \cite{Krauss2016}
+  \item \cite{Rad2016} % this paper investigates different pairs trading frameworks: distance-based, cointegration-based and copula-based)
+\end{itemize}
+
+%----------------------------------------------------
+\qquote{Didactic sources} % these are some didactic references for the interested reader. briefly review them following these guidelines:
+\begin{itemize}
+  \item \cite{hudsonthames2024} % this books contains a comprehensive guide to pairs trading. it reviews from a practical perspective all the different ways in which pairs trading has been approached in the literature
+  \item \cite{alexander2008market} % this book contains a great introduction to the topics of cointegration along with a practical presentation of it applied to pairs trading (chapter II.5), and also gives a great introduction to the use of copulas for financial applications (in chapter II.6), that's it.
+\end{itemize}
+
+%----------------------------------------------------
+\qquote{Copula-based pairs trading} % here i want to devote a paragraph or two to reviewing with more detail the copula-based pairs trading approaches. we want to review each reference in a one or two-liner, trying to connect the dots. 
+\begin{itemize}
+  \item \cite{Min2010}
+  \item \cite{stander2013trading}
+  \item \cite{Liew2013}, \cite{Xie2016}
+  \item \cite{lau2016multi}
+  \item \cite{Krauss2017}
+  \item \cite{zhi2017dynamic}
+  \item \cite{Chu2018}
+  \item \cite{SabinodaSilva2023}
+  \item \cite{Wang2023}
+  \item \cite{He2024}
+  \item \cite{Tadi2025}
+\end{itemize}
+
+%----------------------------------------------------
+\qquote{Pairs Trading: other approaches} % here i just want to mention that alternative approaches have been proposed to the pairs trading framework. review briefly the general idea of each paper in a one-liner. the result should be a paragraph where i explain alterantive approaches to pairs trading.
+\begin{itemize}
+  \item \cite{do2006new}
+  \item \cite{Zeng2014} 
+  \item \cite{Sarmento2020}, 
+  \item \cite{Johansson2024}
+  \item \cite{Han2023}
+  \item \cite{qureshi2024pairs}
+  \item \cite{Roychoudhury2023}
+  \item \cite{Rotondi2025}
+\end{itemize}
+
+%----------------------------------------------------
+\qquote{Synthetic Controls / Index-tracking} % the intention of reviewing these references is to talk about index tracking as somehow inspiring our synthetic control methodology, by which we are using a basket of assets to replicate the price behavior of a target asset (which in these references is the index). review these references shortly, the main goal of this paragraph will be to provide some theoretical background or underpinning for our synthetic control methodology, but we don't care per se about the results of these papers (we simply want to mention them and provide a one-liner with some general statment about each)
+\begin{itemize}
+  \item \cite{Alexander1999} 
+  \item \cite{Alexander2002}
+  \item \cite{Alexander2005a}
+  \item \cite{Alexander2005b}  
+  \item \cite{Shu2020}
+  \item \cite{Bradrania2021}
+\end{itemize}

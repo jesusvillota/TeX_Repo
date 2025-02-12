@@ -1,0 +1,390 @@
+\begin{algorithm}[H]
+\caption{Copula Fitting}
+\label{alg:copula_fit}
+\begin{algorithmic}[1]
+%----------------------------------------------------
+\Require
+    \State Target returns $\mathbf{r} = [r_t]_{t=2}^T \in \mathbb{R}^{T-1}$
+    \State Synthetic returns $\mathbf{r}^* = [r_t^*]_{t=2}^T \in \mathbb{R}^{T-1}$
+    \State Parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$
+    \State Numerical tolerance $\epsilon = 10^{-5}$
+%----------------------------------------------------
+\mx     
+\Ensure Marginal ECDFs $\hat{F}_R, \hat{F}_{R^*}$ and fitted copulas $\{C_{\hat \theta}\}_{C_{\theta}\in \mathcal{C}}$
+
+%----------------------------------------------------
+\mx 
+\Function{CopulaFit}{$\mathbf{r}, \mathbf{r}^*$}
+    \State \textit{\# Construct linearly interpolated ECDFs}
+    \For{each return series $\mathbf{x} \in \{\mathbf{r}, \mathbf{r}^*\}$}
+        \State Sort unique values: $x_{(1)} < \cdots < x_{(m)}$
+        \State $p_i \gets \frac{1}{T-1}\sum_{t=2}^T \mathbb{I}(x_t \leq x_{(i)})$
+       	\Comment{\scalebox{0.9}{\textcolor{Grey_color}{Compute empirical probabilities}}}
+        \State $\hat{F}_X(x) \gets p_i + (p_{i+1} - p_i)\frac{x - x_{(i)}}{x_{(i+1)} - x_{(i)}}$ for $x \in [x_{(i)}, x_{(i+1)}]$:
+        \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Piecewise linear interpolation}}}
+    \EndFor
+%    \State \textit{\# Compute ECDFs} \red{Somehow, we must add the consideration that we are doing linear interpolation to construct the ECDFs!}
+%    \State $\hat{F}_R(r) \gets \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t \leq r)$
+%%    \State 
+%    ; $\hat{F}_{R^*}(r^*) \gets \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*)$
+%----------------------------------------------------
+    \mx 
+    \State \textit{\# Apply probability integral transform}
+%    \State $u_t \gets \hat{F}_R(r_t)$ ;  $v_t \gets \hat{F}_{R^*}(r_t^*)$ for $t = 2, \dots, T$
+	\For{$t\in\{2,\ldots,T\}$}
+     \State
+     $u_t \gets  \max\{\epsilon, \min\{\hat{F}_R(r_t), 1-\epsilon\}\}$
+	 \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Adjust ECDF outputs to tolerance level $\eps$}}}
+     \State
+     $v_t \gets \max\{\epsilon, \min\{\hat{F}_{R^*}(r^*_t), 1-\epsilon\}\}$
+    \EndFor
+%----------------------------------------------------
+    \mx 
+    \State \textit{\# Fit each copula family} % \& Obtain information criterion}
+    \For{each copula family $C_\theta \in \mathcal{C}$}
+        \State $\hat{\theta} \gets \argmax_{\theta \in \Theta} \sum_{t=2}^T \ln c_\theta(u_t, v_t)$
+		\Comment{\scalebox{0.9}{\textcolor{Grey_color}{Estimate parameters via maximum likelihood}}}
+        \State $\ell(\hat \theta) \gets \sum_{t=2}^T \ln c_{\hat \theta}(u_t, v_t)$
+        \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Obtain maximized likelihood}}}
+%        \State $k\gets \dim({\hat \theta})$
+%        \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Count number of parameters estimated for this copula}}}
+%        \State 
+%        $\text{AIC} \gets  2k - 2\ell(\hat \theta)$;
+%        \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Akaike Information Criterion}}}
+%        \State 
+%        $\text{SIC} \gets  k \ln (T-1) - 2\ell(\hat \theta)$;
+%		\Comment{\scalebox{0.9}{\textcolor{Grey_color}{Schwarz Information Criterion}}}
+%		\State 
+%		$\text{HQIC} \gets  2k \ln(\ln (T-1)) - 2\ell(\hat \theta)$
+%        \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Hannan-Quinn Information Criterion}}}
+%        \State $\text{IC}(C_{\hat \theta}) \gets \{\text{AIC}, \text{SIC}, \text{HQIC}\}$
+    \EndFor
+%----------------------------------------------------
+\mx 
+%    \State \Return $C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$
+	\State \Return $\hat{F}_{R},\hat{F}_{R^*}, 
+%	$\hat{\mathcal C}$
+	\{C_{\hat \theta}\}_{C_{\theta}\in \mathcal{C}}$
+%	$\{\hat{\theta}, \text{IC}(C_{\hat \theta})\}_{C\in \mathcal{C}, }$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{algorithm}
+%\caption{Copula Fitting}
+%\label{alg:copula_fit}
+%\begin{algorithmic}[1]
+%%----------------------------------------------------
+%\Require
+%    \State Target returns $\mathbf{r} = [r_t]_{t=2}^T \in \mathbb{R}^{T-1}$
+%    \State Synthetic returns $\mathbf{r}^* = [r_t^*]_{t=2}^T \in \mathbb{R}^{T-1}$
+%    \State Parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$
+%    \State Numerical tolerance $\epsilon = 10^{-5}$
+%%----------------------------------------------------
+%\Ensure
+%    \begin{itemize}
+%        \item Selected copula $C_{\hat{\theta}^*}$ with parameters $\hat{\theta}^*$
+%        \item Linearly interpolated ECDFs $\{\hat{F}_R, \hat{F}_{R^*}\}$
+%        \item Information criteria $\{\text{IC}(C_{\hat{\theta}})\}_{C \in \mathcal{C}}$ for all fitted copulas
+%    \end{itemize}
+%%----------------------------------------------------
+%\Function{CopulaFit}{$\mathbf{r}, \mathbf{r}^*$}
+%    \State \textit{\# Construct linearly interpolated ECDFs}
+%    \For{each return series $\mathbf{x} \in \{\mathbf{r}, \mathbf{r}^*\}$}
+%        \State Sort unique values: $x_{(1)} < \cdots < x_{(m)}$
+%        \State Compute empirical probabilities: $p_i \gets \frac{1}{T-1}\sum_{t=2}^T \mathbb{I}(x_t \leq x_{(i)})$
+%        \State Define piecewise linear interpolation for $x \in [x_{(i)}, x_{(i+1)}]$:
+%        \State $\hat{F}(x) \gets p_i + (p_{i+1} - p_i)\frac{x - x_{(i)}}{x_{(i+1)} - x_{(i)}}$
+%    \EndFor
+%%----------------------------------------------------
+%    \mx 
+%    \State \textit{\# Apply probability integral transform with boundary adjustments}
+%    \For{$t\in\{2,\ldots,T\}$}
+%        \State $u_t \gets \max\{\epsilon, \min\{\hat{F}_R(r_t), 1-\epsilon\}\}$
+%        \State $v_t \gets \max\{\epsilon, \min\{\hat{F}_{R^*}(r^*_t), 1-\epsilon\}\}$
+%    \EndFor
+%%----------------------------------------------------
+%    \mx 
+%    \State \textit{\# Fit copulas and compute information criteria}
+%    \State Initialize $\text{best\_IC} \gets \infty$ and $\text{best\_copula} \gets \text{null}$
+%    \For{each copula family $C_\theta \in \mathcal{C}$}
+%        \State $\hat{\theta} \gets \argmax_{\theta \in \Theta} \sum_{t=2}^T \ln c_\theta(u_t, v_t)$
+%        \State $\ell(\hat{\theta}) \gets \sum_{t=2}^T \ln c_{\hat{\theta}}(u_t, v_t)$
+%        \State $k \gets \dim(\hat{\theta})$ \Comment{Parameter dimension}
+%        \State Compute information criteria:
+%        \State $\text{AIC} \gets 2k - 2\ell(\hat{\theta})$
+%        \State $\text{SIC} \gets k\ln(T-1) - 2\ell(\hat{\theta})$
+%        \State $\text{HQIC} \gets 2k\ln(\ln(T-1)) - 2\ell(\hat{\theta})$
+%        \State Store results: $\text{IC}(C_{\hat{\theta}}) \gets \{\text{AIC}, \text{SIC}, \text{HQIC}\}$
+%        \If{$\text{SIC} < \text{best\_IC}$}
+%            \State $\text{best\_IC} \gets \text{SIC}$
+%            \State $\text{best\_copula} \gets \{C_{\hat{\theta}}, \hat{\theta}\}$
+%        \EndIf
+%    \EndFor
+%%----------------------------------------------------
+%    \mx 
+%    \State \Return $\{\text{best\_copula}, \{\hat{F}_R, \hat{F}_{R^*}\}, \{\text{IC}(C_{\hat{\theta}})\}_{C \in \mathcal{C}}\}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{algorithm}
+%\caption{Copula Fitting}
+%\label{alg:copula_fit}
+%\begin{algorithmic}[1]
+%%----------------------------------------------------
+%\Require
+%    \State Target returns $\mathbf{r} = [r_t]_{t=2}^T \in \mathbb{R}^{T-1}$
+%    \State Synthetic returns $\mathbf{r}^* = [r_t^*]_{t=2}^T \in \mathbb{R}^{T-1}$
+%    \State Parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$
+%    \State Small constant $\epsilon = 10^{-5}$
+%%----------------------------------------------------
+%\Ensure Optimal copula $C_{\hat{\theta}}$, marginal CDFs $\hat{F}_R, \hat{F}_{R^*}$, and information criteria
+%
+%%----------------------------------------------------
+%\Function{CopulaFit}{$\mathbf{r}, \mathbf{r}^*$}
+%    \State \textit{\# Compute ECDFs with linear interpolation}
+%    \State $\hat{F}_R(r) \gets \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t \leq r)$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Using linear interpolation}}}
+%    \State $\hat{F}_{R^*}(r^*) \gets \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*)$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Using linear interpolation}}}
+%%----------------------------------------------------
+%    \State \textit{\# Apply probability integral transform}
+%    \For{$t \in \{2, \ldots, T\}$}
+%        \State $u_t \gets \max\{\epsilon, \min\{\hat{F}_R(r_t), 1-\epsilon\}\}$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Adjust ECDF outputs}}}
+%        \State $v_t \gets \max\{\epsilon, \min\{\hat{F}_{R^*}(r_t^*), 1-\epsilon\}\}$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Adjust ECDF outputs}}}
+%    \EndFor
+%%----------------------------------------------------
+%    \State \textit{\# Fit each copula family \& Obtain information criteria}
+%    \For{each copula family $C_\theta \in \mathcal{C}$}
+%        \State $\hat{\theta} \gets \argmax_{\theta \in \Theta} \sum_{t=2}^T \ln c_\theta(u_t, v_t)$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Estimate parameters via maximum likelihood}}}
+%        \State $\ell(\hat{\theta}) \gets \sum_{t=2}^T \ln c_{\hat{\theta}}(u_t, v_t)$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Obtain maximized likelihood}}}
+%        \State $k \gets \card{\hat{\theta}}$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Count number of parameters estimated for this copula}}}
+%        \State $\text{AIC}(C_{\hat{\theta}}) \gets 2k - 2\ell(\hat{\theta})$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Akaike Information Criterion}}}
+%        \State $\text{SIC}(C_{\hat{\theta}}) \gets k \ln (T-1) - 2\ell(\hat{\theta})$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Schwarz Information Criterion}}}
+%        \State $\text{HQIC}(C_{\hat{\theta}}) \gets 2k \ln(\ln (T-1)) - 2\ell(\hat{\theta})$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Hannan-Quinn Information Criterion}}}
+%    \EndFor
+%%----------------------------------------------------
+%    \State \textit{\# Select the optimal copula based on information criteria}
+%    \State $C_{\hat{\theta}} \gets \argmin_{C_{\hat{\theta}} \in \mathcal{C}} \{\text{AIC}(C_{\hat{\theta}}), \text{SIC}(C_{\hat{\theta}}), \text{HQIC}(C_{\hat{\theta}})\}$
+%    \State \Return $C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}, \{\text{AIC}(C_{\hat{\theta}}), \text{SIC}(C_{\hat{\theta}}), \text{HQIC}(C_{\hat{\theta}})\}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}
+%\caption{Copula Fitting}
+%\label{alg:copula_fit}
+%\begin{algorithmic}[1]
+%\Require 
+%    \State Target returns $\mathbf{r} = [r_t]_{t=2}^T \in \mathbb{R}^{T-1}$
+%    \State Synthetic returns $\mathbf{r}^* = [r_t^*]_{t=2}^T \in \mathbb{R}^{T-1}$
+%    \State Copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$
+%\Ensure 
+%    \State Fitted copula $C_{\hat{\theta}}$
+%    \State Empirical CDFs $\hat{F}_R, \hat{F}_{R^*}$
+%\Statex
+%\Function{CopulaFit}{$\mathbf{r}, \mathbf{r}^*$}
+%    \State \textbf{Stage 1:} Empirical CDF estimation
+%    \For{each unique value $r$ in $\mathbf{r}$}
+%        \State $\hat{F}_R(r) \gets \frac{1}{T-1}\sum_{t=2}^T \mathbb{I}(r_t \leq r)$
+%    \EndFor
+%    \For{each unique value $r^*$ in $\mathbf{r}^*$}
+%        \State $\hat{F}_{R^*}(r^*) \gets \frac{1}{T-1}\sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*)$
+%    \EndFor
+%    \Statex
+%    \State \textbf{Stage 2:} Probability integral transform
+%    \For{$t = 2$ to $T$}
+%        \State $u_t \gets \hat{F}_R(r_t)$ \Comment{Constrain to $[\epsilon, 1-\epsilon]$}
+%        \State $v_t \gets \hat{F}_{R^*}(r_t^*)$ \Comment{where $\epsilon = 10^{-5}$}
+%    \EndFor
+%    \Statex
+%    \State \textbf{Stage 3:} Maximum likelihood estimation
+%    \State Initialize $\text{best\_criterion} \gets \infty$
+%    \For{each copula family $C_\theta \in \mathcal{C}$}
+%        \State $\hat{\theta} \gets \argmax_{\theta \in \Theta} \sum_{t=2}^T \ln c_{\theta}(u_t, v_t)$
+%        \State $\ell \gets \sum_{t=2}^T \ln c_{\hat{\theta}}(u_t, v_t)$ \Comment{Log-likelihood}
+%        \State $k \gets $ number of parameters in $\theta$
+%        \State $\text{SIC} \gets k\ln(T-1) - 2\ell$ \Comment{Schwarz criterion}
+%        \If{$\text{SIC} < \text{best\_criterion}$}
+%            \State $\text{best\_criterion} \gets \text{SIC}$
+%            \State $\text{best\_copula} \gets C_{\hat{\theta}}$
+%        \EndIf
+%    \EndFor
+%    \State \Return $\text{best\_copula}, \hat{F}_R, \hat{F}_{R^*}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%----------------------------------------------------
+%
+%\begin{algorithm}
+%\caption{CopulaFit: Calibrate Copula from Returns}
+%\label{alg:CopulaFit}
+%\begin{algorithmic}[1]
+%\Require Returns $\mathbf{r}=[r_1,\ldots,r_{T-1}]$ and $\mathbf{r}^*=[r^*_1,\ldots,r^*_{T-1}]$, candidate parametric copula families $\mathcal{C}=\{C_\theta:\theta\in\Theta\}$, and a small constant $\epsilon$ (e.g. $10^{-5}$)
+%\Ensure Selected copula $C_{\hat{\theta}}$, marginal ECDF functions $\hat{F}_R$, $\hat{F}_{R^*}$
+%\Statex
+%\Function{CopulaFit}{$\mathbf{r},\mathbf{r}^*$}
+%    \Comment{Step 1: Compute empirical marginals}
+%    \State Compute the empirical cumulative distribution functions:
+%    \[
+%       \hat{F}_R(r) = \frac{1}{T-1}\sum_{t=1}^{T-1} \I(r_t \le r),\quad 
+%       \hat{F}_{R^*}(r^*) = \frac{1}{T-1}\sum_{t=1}^{T-1} \I(r^*_t \le r^*).
+%    \]
+%    \State Adjust ECDF outputs: For all $t$, set 
+%    \[
+%       u_t = \max\{\epsilon, \min\{\hat{F}_R(r_t), 1-\epsilon\}\},
+%    \]
+%    \[
+%       v_t = \max\{\epsilon, \min\{\hat{F}_{R^*}(r^*_t), 1-\epsilon\}\}.
+%    \]
+%    \Comment{Step 2: Maximum likelihood calibration for each copula family}
+%    \For{each copula family $C_\theta\in \mathcal{C}$}
+%        \State Estimate parameter $\hat{\theta}$ by solving
+%          \[
+%              \hat{\theta} = \argmax_{\theta\in\Theta} \sum_{t=1}^{T-1} \ln c_\theta(u_t, v_t),
+%          \]
+%          where $c_\theta(u,v)=\frac{\partial^2 C_\theta(u,v)}{\partial u\partial v}$.
+%        \State Compute information criteria (e.g. AIC, SIC, HQIC) based on the maximized log-likelihood.
+%    \EndFor
+%    \State Select the copula family with the lowest chosen information criterion.
+%    \State \Return $C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%----------------------------------------------------
+%
+%%----------------------------------------------------
+%\begin{algorithm}
+%\caption{CopulaFit}
+%\label{alg:copula_fit}
+%\begin{algorithmic}[1]
+%\Function{CopulaFit}{$\mathbf{r}, \mathbf{r}^*, \mathcal{C}$}
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Inputs: returns $\mathbf{r}, \mathbf{r}^*$, candidate copulas $\mathcal{C}$}}}
+%    \State Compute empirical CDFs: \(\hat{F}_R, \hat{F}_{R^*}\)
+%    \State Convert to pseudo-observations: 
+%           \(u_t = \hat{F}_R(r_t)\), 
+%           \(v_t = \hat{F}_{R^*}(r_t^*)\)
+%    \For{each copula family \(C_\theta\in \mathcal{C}\)}
+%        \State \(\hat{\theta} \gets \displaystyle \argmax_{\theta \in \Theta} \sum_{t=1}^T \ln c_{\theta}(u_t, v_t)\)
+%        \State Compute model selection criteria (AIC, SIC, HQIC)
+%    \EndFor
+%    \State Choose \(C_{\hat{\theta}}\) that minimizes a chosen criterion (e.g.\ SIC)
+%    \State \Return \(C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}\)
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%----------------------------------------------------
+%\begin{algorithm}
+%\caption{Copula Fitting}
+%\label{alg:copula_fit}
+%\begin{algorithmic}[1]
+%\Require
+%    \State Target and synthetic returns $\mathbf{r} = [r_t]_{t=2}^T$, $\mathbf{r}^* = [r_t^*]_{t=2}^T$
+%    \State Parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$
+%
+%\Ensure Fitted copula $C_{\hat{\theta}}$, marginal CDFs $\hat{F}_R, \hat{F}_{R^*}$
+%
+%\Function{CopulaFit}{$\mathbf{r}, \mathbf{r}^*$}
+%    \State Compute ECDFs:
+%    \[
+%    \hat{F}_R(r) = \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t \leq r), \quad \hat{F}_{R^*}(r^*) = \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*)
+%    \]
+%    \State Get pseudo-observations:
+%    \[
+%    u_t \gets \hat{F}_R(r_t), \quad v_t \gets \hat{F}_{R^*}(r_t^*)
+%    \]
+%    \For{each copula family in $\mathcal{C}$}
+%        \State Estimate parameters via MLE:
+%        \[
+%        \hat{\theta} = \argmax_{\theta \in \Theta} \sum_{t=2}^T \ln c_{\theta}(u_t, v_t)
+%        \]
+%        \State Compute AIC, SIC, HQIC
+%    \EndFor
+%    \State Select optimal copula $C_{\hat{\theta}}$ based on information criteria
+%    \State \Return $C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%
+%%----------------------------------------------------
+%
+%\begin{algorithm}
+%\caption{Copula Fitting and Selection}
+%\label{alg:copula_fit}
+%\begin{algorithmic}[1]
+%\Require
+%    \State Target asset log-returns $\mathbf{r} = [r_t]_{t=2}^T$
+%    \State Synthetic asset log-returns $\mathbf{r}^* = [r^*_t]_{t=2}^T$
+%    \State Parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$
+%\Ensure
+%    \State Optimal copula $C_{\hat{\theta}}$
+%    \State Estimated marginal CDFs $\hat{F}_R$, $\hat{F}_{R^*}$
+%
+%\Statex
+%\Function{CopulaFit}{$\mathbf{r}, \mathbf{r}^*$}
+%    \State Compute the linearly interpolated empirical CDFs $\hat{F}_R$ and $\hat{F}_{R^*}$ for $\mathbf{r}$ and $\mathbf{r}^*$, respectively,  constraining outputs within $[\epsilon, 1-\epsilon]$ where $\epsilon = 10^{-5}$:
+%    \[
+%    \hat{F}_{R}(r) = \max\left(\epsilon, \min\left(1-\epsilon, \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t \leq r)\right)\right)
+%    \]
+%    \[
+%    \hat{F}_{R^*}(r^*) = \max\left(\epsilon, \min\left(1-\epsilon, \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*)\right)\right)
+%    \]
+%
+%    \State Compute pseudo-observations:
+%    \[
+%    u_t = \hat{F}_R(r_t), \quad v_t = \hat{F}_{R^*}(r_t^*) \quad \text{for } t = 2, \dots, T
+%    \]
+%    \State Initialize a dictionary `scores` to store AIC, SIC, and HQIC for each copula family.
+%    \For{each copula family $C_\theta$ in $\mathcal{C}$}
+%        \State Estimate the copula parameter $\hat{\theta}$ via maximum likelihood:
+%        \[
+%        \hat{\theta} = \argmax_{\theta \in \Theta} \ell(\theta | \mathbf{u,v}) = \argmax_{\theta \in \Theta} \sum_{t=2}^T \ln c_\theta(u_t, v_t)
+%        \]
+%        \State Calculate the maximized log-likelihood:
+%        \[
+%        \ell(\hat{\theta}|\mathbf{u,v}) = \sum_{t=2}^T \ln c_{\hat{\theta}}(u_t, v_t)
+%        \]
+%        \State Let $k$ be the number of parameters in $\theta$.
+%        \State Compute the Akaike Information Criterion (AIC):
+%        \[
+%        \text{AIC} = 2k - 2\ell(\hat{\theta}|\mathbf{u,v})
+%        \]
+%        \State Compute the Schwarz/Bayesian Information Criterion (SIC):
+%        \[
+%        \text{SIC} = k \ln (T-1) - 2\ell(\hat{\theta}|\mathbf{u,v})
+%        \]
+%        \State Compute the Hannan-Quinn Information Criterion (HQIC):
+%        \[
+%        \text{HQIC} = 2k \ln(\ln (T-1)) - 2\ell(\hat{\theta}|\mathbf{u,v})
+%        \]
+%        \State Store the AIC, SIC, and HQIC values in the `scores` dictionary, keyed by the copula family name.
+%    \EndFor
+%    \State Select the optimal copula family $C_{\hat{\theta}}$ based on the minimum AIC, SIC, or HQIC (choose one criterion and use it consistently).  For example, using AIC:
+%    \[
+%    \text{Optimal Copula} = \argmin_{C_\theta \in \mathcal{C}} \text{AIC}(C_\theta)
+%    \]
+%    \State \Return $C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%

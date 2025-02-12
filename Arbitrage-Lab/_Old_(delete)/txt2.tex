@@ -1,0 +1,254 @@
+\section{Cointegration Meets Synthetic Controls: A Formal Equivalence}
+\label{sec:cointegration_synthetic_controls}
+
+In this section, we develop a formal argument showing how, in a time series context, the notion of \emph{synthetic control} can be viewed as a special case of \emph{cointegration}. This connection underlies the intuition that, when one normalizes the first variable of a cointegrated system to 1, the remaining cointegration relationships effectively produce the \emph{synthetic} version of the first variable when the cointegration vector satisfies a specific type of restriction. 
+%Here, we adopt a rigorous perspective aimed at bridging the econometric concept of cointegration with methodologies employed in the synthetic control literature (e.g., Abadie and Gardeazabal).
+
+\subsection{Cointegration}
+
+%Let $\{p_t^j \}_{t=1}^{T}$ for $j\in\{0,1,\ldots,J\}$ denote $(J+1)$ time series of log-prices. 
+%%
+%Throughout, we assume each $p_t^j$ is an $I(1)$ process (integrated of order 1). 
+%%
+%Formally, an $I(1)$ process is one that becomes \emph{stationary} (and typically ergodic) upon differencing once:
+%$\Delta p_t^j := p_t^j - p_{t-1}^j \sim I(0).$
+%%
+%The notion of cointegration, due to Engle and Granger, is central in analyzing potentially long-run equilibria among these variables.
+
+%----------------------------------------------------
+\begin{definition}[Engle and Granger (1987)]
+The components of the vector $\mbf{y}_t$ are said to be cointegrated of order $d$, $b$, denoted $\mbf{y}_t \sim CI(d,b)$, if (a) all components of $\mbf{y}_t$ are $I(d)$ and (b) a vector $\b{\beta}\neq 0$ exists so that $\b{\beta}'\mbf{y}_t \sim I(d-b)$, $b > 0$. The vector $\b{\beta}$ is called the cointegrating vector.
+\end{definition}
+%----------------------------------------------------
+%\begin{definition}[Campbell and Perron (1991)]
+%An $(n \times 1)$ vector of variables $\mbf{y}_t$ is said to be cointegrated if at least one nonzero $n$-element vector $\b{\beta}_i$ exists such that $\b{\beta}'_i\mbf{y}_t$ is trend-stationary. $\b{\beta}_i$ is called a cointegrating vector. If $r$ such linearly independent vectors $\b{\beta}_i(i = 1,\ldots,r)$ exist, we say that $\{\mbf{y}_t\}$ is cointegrated with cointegrating rank $r$. We then define the $(n \times r)$ matrix of cointegrating vectors $\b{\beta} = (\b{\beta}_1,\ldots,\b{\beta}_r)$. The $r$ elements of the vector $\b{\beta}'\mbf{y}_t$ are trend-stationary, and $\b{\beta}$ is called the cointegrating matrix.
+%\end{definition}
+%----------------------------------------------------
+
+\subsection{Synthetic Control}
+%\begin{definition}
+%In a synthetic control problem we have a target element $y_1$ that we seek to mimick through a linear combination of elements in a donor pool $\mbf y_{2:n}=(y_2,...,y_n)$ with weigths $\mbf w=\arg\underset{w\in\W}{\min} \sum_{t=1}^T (y_1-\mbf w'\mbf y_{2:n})^2$ where $\mathcal{W} := \{\mbf{w}\in\mathbb{R}_{+}^{n-1}: \sum_{j=2}^n w_j=1\}$.
+%\end{definition}
+
+\begin{definition}[Synthetic Control]
+Let $\{y_1, y_2, \dots, y_n\}$ be a collection of time series, where $y_1$ is the ``target'' series and 
+$\mathbf{y}_{2:n} = (y_2,\dots,y_n)$ constitute the ``donor pool.'' A \emph{synthetic control} for 
+$y_1$ is constructed by choosing weights $\mathbf{w}$ in the $(n-1)$-dimensional simplex
+$\mathcal{W} := \{\mbf{w}\in\mathbb{R}_{+}^{n-1}: \sum_{j=2}^n w_j=1\}$
+to minimize the sum of squared deviations over $T$ observations:
+$\mbf w=\arg\underset{w\in\W}{\min} \sum_{t=1}^T (y_{1,t}-\mbf w'\mbf y_{2:n,t})^2$.
+%Because $\mathcal{W}$ is precisely the convex hull of the standard basis vectors in $\mathbb{R}^{n-1}$, the resulting synthetic control $\mathbf{w}'\,\mathbf{y}_{2:n}$ is a convex combination of the donor pool elements $(y_2,\dots,y_n)$.
+\end{definition}
+
+
+
+\subsection{Equivalence}
+Given that cointegration relationships prevail up to scale and sign changes, then, under suitable conditions on the cointegration vector, there exists a nontrivial constant $\kappa$ that allows us to reinterpret the cointegration relationship as one of a synthetic control. In particular,
+
+\begin{proposition} For a cointegrated vector $\mbf y$  with rank $r$, if one of the cointegrating vectors $\b \beta$ satisfies the restriction
+$\mathcal R=
+\{
+%\begin{array}{ll}
+\b \beta > 0, ~
+\mbf 1' \b \beta  = 0
+%\\
+%\beta_j \geq 0, j\neq i
+%\end{array}
+\}$ 
+(i.e, 
+ that its components are nonnegative and sum to 1, and at least one of them is strictly positive). Then, we can scale the cointegration vector by $\kappa=1/\beta_i$ such that $\kappa \b \beta ' \mbf y$ is stationary and describes a \qquote{synthetic control} relationship between $y_i$ and $\mbf y_{-i}$. 
+\end{proposition}
+
+\begin{proof}
+The proof is straightforward. For a cointegration vector $\b \beta$ where $\mathcal R$ holds, we have that $\mbf 1'\b \beta = \sum_{j=1}^n \beta_j= 0$, which trivially implies $\beta_i = \sum_{j\neq i}\beta _j$. For the sake of the proof, set that $\beta_i$ to the first component ($\beta_1$). Then
+$\beta_1 = -\sum_{j=2}^n \beta_j$ and $\kappa = (\beta_1)^{-1} = (\sum_{j=2}^n \beta_j)^{-1}$
+$$
+\kappa \b \beta' \mbf y 
+= 
+\frac{1}{\beta_1} [\beta_1 ~~ \b \beta_{2:n}] \mbf y_t 
+=
+\2{1 ~~ \frac{-\b \beta'_{2:n}}{\sum_{j=2}^n\beta_j}}
+\2{\v{y_1 \\ \mbf y_{2:n}}}
+=
+y_1 - \frac{\beta_2}{\sum_{j=2}^n \beta_j}y_2 - \cdots - 
+\frac{\beta_n}{\sum_{j=2}^n \beta_j} y_n
+\sim I(0)
+$$
+describes a stationary cointegration relationship in $\mbf y$, and since
+\begin{align*}
+y_1 
+&= \frac{\beta_2}{\sum_{j=2}^n \beta_j}y_2 + \cdots + 
+\frac{\beta_n}{\sum_{j=2}^n \beta_j} y_n + \eps 
+\\&= \mbf w' \mbf y_{2:n} + \eps 
+%, \t{~~where~} \eps\sim I(0)
+\end{align*}
+with $\eps\sim I(0)$ and $\mbf w=\1{\frac{\beta_2}{\sum_{j=2}^n \beta_j}, ..., \frac{\beta_n}{\sum_{j=2}^n \beta_j}}'\in \W$, then this relationship is endowed with a synthetic control structure.
+\end{proof}
+
+%
+%\red{
+%If we get rid of the sign restrictions on $\beta_2, ..., \beta_n$ we simplify the problem. We can  test
+%$$\mbf R \b \beta = 
+%\2{\begin{array}{llll}
+% 1 & -1 & \cdots & -1
+% \\
+% 1 & -1 & \cdots & -1
+% \\
+% \vdots
+% \\
+%  1 & -1 & \cdots & -1
+%\end{array}}
+%\2{\begin{array}{llll}
+% \beta_1^{(1)} &  \cdots &  \beta_1^{(r)}
+% \\
+%  \beta_2^{(1)} & \cdots &  \beta_2^{(r)}
+% \\
+% \vdots
+% \\
+%   \beta_n^{(1)} & \cdots & \beta_n^{(r)}
+%\end{array}}
+%=\mbf  0$$
+%}
+
+\section{Empirical Testing of the Cointegration-SC Restriction}
+
+To empirically test whether the cointegrating vector(s) in the data satisfy the restriction 
+$\mathcal{R}$ in the proposition---namely, whether there is a component 
+$\beta_i$ that equals the negative sum of the others and 
+$\beta_j \ge 0$ for all $j \neq i$ (with at least one strictly positive)---we can proceed as follows:
+
+\begin{enumerate}
+    \item \textbf{Estimate the cointegration rank and the (unrestricted) cointegration space.}
+    \begin{itemize}
+        \item Use Johansen's method (trace or eigenvalue tests) on our $n$ time series $\{{y}_t\}_{t=1}^T$ to determine the cointegration rank $r$. 
+        \item Estimate the cointegrating vectors (spanning an $n \times r$ matrix $\widehat{\boldsymbol{\beta}}$).
+    \end{itemize}
+
+    \item \textbf{Test the linear equality restriction $\beta_i + \sum_{j\neq i}\beta_j = 0$.}
+    \begin{itemize}
+%        \item Some econometric software packages (R, Stata, EViews, etc.) allow us to impose linear restrictions on the cointegration vectors in a Johansen framework.
+        \item Impose $\beta_i = -\sum_{j\neq i}\beta_j$ (or equivalently $\mathbf{R}\,\boldsymbol{\beta}=\mathbf{0}$ for some suitable matrix $\mathbf{R}$) and re-estimate the cointegrating relationships. 
+        \item Perform a likelihood ratio (LR) test comparing the restricted and unrestricted models. 
+            \begin{itemize}
+                \item If the restriction is rejected, there is significant evidence \emph{against} the proposition that one coefficient is the negative sum of all the others.
+                \item If the restriction is not rejected, the data are consistent with that linear relationship.
+            \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Check the sign constraints ($\beta_j \ge 0$) and at least one strictly positive.}
+    \begin{itemize}
+        \item Johansen's framework handles linear equality constraints straightforwardly but does not directly test inequalities. Two common strategies are:
+        \begin{enumerate}
+            \item \textit{Constrained estimation with sign restrictions:}\\
+            Set up a constrained maximum-likelihood or feasible estimation problem:
+            $$
+               \max_{\boldsymbol{\beta}\in \mathrm{span}(\widehat{\boldsymbol{\beta}})} \mathcal{L}(\boldsymbol{\beta})
+               \quad \text{s.t.} \quad
+               \mathbf{R}\,\boldsymbol{\beta} = \mathbf{0},\ 
+               \beta_j \ge 0\ (\forall j\neq i),\ 
+               \|\boldsymbol{\beta}\|=1.
+            $$
+            If a candidate $\boldsymbol{\beta}$ emerges with nonnegative coefficients (and at least one strictly positive), you have evidence that the data do not reject the proposition's sign requirements.
+            \item \textit{Two-step ``feasibility check'':}\\
+            \begin{enumerate}
+                \item Estimate an unrestricted basis for the cointegration space, e.g.\ $\{\widehat{\boldsymbol{\beta}}^{(1)}, \dots, \widehat{\boldsymbol{\beta}}^{(r)}\}$. 
+                \item Solve a simple linear program or system of equations:
+                $$
+                  \boldsymbol{\beta}^* \;=\; \sum_{k=1}^r \gamma_k\,\widehat{\boldsymbol{\beta}}^{(k)}
+                  \quad\text{s.t.}\quad 
+                  \bigl(\beta^*_i + \sum_{j \neq i}\beta^*_j = 0\bigr)
+                  \ \text{and}\ 
+                  \beta^*_j \ge 0,\ (j \neq i).
+                $$
+                If no solution exists, the sign and linear constraints cannot be met anywhere in the estimated cointegration space. If a feasible vector exists, verify its residual stationarity and check that at least one $\beta^*_j$ is strictly positive. If all checks out, that validates a synthetic-control-type cointegration vector.
+            \end{enumerate}
+        \end{enumerate}
+    \end{itemize}
+
+    \item \textbf{Interpretation.}
+    \begin{itemize}
+        \item If the restriction is satisfied both in its linear aspect ($\beta_i + \sum_{j\neq i}\beta_j=0$) and sign aspect ($\beta_j \ge 0$), you can rescale 
+        $\boldsymbol{\beta}$ to obtain a stationary relationship of the form
+        $
+            y_i = \sum_{j\neq i} w_j\,y_j + \eps, 
+            \quad \eps \sim I(0),
+            \quad w_j = \frac{\beta_j}{-\beta_i},
+        $
+        which is precisely the ``synthetic control'' structure (convex combination) described in the proposition.
+        \item If either part of the restriction is strongly rejected, then our data do not support that particular synthetic-control form of the cointegrating vector.
+    \end{itemize}
+\end{enumerate}
+
+In summary, we combine standard cointegration testing (Johansen) with (i) a linear restriction test for 
+$\beta_i + \sum_{j\neq i} \beta_j=0$ and (ii) a feasibility check for 
+$\beta_j \ge 0$. If a suitable vector satisfying $\mathcal{R}$ exists in the estimated cointegration space and your data do not reject it, you have validated the proposition empirically.
+
+
+
+%----------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%----------------------------------------------------
+\section{Constrained Estimation}
+
+Johansen's approach uses \textit{canonical correlation analysis} as a means to re\-duce the information content of $T$ observations in the $n$-dimensional space to a lower-dimensional one of $r$ cointegrating vectors. Hence, the canonical correlations determine the extent to which the multicollinearity in the data will allow such a smaller $r$-dimensional space. To do so, $2K$ auxiliary regressions are estimated by OLS: 
+\begin{enumerate}
+\item $\Delta\mbf{y}_t$ is regressed on lagged differences of $\mbf{y}_t$. The residuals are termed $\mbf{R}_{0t}$. 
+\item $\mbf{y}_{t-p}$ is regressed on the same set of regressors. The residuals are termed $\mbf{R}_{1t}$. 
+\end{enumerate}
+The $2K$ residual series of these regressions are used to compute the product moment matrices as
+$$
+\hat{\mbf S}_{ij} = \frac{1}{T}\sum_{t=1}^T \mbf{R}_{it}\mbf{R}'_{jt} \quad \text{with } i,j = 0,1.
+$$
+
+\subsection{Hypothesis}
+
+We make use of the framework proposed by Johansen and Juselius [1992] to test restrictions on the $(n\times r)$ cointegration matrix $\b \beta$. In particular, we impose restrictions on the first $r_1=1$ cointegration vectors and estimate the other $r_2$ cointegration vectors freely.
+$$
+\mathcal{H} : \b{\beta} = [\mbf{H}\b{\varphi},\b{\Psi}]
+$$
+where $ \mbf{H}(n \times s), \b{\varphi}(s \times r_1), \b{\Psi}(n \times r_2), r_1 \leq s \leq n, r = r_1 + r_2$, $
+\dim(\text{span}(\b{\beta}) \cap \text{span}(\mbf{H})) \geq r_1$. 
+
+\subsection{Testing}
+Johansen and Juselius [1992] proposed a simple switching algorithm. The algorithm is initialized by setting $\b{\Psi} = 0$, and the eigenvalue problem
+\begin{equation}
+|\b \lambda\mbf{H}'\hat{\mbf S}_{11}\mbf{H} - \mbf{H}'\hat{\mbf S}_{10}\hat{\mbf S}_{00}^{-1}\hat{\mbf S}_{01}\mbf{H}| = 0 
+\end{equation}
+is solved for $\b \varphi$, which results in the eigenvalues $\hat{\lambda}_1 > \ldots > \hat{\lambda}_s > 0$ and the corresponding eigenvectors $(\hat{\mbf v}_1,\ldots,\hat{\mbf v}_s)$. The first partition of the cointegration relations (i.e., the restricted one) is therefore given by $\hat{\b{\beta}}_1 = \mbf{H} \hat{\mbf v}_1$, although it is preliminary.
+
+The algorithm starts by fixing these values $\hat{\b{\beta}}_1$ and by conditioning on $\hat{\b{\beta}}_1\mbf{R}_{1t}$. It leads to the eigenvalue problem
+\begin{equation*}
+\frac{|\b{\Psi}'(\hat{\mbf{S}}_{11.\hat{\b{\beta}}_1} - \hat{\mbf{S}}_{10.\hat{\b{\beta}}_1}\hat{\mbf{S}}_{00.\hat{\b{\beta}}_1}^{-1}\hat{\mbf{S}}_{01.\hat{\b{\beta}}_1})\b{\Psi}|}{|\b{\Psi}'\hat{\mbf{S}}_{11.\hat{\b{\beta}}_1}\b{\Psi}|}
+\end{equation*}
+for $\b{\Psi}$, where the product moment matrices $\hat{\mbf{S}}_{ij.\hat{\b \beta}_b}$ are given by
+\begin{equation}\label{eq:8_18}
+\hat{\mbf{S}}_{ij.\hat{\b \beta}_b}= \hat{\mbf{S}}_{ij} - \hat{\mbf{S}}_{i1}\hat{\b{\beta}}_b(\hat{\b{\beta}}_b'\hat{\mbf{S}}_{11}\hat{\b{\beta}}_b)^{-1}\hat{\b{\beta}}_b'\hat{\mbf{S}}_{1j} \text{ for } i,j = 0,1 \text{ and } b = 1,2.
+\end{equation}
+
+%The solution to the eigenvalue problem in Equation (8.17) is given as Lemma 1 in Johansen and Juselius [1992], and an extended exposition of eigenvalues and eigenvectors is given in Appendix A.1 in Johansen [1995]. 
+Equation \eqref{eq:8_18} yields eigenvalues $\tilde{\lambda}_1,\ldots,\tilde{\lambda}_{K-r_1}$ and eigenvectors $(\hat{\mbf{u}}_1,\ldots,\hat{\mbf{u}}_{K-r_1})$. Hence, the second partition of cointegration relations is given as $\hat{\b{\beta}}_2 = (\hat{\mbf{u}}_1,\ldots,\hat{\mbf{u}}_{r_2})$, although it is preliminary. The second step of the algorithm consists of holding these cointegration relations fixed and conditioning on $\hat{\b{\beta}}_2\mbf{R}_{1t}$. Hereby, a new estimate of $\hat{\b{\beta}}_1$ is obtained by solving
+
+\begin{equation}
+\frac{|\b{\varphi}'\mbf{H}'(\hat{\mbf{S}}_{11.\hat{\b{\beta}}_2} - \hat{\mbf{S}}_{10.\hat{\b{\beta}}_2}\hat{\mbf{S}}_{00.\hat{\b{\beta}}_2}^{-1}\hat{\mbf{S}}_{01.\hat{\b{\beta}}_2})\mbf{H}\b{\varphi}|}{|\b{\varphi}'\mbf{H}'\hat{\mbf{S}}_{11.\hat{\b{\beta}}_2}\mbf{H}\b{\varphi}|},
+\end{equation}
+which results in eigenvalues $\hat{\omega}_1,\ldots,\hat{\omega}_s$ and eigenvectors $(\hat{\mbf v}_1,\ldots,\hat{\mbf v}_s)$. The new estimate for $\b{\beta}_1$ is then given by $\hat{\b{\beta}}_1 = \mbf{H}\hat{\mbf v}_1$. Equations (8.17) and (8.18) form the switching algorithm by consecutively calculating new sets of eigenvalues and corresponding eigenvectors until convergence is achieved; i.e., the change in values from one iteration to the next is smaller than an a priori given convergence criterion. Alternatively, one could iterate as long as the likelihood function
+\begin{equation}
+L_{\text{max}}^{-2/T} = |\hat{\mbf{S}}_{00.\hat{\b{\beta}}_1}|\prod_{i=1}^{r_2}(1-\hat{\lambda}_i) = |\hat{\mbf{S}}_{00.\hat{\b{\beta}}_2}|\prod_{i=1}^{r_1}(1-\hat{\omega}_i)
+\tag{8.20}
+\end{equation}
+
+has not achieved its maximum. Unfortunately, this algorithm does not necessarily converge to a global maximum but to a local one instead.
+
+Finally, to calculate the likelihood-ratio test statistic, the eigenvalue problem
+\begin{equation}
+|\b{\rho} \hat{\b{\beta}}_1\hat{\mbf{S}}_{11}\hat{\b{\beta}}_1 - \hat{\b{\beta}}_1\hat{\mbf{S}}_{10}\hat{\mbf{S}}_{00}^{-1}\hat{\mbf{S}}_{01}\hat{\b{\beta}}_1| = 0
+\tag{8.21}
+\end{equation}
+
+has to be solved for the eigenvalues $\hat{\rho}_1,\ldots,\hat{\rho}_{r_1}$. The test statistic is then given as
+
+\begin{equation}
+-2\ln Q(\mathcal{H}_2|\mathcal{H}_1(r)) = T\left\{\sum_{i=1}^{r_1}\ln(1-\hat{\rho}_i) + \sum_{i=1}^{r_2}\ln(1-\tilde{\lambda}_i) - \sum_{i=1}^{r}\ln(1-\hat{\lambda}_i)\right\},
+\tag{8.22}
+\end{equation}

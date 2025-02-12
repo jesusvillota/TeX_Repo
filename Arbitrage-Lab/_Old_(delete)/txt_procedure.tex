@@ -1,0 +1,69 @@
+\section{Copula-based pairs trading strategy}
+
+\begin{enumerate}
+\item We observe a single path realization of returns $\mathcal{T}^o$.
+We want to test our trading strategy across muliple paths: 
+$$
+\mathbb{T} =\{\mathcal T_1, \mathcal T_2, \ldots\}
+$$ 
+Ideas to generate these paths: 
+\begin{itemize}
+  \item Monte Carlo Simulation
+  \item Combinatorial Purged Cross-Validation (Lopez de Prado)
+  \item GANs, Diffusions
+\end{itemize}
+
+\item A family of trading strategies $\mathbb{S}$ is defined as: 
+$$
+\mathbb{S}=\{\mathcal S_1, \mathcal S_2, \ldots \}
+$$
+Each particular trading strategy is defined as 
+$S_i(\b \theta(\mathcal T))$, where $\b \theta(\mathcal T)$ are the parameters of that trading strategy estimated on a sample $\mathcal T$. In particular we split each sample as $\mathcal T=\mathcal T^{train} \cup \mathcal T^{test}$ and parameterize the trading strategy on $\mathcal T^{train}$ as $S_i(\b \theta(\mathcal T^{train}))$ and to test it in $\mathcal T^{test}$. The parameterization solves:
+$$
+\b \theta(\mathcal T^{train}) = \arg \max_{\b \theta} B\1{S_i(\b \theta) ; \mathcal T^{train}}
+$$
+In our application, we will test a set of copula-based pairs-trading strategies. 
+\item Define $B: \mathbb S \times \mathbb T\to \mathbb{R}^k$ as a backtesting function that takes a trading strategy $\mathcal S\in\mathbb{S}$ and a sample period $\mathcal T\in\mathbb{T}$ and outputs $k$ backtesting metrics. This function is useful to evaluate the performance of a trading strategy out-of-sample. In particular, for each $\mathcal{T}\in\mathbb{T}$, we evaluate: 
+$$
+B\1{S_i(\b \theta(\mathcal T^{train})) ; \mathcal T^{test}}
+$$
+The asymptotic backtest statistics are given by:
+$$
+B_{\infty}(S_i) = \mathbb{E}\2{B\1{S_i(\b \theta(\mathcal T^{train})) ; \mathcal T^{test}}}
+$$
+which we approaximate from a finite set of paths $\mathbb{T}$ as: 
+$$
+\hat B_{\infty}(S_i) = \frac{1}{\abs{\mathbb{T}}} \sum_{\mathcal T\in \mathbb{T}} 
+B\1{S_i(\b \theta(\mathcal T^{train})) ; \mathcal T^{test}}
+$$
+
+
+
+By some LLN, we have that 
+$$\lim_{\abs{\mathbb{T}} \to \infty} \hat B_{\infty}(S_i) \to  B_{\infty}(S_i) $$
+and by CLT, 
+$$
+\sqrt{\abs{\mathbb{T}}}(\hat B_{\infty}(S_i) - B_{\infty}(S_i)) \overset{d}{\to} \mathcal{N}(0, \Sigma)
+$$
+
+where $\Sigma$ is the asymptotic variance-covariance matrix given by:
+$$
+\Sigma = \text{Var}\left(B\1{S_i(\b \theta(\mathcal T^{train})) ; \mathcal T^{test}}\right)
+$$
+
+which can be consistently estimated by the sample covariance matrix:
+$$
+\hat{\Sigma} = \frac{1}{\abs{\mathbb{T}}-1} \sum_{\mathcal T\in \mathbb{T}} 
+\left(B\1{S_i(\b \theta(\mathcal T^{train})) ; \mathcal T^{test}} - \hat B_{\infty}(S_i)\right)
+\left(B\1{S_i(\b \theta(\mathcal T^{train})) ; \mathcal T^{test}} - \hat B_{\infty}(S_i)\right)'
+$$
+
+This allows us to construct confidence intervals and perform statistical inference on the backtesting metrics. For any linear combination $a'B_{\infty}(S_i)$, a $100(1-\alpha)\%$ confidence interval is given by:
+$$
+a'\hat B_{\infty}(S_i) \pm z_{1-\alpha/2}\sqrt{\frac{a'\hat{\Sigma}a}{\abs{\mathbb{T}}}}
+$$
+
+where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$ quantile of the standard normal distribution.
+\end{enumerate}
+
+

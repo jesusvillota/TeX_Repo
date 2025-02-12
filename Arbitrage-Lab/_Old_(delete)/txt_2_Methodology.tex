@@ -1,0 +1,195 @@
+\section{Methodology}
+
+In this work we propose a pairs-trading strategy that uses a synthetic asset as a reference for the target asset. Our approach is divided into three main steps: (i) construction of a synthetic asset via a sparse (cardinality-constrained) synthetic control method, (ii) modeling the dependence structure between the target and synthetic asset returns via copulas, and (iii) generation of trading signals based on mispricing indices induced by the fitted copulas. Each step is described below with the accompanying mathematical details.
+
+\subsection{Synthetic Asset Construction via Sparse Synthetic Control}
+
+Let the target asset have log-price series $\{y_t\}_{t=1}^T$, and let $\mathbf{X} \in \mathbb{R}^{T \times N}$ denote the log-price series of the donor pool assets (with $N$ assets). Our goal is to construct a synthetic asset that approximates the target using a weighted combination of the donor pool. In order to avoid overfitting and enhance interpretability, we also enforce a cardinality restriction so that only up to $m$ assets (with $m \leq N$) have nonzero weights.
+
+\subsubsection*{Optimization Formulation}
+
+In the first step, we solve the unconstrained least squares problem to obtain candidate weights
+$
+\min_{w \in \mathbb{R}^{N}} \left\| y - \mathbf{X}w \right\|_2^2, \quad \text{subject to } \mathbf{1}^\top w = 1.
+$
+Let $w^\star \in \mathbb{R}^{N}$ be the optimal solution. In order to impose sparsity, we rank the weights by absolute magnitude, and select the index set
+$
+S = \{ i_1, \ldots, i_m \} \quad \text{with } m = \min\{m_{\max}, N\},
+$
+corresponding to the $m$ largest values in $|w^\star|$. Then, we solve a restricted problem:
+$
+\min_{\tilde{w} \in \mathbb{R}^{m}} \left\| y - \mathbf{X}_S \tilde{w} \right\|_2^2, \quad \text{subject to } \mathbf{1}^\top \tilde{w} = 1,
+$
+where $\mathbf{X}_S$ denotes the submatrix of $\mathbf{X}$ containing only the columns indexed by $S$, and $\tilde{w}$ represents the weights on the selected assets. The final synthetic log-price series is then defined as
+$
+\hat{y}_t = \sum_{i \in S} \tilde{w}_i \, X_{t,i}, \quad t=1,\ldots,T.
+$
+
+\subsubsection*{Model Selection}
+
+The parameter $m_{\max}$ (i.e., the maximum number of assets allowed with nonzero weights) is tuned via a time-series cross-validation procedure. More precisely, we use a grid search over candidate values of $m_{\max}$ and select the model that minimizes the out-of-sample mean squared error (MSE).
+
+\subsection{Copula-Based Dependence Modeling}
+
+Once the synthetic asset is constructed, we consider the corresponding return series. Denote by
+$
+r_t^{(1)} = y_t - y_{t-1} \quad \text{and} \quad r_t^{(2)} = \hat{y}_t - \hat{y}_{t-1}
+$
+the return series for the target and synthetic asset respectively. We denote by $F_1$ and $F_2$ the marginal cumulative distribution functions (CDFs) of $r^{(1)}$ and $r^{(2)}$, respectively. Empirical CDFs are constructed using linear interpolation:
+$
+\hat{F}_i(r) = \frac{1}{T}\sum_{t=1}^T \mathbf{1}\{r_t^{(i)} \le r\}, \quad i=1,2.
+$
+
+Next, we transform the return series to the unit interval:
+$
+u_t = \hat{F}_1(r_t^{(1)}), \quad v_t = \hat{F}_2(r_t^{(2)}).
+$
+This transformation is essential for copula modeling. We then fit several copula families (e.g., Gumbel, Frank, Clayton, Joe,
+N14, Gaussian, and Student-\emph{t}) to the data $\{(u_t,v_t)\}_{t=1}^T$ by maximizing the associated log-likelihood function. For example, for a generic copula $C_\theta(u,v)$ parameterized by $\theta$, the maximum likelihood estimation (MLE) is formulated as
+$
+\hat{\theta} = \arg \max_{\theta \in \Theta} \sum_{t=1}^T \ln c_\theta(u_t,v_t),
+$
+where $c_\theta(u,v) = \frac{\partial^2}{\partial u\,\partial v} C_\theta(u,v)$ is the copula density. The fitted copula not only captures central dependence but also tail dependencies, which is critical in times of market stress.
+
+\subsection{Trading Signal Generation and Portfolio Construction}
+
+With the copula model in place, we generate mispricing signals based on deviations from the expected dependence structure. Let $\Psi_t$ denote our mispricing index computed from the transformed returns. In our framework, the trading signal (flag) is determined by threshold rules. For instance, one may define the signal as
+$
+\phi_t = \begin{cases}
++1, & \text{if } \Psi_t > \delta_u, \\
+-1, & \text{if } \Psi_t < \delta_l, \\
+0, & \text{otherwise},
+\end{cases}
+$
+where $\delta_u>0$ and $\delta_l<0$ are upper and lower thresholds, respectively. Two variants of the open-exit rules are considered (e.g., OR-OR logic with one copula family and AND-OR logic with another) to capture asymmetries in tail dependencies.
+
+Positions in the asset pair are then generated in a dollar-neutral manner. Let
+$
+\pi_t = (\pi_t^{(1)},\pi_t^{(2)})
+$
+denote the number of units held in the target and synthetic asset respectively. The positions are determined in such a way that
+$
+\pi_t^{(1)} + \pi_t^{(2)} = 0,
+$
+ensuring dollar neutrality. The trading positions are updated based on the signal process $\{\phi_t\}$ and the mispricing accumulation, after a one-day lag to avoid look-ahead bias.
+
+\subsubsection*{Portfolio P\&L and Equity Curve}
+
+The realized daily P\&L of the strategy is computed by applying the positions to the corresponding returns. Let $r_t^{(i)}$ denote the daily return for asset $i$ and let $u_t^{(i)}$ denote the number of units held. Then the daily portfolio return is given by:
+$
+\text{P\&L}_t = \sum_{i=1}^{2} u_t^{(i)}\,r_t^{(i)}.
+$
+The cumulative strategy return (equity curve) is then obtained by the cumulative sum
+$
+\text{Equity}_T = \sum_{t=1}^{T} \text{P\&L}_t.
+$
+This framework permits an evaluation of the performance of the copula-based trading strategy in both in-sample and out-of-sample periods.
+
+\medskip
+
+Overall, our methodology combines a rigorous synthetic control approach with advanced copula-based modeling to capture asymmetric dependencies, particularly in the tails, which are essential for generating robust trading signals in pairs trading strategies.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{Methodology}
+\subsection{Synthetic Asset Construction}
+Let $P_t^{(i)}$ denote the log-price of the $i$-th constituent asset at time $t$. We construct a synthetic asset $S_t$ through an optimized linear combination of donor assets:
+
+\begin{equation}
+S_t = \sum_{i=1}^n w_i P_t^{(i)},\quad \text{s.t. } \sum_{i=1}^n w_i = 1
+\end{equation}
+
+The weight vector $\mathbf{w} \in \mathbb{R}^n$ is determined via a two-stage cardinality-constrained optimization:
+
+\begin{equation}
+\begin{aligned}
+& \underset{\mathbf{w}}{\text{minimize}}
+& & \sum_{t=1}^T \left(P_t^{\text{target}} - \sum_{i=1}^n w_i P_t^{(i)}\right)^2 \\
+& \text{subject to}
+& & \sum_{i=1}^n w_i = 1 \\
+& & & \|\mathbf{w}\|_0 \leq k
+\end{aligned}
+\end{equation}
+
+where $k$ is the maximum number of non-zero weights. The solution is obtained through:
+\begin{enumerate}
+\item Unconstrained least squares estimation: $\hat{\mathbf{w}}_{\text{OLS}} = \argmin_{\mathbf{w}} \|\mathbf{P}\mathbf{w} - \mathbf{P}^{\text{target}}\|_2^2$
+\item Cardinality reduction: $\mathcal{I} = \{i : |\hat{w}_i^{\text{OLS}}| \text{ top } k \text{ values}\}$
+\item Restricted OLS: $\hat{\mathbf{w}} = \argmin_{\mathbf{w}_{\mathcal{I}}} \|\mathbf{P}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}} - \mathbf{P}^{\text{target}}\|_2^2$
+\end{enumerate}
+
+\subsection{Copula Modeling}
+Let $r_t^{(1)}$ and $r_t^{(2)}$ be the log-returns of the target and synthetic assets respectively. We model their joint distribution using a copula framework:
+
+\begin{equation}
+F(r^{(1)}, r^{(2)}) = C(F_1(r^{(1)}), F_2(r^{(2)}); \theta)
+\end{equation}
+
+where $F_i$ are empirical cumulative distribution functions (ECDF) estimated via:
+
+\begin{equation}
+F_i(x) = \frac{1}{T+1}\sum_{t=1}^T \mathbb{I}_{\{r_t^{(i)} \leq x\}},\quad i=1,2
+\end{equation}
+
+We consider multiple copula families $C \in \mathcal{C}$ with parameters $\theta$ estimated via maximum likelihood:
+
+\begin{equation}
+\hat{\theta} = \argmax_{\theta} \sum_{t=1}^T \log c(F_1(r_t^{(1)}), F_2(r_t^{(2)}); \theta)
+\end{equation}
+
+where $\mathcal{C} = \{\text{Gumbel, Clayton, Frank, Joe, N14, Student-t, Gaussian}\}$.
+
+\subsection{Mispricing Index and Trading Rules}
+Define the mispricing index (MPI) through the copula's conditional probabilities:
+
+\begin{align}
+MPI_t^{(1|2)} &= C_{2|1}(F_1(r_t^{(1)})|F_2(r_t^{(2)}); \theta) \\
+MPI_t^{(2|1)} &= C_{1|2}(F_2(r_t^{(2)})|F_1(r_t^{(1)}); \theta)
+\end{align}
+
+Trading signals are generated via threshold crossing:
+
+\begin{equation}
+\tau_{\text{entry}} = \begin{cases}
+1 & \text{if } MPI_t^{(1|2)} < \ell_- \text{ or } MPI_t^{(1|2)} > \ell_+ \\
+-1 & \text{if } MPI_t^{(2|1)} < \ell_- \text{ or } MPI_t^{(2|1)} > \ell_+ \\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+
+with exit thresholds $\{\ell_-, \ell_+\}$ and stop-loss levels $\{\underline{L}, \overline{L}\}$. Positions are dollar-neutral:
+
+\begin{equation}
+\Delta^{(1)}_t = -\Delta^{(2)}_t = \begin{cases}
+\frac{\text{Capital}}{P_t^{(1)}} & \text{if long signal} \\
+-\frac{\text{Capital}}{P_t^{(1)}} & \text{if short signal}
+\end{cases}
+\end{equation}
+
+\subsection{Strategy Implementation}
+The trading strategy $\Phi$ is characterized by:
+
+\begin{equation}
+\Phi = \{\mathcal{C}, \mathbf{F}, \tau, \Delta, \{\ell_-, \ell_+, \underline{L}, \overline{L}\}\}
+\end{equation}
+
+where $\mathbf{F}$ denotes the filtration generated by the price process. Performance is evaluated through cumulative returns:
+
+\begin{equation}
+R_T = \sum_{t=1}^T \left(\Delta_t^{(1)} r_t^{(1)} + \Delta_t^{(2)} r_t^{(2)}\right)
+\end{equation}
+
+\end{section}

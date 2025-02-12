@@ -1,0 +1,422 @@
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+\section{Methodology}
+\label{sec:methodology}
+
+\subsection{Synthetic Asset Construction}
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (AAPL) using a combination of assets from a donor pool. We employ a two-stage optimization approach with cardinality constraints:
+
+\begin{enumerate}
+    \item \textbf{Initial Unconstrained Optimization:} Solve the convex optimization problem:
+    \begin{equation}
+        \min_{\mathbf{w}} \sum_{t=1}^T \left(y_t - \sum_{i=1}^N w_i x_{i,t}\right)^2 \quad \text{s.t.} \quad \sum_{i=1}^N w_i = 1
+    \end{equation}
+    where $ y_t $ represents the target asset's log-price and $ x_{i,t} $ the donor assets' log-prices.
+    
+    \item \textbf{Cardinality-Constrained Refinement:} Select the top $ k $ assets with largest absolute weights from the initial solution, then resolve the optimization problem restricted to these $ k $ assets. The optimal $ k $ is determined through time-series cross-validation with 5 splits, minimizing mean squared error.
+\end{enumerate}
+
+The final synthetic asset price series $ S_t $ is computed as:
+\begin{equation}
+    S_t = \sum_{i=1}^k w_i^* x_{i,t}^*
+\end{equation}
+where $ w_i^* $ are the optimized weights and $ x_{i,t}^* $ the selected donor assets' log-prices.
+
+\subsection{Copula Model Specification}
+We model the dependence structure between the target asset and synthetic asset returns using copula functions. The methodology proceeds as follows:
+
+\begin{enumerate}
+    \item \textbf{Marginal Distribution Transformation:} Convert returns to uniform marginals using empirical CDFs:
+    \begin{equation}
+        U_t = F_{\text{emp}}(r_t^{A1}), \quad V_t = F_{\text{emp}}(r_t^{A2})
+    \end{equation}
+    
+    \item \textbf{Copula Selection:} Evaluate multiple Archimedean and elliptical copulas (Gumbel, Clayton, Frank, Joe, N14, Gaussian, and Student-t) using maximum likelihood estimation. The log-likelihood for a copula $ C_\theta $ with parameter $ \theta $ is:
+    \begin{equation}
+        \mathcal{L}(\theta) = \sum_{t=1}^T \ln c_\theta(U_t, V_t)
+    \end{equation}
+    where $ c_\theta $ is the copula density function.
+\end{enumerate}
+
+\subsection{Trading Strategy Implementation}
+The trading strategy employs a dollar-neutral approach based on copula-derived mispricing indices:
+
+\begin{enumerate}
+    \item \textbf{Signal Generation:} Compute mispricing indices $ M_t $ using the conditional copula probabilities:
+    \begin{align}
+        M_t^{A1} &= P(U_t \leq u | V_t = v) \\
+        M_t^{A2} &= P(V_t \leq v | U_t = u)
+    \end{align}
+    
+    \item \textbf{Position Management:} Implement trading rules with thresholds:
+    \begin{itemize}
+        \item Open positions when $ |M_t| > 0.5 $ (entry threshold)
+        \item Close positions when $ |M_t| < 0.2 $ (exit threshold)
+        \item Stop-loss triggers at $ |M_t| > 2.0 $
+    \end{itemize}
+    
+    \item \textbf{Portfolio Construction:} Maintain dollar-neutral exposure through dynamic position sizing:
+    \begin{equation}
+        \Delta \text{Position}_t = \begin{cases}
+            \text{Long A1/Short A2} & M_t < -0.5 \\
+            \text{Short A1/Long A2} & M_t > 0.5 \\
+            0 & \text{otherwise}
+        \end{cases}
+    \end{equation}
+\end{enumerate}
+
+\subsection{Performance Evaluation}
+We assess strategy effectiveness through:
+\begin{itemize}
+    \item In-sample/out-of-sample division (70\%-30\% split)
+    \item Cumulative returns calculation:
+    \begin{equation}
+        R_{\text{cum}} = \sum_{t=1}^T (r_t^{A1} \cdot w_t^{A1} + r_t^{A2} \cdot w_t^{A2})
+    \end{equation}
+    \item Risk-adjusted metrics: Sharpe ratio and maximum drawdown
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%\section{Methodology}
+%
+%\subsection{Synthetic Asset Construction}
+%Our methodology begins with the construction of a synthetic asset that closely tracks our target asset. We employ a cardinality-constrained approach to synthetic control, which optimizes the following problem:
+%
+%\begin{equation}
+%\begin{aligned}
+%\min_{w} & \sum_{t=1}^{T} (y_t - X_t w)^2 \\
+%\text{s.t. } & \sum_{i=1}^{N} w_i = 1 \\
+%& \|\{i: w_i \neq 0\}\|_0 \leq k
+%\end{aligned}
+%\end{equation}
+%
+%where $y_t$ represents the log-price of the target asset at time $t$, $X_t$ is the vector of log-prices for the donor pool assets at time $t$, $w$ is the weight vector, and $k$ is the maximum number of assets allowed in the synthetic control (cardinality constraint).
+%
+%The optimization is solved in two stages:
+%\begin{enumerate}
+%    \item First, we solve the unconstrained problem to identify the most important assets based on their absolute weights.
+%    \item Second, we resolve the optimization problem using only the top $k$ assets.
+%\end{enumerate}
+%
+%\subsection{Copula-Based Pairs Trading Framework}
+%Having constructed the synthetic asset, we implement a copula-based pairs trading strategy that captures the complex dependence structure between the target asset and its synthetic counterpart. The strategy consists of several key components:
+%
+%\subsubsection{Return Series Transformation}
+%Let $R_1$ and $R_2$ denote the return series of the target and synthetic assets, respectively. We transform these returns into uniform variates using their empirical cumulative distribution functions (ECDFs):
+%
+%\begin{equation}
+%U_1 = F_1(R_1), \quad U_2 = F_2(R_2)
+%\end{equation}
+%
+%where $F_1$ and $F_2$ are the ECDFs constructed using linear interpolation.
+%
+%\subsubsection{Copula Selection and Fitting}
+%We evaluate multiple copula families to capture the dependence structure:
+%\begin{itemize}
+%    \item Archimedean copulas: Gumbel, Clayton, Frank, Joe, N14
+%    \item Elliptical copulas: Gaussian, Student-t
+%\end{itemize}
+%
+%The optimal copula is selected based on maximum likelihood estimation:
+%
+%\begin{equation}
+%\hat{\theta} = \argmax_{\theta} \sum_{t=1}^{T} \log c(U_{1,t}, U_{2,t}; \theta)
+%\end{equation}
+%
+%where $c(\cdot,\cdot;\theta)$ is the copula density with parameter $\theta$.
+%
+%\subsubsection{Trading Signal Generation}
+%We employ a mispricing index (MPI) approach to generate trading signals. The MPI is calculated using:
+%
+%\begin{equation}
+%\text{MPI}_t = \frac{\partial}{\partial u_1} C(u_1, u_2) - \frac{\partial}{\partial u_2} C(u_1, u_2)
+%\end{equation}
+%
+%where $C$ is the fitted copula and $\frac{\partial}{\partial u_i}$ represents the partial derivative with respect to the $i$-th argument.
+%
+%Trading positions are determined using a flag-based system:
+%\begin{equation}
+%\text{Position}_t = 
+%\begin{cases}
+%1 & \text{if Flag}_{1,t} > \alpha \text{ and Flag}_{2,t} < -\alpha \\
+%-1 & \text{if Flag}_{1,t} < -\alpha \text{ and Flag}_{2,t} > \alpha \\
+%0 & \text{otherwise}
+%\end{cases}
+%\end{equation}
+%
+%where $\alpha$ is the threshold parameter and Flags are cumulative measures of the MPI.
+%
+%\subsection{Portfolio Construction}
+%We implement a dollar-neutral strategy where the position sizes are determined by:
+%
+%\begin{equation}
+%\begin{aligned}
+%\text{Units}_{1,t} &= \text{Position}_t \cdot \frac{1}{2P_{1,t}} \\
+%\text{Units}_{2,t} &= -\text{Position}_t \cdot \frac{1}{2P_{2,t}}
+%\end{aligned}
+%\end{equation}
+%
+%where $P_{i,t}$ represents the price of asset $i$ at time $t$. The portfolio return at time $t$ is calculated as:
+%
+%\begin{equation}
+%R_{p,t} = \text{Units}_{1,t} \cdot R_{1,t} + \text{Units}_{2,t} \cdot R_{2,t}
+%\end{equation}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{Methodology}\label{sec:methodology}
+
+In this section, we outline the methodology employed for constructing a copula-based pairs trading strategy in which one of the two assets is a synthetic reference asset. The approach consists of four main steps: (i) data preprocessing and partitioning, (ii) construction of the synthetic control asset via a cardinality-constrained optimization, (iii) copula fitting to capture dependence, and (iv) generating trading signals based on mispricing indices derived from the fitted copula.
+
+\subsection{Data Preprocessing}
+We start by gathering price data (log prices, in particular) for a target symbol, denoted $A_1$, and a donor pool of other assets. The time horizon is split into two segments: a training period and an out-of-sample (testing) period. Formally, we partition the overall timeline $\{ t_1, t_2, \ldots, t_T \}$ into:
+
+\begin{itemize}
+    \item A \textit{training set}, $\{ t_1, \ldots, t_{k} \}$, used to fit models.
+    \item A \textit{testing set}, $\{ t_{k+1}, \ldots, t_T \}$, used for out-of-sample validation.
+\end{itemize}
+
+We collect the target symbol's log prices, $\{ p_{A_1}(t_i) \}$, and the log prices of the donor pool $\{ p_{j}(t_i) \}_{j \in \mathcal{D}}$. As shown in the code, we store these values in data frames and pivot them such that each row corresponds to a timestamp and each column to a specific symbol's log price.
+
+\subsection{Synthetic Asset Construction}
+The objective is to create a single synthetic asset $A_2^\text{(syn)}$ that tracks the target symbol $A_1$ closely. Formally, let $\{ x_i \}$ be the vector of stacked donor asset log prices at time $t_i$ (one component for each asset in the donor pool). We aim to find weights $\mathbf{w} = (w_1, \ldots, w_N)$ such that the synthetic price 
+$
+   p_{A_2}^\text{(syn)}(t_i) \;=\; \sum_{j=1}^{N} w_j\, x_{j}(t_i)
+$
+tracks $ p_{A_1}(t_i)$ in-sample while restricting the total number of assets in the combination. 
+
+\paragraph{Cardinality-Constrained Optimization.}
+To realize this, we solve a two-stage least squares problem. First, we solve
+$
+   \min_{\mathbf{w}} \sum_{i\,\in\,\text{train}} \bigl(p_{A_1}(t_i) \;-\; \mathbf{w}^\top \mathbf{x}_i\bigr)^2,
+   \quad \text{subject to} \quad \sum_{j=1}^N w_j \;=\; 1,
+$
+and subsequently select the top $\max\_assets$ contributors (in absolute weight). We re-solve the minimization using only that restricted subset of donor assets. This step ensures interpretability by limiting the model to a small number of donor assets. The outcome of this step is a fitted weight vector $\widehat{\mathbf{w}}$, from which we then derive the in-sample synthetic log prices,
+$
+    p_{A_2}^\text{(syn)}(t_i) \;=\; \widehat{\mathbf{w}}^\top \mathbf{x}_i.
+$
+
+\subsection{Copula Modeling and Fitting}
+Once we obtain the pair $\{ A_1, A_2^\text{(syn)} \}$, we transform the price series into returns for modeling dependence. Let
+$
+   r_{A_1}(t_i) \;=\; p_{A_1}(t_i) - p_{A_1}(t_{i-1}), 
+   \quad
+   r_{A_2}(t_i) \;=\; p_{A_2}^\text{(syn)}(t_i) - p_{A_2}^\text{(syn)}(t_{i-1}).
+$
+We then estimate the empirical marginal cumulative distribution functions (CDFs) $\widehat{F}_{A_1}$ and $\widehat{F}_{A_2}$ for the training period. By applying these empirical CDFs, we map the returns into uniforms, facilitating copula fitting.
+
+A variety of copula families may be fitted (Gumbel, Clayton, Frank, Joe, N14, Gaussian, Student-$t$), each capturing different forms of dependence and tail behavior. Let 
+$
+   (u_i, v_i) \;=\; \bigl(\widehat{F}_{A_1}(r_{A_1}(t_i)), \,\widehat{F}_{A_2}(r_{A_2}(t_i))\bigr)
+$
+refer to the pairs of transformed returns. The likelihood of each copula family $\mathcal{C}_\theta$ for parameters $\theta$ is maximized:
+$
+   \hat{\theta} 
+   \;=\; 
+   \underset{\theta}{\arg\max}
+   \sum_{i \in \text{train}} 
+   \log \Bigl( c_\theta\bigl(u_i, v_i\bigr) \Bigr),
+$
+where $c_\theta$ is the copula density. Based on goodness-of-fit criteria (e.g., log-likelihood) and tail-dependence considerations, we select one or more copulas (e.g., Student-$t$ and N14) to generate trading signals.
+
+\subsection{Trading Strategy and Signal Generation}
+We employ a mispricing index (MPI) signal derived from the fitted copula. In essence, the MPI measures how much the current (transformed) return pair $(u, v)$ deviates from its expected relationship specified by the copula. Larger deviations correspond to stronger over- or under-valuation between $A_1$ and $A_2^\text{(syn)}$. 
+
+Concretely, we:
+\begin{enumerate}
+    \item Compute $\{ r_{A_1}(t_i),\,r_{A_2}(t_i)\}$ in the test period.
+    \item Transform returns via the training-set CDFs, yielding $\{ (u_i, v_i)\}$.
+    \item Use the fitted copula to estimate the MPI.  
+    \item Define a set of threshold-based trading rules:
+    \begin{itemize}
+        \item \textit{Open} a position if the MPI crosses a specified boundary (indicating mispricing).
+        \item \textit{Close} or \textit{exit} the position once the MPI reverts to a certain level or hits a stop-loss.
+    \end{itemize}
+    \item The position sizes are maintained \textit{dollar-neutral} (or value-neutral), such that the capital invested long in one asset matches the capital invested short in the other.
+\end{enumerate}
+
+\paragraph{Equity Curve Computation.}
+Finally, we track profit and loss (P\&L) based on the positions held. Let $\{ \pi_{A_1}(t), \pi_{A_2}(t)\}$ be the time series of positions (in shares) for each asset, determined from the MPI-based trading signals. The daily P\&L can be approximated by:
+$
+   \Delta \text{P\&L}(t) 
+   \;=\; \pi_{A_1}(t) \, \bigl[r_{A_1}(t)\bigr] \;+\; \pi_{A_2}(t) \, \bigl[r_{A_2}(t)\bigr].
+$
+Cumulative sums (or exponentiated if returns are log-based) of these daily changes form the so-called \textit{equity curve}. We compare equity curves for different copulas to evaluate strategy performance, risk exposure, and stability out of sample.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\section{Methodology}
+%\subsection{Synthetic Asset Construction}
+%We construct a synthetic asset $A_2$ designed to replicate the price movements of the target asset $A_1$ (AAPL) using a donor pool of assets. The synthetic asset is created through an Elastic Net-regularized regression model that solves:
+%
+%\begin{equation}
+%\min_{\mathbf{w}} \| \mathbf{y} - \mathbf{Xw} \|^2 + \alpha \left( \lambda \|\mathbf{w}\|_1 + (1-\lambda)\|\mathbf{w}\|^2 \right)
+%\end{equation}
+%
+%subject to:
+%\begin{equation}
+%\sum w_i = 1 \quad \text{and} \quad w_i \geq 0
+%\end{equation}
+%
+%where $\mathbf{y}$ represents the target asset returns, $\mathbf{X}$ the donor pool returns, and $\mathbf{w}$ the portfolio weights. A cardinality-constrained variant limits the number of non-zero weights to enhance interpretability.
+%
+%\subsection{Copula-Based Mispricing Detection}
+%\subsubsection{Returns Transformation}
+%For assets $A_1$ and $A_2$, we calculate daily log returns:
+%\begin{equation}
+%r_t = \ln(p_t) - \ln(p_{t-1})
+%\end{equation}
+%
+%Empirical CDFs $F_{A_1}$ and $F_{A_2}$ are constructed from training period returns for probability integral transformation:
+%\begin{equation}
+%u_t = F_{A_1}(r_t^{A_1}), \quad v_t = F_{A_2}(r_t^{A_2})
+%\end{equation}
+%
+%\subsubsection{Copula Fitting}
+%We model the dependency structure using several Archimedean and elliptical copulas:
+%\begin{equation}
+%\mathcal{C}(u,v) = \Phi_\theta(u,v)
+%\end{equation}
+%
+%where $\Phi_\theta$ represents the copula function with parameters $\theta$, selected via maximum likelihood estimation. The best-fitting copula is chosen based on log-likelihood scores and tail dependency characteristics.
+%
+%\subsection{Mispricing Index and Trading Signals}
+%\subsubsection{Mispricing Index (MPI)}
+%The conditional probability MPI is calculated as:
+%\begin{equation}
+%MI_t^{A_1|A_2} = P(R_t^{A_1} \leq r_t^{A_1} | R_t^{A_2} = r_t^{A_2})
+%\end{equation}
+%\begin{equation}
+%MI_t^{A_2|A_1} = P(R_t^{A_2} \leq r_t^{A_2} | R_t^{A_1} = r_t^{A_1})
+%\end{equation}
+%
+%\subsubsection{Flag Accumulation}
+%We maintain cumulative mispricing indicators:
+%\begin{equation}
+%Flag_{A_1}^*(t) = \sum_{s=1}^t (MI_s^{A_1|A_2} - 0.5)
+%\end{equation}
+%\begin{equation}
+%Flag_{A_2}^*(t) = \sum_{s=1}^t (MI_s^{A_2|A_1} - 0.5)
+%\end{equation}
+%
+%These raw flags are reset to zero upon position closure.
+%
+%\subsection{Trading Rules}
+%\subsubsection{Entry/Exit Conditions}
+%A dollar-neutral pairs trading strategy is implemented with:
+%\begin{itemize}
+%\item Entry when flags cross $\pm D$ thresholds ($D = 0.2-0.6$)
+%\item Exit when flags revert to 0 or reach stop-loss levels $\pm S$ ($S = 2$)
+%\item Position sizing maintains equal dollar amounts in long/short legs
+%\end{itemize}
+%
+%The strategy employs four decision rules for signal combinations:
+%\begin{equation}
+%\text{Position}_t = \begin{cases}
+%+1 & \text{if } Flag_{A_1} \leq -D \text{ OR } Flag_{A_2} \geq D \\
+%-1 & \text{if } Flag_{A_1} \geq D \text{ OR } Flag_{A_2} \leq -D \\
+%0 & \text{otherwise}
+%\end{cases}
+%\end{equation}
+%
+%\subsection{Performance Measurement}
+%Strategy returns are calculated as:
+%\begin{equation}
+%R_t^{strategy} = \frac{1}{2}(r_t^{A_1} - r_t^{A_2}) \times \text{Position}_{t-1}
+%\end{equation}
+%
+%Equity curves are computed through cumulative sum of daily returns, with positions shifted one period to avoid look-ahead bias.
+%
+%%\end{document}
+%
+%
+%
+%%\section*{Two-Stage Optimization Approach}
+%%
+%%In this formulation, we select a subset of assets using a two-stage procedure.
+%%
+%%\subsection*{Stage 1: Unrestricted Optimization}
+%%
+%%We first solve the following optimization problem, where $ y \in \mathbb{R}^T $ is the target time series, $ X \in \mathbb{R}^{T \times N} $ is the donor pool data, and $ w \in \mathbb{R}^N $ represents the weight vector:
+%%\begin{equation*}
+%%	\begin{array}{ll}
+%%\text{minimize}_{w} & \| y - Xw \|_2^2 \\
+%%\text{subject to} & \displaystyle \sum_{i=1}^{N} w_i = 1.
+%%\end{array}
+%%\end{equation*}
+%%
+%%Let $\hat{w}$ denote the solution of the above problem. We then select a subset of indices $ I \subset \{1,2,\dots,N\} $ with $|I| = k$ (where $ k $ is the maximum number of assets allowed), corresponding to the $ k $ largest values in absolute terms:
+%%$
+%%I = \left\{ i \in \{1,\dots,N\} \;:\; i \text{ is among the indices corresponding to the } k \text{ largest values of } \{ |\hat{w}_1|, \dots, |\hat{w}_N| \} \right\}.
+%%$
+%%
+%%\subsection*{Stage 2: Restricted Optimization}
+%%
+%%Let $ X_I \in \mathbb{R}^{T \times k} $ be the submatrix of $ X $ that contains only the columns indexed by $ I $, and let $ w_I \in \mathbb{R}^k $ be the corresponding weight vector. We then solve:
+%%\begin{equation*}
+%%	\begin{array}{ll}
+%%\text{minimize}_{w_I} & \| y - X_I w_I \|_2^2 \\
+%%\text{subject to} & \displaystyle \sum_{i \in I} (w_I)_i = 1.
+%%\end{array}
+%%\end{equation*}The final full weight vector $ w \in \mathbb{R}^N $ is defined by:
+%%%$
+%%%w_i =
+%%%\begin{cases}
+%%%(w_I)_i, & \text{if } i \in I,\[1mm]
+%%%0, & \text{otherwise.}
+%%%\end{cases}
+%%%$
+%%
+%%%\end{document}

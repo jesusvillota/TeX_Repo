@@ -1,0 +1,55 @@
+\newpage
+\section{Doubly X-validated copula-based pairs trading}
+
+
+
+
+\begin{itemize}
+\item Double cross-validation
+\begin{itemize}
+  \item x-validate: [Copula selection] + [Copula parameters]
+  \item x-validate [trading strategy selection] + [trading strategy parameters]
+\end{itemize}
+\end{itemize}
+
+
+\Vhrulefill
+
+\begin{itemize}
+  \item Step 1. Select the best copula with cross-validation	
+\begin{itemize}
+  \item Define a family of copulas: 
+$$
+\mathcal C := 
+\{ 
+C_{\t{gaussian}}, 
+C_{\t{gaussian\_mixture}}, 
+C_{\t{student-t}}, 
+C_{\t{clayton}},
+C_{\t{rotated\_clayton}}, 
+C_{\t{gumbel}},
+C_{\t{rotated\_gumbel}},
+C_{\t{frank}},  
+\}
+$$
+\item For $C\in\mathcal C$, select the optimal copula with its best-fitting parameters: $C^*(\b \theta_{C^*})$
+\end{itemize}
+\item Step 2: Select the best trading strategy with cross-validation
+\begin{itemize}
+  \item Define a family of trading strategies
+$$
+\mathcal S:=\{
+S_{\t{cond\_exp}}, 
+S_{\t{MPI}},
+... 
+\}
+$$
+  \item For $S\in\mathcal S$, select the optimal trading strategy with its best-fitting parameters: $S^*(\b \theta_{S^*})$
+\end{itemize}
+
+\Vhrulefill
+
+Returns: $$\angl{C^*(\b \theta_{C^*}), S^*(\b \theta_{S^*})}$$
+
+
+\end{itemize}
