@@ -1,0 +1,607 @@
+<abstract>
+Financial markets frequently exhibit transient price divergences between economically linked assets, yet traditional pairs trading strategies struggle to adapt to structural breaks and complex dependencies, limiting their robustness in dynamic regimes. 
+%
+This paper addresses these challenges by developing a novel framework that integrates sparse synthetic control with copula-based dependence modeling to enhance adaptability and risk management. 
+%
+Economically, our approach responds to the need for strategies that systematically identify latent linkages while mitigating overfitting in high-dimensional asset pools. 
+%
+The sparse synthetic control methodology constructs a parsimonious synthetic asset via a constrained linear combination of candidates from a broad donor pool, automating pair selection while prioritizing interpretability and computational efficiency. 
+%
+By embedding this within a copula-based dependence framework, we capture non-linear and tail dependencies between target and synthetic assets. 
+%
+Trading signals, grounded in the relative mispricing between these assets, employ a cumulative index that resets after position closures to isolate episodic opportunities, with disciplined entry rules requiring concurrent misalignment signals to filter noise. 
+%
+Empirical analysis demonstrates the superior performance of our approach across diverse market conditions. 
+</abstract>
+
+<introduction>
+%====================[Pairs Trading]=========================
+
+% ------[ Definition: What is it? ]-------
+
+Pairs trading is widely recognized as a cornerstone of statistical arbitrage, offering a market-neutral investment approach that exploits temporary divergences in the prices of historically correlated or economically linked assets.
+%
+% ------[ Explanation: What does it involve? ]-------
+%
+By simultaneously taking a long position in the relatively undervalued asset and a short position in the relatively overvalued one, pairs traders aim to profit from the eventual convergence of these prices. This strategy has garnered enduring prominence among quantitative researchers and practitioners, attributing its appeal to both conceptual simplicity--focusing on the relative mispricing of two assets--and the potential for stable returns independent of broader market movements.
+
+% ------[ Challenges / Limitations ]-------
+
+While pairs trading is conceptually straightforward, its effective implementation faces notable complexities in practice. Traditional approaches often rely on simple distance measures or cointegration-based criteria to identify pairs and establish entry and exit rules. However, these methods can be hampered by strict parametric assumptions, sensitivity to transient noise, and an inability to adapt to evolving market conditions. Structural breaks, non-linear dependencies, and time-varying correlation patterns often violate the assumptions of classical linear models, increasing the risk of identifying spurious relationships and making it difficult to achieve stable performance over diverse market regimes.
+
+To address these challenges, recent research has explored more flexible frameworks that combine advanced econometric tools with statistical learning. In particular, incorporating synthetic control methodologies and copula-based dependence modeling aims to better capture the dynamic interactions between assets. By abandoning the sole reliance on fixed, potentially fragile pair relationships, such approaches promise to more robustly uncover the underlying economic or statistical linkages that drive temporary mispricings, thus laying the groundwork for improved performance and risk control in pairs trading strategies.
+
+%====================[This paper]=========================
+
+Building on the challenges and limitations outlined above, this paper proposes a novel pairs trading framework that integrates sparse synthetic control methods with copula-based dependence modeling. 
+%
+% ------[ Research Question ]-------
+%
+The primary research question we aim to answer is: \qquote{Can the integration of sparse synthetic control and copula-based dependence modeling improve the performance of pairs trading strategies?}
+%
+% ------[ How we address this question ]-------
+%
+To address this question, we design a methodology that overcomes several shortcomings of traditional pairs trading. 
+
+First, rather than relying on a fixed or pre-specified partner asset, we construct a \emph{synthetic asset} through a sparse linear combination of assets from a larger donor pool. This allows the framework to discover the most influential contributors to the target asset's behavior, effectively automating pair selection. By enforcing sparsity in the weight vector, we reduce computational complexity and enhance interpretability, while mitigating overfitting risks in thinner markets.
+
+Second, we incorporate copula-based dependence modeling to capture potentially complex, non-linear relationships and tail dependencies that can arise in financial returns. Unlike correlation- or cointegration-based strategies, which often impose strict distributional assumptions, copulas decouple the marginal distributions from the joint dependence structure, thereby offering a more nuanced view of how assets co-move. This feature is especially important in periods of market stress, when returns frequently exhibit heightened correlations and non-linearities.
+
+Finally, we adapt and extend the Mispricing Index (MI) strategy of \cite{Xie2016} by introducing a Cumulative Mispricing Index (CMI) that resets upon trade closure, ensuring that stale signals do not accumulate across different trading episodes. As in \cite{Rad2016}, we adopt an \qquote{and-or} logic for opening and closing positions, requiring persistent mispricing signals from both the target and synthetic assets to initiate a trade and closing positions promptly when either market correction or stop-loss conditions are met.
+
+%====================[Structure]=========================
+
+The remainder of this paper proceeds as follows. 
+%
+In Section 1 %\cref{sec:literature_review} 
+we begin by reviewing the relevant literature on pairs trading, synthetic control methods, and copula-based dependence modeling. 
+%
+In Section 2 %\cref{sec:methodology} 
+we present our methodological framework, detailing how sparse synthetic control and copula families are jointly employed to construct a robust trading signal, and introduce the mispricing index (MI) strategy adapted to incorporate copula-driven signals. 
+%
+Subsequently, in Section 3 %\cref{sec:empirics}
+we conduct an empirical evaluation using real-world market data, illustrating the performance and practical implications of our approach. 
+%
+We conclude in Section 4 %\cref{sec:conclusion} 
+by summarizing key insights, discussing limitations, and outlining prospective directions for future research.
+</introduction>
+
+
+<literature-review>
+%==============[	  Classics  ]==============
+Pairs trading has emerged as a cornerstone of statistical arbitrage strategies, with a rich history in both academic research and practical applications. The foundational work of \cite{Gatev2006} provided the first comprehensive academic study of pairs trading, documenting significant excess returns of up to 11\% annually for self-financing portfolios over a 40-year period from 1962 to 2002. This seminal paper was complemented by the theoretical framework developed in \cite{Elliott2005}, which introduced a mean-reverting Gaussian Markov chain model for spread dynamics and established analytical methods for parameter estimation using the EM algorithm.
+
+%==============[	  Empirical investigations  ]==============
+Empirical investigations have thoroughly examined the profitability of pairs trading across different markets and time periods. For instance, \cite{Chen2019} reported large abnormal returns driven by short-term reversals and pairs momentum effects, while \cite{Do2010} showed that simple pairs trading remains viable in turbulent periods despite a general profitability decline in later years. In a UK-centric study, \cite{Bowen2014} recorded moderate annual returns once risk and liquidity were accounted for. Large-scale assessments in \cite{Krauss2016} and \cite{Rad2016} confirmed that distance, cointegration, and copula-based strategies can yield significant alpha but exhibit important differences regarding convergence speed and trading frequencies.
+
+%==============[	  Cointegration  ]==============
+A popular way to identify and exploit persistent relationships in pairs trading has involved cointegration analysis. \cite{vidyamurthy2004pairs} stands out as a seminal reference, detailing how cointegration can be applied to detect mean-reverting spreads in equity markets. 
+Subsequent research has explored various aspects of this approach: \cite{Caldeira2013} demonstrated the effectiveness of cointegration-based selection methods in the Brazilian market, while \cite{Huck2014} provided evidence that cointegration-based strategies outperform distance-based methods. \cite{Cartea2015} extended the framework by incorporating optimal dynamic investment strategies, and \cite{Lintilhac2016} applied these techniques to cryptocurrency markets.
+
+%==============[	  Copulas  ]==============
+A growing strand of research leverages copulas to model more general dependencies beyond linear correlation.
+\cite{Min2010} introduced Bayesian inference for multivariate copulas using pair-copula constructions, while \cite{stander2013trading} offer a copula-based approach for detecting relative mispricing. 
+Extensions in \cite{Liew2013} and \cite{Xie2016} underscore that copulas outperform distance-of-prices rules in capturing tail dependencies 
+Multi-dimensional variants have been proposed (e.g., \cite{lau2016multi}) to incorporate three or more assets into a single framework. Further refinements, like those introduced in \cite{Krauss2017} and \cite{zhi2017dynamic}, combine t-copulas or dynamic copula-GARCH models with individualized thresholds for improved risk-adjusted returns. In the high-frequency domain, \cite{Chu2018} showed that copula-based mispricing indices can be coupled with deep learning for profitability enhancements. Recent efforts also explore mixed copulas (\cite{SabinodaSilva2023}), ARMA-GARCH approaches (\cite{Wang2023}), and copulas specialized for cointegrated assets (\cite{He2024}), culminating in improved alpha extraction. Finally, \cite{Tadi2025} proposes reference-asset-based copula trading specifically for cryptocurrencies. 
+%
+
+%==============[	  Didactic resources  ]==============
+Practical guidance and pedagogical discussions on pairs trading can be found in \cite{hudsonthames2024}, which provides a broad compendium of methods, from classical cointegration to machine learning-based selection. On a methodological note, \cite{alexander2008market} offers valuable introductions to both cointegration analysis and copula applications in financial markets, particularly in chapters II.5 and II.6.
+
+
+%==============[	  Alternative approaches  ]==============
+Beyond cointegration or copula methodologies, several innovative techniques have surfaced. 
+%New approaches to modeling and parameter estimation for pairs trading appear in \cite{do2006new} and \cite{Zeng2014}, with the latter introducing threshold-based mean-reversion strategies. 
+\cite{do2006new} developed a stochastic residual spread model, while \cite{Zeng2014} focused on optimal threshold determination. 
+In more recent research, \cite{Sarmento2020} incorporates machine learning (OPTICS clustering) to constrain search space, while \cite{Johansson2024} leverages convex-concave optimization for multi-asset statistical arbitrage. Reinforcement learning is featured in \cite{Han2023} for automated pair selection, and \cite{qureshi2024pairs} employs a graphical matching approach to reduce overlap among chosen pairs. Further, \cite{Roychoudhury2023} couples clustering with deep RL for equity indices, whereas \cite{Rotondi2025} applies a partial correlation-based distance to cluster promising trading candidates.
+%Alternative approaches to traditional pairs trading have been proposed. \cite{do2006new} developed a stochastic residual spread model, while \cite{Zeng2014} focused on optimal threshold determination. Machine learning applications have gained prominence, with \cite{Sarmento2020} utilizing LSTM networks, \cite{Han2023} employing unsupervised learning for pair selection, and \cite{Roychoudhury2023} combining clustering with deep reinforcement learning. Novel optimization approaches include the convex-concave framework of \cite{Johansson2024}, the graphical matching approach of \cite{qureshi2024pairs}, and the clustering-based methodology of \cite{Rotondi2025}.
+%
+
+%==============[	  Synthetic Controls / Index-Tracking  ]==============
+The method of replicating a target asset's returns by constructing a portfolio of contributor assets is reminiscent of index-tracking procedures. Classic treatments connecting cointegration analysis and hedging tasks (e.g., \cite{Alexander1999} and \cite{Alexander2002}) lay theoretical groundwork for such an approach. Subsequent refinements in \cite{Alexander2005a} and \cite{Alexander2005b} investigate how cointegration outperforms traditional techniques in crafting robust index trackers and exploiting time-varying market regimes. Complementary research (e.g., \cite{Shu2020}) shows that sparse solutions across a large universe can reduce transaction costs, an idea further corroborated in \cite{Bradrania2021}, where machine learning identifies dynamic selection methods for index constituents. These frameworks illustrate how synthetic control concepts provide a flexible foundation for building market-neutral positions or tracking assets with fewer assumptions.
+%Our synthetic control methodology draws inspiration from the index tracking literature. \cite{Alexander1999} pioneered the application of cointegration to tracking problems, while \cite{Alexander2002} and \cite{Alexander2005a} developed enhanced indexing strategies. \cite{Alexander2005b} explored market regime effects, and recent work by \cite{Shu2020} introduced adaptive elastic net methods for high-dimensional tracking. \cite{Bradrania2021} incorporated machine learning for state-dependent stock selection, demonstrating the evolving sophistication of tracking methodologies.
+</literature-review>
+
+<methodology>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPARSE SYNTHETIC CONTROL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sparse Synthetic Control}
+
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g: AAPL) using a combination of assets from a donor pool. 
+Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. We construct a synthetic asset ${\mbf y}^*$ through a sparse linear combination
+\begin{equation*}
+{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
+.
+\end{equation*}
+%
+The weights $\mbf w^*=[w_1^*, ..., w_N^*]$ are determined via a cardinality-constrained quadratic program
+%
+\begin{equation*}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 
+\quad \text{s.t.} \quad 
+\left|
+\begin{array}{ll}
+	\mbf 1\' \mbf w &= 1 \\
+	\norm{\mathbf{w}}_0 &\leq K
+\end{array}
+\right
+.
+\end{equation*}
+%
+where $\|\mathbf{w}\|_0:=\sum_{i=1}^N \I{w_i\neq 0}$ counts the non-zero elements in $\mbf w$. The goal is to enforce sparsity so that only a limited number of assets receive a nonzero weight. The NP-hard cardinality constraint is approximated by the following procedure: 
+\begin{enumerate}
+\item Solve the full least squares problem
+%
+\begin{equation*}
+\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \mathbb{R}^{N}} \norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2
+\quad \text{s.t.} \quad \mathbf{1}^\top \mbf w=1.
+\end{equation*}
+%
+\item Select the $K$ largest weights (in absolute value) from $\mbf w^{(1)}$ into
+$$\mathcal I:=\{i : |w_i^{(1)}| \t{~among $K$ largests}\}$$
+%
+\item Solve the restricted program on support $\mathcal I$
+%
+\begin{equation*}
+	\mbf w^{(2)} = \arg \min_{\mbf w_{\mathcal I}\in \mathbb{R}^K} \norm{\mbf y - \mbf X_{\mathcal I}\mbf w_{\mathcal I}}_{2}^{2}
+\quad \text{s.t.} \quad 
+\mbf 1\' \mbf w_{\mathcal I} = 1
+\end{equation*}
+%
+where $\mbf X_{\mathcal{I}} \in \mathbb{R}^{T \times K}$ is the resricted donor matrix and $\mbf w_{\mathcal{I}} \in \mathbb{R}^{K}$ is the restricted weight vector for the selected assets.
+%
+\item Construct the full weight vector $\mbf w^* \in \mathbb{R}^{N}$ by embedding the optimized restricted weights back into the original $N$-dimensional space. 
+\begin{equation*}
+	w^*_i = 
+\mycases{llll}{
+w^{(2)}_j & \IF  i = \mathcal I_j
+\\
+0 & \text{otherwise}
+}
+\end{equation*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% COPULAS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Copula-Based Dependence Modeling}
+
+%==============[	  Transition  ]==============
+The sparse synthetic control framework provides an adaptive mechanism to construct a replicating portfolio that dynamically identifies influential assets from a broad candidate pool. However, the efficacy of a pairs trading strategy depends not only on accurate synthetic replication but also on quantifying how --and to what extent-- the target and synthetic assets co-move under varying market conditions. 
+%
+Traditional pairs-trading approaches often rely on linear correlation or cointegration measures, but these methods impose restrictive assumptions about the joint distribution of returns. Such assumptions are frequently violated in practice, particularly during periods of market stress where asymmetric tail dependencies and non-linear dynamics dominate.
+
+To overcome these limitations, we complement the synthetic asset construction with copula-based dependence modeling. Copulas provide a flexible framework to decouple marginal distributions from the joint dependence structure, enabling us to capture non-linear and tail-dependent interactions that linear correlations overlook, model time-varying dependencies without assuming Gaussianity or stationarity and quantify conditional mispricing probabilities in a distributionally robust manner.
+%
+We now formalize the copula framework and its integration with the synthetic asset returns.
+
+%==============[	  Introduction to bivariate copulas  ]==============
+Let $(\Omega, \mathcal{F}, \mathbb{P})$ be a probability space and let $R, R^*: \Omega \to \mathbb{R}$ be real-valued random variables representing the target and synthetic log-returns, respectively, 
+%where $R_t = y_t - y_{t-1}$ and $R^*_t = y^*_t - y^*_{t-1}$. 
+Let $F_R$ and $F_{R^*}$ denote their respective cumulative distribution functions (CDFs).
+
+%==============[	  Definition: Bivariate Copula  ]==============
+\begin{definition}[Copula]
+A bivariate copula is a function $C: [0,1]^2 \to [0,1]$ satisfying:
+\begin{enumerate}
+   \item $C(u,0) = C(0,v) = 0$ and $C(u,1) = u$, $C(1,v) = v$ for all $u,v \in [0,1]$ (boundary conditions)
+   \item $C(u_2,v_2) - C(u_2,v_1) - C(u_1,v_2) + C(u_1,v_1) \geq 0$ for all $u_1 \leq u_2$, $v_1 \leq v_2$ in $[0,1]$ (2-increasing)
+\end{enumerate}
+\end{definition}
+
+The fundamental relationship between copulas and joint distributions is established by Sklar's theorem:
+
+%==============[	  Sklar's Theorem  ]==============
+\begin{theorem}[Sklar (1959)]
+Let $F_{R,R^*}$ be the joint CDF of $(R,R^*)$. Then there exists a copula $C: [0,1]^2 \to [0,1]$ such that
+\begin{equation}
+   F_{R,R^*}(r,r^*) = C(F_R(r), F_{R^*}(r^*)) \quad \forall r,r^* \in \mathbb{R}.
+\end{equation}
+If $F_R$ and $F_{R^*}$ are continuous, then $C$ is unique. Conversely, if $C$ is a copula and $F_R$, $F_{R^*}$ are CDFs, then $F_{R,R^*}$ defined above is a joint CDF with margins $F_R$ and $F_{R^*}$.
+\end{theorem}
+%
+When uniqueness holds, the copula can be expressed through the probability integral transform: 
+$$
+C(u,v) = \mathbb P( F_R(R) \leq u, F_{R^*}(R^*) \leq v) 
+\quad \text{for} \quad
+(u,v)\in[0,1]^2
+.
+$$
+The corresponding copula density $c:[0,1]^2\to\mathbb R_+$, when it exists, is given by
+%When the joint CDF $F_{R,R^*}$ has a density $f_{R,R^*}$ and the copula $C$ is twice differentiable, the copula density is given by
+$
+   c(u,v) = \frac{\partial^2 C(u,v)}{\partial u \partial v},
+%   c(u,v) = \partial^2 C(u,v) / \partial u \partial v
+$
+and the joint density can be expressed as
+$
+   f_{R,R^*}(r,r^*) = c(F_R(r), F_{R^*}(r^*)) f_R(r)f_{R^*}(r^*),
+$
+where $f_{R,R^*}$ is the joint density and $f_R$ and $f_{R^*}$ are the marginal densities.
+
+Intuitively, Sklar's theorem tells us that any joint distribution can be decomposed into two parts: the marginal distributions of individual variables and a copula that captures their dependence structure. 
+%This decomposition is particularly valuable for our pairs trading application as it allows us to separately model the behavior of individual assets and their joint dynamics.
+This decomposition provides a framework for modeling the dependence structure between the target and synthetic returns independently of their marginal distributions. The implementation involves three stages: (1) nonparametric estimation of the marginal CDFs $F_R$, $F_{R^*}$ , (2) copula calibration from parametric classes $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$ via maximum likelihood estimation, (3) selection of an appropriate copula family 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Marginal Distribution Estimation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The foundation of copula modeling lies in the accurate estimation of marginal distributions for both target and synthetic asset returns. To maintain flexibility and avoid restrictive parametric assumptions, we adopt a non-parametric approach through empirical cumulative distribution functions (ECDFs).
+
+%==============[	  Building Returns  ]==============
+First, we construct logarithmic return series for both assets. Let $y_t$ and $y_t^*$ denote the log-prices of the target and synthetic assets at time $t$, respectively. The log-returns are computed as  
+$
+r_t = y_t - y_{t-1} 
+%\quad 
+~\text{and}~ 
+%\quad 
+r_t^* = y_t^* - y_{t-1}^* 
+%\quad 
+~\text{for}\ t = 2,\ldots,T,
+$  
+delivering return time series $\{r_t\}_{t=2}^T$ and $\{r_t^*\}_{t=2}^T$ for the target and stationary assets respectively. 
+
+%==============[	  ECDFs  ]==============
+Next, we estimate the marginal distributions through linearly interpolated ECDFs. For any $r \in \mathbb{R}$, the empirical distribution functions are given by  
+$$
+\hat{F}_{R}(r) = \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t \leq r) \quad \text{and} \quad \hat{F}_{R^*}(r^*) = \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*),
+$$  
+where $\mathbb{I}(\cdot)$ denotes the usual indicator function. Following \cite{hudsonthames2024}, we then enforce linear interpolation between observed returns to ensure continuity of the distribution functions across their support. Also, to mitigate numerical instabilities during subsequent copula estimation, we constrain the ECDF outputs within $[\epsilon, 1-\epsilon]$ where $\epsilon = 10^{-5}$, thereby avoiding boundary effects at the distribution tails.
+
+%==============[	  Probability Integral Transform  ]==============
+The final step involves applying the probability integral transform to obtain uniform marginals. Specifically, we compute pseudo-observations  
+$$
+u_t = \hat{F}_R(r_t) \quad \text{and} \quad v_t = \hat{F}_{R^*}(r_t^*) \quad \text{for}\ t = 2,\ldots,T,
+$$  
+yielding paired realizations $(\mbf {u,v})=\{(u_t,v_t)\}_{t=2}^T$ that reside in the unit square $[0,1]^2$. This transformation, justified by Sklar's Theorem, effectively decouples the marginal distributions from the dependence structure. The resulting uniform variates serve as canonical inputs for copula specification while preserving the essential dependence characteristics between target and synthetic returns. 
+
+%This non-parametric approach to marginal distribution estimation provides several advantages: it circumvents potential misspecification risks from parametric assumptions, maintains consistency with the empirical properties of financial returns, and ensures numerical stability during subsequent copula calibration stages. The procedure aligns with the canonical copula framework by construction, as the uniform pseudo-observations directly satisfy the requirements of Sklar's representation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Copula calibration from parametric classes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The goal of copula fitting is to find the copula that best describes the dependence structure between the returns of the target and synthetic assets. This is done by maximizing the likelihood of the observed data under different copula models. 
+%Let $(\mbf u, \mbf v)=[(u_t, v_t)]_{t=1}^T$ be the pseudo-observations obtained through the marginal transformation process, where $u_t = \hat{F}_R(r_t)$ and $v_t = \hat{F}_{R^*}(r_t^*)$. 
+We consider parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$ where each copula $C_\theta$ has density
+$
+%\begin{equation} \label{eq:copula_density_def}
+c_\theta(u,v) = \frac{\partial^2 C_\theta}{\partial u \partial v}(u,v)
+%\end{equation}
+.
+$
+%\subsubsection{Maximum Likelihood Estimation}
+For each candidate copula family, we estimate parameters via constrained maximum likelihood:
+%
+\begin{equation} \label{eq:mle}
+\hat{\theta} = \argmax_{\theta \in \Theta} \ell(\theta | \mbf {u,v}) \quad \text{where} \quad 
+\ell(\theta| \mbf {u,v}) := \sum_{t=2}^T \ln c_\theta(u_t, v_t)
+.
+\end{equation}
+%
+The optimization is subject to parameter constraints $\Theta$ specific to each copula family:
+
+\begin{itemize}
+\item \textbf{Elliptical Copulas:}
+   \begin{itemize}
+   \item Gaussian: $\Theta = \{\rho \in (-1,1)\}$ with density
+   \[
+   c_\rho^{Gauss}(u,v) = \frac{1}{\sqrt{1-\rho^2}} \exp\left(-\frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{2(1-\rho^2)} + \frac{\zeta_u^2 + \zeta_v^2}{2}\right)
+   \]
+   where $\zeta_u = \Phi^{-1}(u)$, $\zeta_v = \Phi^{-1}(v)$ and $\Phi$ is the standard normal CDF.
+   
+   \item Student-$t$: $\Theta = \{\rho \in (-1,1), \nu > 2\}$ with density
+   \[
+   c_{\rho,\nu}^{t}(u,v) = \frac{\Gamma\left(\frac{\nu+2}{2}\right)\Gamma\left(\frac{\nu}{2}\right)}{\sqrt{1-\rho^2}\Gamma\left(\frac{\nu+1}{2}\right)^2} 
+   \frac{\left(1 + \frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{\nu(1-\rho^2)}\right)^{-(\nu+2)/2}}{\prod_{i\in\{u,v\}} \left(1 + \frac{\zeta_i^2}{\nu}\right)^{-(\nu+1)/2}}
+   \]
+   where $\zeta_u = t_\nu^{-1}(u)$, $\zeta_v = t_\nu^{-1}(v)$ and $t_\nu$ is the Student-$t$ CDF.
+   \end{itemize}	
+
+\item \textbf{Archimedean Copulas:} For generator function $\psi_\theta$, 
+\[
+C_\theta(u,v) = \psi_\theta(\psi_\theta^{-1}(u) + \psi_\theta^{-1}(v))
+\]
+    \begin{itemize}
+    \item Clayton: $\Theta = (0, \infty)$ with $\psi_\theta(t) = (1 + t)^{-1/\theta}$
+    \item Gumbel: $\Theta = [1, \infty)$ with $\psi_\theta(t) = \exp(-t^{1/\theta})$
+    \item Frank: $\Theta = \mathbb{R}\setminus\{0\}$ with $\psi_\theta(t) = -\frac{1}{\theta}\ln\left(1 - (1 - e^{-\theta})e^{-t}\right)$
+    \item Joe: $\Theta = [1, \infty)$ with $\psi_\theta(t) = 1 - (1 - e^{-t})^{1/\theta}$
+    \end{itemize}
+
+\item \textbf{Mixed Copulas:}
+    \begin{itemize}
+    \item N14: Rotated Clayton-Gumbel mixture with $\Theta \subset \mathbb{R}^2_+$
+    \end{itemize}
+\end{itemize}
+
+A formal description of the copula fitting procedure can be found in \cref{alg:copula_fit}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Selection of an appropriate copula family}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+After estimating parameters for each candidate copula family $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$, we select the optimal model using information criteria that balance goodness-of-fit against model complexity. Let $\ell(\hat{\theta}|\mbf {u,v}) = \max_{\theta\in\Theta} \sum_{t=2}^T \ln c_{{\theta}}(u_t, v_t)$ be the maximized log-likelihood for a copula with parameter estimate $\hat{\theta}$, where $T$ is the sample size and $k$ is the number of parameters. We evaluate the following information criterions:
+$$
+\begin{array}{lllll}
+\text{\textit{Akaike}} &&& \text{AIC} &= 2k - 2
+%\ell(\hat{\theta}) 
+\ell(\hat{\theta}|\mbf {u,v})
+\\
+\text{\textit{Schwarz/Bayesian}} &&& \text{SIC} &= k\ln(T-1) - 2
+%\ell(\hat{\theta}) 
+\ell(\hat{\theta}|\mbf {u,v})
+\\
+\text{\textit{Hannan-Quinn}} &&& \text{HQIC} &= 2k\ln(\ln T-1) - 2
+%\ell(\hat{\theta})
+\ell(\hat{\theta}|\mbf {u,v})
+\end{array}
+$$
+
+The copula family with the lowest value for a chosen criterion is selected as optimal. These criteria penalize overfitting through the $k$ term while rewarding better fit through the log-likelihood.
+%$\ell(\hat{\theta}|\mbf {u,v})$. 
+% The SIC provides the strongest penalty for model complexity, making it particularly suitable for financial applications where parsimony is valued.
+ 
+ \input{table_1_copula_fit.tex}
+ \cref{tab:copula_selection} presents the fitting results for different copula families. 
+ %The scatter plots of the empirical and fitted copulas reveal significant lower tail dependence in the returns, consistent with the increased correlation during market downturns. 
+
+
+\end{enumerate}
+
+\section{Pairs Trading Strategy via Mispricing Indices (MI)} \label{sec:mpi_strategy}
+
+In this section, we adapt the mispricing index (MI) strategy from \cite{Xie2016} to our setting, wherein we trade a target asset (with returns $R_t$) against its synthetic counterpart (with returns $R_t^*$). While the strategy might initially appear unconventional, it hinges on interpreting conditional probabilities of daily returns as an evolving measure of relative mispricing. Below, we detail the essential components of the approach and how trading positions are opened and closed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MISPRICING INDICES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Mispricing Index (MI), Flags and Cumulative Mispricing Index (CMI)}
+
+%==============[	  MI  ]==============
+On each trading day $t$, let $r_t$ and $r_t^*$ respectively denote the realized returns for the target and synthetic assets. We define two conditional mispricing indices,
+\begin{align*}
+%MI_t
+MI_t^{R \mid R^*} 
+&:= \mathbb{P}(R_t \leq r_t \mid R_t^* = r_t^*)
+= 
+%\left.
+\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_{R^*}(r_t^*)}
+%\right|_{r_t,r_t^*}
+,
+\\[0.4em]
+%MI_t^*
+MI_t^{R^* \mid R} 
+&:= \mathbb{P}(R_t^* \leq r_t^* \mid R_t = r_t)
+= 
+%\left.
+\frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_R(r_t)}
+%\right|_{r_t,r_t^*}
+.
+\end{align*}
+
+The quantity $MI_t^{R \mid R^*}$ measures how ``mispriced'' the target asset appears when conditioned on that day's synthetic return, whereas $MI_t^{R^* \mid R}$ does the same for the synthetic asset when conditioned on the target return.
+%
+%==============[	  FLAGS  ]==============
+Since a single day's mispricing index reflects only an instantaneous view, we accumulate daily signals over time to gauge how much the returns have gradually driven prices apart (or together). We define a \emph{flag} series for each asset, defined as a running sum of daily deviations from $0.5$\footnote{The subtraction of $0.5$ centers the cumulative sum so that deviations from zero reflect mispricing.}. Let $\text{Flag}_{R}(0)=\text{Flag}_{R^*}(0)=0$, then, for $t=1, ..., T$ we have
+%\begin{align*}
+$$\begin{array}{llll}
+\mathrm{Flag}^{R}_{t} 
+&= \mathrm{Flag}^{R}_{t-1} + (MI_t^{R \mid R^*} - 0.5)
+&=\sum_{s=1}^t (MI_s^{R \mid R^*} - 0.5),
+%&&\text{Flag}_{R}(0) = 0,
+\\[0.2em]
+\mathrm{Flag}^{R^*}_{t}
+&= \mathrm{Flag}^{R^*}_{t-1} + (MI_t^{R^* \mid R} - 0.5)
+&= \sum_{s=1}^t (MI_s^{R^* \mid R} - 0.5)
+%&&\text{Flag}_{R^*}(0) = 0
+.
+\end{array}$$
+%\end{align*}
+%Equivalently, each raw flag is a cumulative sum over the trading horizon:
+%\begin{equation}
+%\mathrm{Flag}^{R}_{t} = \sum_{s=1}^t (MI_s^{R \mid R^*} - 0.5),
+%\qquad
+%\mathrm{Flag}^{R^*}_{t}= \sum_{s=1}^t (MI_s^{R^* \mid R} - 0.5).
+%\end{equation}
+Similar to plotting cumulative returns, these raw flags track the net effect of mispricing signals over time. 
+%However, the \emph{real flag} series, $\text{CMI}_R$ and $\text{CMI}_{R^*}$, will be \emph{reset to zero} whenever an open position is fully closed (i.e., after an exit signal). This reset ensures that newly detected mispricings are measured from a fresh baseline rather than mixing with completed trades.
+%
+
+
+%==============[	  CMI  ]==============
+
+To prevent the compounding of stale mispricing signals, we formally define a Cumulative Mispricing Index (CMI) as the reset-adjusted flag series through the recursive relationship:
+$$
+\mathrm{CMI}^{R}_{t} =
+\begin{cases}
+\mathrm{CMI}^{R}_{t-1} + (MI_t^{R\mid R^*} - 0.5), & \text{if no position reset occurs at time } t,\\
+0, & \text{if a position is closed at } t,
+\end{cases}
+$$
+$$
+\mathrm{CMI}^{R^*}_{t} =
+\begin{cases}
+\mathrm{CMI}^{R^*}_{t-1} + (MI_t^{R^*\mid R} - 0.5), & \text{if no position reset occurs at time } t,\\
+0, & \text{if a position is closed at } t,
+\end{cases}
+$$
+where \(\mathrm{CMI}^R_{0}= \mathrm{CMI}^{R^*}_{0}=0\). 
+Unlike the raw flags that accrue continuously, each CMI absorbs daily mispricing signals only until a trade is exited, at which point it is reset to zero. This mechanism ensures that any fresh mispricing accumulates from a ``clean slate,'' thereby preventing the influence of past, already-traded mispricing from compounding future signals.
+
+%==============[	  Algorithms  ]==============
+We formally present the procedures to compute the mispricing index and update the cumulative mispricing indices in \cref{alg:mispricing_indices} and \cref{alg:cmi_update}
+
+%----------------------------------------------------
+% To track active mispricing signals, we introduce the Cumulative Mispricing Index (CMI), which resets upon trading activity. Let $\tau_k$ denote the sequence of times when trades are closed (with $\tau_0 = 0$). For any time $t \in [\tau_k, \tau_{k+1})$, the CMIs are defined as:
+%
+%\begin{equation*}
+%\text{CMI}_{R}(t) = \sum_{s=\tau_k + 1}^t (MI_s^{R \mid R^*} - 0.5),
+%\end{equation*}
+%
+%\begin{equation*}
+%\text{CMI}_{R^*}(t) = \sum_{s=\tau_k + 1}^t (MI_s^{R^* \mid R} - 0.5).
+%\end{equation*}
+%
+%These indices maintain a running tally of mispricing signals since the most recent trade closure, providing a cleaner measure of emerging price divergences.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TRADING STRATEGY 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Trading Logic}
+
+We implement a dollar-neutral trading strategy that capitalizes on relative mispricing signals between the target and synthetic assets. The trading rule ($TR$) we employ builds upon the frameworks of \cite{Xie2016} and \cite{Rad2016}, incorporating their key insights about signal combination logic. While \cite{Xie2016} originally proposed an \qquote{or-or} framework, where trades are initiated when either asset shows mispricing and closed when either asset exhibits correction, \cite{Rad2016} demonstrated that a more conservative \qquote{and-or} approach yields more robust performance. This latter approach requires concurrent mispricing signals from both assets to open positions while maintaining a sensitive exit strategy where correction in either asset triggers position closure.
+
+Let $D_l$ and $D_u$ denote the lower and upper thresholds for opening positions, and $S_l$ and $S_u$ the lower and upper stop-loss boundaries. Starting with $TR_0=0$, for $t=1,...,T$, the trading rule evolves as follows:
+
+%==============[	  FORMULA  ]==============
+\begin{align}\label{eq:trading_rule}
+&TR_t(\t{CMI}_t^R, \t{CMI}_t^{R^*}, TR_{t-1}; D_l, D_u, S_l, S_u) 
+=
+\\[0.2em]\nonumber
+&\mycases{clllll}{
++1 & \IF ~  
+(\t{CMI}_t^R \leq  D_l 
+~\t{and}~ 
+\t{CMI}_t^{R^*} \geq D_u)
+\\
+-1 & \IF ~ 
+(\t{CMI}_t^R \geq D_u 
+~\t{and}~ 
+\t{CMI}_t^{R^*} \leq D_l)
+\\
+0 & \IF~
+%\t{either} 
+$$
+%\mycases{llllll}{
+\begin{cases}
+\biggl\{
+TR_{t-1}=1 
+~~~\t{and}~ 
+\bigl[
+(\ub{\t{CMI}_t^R\geq 0 ~\t{or}~ \t{CMI}_t^{R^*}\leq 0}{\t{take profit}})
+~\t{or}~
+(\ub{\t{CMI}_t^R\leq S_l ~\t{or}~ \t{CMI}_t^{R^*}\geq S_u}{\t{stop loss}})
+\bigr]
+\biggr\}
+,\t{or}
+\\
+\biggl\{
+TR_{t-1}=-1 
+~\t{and}~ 
+\bigl[
+(\ub{\t{CMI}_t^R\leq 0 ~\t{or}~ \t{CMI}_t^{R^*}\geq 0}{\t{take profit}})
+~\t{or}~
+(\ub{\t{CMI}_t^R\geq S_u ~\t{or}~ \t{CMI}_t^{R^*}\leq S_l}{\t{stop loss}})
+\bigr]
+\biggr\}
+%}
+\end{cases}
+$$
+\\
+TR_{t-1} & \t{otherwise}
+}
+\end{align}
+
+%==============[	  Explanation of formula  ]==============
+That is, at the beginning of each trading day \(t\), observe the current values of both mispricing indicators, \(\mathrm{CMI}_t^R\) (for the target asset) and \(\mathrm{CMI}_t^{R^*}\) (for the synthetic). The trading rule \(TR_t\) can take one of three values: \(+1\), \(-1\), or \(0\), indicating a \qquote{long-short}, \qquote{short-long}, or \qquote{flat} position, respectively. When no position is open (i.e., \(TR_{t-1} = 0\)), the rule opens a position only if there is simultaneous mispricing in both assets according to the thresholds \(D_l\) and \(D_u\). 
+%----------------------------------------------------
+Specifically,
+\begin{itemize}
+  \item \textbf{Long target/Short synthetic (+1)}: Entered when both CMIs indicate the target asset is underpriced relative to the synthetic ($\text{CMI}_t^R \leq D_l$ \textbf{and} $\text{CMI}_t^{R^*} \geq D_u$).
+  \item \textbf{Short target/Long synthetic (-1)}: Entered when both CMIs indicate the target asset is overpriced relative to the synthetic ($\text{CMI}_t^R \geq D_u$ \textbf{and} $\text{CMI}_t^{R^*} \leq D_l$).
+\end{itemize} 
+%----------------------------------------------------
+%if \(\mathrm{CMI}_t^R\) falls below \(D_l\) at the same time that \(\mathrm{CMI}_t^{R^*}\) rises above \(D_u\), then \(TR_t\) is set to \(+1\). Conversely, if \(\mathrm{CMI}_t^R\) rises above \(D_u\) while \(\mathrm{CMI}_t^{R^*}\) falls below \(D_l\), \(TR_t\) is set to \(-1\).
+
+Once a position is open (either \(TR_{t-1} = +1\) or \(TR_{t-1} = -1\)), the logic checks each day whether the mispricing has corrected enough to trigger a take-profit condition or crossed critical boundaries that trigger a stop-loss. These checks apply to either of the two mispricing indices, so if correction or a stop-loss occurs in any one of them, the entire position is closed. Mathematically, this is captured by the \qquote{OR} clauses in the formula, which evaluate whether \(\mathrm{CMI}_t^R\) or \(\mathrm{CMI}_t^{R^*}\) has crossed the zero line (for take-profit) or moved beyond the \((S_l, S_u)\) band (for stop-loss). If one of these events occurs, then \(TR_t\) is set to \(0\), and the mispricing indices are both reset to zero for the next trading day. 
+%----------------------------------------------------
+%Specifically:
+%\begin{itemize}
+%\item \textit{Exit position} (0): An existing position is closed under two scenarios:
+%\begin{itemize}
+%  \item Take profit: When \textbf{either} CMI reverts to zero, suggesting the mispricing has been corrected
+%  \item Stop loss: When \textbf{either} CMI reaches its respective stop-loss boundary
+%\end{itemize}
+%\end{itemize}
+%----------------------------------------------------
+If neither a take-profit nor a stop-loss threshold is met, then the position remains unchanged, meaning \(TR_t\) simply inherits the previous value \(TR_{t-1}\).
+
+Intuitively, when both indicators are simultaneously misaligned (one significantly high and the other significantly low), the strategy deems it a strong signal to open a dollar-neutral position that is long the \qquote{undervalued} side and short the \qquote{overvalued} side. As soon as either index crosses back toward zero (suggesting partial correction of that asset's mispricing) or breaches a stop-loss boundary (indicating that the trade is moving unfavorably), the position is liquidated. This \qquote{and-or} logic helps filter out noise in the daily movements and more reliably captures episodes in which both assets appear to be drifting apart (opening a trade) and then swiftly catches at least one side reverting (closing the trade). 
+%
+%==============[	  Algorithm  ]==============
+We formally present this procedure in \cref{alg:mi_pairs_trading}
+
+%==============[	  Parametric choice  ]==============
+As in \cite{Xie2016}, we set $(D_l, D_u)=(-0.6,0.6)$ and $(S_u,S_l)=(-2,2)$ and we will explore other parametric choices in the robustness checks.
+
+
+
+
+%The intuition behind these rules is that the cumulative mispricing captured by the flag series reflects how returns may drive prices apart or together over time. Because trading is ultimately conducted on prices, it becomes necessary to integrate the daily return information in a cumulative measure and to reset it upon entering a new trade.
+
+
+%----------------------------------------------------
+%----------------------------------------------------
+%Starting with $TR_0=0$, the strategy generates three possible positions at each time $t=1,...,T$:
+%\begin{itemize}
+%  \item Long target/Short synthetic (+1): Entered when both CMIs indicate the target asset is underpriced relative to the synthetic ($\text{CMI}_t^R \leq D_l$ \textbf{and} $\text{CMI}_t^{R^*} \geq D_u$).
+%  \item Short target/Long synthetic (-1): Entered when both CMIs indicate the target asset is overpriced relative to the synthetic ($\text{CMI}_t^R \geq D_u$ \textbf{and} $\text{CMI}_t^{R^*} \leq D_l$).
+%  \item Exit position (0): An existing position is closed under two scenarios:
+%\begin{itemize}
+%  \item Take profit: When \textbf{either} CMI reverts to zero, suggesting the mispricing has been corrected
+%  \item Stop loss: When \textbf{either} CMI reaches its respective stop-loss boundary
+%\end{itemize}
+%\end{itemize}
+% If none of the conditions for opening or closing a position are met, the previous trading signal ($TR_{t-1}$) is maintained. Formally, the trading rule is defined as:
+%----------------------------------------------------
+
+
+</methodology>
+
+<empirical-application>
+\subsection{Assumptions}
+To ensure transparency in our empirical analysis, we explicitly outline the critical assumptions underlying the implementation of our proposed pairs trading strategy. These assumptions reflect idealized market conditions necessary for theoretical feasibility and reproducibility of results.
+%To be transparent about the procedures implemented in this application, we need to set forward a set of assumptions that are crucial for the feasibility of the proposed trading strategy and to obtain our results.
+
+
+\begin{assumption}[Price Execution] \label{assum:execution}
+All trades are executed at daily adjusted closing prices. This assumption requires sufficient market liquidity and depth to accommodate position entries and exits without significant price impact or execution delays.
+\end{assumption}
+
+\begin{assumption}[Short Selling Access] \label{assum:shorting}
+Unrestricted short selling is permitted for all assets, including the ability to maintain leveraged short positions. This encompasses having reliable access to securities lending facilities and the capacity to meet associated margin requirements.
+\end{assumption}
+
+\begin{assumption}[Leverage Capacity] \label{assum:leverage}
+Trading positions can employ substantial leverage on both long and short sides. This assumes access to margin facilities that permit position sizes meaningfully larger than the allocated capital base, subject to prevailing broker and regulatory requirements.
+%Investors may employ leveraged positions up to a 200:1 leverage factor. This allows increasing exposure to mispricing opportunities but amplifies potential losses.
+%Trading positions can be leveraged up to 4:1 on both long and short sides. This leverage constraint aligns with standard margin requirements for US equity trading while maintaining reasonable risk management practices.
+\end{assumption}
+
+%\begin{assumption}
+%Trades are executed at (adjusted) closing prices (this implicitly embeds assumptions about the liquidity of the traded assets and the order of their trade book).
+%\end{assumption}
+%
+%\begin{assumption}
+%High leverage positionsa are allowed (specify leverage factor).
+%\end{assumption}
+%
+%\begin{assumption}
+%Short selling and leveraged short selling is allowed.
+%\end{assumption}
+
+While these assumptions may appear restrictive, recent developments in financial technology and market structure have made such trading conditions increasingly accessible. Modern electronic trading platforms like Alpaca, Interactive Brokers, and similar services now offer retail investors sophisticated capabilities previously reserved for institutional traders. These platforms provide programmatic trading interfaces, competitive margin rates, and extensive short-selling facilities that may align with our implementation requirements.
+
+
+%==============[	  CAUTION PARAGRAPH  ]==============
+\textbf{Cautionary note.} \textit{This paper is intended for academic %and informational 
+purposes only and does not constitute financial advice. The strategies and methodologies discussed involve significant risks, including the potential loss of capital. Past performance is not indicative of future results, and the authors assume no liability for decisions made by individuals or entities based on the content of this research. 
+%Readers are advised to consult qualified financial professionals before engaging in trading activities.
+}
+</empirical-application>

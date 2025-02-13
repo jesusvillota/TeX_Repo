@@ -1,0 +1,58 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPARSE SYNTHETIC CONTROL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sparse Synthetic Control}
+
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g: AAPL) using a combination of assets from a donor pool. 
+Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. We construct a synthetic asset ${\mbf y}^*$ through a sparse linear combination
+\begin{equation*}
+{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
+.
+\end{equation*}
+%
+The weights $\mbf w^*=[w_1^*, ..., w_N^*]$ are determined via a cardinality-constrained quadratic program
+%
+\begin{equation*}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 
+\quad \text{s.t.} \quad 
+\left|
+\begin{array}{ll}
+	\mbf 1\' \mbf w &= 1 \\
+	\norm{\mathbf{w}}_0 &\leq K
+\end{array}
+\right
+.
+\end{equation*}
+%
+where $\|\mathbf{w}\|_0:=\sum_{i=1}^N \I{w_i\neq 0}$ counts the non-zero elements in $\mbf w$. The goal is to enforce sparsity so that only a limited number of assets receive a nonzero weight. The NP-hard cardinality constraint is approximated by the following procedure: 
+\begin{enumerate}
+\item Solve the full least squares problem
+%
+\begin{equation*}
+\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \mathbb{R}^{N}} \norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2
+\quad \text{s.t.} \quad \mathbf{1}^\top \mbf w=1.
+\end{equation*}
+%
+\item Select the $K$ largest weights (in absolute value) from $\mbf w^{(1)}$ into
+$$\mathcal I:=\{i : |w_i^{(1)}| \t{~among $K$ largests}\}$$
+%
+\item Solve the restricted program on support $\mathcal I$
+%
+\begin{equation*}
+	\mbf w^{(2)} = \arg \min_{\mbf w_{\mathcal I}\in \mathbb{R}^K} \norm{\mbf y - \mbf X_{\mathcal I}\mbf w_{\mathcal I}}_{2}^{2}
+\quad \text{s.t.} \quad 
+\mbf 1\' \mbf w_{\mathcal I} = 1
+\end{equation*}
+%
+where $\mbf X_{\mathcal{I}} \in \mathbb{R}^{T \times K}$ is the resricted donor matrix and $\mbf w_{\mathcal{I}} \in \mathbb{R}^{K}$ is the restricted weight vector for the selected assets.
+%
+\item Construct the full weight vector $\mbf w^* \in \mathbb{R}^{N}$ by embedding the optimized restricted weights back into the original $N$-dimensional space. 
+\begin{equation*}
+	w^*_i = 
+\mycases{llll}{
+w^{(2)}_j & \IF  i = \mathcal I_j
+\\
+0 & \text{otherwise}
+}
+\end{equation*}
+\end{enumerate}
