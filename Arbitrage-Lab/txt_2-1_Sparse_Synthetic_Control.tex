@@ -3,15 +3,85 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Sparse Synthetic Control}
 
-The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g: AAPL) using a combination of assets from a donor pool. 
-Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. We construct a synthetic asset ${\mbf y}^*$ through a sparse linear combination
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g: AAPL) using a sparse combination of assets from a donor pool. 
+Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. Then, we can build a synthetic asset ${\mbf y}^*$ as
 \begin{equation*}
 {y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
-.
+\quad \text{for~} t=1,...,T
+,
 \end{equation*}
+
+where the weights $\mbf w^*=[w_1^*, ..., w_N^*]\'\in \R^N$ are determined via an $\ell_1$-regularized least squares optimization problem
+\begin{equation*}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \left\{\sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 + \lambda\|\mathbf{w}\|_1\right\}
+\quad \text{s.t.} \quad \mathbf{1}^\top \mathbf{w} = 1
+\end{equation*}
+
+where $\|\mathbf{w}\|_1 = \sum_{i=1}^N |w_i|$ denotes the $\ell_1$-norm of the weight vector and $\lambda > 0$ is a regularization parameter that controls the level of sparsity. This formulation promotes sparse solutions through the $\ell_1$ penalty term while maintaining the constraint that the weights sum to unity. The $\ell_1$ regularization, also known as the lasso penalty, induces sparsity by shrinking some weights exactly to zero, effectively performing feature selection among the donor assets. This sparsity-inducing property stems from the non-differentiability of the penalty term at the origin \cite{tibshirani1996regression}.
+
+The optimization problem possesses several key theoretical and practical features that make it particularly suitable for our application. First, the combination of a quadratic loss function with the convex $\ell_1$-penalty and affine constraint guarantees a unique solution under mild regularity conditions \cite{boyd2004convex}. Second, the regularization parameter $\lambda$ (optimally selected through cross-validation) provides direct control over the sparsity level, with larger values yielding solutions with fewer non-zero weights. Third, the simplex constraint $\mbf 1^\top \mbf w = 1$ ensures interpretability of the synthetic control as a weighted portfolio of donor assets. We don't impose a convex hull restriction, which effectively means that we allow for negative ways in the synthetic asset.
+
+The resulting weight vector $\mathbf{w}^*$ will typically have many components exactly equal to zero, with the number of non-zero weights decreasing as $\lambda$ increases. In practice, we identify the support of non-zero weights through thresholding:
+\begin{equation*}
+\mathcal{I} = \{i \in \{1,...,N\} : |w^*_i| > \epsilon\}
+\end{equation*}
+where $\epsilon > 0$ is a small tolerance threshold (in our application, $\epsilon \approx 10^{-6}$). The final synthetic asset is then constructed using only assets in $\mathcal{I}$. This approach provides computational advantages over cardinality-constrained formulations while maintaining sparse exposures. Moreover, the convex nature of the problem permits efficient solution via proximal algorithms or quadratic programming techniques, making it suitable for high-dimensional donor pools. %\citep{Beck2009}.
+
+The reader may draw similarities of this process with the Engle-Granger procedure for estimating the cointegration vector associated to the target asset and the donor pool. If we don't impose the $\ell_1$-penalty, it can be shown that, under some conditions, the procedure to finding a trading basket for pairs-trading is equivalent to finding the cointegration vector. For a formal discussion see \cref{sec:cointegration_meets_synthetic_controls}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPARSE SYNTHETIC CONTROL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sparse Synthetic Control}
+
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g: AAPL) using a sparse combination of assets from a donor pool. 
+Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. Then, we can build a synthetic asset ${\mbf y}^*$ as\begin{equation*}
+{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
+,
+\end{equation*}
+
+where the weights $\mbf w^*=[w_1^*, ..., w_N^*]\'$ are determined via an $\ell_1$-regularized least squares optimization problem
+
+\begin{equation*}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \left\{\sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 + \lambda\|\mathbf{w}\|_1\right\}
+\quad \text{s.t.} \quad \mathbf{1}^\top \mathbf{w} = 1
+\end{equation*}
+where $\|\mathbf{w}\|_1 = \sum_{i=1}^N |w_i|$ denotes the $\ell_1$-norm of the weight vector and $\lambda > 0$ is a regularization parameter that controls the level of sparsity. This formulation promotes sparse solutions through the $\ell_1$ penalty term while maintaining the constraint that the weights sum to unity. The $\ell_1$ regularization, also known as the lasso penalty, induces sparsity by shrinking some weights exactly to zero, effectively performing feature selection among the donor assets.
+\bblue{The $\ell_1$-penalty induces sparsity by shrinking small weights to zero through the non-differentiability of the penalty term at the origin \cite{tibshirani1996regression}}
+
+The optimization problem is convex and can be efficiently solved using standard convex optimization algorithms. The resulting weight vector $\mathbf{w}^*$ will typically have many components exactly equal to zero, with the number of non-zero weights decreasing as $\lambda$ increases. This provides a computationally tractable approach to constructing sparse synthetic controls, where only a subset of the donor assets contribute to replicating the target asset's behavior.
+
+
+For a discussion of the formal equivalence of this procedure with cointegration analysis, see \cref{sec:cointegration_meets_synthetic_controls}.
+
+
+\bblue{
+The optimization problem possesses several key features:
+
+\begin{itemize}
+\item \textbf{Convexity}: The quadratic loss function combined with the convex $\ell_1$-penalty and affine constraint guarantees a unique solution under mild regularity conditions \cite{boyd2004convex}.
+
+\item \textbf{Sparsity Control}: The regularization parameter $\lambda$ governs the number of non-zero weights, with larger values yielding sparser solutions. Optimal $\lambda$ selection can be performed via cross-validation or information criteria.
+
+\item \textbf{Portfolio Interpretation}: The simplex constraint $\mbf 1^\top \mbf w = 1$ ensures interpretability as a weighted portfolio of donor assets. Note that we are not imposing a convex hull restriction (which would restrict donor weights to be nonnegative). 
+\end{itemize}
+
+Post-optimization, the support of non-zero weights is identified through thresholding:
+\begin{equation*}
+\mathcal{I} = \{i \in \{1,...,N\} : |w^*_i| > \epsilon\}
+\end{equation*}
+
+where $\epsilon > 0$ is a small tolerance threshold (in our application, $\epsilon \approx 10^{-6}$). The final synthetic asset is then constructed using only assets in $\mathcal{I}$. %, effectively automating donor selection through continuous optimization rather than combinatorial search.
 %
-The weights $\mbf w^*=[w_1^*, ..., w_N^*]$ are determined via a cardinality-constrained quadratic program
-%
+This approach provides computational advantages over cardinality-constrained formulations while maintaining sparse exposures. The convex formulation permits efficient solution via proximal algorithms or quadratic programming techniques, making it suitable for high-dimensional donor pools \cite{beck2009fast}.
+}
+
+%\input{delete.tex}
+
+%==============[	  DISCUSSION  ]==============
+
+Many alternative procedures for building a sparse synthetic control can be devised. A natural one would be to directly perform a cardinality constrained quadratic program 
 \begin{equation*}
 \mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 
 \quad \text{s.t.} \quad 
@@ -24,7 +94,17 @@ The weights $\mbf w^*=[w_1^*, ..., w_N^*]$ are determined via a cardinality-cons
 .
 \end{equation*}
 %
-where $\|\mathbf{w}\|_0:=\sum_{i=1}^N \I{w_i\neq 0}$ counts the non-zero elements in $\mbf w$. The goal is to enforce sparsity so that only a limited number of assets receive a nonzero weight. The NP-hard cardinality constraint is approximated by the following procedure: 
+where $\|\mathbf{w}\|_0:=\sum_{i=1}^N \I{w_i\neq 0}$ counts the non-zero elements in $\mbf w$. The goal is to enforce sparsity so that only a limited number of assets receive a nonzero weight. 
+%
+%
+%
+%
+The NP-hard cardinality constraint can be approximated by many different procedures:
+
+\subsubsection{Mixed integer} % mixed integer stuff here
+% explain this in detail
+
+\subsubsection{Procedure 2} % Give a name to this procedure 
 \begin{enumerate}
 \item Solve the full least squares problem
 %
@@ -56,3 +136,71 @@ w^{(2)}_j & \IF  i = \mathcal I_j
 }
 \end{equation*}
 \end{enumerate}
+
+The problems with these procedure are [insert problems here]
+In our application, when implementing this procedure, we would get extremely large weights (positive and negative), yielding a highly leveraged portfolio
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SPARSE SYNTHETIC CONTROL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Sparse Synthetic Control}
+%
+%The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g: AAPL) using a combination of assets from a donor pool. 
+%Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. We construct a synthetic asset ${\mbf y}^*$ through a sparse linear combination
+%\begin{equation*}
+%{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
+%.
+%\end{equation*}
+%%
+%The weights $\mbf w^*=[w_1^*, ..., w_N^*]$ are determined via a cardinality-constrained quadratic program
+%%
+%\begin{equation*}
+%\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 
+%\quad \text{s.t.} \quad 
+%\left|
+%\begin{array}{ll}
+%	\mbf 1\' \mbf w &= 1 \\
+%	\norm{\mathbf{w}}_0 &\leq K
+%\end{array}
+%\right
+%.
+%\end{equation*}
+%%
+%where $\|\mathbf{w}\|_0:=\sum_{i=1}^N \I{w_i\neq 0}$ counts the non-zero elements in $\mbf w$. The goal is to enforce sparsity so that only a limited number of assets receive a nonzero weight. 
+%%
+%%
+%%
+%%
+%The NP-hard cardinality constraint is approximated by the following procedure: 
+%\begin{enumerate}
+%\item Solve the full least squares problem
+%%
+%\begin{equation*}
+%\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \mathbb{R}^{N}} \norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2
+%\quad \text{s.t.} \quad \mathbf{1}^\top \mbf w=1.
+%\end{equation*}
+%%
+%\item Select the $K$ largest weights (in absolute value) from $\mbf w^{(1)}$ into
+%$$\mathcal I:=\{i : |w_i^{(1)}| \t{~among $K$ largests}\}$$
+%%
+%\item Solve the restricted program on support $\mathcal I$
+%%
+%\begin{equation*}
+%	\mbf w^{(2)} = \arg \min_{\mbf w_{\mathcal I}\in \mathbb{R}^K} \norm{\mbf y - \mbf X_{\mathcal I}\mbf w_{\mathcal I}}_{2}^{2}
+%\quad \text{s.t.} \quad 
+%\mbf 1\' \mbf w_{\mathcal I} = 1
+%\end{equation*}
+%%
+%where $\mbf X_{\mathcal{I}} \in \mathbb{R}^{T \times K}$ is the resricted donor matrix and $\mbf w_{\mathcal{I}} \in \mathbb{R}^{K}$ is the restricted weight vector for the selected assets.
+%%
+%\item Construct the full weight vector $\mbf w^* \in \mathbb{R}^{N}$ by embedding the optimized restricted weights back into the original $N$-dimensional space. 
+%\begin{equation*}
+%	w^*_i = 
+%\mycases{llll}{
+%w^{(2)}_j & \IF  i = \mathcal I_j
+%\\
+%0 & \text{otherwise}
+%}
+%\end{equation*}
+%\end{enumerate}
