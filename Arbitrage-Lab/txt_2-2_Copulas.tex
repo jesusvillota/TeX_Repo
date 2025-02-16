@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % COPULAS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Copula-Based Dependence Modeling}
+\subsection{Copula-Based Dependence Modeling}
 
 %==============[	  Transition  ]==============
 The sparse synthetic control framework provides an adaptive mechanism to construct a replicating portfolio that dynamically identifies influential assets from a broad candidate pool. However, the efficacy of a pairs trading strategy depends not only on accurate synthetic replication but also on quantifying how --and to what extent-- the target and synthetic assets co-move under varying market conditions. 
@@ -58,12 +58,12 @@ where $f_{R,R^*}$ is the joint density and $f_R$ and $f_{R^*}$ are the marginal 
 
 Intuitively, Sklar's theorem tells us that any joint distribution can be decomposed into two parts: the marginal distributions of individual variables and a copula that captures their dependence structure. 
 %This decomposition is particularly valuable for our pairs trading application as it allows us to separately model the behavior of individual assets and their joint dynamics.
-This decomposition provides a framework for modeling the dependence structure between the target and synthetic returns independently of their marginal distributions. The implementation involves three stages: (1) nonparametric estimation of the marginal CDFs $F_R$, $F_{R^*}$ , (2) copula calibration from parametric classes $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$ via maximum likelihood estimation, (3) selection of an appropriate copula family 
+This decomposition provides a framework for modeling the dependence structure between the target and synthetic returns independently of their marginal distributions. The implementation involves three stages: (1) nonparametric estimation of the marginal CDFs $F_R$, $F_{R^*}$ , (2) copula calibration from parametric classes $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$ via maximum likelihood estimation, and (3) selection of an appropriate copula family 
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Marginal Distribution Estimation}
+\subsubsection{Marginal Distribution Estimation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The foundation of copula modeling lies in the accurate estimation of marginal distributions for both target and synthetic asset returns. To maintain flexibility and avoid restrictive parametric assumptions, we adopt a non-parametric approach through empirical cumulative distribution functions (ECDFs).
 
@@ -96,8 +96,61 @@ yielding paired realizations $(\mbf {u,v})=\{(u_t,v_t)\}_{t=2}^T$ that reside in
 
 %This non-parametric approach to marginal distribution estimation provides several advantages: it circumvents potential misspecification risks from parametric assumptions, maintains consistency with the empirical properties of financial returns, and ensures numerical stability during subsequent copula calibration stages. The procedure aligns with the canonical copula framework by construction, as the uniform pseudo-observations directly satisfy the requirements of Sklar's representation.
 
+
+\cref{fig:all_CDFs_comparison} presents a comparative analysis of the empirical cumulative distribution functions (ECDFs) between the target and synthetic assets across both training and testing periods, revealing several notable patterns. The analysis of ECDFs in both return and price spaces provides crucial insights into the effectiveness of our synthetic replication strategy.
+In the training period (top panels), we observe an almost perfect alignment between the target (red) and synthetic (blue) ECDFs in both return and price spaces. The log-returns distributions (top-left) exhibit the characteristic S-shaped curve typical of financial returns, with steep slopes around zero and thinner tails, suggesting that both assets capture similar distributional properties including volatility patterns and extreme events. The log-price ECDFs (top-right) show an equally strong correspondence, indicating successful replication of the price level dynamics during the training phase.
+However, the testing period (bottom panels) reveals a striking contrast between returns and prices that has important implications for our trading strategy. The log-returns ECDFs (bottom-left) maintain their strong alignment, with both target and synthetic assets continuing to share nearly identical distributional properties. This persistence in the return space is particularly noteworthy as it suggests that our synthetic construction preserves its ability to mimic the target's return dynamics even out-of-sample.
+In contrast, the log-price ECDFs (bottom-right) exhibit notable divergence in the testing period, especially in the upper quantiles (above the 0.6 probability level). This divergence manifests as a systematic deviation between the target and synthetic price paths, with the synthetic asset generally showing lower price levels than the target for given probability levels. This pattern suggests that while the return dynamics remain well-matched, price levels can drift apart over time due to the cumulative effect of small return differences.
+This asymmetric behavior between returns and prices provides strong empirical justification for our copula-based approach, which focuses on modeling return dependencies rather than price-level relationships. The stability of the return distributions, even when price levels diverge, indicates that return-based trading signals may offer more reliable indicators of relative mispricings than traditional price-level methods. Furthermore, the observed price divergence in the testing period actually represents potential trading opportunities, as it suggests periods where the target and synthetic assets have moved out of their historical relationship, potentially creating conditions for profitable mean reversion trades.
+
+%==============[	  Figure 2  ]==============
+\inserthere{fig:all_CDFs_comparison}
+\begin{figure}[H]
+  \caption{Empirical Cumulative Distribution Functions of Target and Synthetic Assets}
+  \centering
+  \includegraphics[scale=0.47]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf}
+  \label{fig:all_CDFs_comparison}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note: 
+This figure presents the linearly interpolated empirical cumulative distribution functions (ECDFs) for both log-returns and log-prices of the target (red) and synthetic (blue) assets. The panels are divided into training period (top) and test period (bottom). The left panels show the CDFs of daily log-returns, while the right panels display the CDFs of log-price levels. The y-axis represents cumulative probability from 0 to 1, and the x-axis shows the corresponding log-returns or log-prices."
+}
+\end{minipage}
+%.............
+\end{figure}
+
+\cref{fig:CDF_scatter_comparison} reveals several important patterns in the relationship between target and synthetic assets across different dimensions. In the returns series (left panels), we observe considerable dispersion around the 45-degree line in both training and testing periods, with points forming a cloud-like pattern that suggests a consistent dependency structure. This dispersion reflects the inherent volatility in daily returns, yet the overall symmetric pattern around the diagonal indicates that the synthetic asset effectively captures the statistical properties of the target's return distribution.
+
+The price series (right panels) exhibits markedly different behavior. During the training period, we observe a tight clustering of points along the diagonal, indicating that the synthetic asset closely tracks the price level distribution of the target. However, the testing period reveals a subtle but important deviation from this pattern, with increased dispersion and slight systematic deviations from the 45-degree line, particularly in the middle range of the distribution (0.4-0.6 probability region). This divergence suggests that while the synthetic asset maintains similar distributional properties in returns space, the accumulated price levels begin to show some drift in the out-of-sample period.
+
+The contrast between return and price space behaviors is particularly instructive. The relatively stable pattern in returns space, even during the testing period, suggests that the copula-based approach successfully captures the underlying return dynamics. Meanwhile, the gradual price divergence in the testing period highlights the challenges of maintaining long-term price level correspondence between target and synthetic assets, a common phenomenon in pairs trading that often creates trading opportunities.
+
+This dual perspective-stability in returns but drift in prices-provides empirical support for our strategy's focus on return-based copula modeling rather than price-level relationships, as it appears to offer more robust statistical properties for trading signal generation.
+
+%==============[	  Figure 3  ]==============
+\inserthere{fig:CDF_scatter_comparison}
+\begin{figure}[H]
+  \caption{Scatter Plots of CDF Pairs for Target and Synthetic Assets}
+  \centering
+  \includegraphics[scale=0.4]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf}
+  \label{fig:CDF_scatter_comparison}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\footnotesize\textit{Note: 
+Scatter plots comparing the cumulative distribution functions (CDFs) of the target asset and the synthetic asset for both returns and prices during training and testing periods. The top row displays the CDFs for the training data, while the bottom row shows the CDFs for the testing data. The left column represents the returns series, and the right column represents the price series. Each plot compares the target CDF (x-axis) against the synthetic CDF (y-axis). Both axes represent the [0,1] probability space of the copula domain, with values extending slightly beyond this range to show boundary behavior. The close alignment of points along the diagonal line indicates a strong similarity between the target and synthetic distributions. The returns series exhibit more dispersion, reflecting the volatility in returns, while the price series show a tighter fit, suggesting that the synthetic asset effectively replicates the price dynamics of the target asset.
+}
+\end{minipage}
+%.............
+
+\end{figure}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Copula calibration from parametric classes}
+\subsubsection{Copula calibration from parametric classes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The goal of copula fitting is to find the copula that best describes the dependence structure between the returns of the target and synthetic assets. This is done by maximizing the likelihood of the observed data under different copula models. 
@@ -118,7 +171,7 @@ For each candidate copula family, we estimate parameters via constrained maximum
 .
 \end{equation}
 %
-The optimization is subject to parameter constraints $\Theta$ specific to each copula family:
+The optimization is subject to parameter constraints $\Theta$ specific to each copula family (a formal description of the copula fitting procedure can be found in \cref{alg:copula_fit}):
 
 \begin{itemize}
 \item \textbf{Elliptical Copulas:}
@@ -154,10 +207,30 @@ C_\theta(u,v) = \psi_\theta(\psi_\theta^{-1}(u) + \psi_\theta^{-1}(v))
     \end{itemize}
 \end{itemize}
 
-A formal description of the copula fitting procedure can be found in \cref{alg:copula_fit}
+
+\cref{fig:copula_samples_comparison} visualizes the dependence structures of different parametric copula families through density heatmaps generated from samples. The Archimedean copulas each exhibit distinct characteristics: Clayton demonstrates strong lower tail dependence, Gumbel and Joe show pronounced upper tail dependence, while Frank captures dependence concentrated in both tails. Among elliptical copulas, the Gaussian shows symmetric dependence with moderate tails, while the Student-t accommodates heavier tails in both directions. The N14, as a Clayton-Gumbel mixture, combines properties of both families to achieve a more flexible dependence structure. These varying patterns underscore how each family could potentially capture different aspects of movement between the target and synthetic asset.
+
+%==============[	  Figure 4  ]==============
+\inserthere{fig:copula_samples_comparison}
+\begin{figure}[H]
+  \caption{Copula Density Heatmaps for Different Parametric Families}
+  \centering
+  \includegraphics[scale=0.47]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf}
+  \label{fig:copula_samples_comparison}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note: 
+Contour plots of copula densities for various parametric families, illustrating the dependence structures between the target and synthetic asset returns. Each subplot represents a different copula family: Gumbel, Frank, Clayton, Joe, N14, Gaussian, and Student-t. The color intensity in the plots indicates the density of the copula, with darker regions representing higher densities. These visualizations highlight the differences in tail dependencies and overall dependence structures captured by each copula family. The Gumbel and Clayton copulas exhibit stronger upper and lower tail dependencies, respectively, while the Gaussian copula shows symmetric dependencies. The Student-t copula accounts for heavier tails, and the Frank copula displays a balanced dependence structure. 
+}
+\end{minipage}
+%.............
+
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Selection of an appropriate copula family}
+\subsubsection{Selection of an appropriate copula family}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 After estimating parameters for each candidate copula family $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$, we select the optimal model using information criteria that balance goodness-of-fit against model complexity. Let $\ell(\hat{\theta}|\mbf {u,v}) = \max_{\theta\in\Theta} \sum_{t=2}^T \ln c_{{\theta}}(u_t, v_t)$ be the maximized log-likelihood for a copula with parameter estimate $\hat{\theta}$, where $T$ is the sample size and $k$ is the number of parameters. We evaluate the following information criterions:
@@ -180,8 +253,16 @@ $$
 The copula family with the lowest value for a chosen criterion is selected as optimal. These criteria penalize overfitting through the $k$ term while rewarding better fit through the log-likelihood.
 %$\ell(\hat{\theta}|\mbf {u,v})$. 
 % The SIC provides the strongest penalty for model complexity, making it particularly suitable for financial applications where parsimony is valued.
- 
- \input{table_1_copula_fit.tex}
- \cref{tab:copula_selection} presents the fitting results for different copula families. 
- %The scatter plots of the empirical and fitted copulas reveal significant lower tail dependence in the returns, consistent with the increased correlation during market downturns. 
+
+%The scatter plots of the empirical and fitted copulas reveal significant lower tail dependence in the returns, consistent with the increased correlation during market downturns. 
+
+
+%==============[	  Table 2 ]==============
+\input{table_1_copula_fit.tex}
+
+\cref{tab:copula_fit} presents the fitting results for different copula families.  The comparative analysis of copula specifications reveals a clear dominance of elliptical copulas in modeling the dependence structure between  our target and synthetic returns. The Student-t copula achieves the best fit across all information criteria, %(SIC: -1427.05, AIC: -1432.94, HQIC: -1430.81)
+followed closely by the N14 mixed copula and the Gaussian copula, with substantially better performance than all Archimedean specifications. This hierarchy in goodness-of-fit measures, particularly the superior performance of symmetric specifications (Student-t, Gaussian) over asymmetric ones (Clayton, Gumbel, Joe), indicates that the dependence structure is predominantly symmetric, which aligns with the theoretical construction of the synthetic control as a tracking portfolio.
+
+The significant improvement in fit from Gaussian to Student-t copula ($\Delta \t{SIC} \approx 90$ points) demonstrates that while symmetry is essential, the joint distribution exhibits heavier tails than implied by normal dependence. This finding is further supported by the Frank copula's performance, which achieves better fit than other Archimedean copulas but worse than elliptical specifications, suggesting that symmetric dependence without tail dependence is insufficient for capturing the full relationship. The relatively poor fit of copulas with exclusive lower tail (Clayton, SIC: -1168.92) or upper tail (Joe, SIC: -671.50) dependence reinforces that the target-synthetic relationship maintains its symmetric structure even during extreme market movements, a desirable property for the stability of our trading strategy.
+
 

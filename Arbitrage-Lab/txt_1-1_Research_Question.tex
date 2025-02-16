@@ -12,7 +12,7 @@ By simultaneously taking a long position in the relatively undervalued asset and
 
 While pairs trading is conceptually straightforward, its effective implementation faces notable complexities in practice. Traditional approaches often rely on simple distance measures or cointegration-based criteria to identify pairs and establish entry and exit rules. However, these methods can be hampered by strict parametric assumptions, sensitivity to transient noise, and an inability to adapt to evolving market conditions. Structural breaks, non-linear dependencies, and time-varying correlation patterns often violate the assumptions of classical linear models, increasing the risk of identifying spurious relationships and making it difficult to achieve stable performance over diverse market regimes.
 
-To address these challenges, recent research has explored more flexible frameworks that combine advanced econometric tools with statistical learning. In particular, incorporating synthetic control methodologies and copula-based dependence modeling aims to better capture the dynamic interactions between assets. By abandoning the sole reliance on fixed, potentially fragile pair relationships, such approaches promise to more robustly uncover the underlying economic or statistical linkages that drive temporary mispricings, thus laying the groundwork for improved performance and risk control in pairs trading strategies.
+%To address these challenges, recent research has explored more flexible frameworks that combine advanced econometric tools with statistical learning. In particular, incorporating synthetic control methodologies and copula-based dependence modeling aims to better capture the dynamic interactions between assets. By abandoning the sole reliance on fixed, potentially fragile pair relationships, such approaches promise to more robustly uncover the underlying economic or statistical linkages that drive temporary mispricings, thus laying the groundwork for improved performance and risk control in pairs trading strategies.
 
 %====================[This paper]=========================
 
@@ -34,16 +34,11 @@ Finally, we adapt and extend the Mispricing Index (MI) strategy of \cite{Xie2016
 
 %====================[Structure]=========================
 
-The remainder of this paper proceeds as follows. 
-%
-In Section 1 %\cref{sec:literature_review} 
-we begin by reviewing the relevant literature on pairs trading, synthetic control methods, and copula-based dependence modeling. 
-%
-In Section 2 %\cref{sec:methodology} 
-we present our methodological framework, detailing how sparse synthetic control and copula families are jointly employed to construct a robust trading signal, and introduce the mispricing index (MI) strategy adapted to incorporate copula-driven signals. 
-%
-Subsequently, in Section 3 %\cref{sec:empirics}
-we conduct an empirical evaluation using real-world market data, illustrating the performance and practical implications of our approach. 
-%
-We conclude in Section 4 %\cref{sec:conclusion} 
-by summarizing key insights, discussing limitations, and outlining prospective directions for future research.
+The remainder of this paper is structured as follows. We begin in \cref{sec:lierature_review} with a comprehensive review of the relevant literature, exploring pairs trading, synthetic control methods, and copula-based dependence modeling. \cref{sec:methodology} presents our methodological framework, detailing how we employ sparse synthetic control and copula families to construct a robust trading signal. In \cref{sec:trading_strategy}, we introduce the mispricing index (MI) strategy, adapted to incorporate copula-driven signals, and define the cumulative mispricing index (CMI) as a key component of our trading approach. Section \ref{sec:results} shows the results of our trading strategy, and we conclude in \cref{sec:conclusion} by synthesizing key insights and proposing future research directions.
+
+%The remainder of this paper proceeds as follows. 
+%In \cref{sec:lierature_review} we begin by reviewing the relevant literature on pairs trading, synthetic control methods, and copula-based dependence modeling. 
+%In \cref{sec:methodology} we present our methodological framework, detailing how sparse synthetic control and copula families are employed to construct a robust trading signal. 
+%In \cref{sec:trading_strategy} we introduce the mispricing index (MI) strategy adapted to incorporate copula-driven signals and define the cumulative mispricing index (CMI) and capitalize it in a trading strategy.
+%Subsequently, in \cref{sec:results} show the results of our trading strategy. 
+%We conclude in \cref{sec:conclusion} by summarizing key insights and outlining prospective directions for future research. 

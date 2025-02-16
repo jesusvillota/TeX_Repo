@@ -1,0 +1,108 @@
+\begin{table}[H] 
+\centering
+\caption{Synthetic Control Model Weights}
+\label{tab:scm_weights}
+\begin{tabular}{llc}
+\toprule
+ Tickers & Company Name & Weights (\%) \\
+\midrule
+\textbf{AME} & Ametek & 41.08 \\
+\textbf{LUV} & Southwest Airlines & 33.31 \\
+\textbf{TFC} & Truist Financial & 25.60 \\
+\textbf{AEP} & American Electric Power & 21.69 \\
+\textbf{ADM} & Archer Daniels Midland & 20.56 \\
+\textbf{RSG} & Republic Services & 18.42 \\
+\textbf{AXP} & American Express & 18.10 \\
+\textbf{LLY} & Lilly (Eli) & 14.74 \\
+\textbf{C} & Citigroup & 9.67 \\
+\textbf{VRSN} & Verisign & 7.77 \\
+\textbf{MTB} & M\&T Bank & 7.38 \\
+\textbf{FE} & FirstEnergy & 7.16 \\
+\textbf{FIS} & Fidelity National Information Services & 5.21 \\
+\textbf{PARA} & Paramount Global & 4.48 \\
+\textbf{TXT} & Textron & 2.21 \\
+\textbf{STX} & Seagate Technology & 0.26 \\
+\textbf{BIIB} & Biogen & 0.16 \\
+\textbf{NFLX} & Netflix & -1.04 \\
+\textbf{FDX} & FedEx & -2.39 \\
+\textbf{UDR} & UDR, Inc. & -3.95 \\
+\textbf{V} & Visa Inc. & -5.43 \\
+\textbf{CNP} & CenterPoint Energy & -7.75 \\
+\textbf{MS} & Morgan Stanley & -16.21 \\
+\textbf{NI} & NiSource & -16.35 \\
+\textbf{WMT} & Walmart & -16.65 \\
+\textbf{UNP} & Union Pacific Corporation & -25.77 \\
+\textbf{ADSK} & Autodesk & -42.25 \\
+\bottomrule
+ & Total& 100.00 \\
+\bottomrule
+\end{tabular}
+
+%----------------------------------------------------
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note: 
+% Optimal weights of the sparse synthetic control portfolio for replicating the target asset's price dynamics. The table displays the percentage contribution of each donor asset from the S\&P 500 constituents, with positive weights indicating long positions and negative weights indicating short positions. The weights are derived using an $\ell_1$-regularized least squares optimization, which enforces sparsity by shrinking some weights to zero, effectively selecting the most influential assets. The weights sum to 100\% as enforced by the simplex constraint in the optimization problem.
+This table presents the optimal weights obtained from the sparse synthetic control methodology for replicating the target asset's price dynamics. The weights are expressed as percentages and represent each donor asset's contribution to the synthetic portfolio. Positive weights indicate long positions while negative weights represent short positions. The donor pool consists of S\&P 500 constituents, and the methodology yields a sparse solution where many potential donor assets receive zero weights. The sparsity is achieved through $\ell_1$-regularization, which automatically selects the most influential assets for constructing the synthetic control. The weights sum to 100\% as enforced by the simplex constraint in the optimization problem.
+}
+\end{minipage}
+%----------------------------------------------------
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\inserthere{tab:scm_weights}
+%\begin{table}[H] 
+%\centering
+%\caption{Synthetic Control Model Weights}
+%\label{tab:scm_weights}
+%\begin{tabular}{cc}
+%\toprule
+% Tickers & Weights (\%) \\
+%\midrule
+%\textbf{AME} & 41.08 \\
+%\textbf{LUV} & 33.31 \\
+%\textbf{TFC} & 25.60 \\
+%\textbf{AEP} & 21.69 \\
+%\textbf{ADM} & 20.56 \\
+%\textbf{RSG} & 18.42 \\
+%\textbf{AXP} & 18.10 \\
+%\textbf{LLY} & 14.74 \\
+%\textbf{C} & 9.67 \\
+%\textbf{VRSN} & 7.77 \\
+%\textbf{MTB} & 7.38 \\
+%\textbf{FE} & 7.16 \\
+%\textbf{FIS} & 5.21 \\
+%\textbf{PARA} & 4.48 \\
+%\textbf{TXT} & 2.21 \\
+%\textbf{STX} & 0.26 \\
+%\textbf{BIIB} & 0.16 \\
+%\textbf{NFLX} & -1.04 \\
+%\textbf{FDX} & -2.39 \\
+%\textbf{UDR} & -3.95 \\
+%\textbf{V} & -5.43 \\
+%\textbf{CNP} & -7.75 \\
+%\textbf{MS} & -16.21 \\
+%\textbf{NI} & -16.35 \\
+%\textbf{WMT} & -16.65 \\
+%\textbf{UNP} & -25.77 \\
+%\textbf{ADSK} & -42.25 \\
+%\bottomrule
+%\textbf{Total} & 100.00 \\
+%\bottomrule
+%\end{tabular}
+%
+%%----------------------------------------------------
+%\vspace{0.5cm}
+%\begin{minipage}{\textwidth}
+%\setlength{\parindent}{0pt}
+%\small\textit{Note: 
+%% Optimal weights of the sparse synthetic control portfolio for replicating the target asset's price dynamics. The table displays the percentage contribution of each donor asset from the S\&P 500 constituents, with positive weights indicating long positions and negative weights indicating short positions. The weights are derived using an $\ell_1$-regularized least squares optimization, which enforces sparsity by shrinking some weights to zero, effectively selecting the most influential assets. The weights sum to 100\% as enforced by the simplex constraint in the optimization problem.
+%This table presents the optimal weights obtained from the sparse synthetic control methodology for replicating the target asset's price dynamics. The weights are expressed as percentages and represent each donor asset's contribution to the synthetic portfolio. Positive weights indicate long positions while negative weights represent short positions. The donor pool consists of S\&P 500 constituents, and the methodology yields a sparse solution where many potential donor assets receive zero weights. The sparsity is achieved through $\ell_1$-regularization, which automatically selects the most influential assets for constructing the synthetic control. The weights sum to 100\% as enforced by the simplex constraint in the optimization problem.
+%}
+%\end{minipage}
+%%----------------------------------------------------
+%\end{table}
+

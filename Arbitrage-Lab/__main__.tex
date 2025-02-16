@@ -12,27 +12,30 @@ a Sparse Synthetic Control
 }
 
 \author[1]{
-{ 
-{\large Jesus Villota Miranda}$^{\dagger}$\footnote{
-\scriptsize{
+{  
+%{\large Jesus Villota Miranda}$^{\dagger}$
+%\footnote{
+%\scriptsize{
 %I am deeply grateful to [...].
-%Finally, 
-I gratefully acknowledge financial support from the Santander Research Chair at CEMFI.
+%% This paper is intended for academic purposes only and does not constitute financial advice. The strategies and methodologies discussed involve risks, including the potential loss of capital. Past performance is not indicative of future results, and the authors assume no liability for decisions made by individuals or entities based on the content of this research. 
+%%Finally, 
+%I gratefully acknowledge financial support from the Santander Research Chair at CEMFI.
+%}
+%}
 }
-}}
 
-\bx 
-{\small
-$\big{<}$
-\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
-$\big{>}$
+%\bx 
+%{\small
+%$\big{<}$
+%\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
+%$\big{>}$
+%
+%$\big{<}$
+%Email: \href{mailto:jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
+%$\big{>}$
 
-$\big{<}$
-Email: \href{mailto:jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
-$\big{>}$
-
-\textbf{This version: \mydate\today}
-}
+\small \textbf{This version: \mydate\today}
+%}
 }
 \date{}
 %----------------------------------------------------
@@ -51,7 +54,7 @@ $\big{>}$
 \noindent\textbf{JEL Codes:} C14, C32, C58, C61, G12, G14
 
 \mx 
-\noindent\textbf{Keywords:} Pairs Trading, Sparse, Synthetic Control, High leverage, Dollar neutral, Copula, 
+\noindent\textbf{Keywords:} Pairs Trading, Sparse, Synthetic Control, Copula, Basket trading
 %\par }
 \end{abstract}
 %----------------------------------------------------
@@ -68,28 +71,32 @@ $\big{>}$
 %%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
 \input{txt_2_Methodology.tex}
 
+%%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+\input{txt_3_TradingStrategy.tex}
+
 %%%%%%%%%%%%%%% EMPRICAL APPLICATION %%%%%%%%%%%%%%%%%
-\input{txt_3_Empirical.tex}
+\input{txt_4_Results.tex}
 
 %%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
-%\input{txt_Conclusion.tex}
+\input{txt_5_Conclusion.tex}
 
 %%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
 \bibliography{bib_references_DOI.bib}
 \bibliographystyle{plain}
 
 %----------------------------------------------------
-%\newpage
-%% To make sure all the tables/figures appear before the appendix
-%\processdelayedfloats 
+\newpage
+% To make sure all the tables/figures appear before the appendix
+\processdelayedfloats 
 % Reset the numbering for appendix figures and tables
-%\renewcommand{\thefigure}{A\arabic{figure}} 
-%\renewcommand{\thetable}{A\arabic{table}}
+\renewcommand{\thefigure}{A\arabic{figure}} 
+\renewcommand{\thetable}{A\arabic{table}}
 %----------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%% APPENDIX %%%%%%%%%%%%%%%%%%%%%%
 \appendix
-\section{Online Appendix}
+\newpage
+\section{Appendix}
 \input{txt_Appendix.tex}
 
 \end{document}

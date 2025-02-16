@@ -1,0 +1,69 @@
+\inserthere{tab:copula_performance}
+\begin{table}[H]
+\centering
+\caption{Performance Metrics by Copula}
+\label{tab:copula_performance}
+\small\begin{tabular}{lR{1.2cm}R{1.2cm}R{1.1cm}R{1.3cm}R{1.3cm}R{1.3cm}R{1.2cm}R{1.2cm}R{1.2cm}R{1.3cm}}
+\toprule
+Copula & Total Return (\%) & Ann. Return (\%) & Ann. Vol. (\%) & Sharpe Ratio & Sortino Ratio & Calmar Ratio & Max DD (\%) & Win Rate (\%) & Profit Factor & VaR-95 (\%) \\
+\midrule
+Gumbel & 72.59 & 16.10 & 4.61 & 3.49 & 4.42 & 7.42 & 2.17 & 34.86 & 2.19 & -0.35 \\
+Frank & 66.53 & 14.76 & 3.97 & 3.71 & 4.75 & 10.85 & 1.36 & 30.55 & 2.51 & -0.30 \\
+Clayton & 74.67 & 16.56 & 4.18 & 3.97 & 5.30 & 10.89 & 1.52 & 32.31 & 2.60 & -0.31 \\
+Joe & 67.45 & 14.96 & 4.62 & 3.24 & 3.85 & 5.83 & 2.57 & 36.62 & 2.02 & -0.36 \\
+N14 & 77.82 & 17.26 & 4.35 & 3.97 & 5.75 & 11.25 & 1.53 & 34.07 & 2.50 & -0.32 \\
+Gaussian & 62.70 & 13.91 & 4.43 & 3.14 & 4.10 & 8.12 & 1.71 & 32.31 & 2.07 & -0.35 \\
+Student-t & 74.63 & 16.55 & 4.60 & 3.60 & 4.64 & 7.70 & 2.15 & 35.04 & 2.30 & -0.33 \\
+\bottomrule
+\end{tabular}
+
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note: 
+This table reports various performance metrics for pairs trading strategies implemented using different copula specifications. Performance measures include total and annualized returns, annualized volatility, risk-adjusted ratios (Sharpe, Sortino, and Calmar), maximum drawdown (Max DD), win rate, profit factor, and 95\% Value-at-Risk (VaR-95). All metrics are computed over the out-of-sample period from July 2020 to January 2025.
+}
+\end{minipage}
+%.............
+
+\end{table}
+
+
+%\begin{table}[H]
+%\centering
+%\caption{Performance Metrics by Copula}
+%\label{tab:copula_performance}
+%\small\begin{tabular}{lR{1.2cm}R{1.2cm}R{1.1cm}R{1.3cm}R{1.3cm}R{1.3cm}R{1.2cm}R{1.2cm}R{1.2cm}R{1.3cm}}
+%\toprule
+%Copula & Total Return (\%) & Ann. Return (\%) & Ann. Vol. (\%) & Sharpe Ratio & Sortino Ratio & Calmar Ratio & Max DD (\%) & Win Rate (\%) & Profit Factor & VaR-95 (\%) \\
+%\midrule
+%Gumbel & 72.59 & 16.10 & 4.61 & 3.49 & 4.42 & 7.42 & -2.17 & 34.86 & 2.19 & -0.35 \\
+%Frank & 66.53 & 14.76 & 3.97 & 3.71 & 4.75 & 10.85 & -1.36 & 30.55 & 2.51 & -0.30 \\
+%Clayton & 74.67 & 16.56 & 4.18 & 3.97 & 5.30 & 10.89 & -1.52 & 32.31 & 2.60 & -0.31 \\
+%Joe & 67.45 & 14.96 & 4.62 & 3.24 & 3.85 & 5.83 & -2.57 & 36.62 & 2.02 & -0.36 \\
+%N14 & 77.82 & 17.26 & 4.35 & 3.97 & 5.75 & 11.25 & -1.53 & 34.07 & 2.50 & -0.32 \\
+%Gaussian & 62.70 & 13.91 & 4.43 & 3.14 & 4.10 & 8.12 & -1.71 & 32.31 & 2.07 & -0.35 \\
+%Student-t & 74.63 & 16.55 & 4.60 & 3.60 & 4.64 & 7.70 & -2.15 & 35.04 & 2.30 & -0.33 \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
+
+%\begin{table}[H]
+%\centering
+%\caption{Performance Metrics by Copula}
+%\label{tab:copula_performance}
+%\small\begin{tabular}{lR{1.2cm}R{1.2cm}R{1.1cm}R{1.3cm}R{1.3cm}R{1.3cm}R{1.2cm}R{1.2cm}R{1.2cm}R{1.3cm}}
+%\toprule
+%Copula & Total Return (\%) & Ann. Return (\%) & Ann. Vol. (\%) & Sharpe Ratio & Sortino Ratio & Calmar Ratio & Max DD (\%) & Win Rate (\%) & Profit Factor & VaR-95 (\%) \\
+%\midrule
+%Gumbel & 72.59 & 16.10 & 4.61 & 3.49 & 4.42 & 0.11 & -152.88 & 34.86 & 2.19 & -0.35 \\
+%Frank & 66.53 & 14.76 & 3.97 & 3.71 & 4.75 & 0.48 & -30.92 & 30.55 & 2.51 & -0.30 \\
+%Clayton & 74.67 & 16.56 & 4.18 & 3.97 & 5.30 & 0.17 & -98.60 & 32.31 & 2.60 & -0.31 \\
+%Joe & 67.45 & 14.96 & 4.62 & 3.24 & 3.85 & 0.14 & -110.30 & 36.62 & 2.02 & -0.36 \\
+%N14 & 77.82 & 17.26 & 4.35 & 3.97 & 5.75 & 0.41 & -42.44 & 34.07 & 2.50 & -0.32 \\
+%Gaussian & 62.70 & 13.91 & 4.43 & 3.14 & 4.10 & 0.45 & -30.92 & 32.31 & 2.07 & -0.35 \\
+%Student-t & 74.63 & 16.55 & 4.60 & 3.60 & 4.64 & 0.54 & -30.92 & 35.04 & 2.30 & -0.33 \\
+%\bottomrule
+%\end{tabular}
+%\end{table}
