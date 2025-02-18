@@ -1,0 +1,55 @@
+/*-- scss:defaults --*/
+@import url('https://fonts.googleapis.com/css2?family=Latin+Modern+Math&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Latin+Modern+Roman:wght@400;700&display=swap');
+
+// Font families
+$font-family-sans-serif: "Latin Modern Roman", serif !default;
+$font-family-monospace: "Latin Modern Mono", monospace !default;
+$presentation-heading-font: "Latin Modern Roman", serif !default;
+
+/*-- scss:rules --*/
+.reveal {
+  font-family: "Latin Modern Roman", serif;
+}
+
+.reveal .math {
+  font-family: "Latin Modern Math", serif;
+  font-size: 0.85em !important;
+}
+
+// /*-- scss:defaults --*/
+// @import url('https://fonts.googleapis.com/css2?family=Latin+Modern+Math&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Latin+Modern+Roman:wght@400;700&display=swap');
+
+// // Font families
+// $font-family-sans-serif: "Latin Modern Roman", serif !default;
+// $font-family-monospace: "Latin Modern Mono", monospace !default;
+// $presentation-heading-font: "Latin Modern Roman", serif !default;
+
+// /*-- scss:rules --*/
+// .reveal {
+//   font-family: "Latin Modern Roman", serif;
+// }
+
+// .reveal h1, 
+// .reveal h2, 
+// .reveal h3, 
+// .reveal h4, 
+// .reveal h5, 
+// .reveal h6 {
+//   font-family: "Latin Modern Roman", serif;
+// }
+
+// .reveal .math {
+//   font-family: "Latin Modern Math", serif;
+// }
+
+// // Code blocks
+// .reveal code {
+//   font-family: "Latin Modern Mono", monospace;
+// }
+
+// // Math display
+// .reveal .MathJax {
+//   font-size: 1.5em !important;
+// }

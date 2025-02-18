@@ -1,0 +1,945 @@
+---
+title: "Pairs-Trading a Sparse Synthetic Control"
+subtitle: "Jesus Villota Miranda"
+format:
+  revealjs:
+    slide-number: true
+    plugins: 
+      - spotlight
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    css: styles2.css
+    title-slide-attributes:
+      data-background-color: "#ffffff"
+      data-background-image: none
+    logo: images/cemfi_logo.png
+    theme: [default, custom2.scss]
+    math: 
+      html: true
+    html-math-method:
+      method: mathjax
+      url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+---
+
+# Introduction {background-color="#3e5c76" auto-animate=true}
+
+## Motivation {.smaller}
+- Financial markets exhibit transient price divergences between economically linked assets
+- Traditional pairs trading strategies face significant limitations:
+  - Poor adaptation to structural breaks
+  - Inability to model complex dependencies
+  - Limited robustness across dynamic market regimes
+
+## Research Gap {.smaller}
+- Need for strategies that:
+  - Systematically identify latent economic linkages
+  - Mitigate overfitting in high-dimensional asset pools
+  - Adapt to changing market conditions
+  - Capture non-linear and tail dependencies
+
+## Our Approach {.smaller}
+- Novel framework integrating:
+  - **Sparse synthetic control methods**
+  - **Copula-based dependence modeling**
+
+- Designed to enhance:
+  - Strategy adaptability
+  - Risk management capabilities
+  - Performance stability
+
+## Key Methodological Components {.smaller}
+- **Sparse Synthetic Control**
+  - Constructs parsimonious synthetic asset
+  - Employs $\ell_1$-regularized least squares optimization
+  - Automatically selects sparse subset from broad donor pool
+  - Maintains interpretability and computational efficiency
+
+- **Copula-Based Dependence Framework**
+  - Captures non-linear relationships between assets
+  - Models tail dependencies beyond linear correlation
+  - Adapts to complex market dynamics
+
+## Trading Signal Generation {.smaller}
+- Based on relative mispricing between target and synthetic assets
+- Employs cumulative mispricing index that:
+  - Accumulates signals over time
+  - Resets after position closures
+  - Isolates episodic trading opportunities
+- Disciplined entry rules require concurrent misalignment signals
+- Designed to filter market noise
+
+# Literature Review {background-color="#3e5c76" auto-animate=true}
+
+<!-- ## Evolution of Pairs Trading Research {.smaller}
+![](images/timeline_placeholder.svg){width=90% fig-align="center"} -->
+
+## Foundational Approaches {.smaller}
+
+::: {style="display: grid; grid-template-columns: 48% 48%; gap: 4%; font-size: 0.85em;"}
+
+<div>
+**Classical Pairs Trading**
+
+- **Gatev et al. (2006)**: First comprehensive academic study
+  - Documented 11% annual excess returns (1962-2002)
+  - Established distance-based methodology
+- **Elliott et al. (2005)**: Theoretical framework
+  - Mean-reverting Gaussian Markov chain model
+  - EM algorithm for parameter estimation
+</div>
+
+<div>
+**Empirical Validations**
+
+- **Chen et al. (2019)**: Short-term reversals
+- **Do et al. (2010)**: Performance in turbulent markets
+- **Bowen et al. (2014)**: UK market analysis
+- **Krauss (2016) & Rad (2016)**: Large-scale assessments
+  - Performance comparisons across methodologies
+  - Trade frequency and convergence differences
+</div>
+
+:::
+
+## Key Methodological Streams {.smaller}
+
+::: {style="display: grid; grid-template-columns: 48% 48%; gap: 4%; font-size: 0.82em;"}
+
+<div>
+**Cointegration Approach**
+
+- **Vidyamurthy (2004)**: Seminal application to equity markets
+- **Caldeira (2013)**: Brazilian market application
+- **Huck (2014)**: Outperformance vs. distance methods
+- **Cartea (2015)**: Dynamic investment strategies
+- **Lintilhac (2016)**: Cryptocurrency applications
+</div>
+
+<div>
+**Copula-Based Methods**
+
+- **Min (2010)**: Bayesian inference for pair-copulas
+- **Stander (2013)**: Mispricing detection framework
+- **Liew (2013) & Xie (2016)**: Superior tail dependencies
+- **Krauss (2017) & Zhi (2017)**: Adaptive thresholds
+- **Recent extensions**:
+  - Mixed copulas (Silva, 2023)
+  - ARMA-GARCH integration (Wang, 2023)
+  - Specialized cryptocurrency applications (Tadi, 2025)
+</div>
+
+:::
+
+## Emerging Approaches {.smaller}
+
+::: {style="display: grid; grid-template-columns: 48% 48%; gap: 4%; font-size: 0.82em;"}
+
+<div>
+**Advanced Modeling Techniques**
+
+- **Do (2006)**: Stochastic residual spread models
+- **Zeng (2014)**: Threshold-based mean-reversion
+- **Machine Learning Integration**:
+  - OPTICS clustering (Sarmento, 2020)
+  - Deep reinforcement learning (Roychoudhury, 2023)
+  - Automated pair selection (Han, 2023)
+  - Graphical matching (Qureshi, 2024)
+</div>
+
+<div>
+**Synthetic Control Methods**
+
+- **Alexander (1999, 2002)**: Cointegration for tracking
+- **Alexander (2005a, 2005b)**:
+  - Enhanced indexing strategies
+  - Market regime adaptations
+- **Recent Developments**:
+  - Sparse solutions (Shu, 2020)
+  - Machine learning for dynamic selection (Bradrania, 2021)
+  - Convex-concave optimization (Johansson, 2024)
+</div>
+
+:::
+
+## Research Positioning {.smaller}
+
+<!-- ::: {style="text-align: center; margin-top: 20px;"}
+![](images/research_position_diagram.svg){width=75% fig-align="center"}
+::: -->
+
+::: {.fragment .fade-in style="margin-top: 30px; font-size: 0.9em;"}
+**Our Contribution**
+- Integrates sparse synthetic control with copula-based dependence modeling
+- Addresses limitations of traditional approaches
+- Enhances adaptability to structural breaks and complex dependencies
+- Provides systematic framework for high-dimensional asset pools
+:::
+
+# Methodology {background-color="#3e5c76" transition="slide"}
+
+## Sparse Synthetic Control {.smaller auto-animate=true}
+<!-- ::: {.incremental} -->
+- Let $\mathbf{y} = [y_t]_{t=1}^T$ be the log-price of target asset
+- Let $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T$ be the log-prices of donor assets
+- Build synthetic asset $\mathbf{y}^*$ as:
+
+$$
+y_t^* = \sum_{i=1}^N w_i^* x_{it} \quad \text{for } t=1,...,T
+$$
+
+- weights $\mathbf{w}^*=[w_1^*, ..., w_N^*]'$ solve:
+
+$$
+\mathbf{w}^* = \arg\min_{\mathbf{w} \in \mathbb{R}^N} \left\{\sum_{t=1}^T \left(y_t - \sum_{i=1}^N w_i x_{it}\right)^2 + \lambda\|\mathbf{w}\|_1\right\} 
+\quad \text{s.t.} \quad \mathbf{1}^\top \mathbf{w} = 1
+$$
+
+<!-- ::: -->
+
+<!--  -->
+## Key Features {.smaller}
+
+- **$\ell_1$ Regularization (LASSO)**
+  - Induces sparsity through non-differentiability at origin
+  - Automatically selects most relevant assets
+  
+- **Optimization Properties**
+  - Unique solution (convex problem)
+  - Direct sparsity control via $\lambda$
+  - Portfolio interpretation ($\mathbf{1}^\top \mathbf{w} = 1$)
+  
+- **Implementation**
+  - Support identification via thresholding:
+  $$
+  \mathcal{I} = \{i \in \{1,...,N\} : |w^*_i| > \epsilon\}
+  $$
+  - Efficient solution via proximal algorithms
+
+<!--  -->
+## Empirical Application {.smaller}
+
+- **Data**: S&P500 daily adjusted-close prices
+- **Target**: NVIDIA (NVDA)
+- **Period**: Jan 2010 - Jan 2025
+- **Split**: 70% training, 30% testing
+- **Result**: 27 stocks selected
+
+
+<!-- ## SCM Weights {.smaller}
+![](images/scm_weights.png){width=45% fig-align="center"} -->
+## Synthetic Control Model Weights {.smaller}
+
+::: {style="display: grid; grid-template-columns: 48% 48%; gap: 12%; font-size: 0.72em; width: 90%; margin: 0 auto;"}
+
+<div>
+<table style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="text-align: left; padding: 2px 3px; width: 20%;">Ticker</th>
+      <th style="text-align: left; padding: 2px 3px; width: 55%;">Company</th>
+      <th style="text-align: right; padding: 2px 3px; width: 25%;">Weight (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>AME</td><td>Ametek</td><td style="text-align: right;">41.08</td></tr>
+    <tr><td>LUV</td><td>Southwest Airlines</td><td style="text-align: right;">33.31</td></tr>
+    <tr><td>TFC</td><td>Truist Financial</td><td style="text-align: right;">25.60</td></tr>
+    <tr><td>AEP</td><td>American Electric Power</td><td style="text-align: right;">21.69</td></tr>
+    <tr><td>ADM</td><td>Archer Daniels Midland</td><td style="text-align: right;">20.56</td></tr>
+    <tr><td>RSG</td><td>Republic Services</td><td style="text-align: right;">18.42</td></tr>
+    <tr><td>AXP</td><td>American Express</td><td style="text-align: right;">18.10</td></tr>
+    <tr><td>LLY</td><td>Lilly (Eli)</td><td style="text-align: right;">14.74</td></tr>
+    <tr><td>C</td><td>Citigroup</td><td style="text-align: right;">9.67</td></tr>
+    <tr><td>VRSN</td><td>Verisign</td><td style="text-align: right;">7.77</td></tr>
+    <tr><td>MTB</td><td>M&T Bank</td><td style="text-align: right;">7.38</td></tr>
+    <tr><td>FE</td><td>FirstEnergy</td><td style="text-align: right;">7.16</td></tr>
+    <tr><td>FIS</td><td>Fidelity National Info</td><td style="text-align: right;">5.21</td></tr>
+    <tr><td>PARA</td><td>Paramount Global</td><td style="text-align: right;">4.48</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div>
+<table style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="text-align: left; padding: 2px 3px; width: 25%;">Ticker</th>
+      <th style="text-align: left; padding: 2px 3px; width: 50%;">Company</th>
+      <th style="text-align: right; padding: 2px 3px; width: 25%;">Weight (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>TXT</td><td>Textron</td><td style="text-align: right;">2.21</td></tr>
+    <tr><td>STX</td><td>Seagate Technology</td><td style="text-align: right;">0.26</td></tr>
+    <tr><td>BIIB</td><td>Biogen</td><td style="text-align: right;">0.16</td></tr>
+    <tr><td>NFLX</td><td>Netflix</td><td style="text-align: right;">-1.04</td></tr>
+    <tr><td>FDX</td><td>FedEx</td><td style="text-align: right;">-2.39</td></tr>
+    <tr><td>UDR</td><td>UDR, Inc.</td><td style="text-align: right;">-3.95</td></tr>
+    <tr><td>V</td><td>Visa Inc.</td><td style="text-align: right;">-5.43</td></tr>
+    <tr><td>CNP</td><td>CenterPoint Energy</td><td style="text-align: right;">-7.75</td></tr>
+    <tr><td>MS</td><td>Morgan Stanley</td><td style="text-align: right;">-16.21</td></tr>
+    <tr><td>NI</td><td>NiSource</td><td style="text-align: right;">-16.35</td></tr>
+    <tr><td>WMT</td><td>Walmart</td><td style="text-align: right;">-16.65</td></tr>
+    <tr><td>UNP</td><td>Union Pacific</td><td style="text-align: right;">-25.77</td></tr>
+    <tr><td>ADSK</td><td>Autodesk</td><td style="text-align: right;">-42.25</td></tr>
+    <tr><td colspan="2" style="text-align: right;"><strong>Total</strong></td><td style="text-align: right;">100.00</td></tr>
+  </tbody>
+</table>
+</div>
+
+:::
+
+<!--  -->
+## Target vs Synthetic Log-Prices {.smaller} 
+![](images/converted/target_synthetic_prices_NVDA.svg){width=100% fig-align="center"}
+
+## Copula-based Modeling {.smaller}
+- Traditional pairs-trading approaches rely on:
+  - Linear correlation
+  - Cointegration measures
+  
+- **Limitations**:
+  - Restrictive assumptions about joint distributions
+  - Poor performance during market stress
+  - Miss asymmetric tail dependencies
+  
+- **Solution**: Copula-based dependence modeling
+  - Decouples marginal distributions from joint dependence
+  - Captures non-linear interactions
+  - Models time-varying dependencies
+  - Quantifies mispricing probabilities
+
+## Sklar's Theorem {.smaller}
+- Let $(\Omega, \mathcal{F}, \mathbb{P})$ be a probability space.
+
+::: {.v-space-small}
+:::
+
+- Let $R, R^*: \Omega \to \mathbb{R}$ be RVs representing ***target*** and ***synthetic*** log-returns.
+
+::: {.v-space-small}
+:::
+
+- Let $F_R$ and $F_{R^*}$ denote their respective cumulative distribution functions (CDFs).
+
+::: {.v-space-small}
+:::
+
+- Then, for the joint CDF $F_{R,R^*}$, there exists a copula $C: [0,1]^2 \to [0,1]$ s.t.:
+$$F_{R,R^*}(r,r^*) = C(F_R(r), F_{R^*}(r^*)) \quad \forall r,r^* \in \mathbb{R}$$
+
+- If $F_R$ and $F_{R^*}$ are continuous, then $C$ is unique. 
+
+::: {.v-space-small}
+:::
+
+- Conversely, if $C$ is a copula and $F_R$, $F_{R^*}$ are CDFs, then $F_{R,R^*}$ defined above is a joint CDF with margins $F_R$ and $F_{R^*}$.
+
+
+##  {.smaller}
+- When uniqueness holds, by the ***Probability Integral Transform***: 
+
+$$
+C(u,v) = \mathbb P( F_R(R) \leq u, F_{R^*}(R^*) \leq v) 
+\quad \text{for} \quad
+(u,v)\in[0,1]^2
+.
+$$
+
+::: {.v-space-large}
+:::
+
+- When it exists, the ***copula density*** $c:[0,1]^2\to\mathbb R_+$ is given by
+
+$$
+   c(u,v) = \frac{\partial^2 C(u,v)}{\partial u \partial v},
+$$
+
+::: {.v-space-large}
+:::
+
+
+- Then, the ***joint density*** can be decomposed as:
+
+$$
+f_{R,R^*}(r,r^*) = c(F_R(r), F_{R^*}(r^*)) f_R(r)f_{R^*}(r^*)
+$$
+
+## Marginal Distribution Estimation {.smaller}
+1. **Compute log-returns**:
+   $$
+   r_t = y_t - y_{t-1} \quad \text{and} \quad r_t^* = y_t^* - y_{t-1}^* 
+   % \quad \quad t=2,...,T
+   $$
+
+2. **Estimate ECDFs**:
+   \begin{align}
+   \hat{F}_{R}(r) &= \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t \leq r)
+   \\
+   \hat{F}_{R^*}(r^*) &= \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*)
+   \end{align}
+
+3. **Transform to uniforms**:
+   $$
+   u_t = \hat{F}_R(r_t) \quad \text{and} \quad v_t = \hat{F}_{R^*}(r_t^*)
+   $$
+
+## CDF Scatterplot: Returns Vs. Prices {.smaller}
+![](images/converted/CDF_scatter_comparison.svg){width=100% fig-align="center"}
+
+## Empirical CDFs: Returns Vs. Prices {.smaller}
+![](images/converted/all_CDFs_comparison.svg){width=50% fig-align="center"}
+
+
+## Maximum Likelihood Estimation {.smaller}
+For each copula family $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$, estimate parameters via:
+
+$$\hat{\theta} = \arg\max_{\theta \in \Theta} \ell(\theta | \mathbf{u,v})$$
+
+where the log-likelihood is:
+
+$$\ell(\theta| \mathbf{u,v}) := \sum_{t=2}^T \ln c_\theta(u_t, v_t)$$
+
+and $c_\theta(u,v)$ is the copula density:
+
+$$c_\theta(u,v) = \frac{\partial^2 C_\theta}{\partial u \partial v}(u,v)$$
+
+## Elliptical Copulas {.smaller}
+
+**Gaussian Copula**:  $\Theta = \{\rho \in (-1,1)\}$
+$$c_\rho^{Gauss}(u,v) = \frac{1}{\sqrt{1-\rho^2}} \exp\left(-\frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{2(1-\rho^2)} + \frac{\zeta_u^2 + \zeta_v^2}{2}\right)$$
+where $\zeta_u = \Phi^{-1}(u)$, $\zeta_v = \Phi^{-1}(v)$
+
+::: {.v-space-large} 
+:::
+
+**Student-t Copula**:   $\Theta = \{\rho \in (-1,1), \nu > 2\}$
+$$c_{\rho,\nu}^{t}(u,v) = \frac{\Gamma(\frac{\nu+2}{2})\Gamma(\frac{\nu}{2})}{\sqrt{1-\rho^2}\Gamma(\frac{\nu+1}{2})^2} 
+\frac{(1 + \frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{\nu(1-\rho^2)})^{-(\nu+2)/2}}{\prod_{i\in\{u,v\}} (1 + \frac{\zeta_i^2}{\nu})^{-(\nu+1)/2}}
+$$
+where $\zeta_u = t_\nu^{-1}(u)$, $\zeta_v = t_\nu^{-1}(v)$
+
+## Elliptical Copulas {.smaller}
+- Gaussian
+  - Symmetric dependence
+  - Light tails
+
+- Student-t
+  - Symmetric dependence
+  - Heavy tails
+
+## Archimedean Copulas {.smaller}
+For generator function $\psi_\theta$,
+$$C_\theta(u,v) = \psi_\theta(\psi_\theta^{-1}(u) + \psi_\theta^{-1}(v))$$
+
+::: {.v-space-medium}
+:::
+
+<table class="copula-table">
+  <thead>
+    <tr>
+      <th>Family</th>
+      <th>Parameter Range</th>
+      <th>Generator Function</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Clayton</td>
+      <td>$\Theta = (0, \infty)$</td>
+      <td>$\psi_\theta(t) = (1 + t)^{-1/\theta}$</td>
+    </tr>
+    <tr>
+      <td>Gumbel</td>
+      <td>$\Theta = [1, \infty)$</td>
+      <td>$\psi_\theta(t) = \exp(-t^{1/\theta})$</td>
+    </tr>
+    <tr>
+      <td>Frank</td>
+      <td>$\Theta = \mathbb{R}\setminus\{0\}$</td>
+      <td>$\psi_\theta(t) = -\frac{1}{\theta}\ln(1 - (1 - e^{-\theta})e^{-t})$</td>
+    </tr>
+    <tr>
+      <td>Joe</td>
+      <td>$\Theta = [1, \infty)$</td>
+      <td>$\psi_\theta(t) = 1 - (1 - e^{-t})^{1/\theta}$</td>
+    </tr>
+  </tbody>
+</table>
+
+## Archimedean Copulas {.smaller}
+
+- Clayton
+  - Lower tail dependence
+- Gumbel
+  - Upper tail dependence
+- Frank
+  - Symmetric, no tail dependence
+- Joe
+  - Strong upper tail dependence
+
+
+## Mixed Copulas {.smaller}
+
+- N14: Rotated Clayton-Gumbel mixture with $\Theta \subset \mathbb{R}^2_+$
+
+## Copula Density Heatmaps {.smaller}
+![](images/converted/copula_samples_comparison.svg){width=50% fig-align="center"}
+
+## Model Selection {.smaller}
+**Information Criteria**:
+
+$$
+\begin{array}{ll}
+\text{AIC} &= 2k - 2\ell(\hat{\theta}|\mathbf{u,v})
+\\
+\text{SIC} &= k\ln(T-1) - 2\ell(\hat{\theta}|\mathbf{u,v})
+\\
+\text{HQIC} &= 2k\ln(\ln T-1) - 2\ell(\hat{\theta}|\mathbf{u,v})
+\end{array}
+$$
+
+**Key Findings**:
+- Student-t copula provides best fit
+- Symmetric dependence structure dominates
+- Heavy tails are significant
+- Asymmetric copulas perform poorly
+
+## Copula Fitting Results {.smaller}
+
+::: {.v-space-large}
+:::
+
+<table class="copula-results" style="width: 100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="text-align: left; padding: 8px 12px; width: 25%;">Copula</th>
+      <th style="text-align: right; padding: 8px 12px; width: 25%;">SIC</th>
+      <th style="text-align: right; padding: 8px 12px; width: 25%;">AIC</th>
+      <th style="text-align: right; padding: 8px 12px; width: 25%;">HQIC</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px;">Joe</td>
+      <td style="text-align: right; padding: 8px 12px;">-671.50</td>
+      <td style="text-align: right; padding: 8px 12px;">-677.39</td>
+      <td style="text-align: right; padding: 8px 12px;">-675.26</td>
+    </tr>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px;">Clayton</td>
+      <td style="text-align: right; padding: 8px 12px;">-1168.92</td>
+      <td style="text-align: right; padding: 8px 12px;">-1174.80</td>
+      <td style="text-align: right; padding: 8px 12px;">-1172.67</td>
+    </tr>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px;">Gumbel</td>
+      <td style="text-align: right; padding: 8px 12px;">-1210.02</td>
+      <td style="text-align: right; padding: 8px 12px;">-1215.90</td>
+      <td style="text-align: right; padding: 8px 12px;">-1213.78</td>
+    </tr>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px;">Frank</td>
+      <td style="text-align: right; padding: 8px 12px;">-1212.68</td>
+      <td style="text-align: right; padding: 8px 12px;">-1218.56</td>
+      <td style="text-align: right; padding: 8px 12px;">-1216.43</td>
+    </tr>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px;">Gaussian</td>
+      <td style="text-align: right; padding: 8px 12px;">-1337.69</td>
+      <td style="text-align: right; padding: 8px 12px;">-1343.57</td>
+      <td style="text-align: right; padding: 8px 12px;">-1341.44</td>
+    </tr>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px;">N14</td>
+      <td style="text-align: right; padding: 8px 12px;">-1425.18</td>
+      <td style="text-align: right; padding: 8px 12px;">-1431.06</td>
+      <td style="text-align: right; padding: 8px 12px;">-1428.94</td>
+    </tr>
+    <tr>
+      <td style="text-align: left; padding: 8px 12px;">Student-t</td>
+      <td style="text-align: right; padding: 8px 12px;">-1427.05</td>
+      <td style="text-align: right; padding: 8px 12px;">-1432.94</td>
+      <td style="text-align: right; padding: 8px 12px;">-1430.81</td>
+    </tr>
+  </tbody>
+</table>
+
+# Trading Strategy {background-color="#3e5c76" transition="slide" auto-animate=true}
+
+## Pairs Trading via Mispricing Indices {.smaller}
+- Approach adapted from Xie et al. (2016)
+  <!-- - **Objective**: Exploit mispricing between two assets -->
+  - Uses **conditional probabilities** of daily returns as a **mispricing measure**
+- In our setting: trade ***target asset*** Vs. ***its synthetic counterpart***
+- Dollar-neutral strategy captures price divergence/convergence
+- Accounts for dynamic dependence structure through copula model
+
+## Mispricing Index (MI) {.smaller}
+- Two conditional mispricing indices
+
+- $MI_t^{R \mid R^*}\Rightarrow$ *How "mispriced" is the **target asset** <u>today</u> conditional on <u>today</u>'s **synthetic return**?*
+$$
+MI_t^{R \mid R^*} := \mathbb{P}(R_t \leq r_t \mid R_t^* = r_t^*) = \frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_{R^*}(r_t^*)}
+$$
+
+::: {.v-space-medium}
+:::
+
+
+- $MI_t^{R^* \mid R}\Rightarrow$ *How "mispriced" is the **synthetic asset** <u>today</u> conditional on <u>today</u>'s **target return**?*
+
+$$
+MI_t^{R^* \mid R} := \mathbb{P}(R_t^* \leq r_t^* \mid R_t = r_t) = \frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_R(r_t)}
+$$
+
+
+## Cumulative Mispricing Index (CMI) {.smaller}
+- Individual MI reflects only instantaneous view
+- Solution: 
+  - Accumulate signals over time to track persistent mispricing 
+  - Reset them to zero after position is closed to prevent stale signals
+
+::: {.v-space-small}
+:::
+
+- This defines a **Cumulative Mispricing Index** (CMI) for each asset:
+
+\begin{align}
+\mathrm{CMI}^{R}_{t} &=
+\begin{cases}
+\mathrm{CMI}^{R}_{t-1} + (MI_t^{R\mid R^*} - 0.5), & \text{if no position reset at time } t,\\
+0, & \text{if a position is closed at } t,
+\end{cases}
+\\[1.em]
+\mathrm{CMI}^{R^*}_{t} &=
+\begin{cases}
+\mathrm{CMI}^{R^*}_{t-1} + (MI_t^{R^*\mid R} - 0.5), & \text{if no position reset at time } t,\\
+0, & \text{if a position is closed at } t.
+\end{cases}
+\end{align}
+
+where $CMI_0^R = CMI_0^{R^*} = 0$.
+
+
+## Trading Logic - Signal Generation {.smaller}
+
+
+- **"Or-Or" Logic**: Proposed by Xie et al. (2016)
+  - Trades are initiated when either asset is shows mispricing
+  - Positions are closed when either asset corrects
+
+::: {.v-space-small}
+:::
+
+
+::: {.fragment .highlight-current-red}
+- **"And-Or" Logic**: Proposed by Rad et al. (2016)
+  - Requires concurrent signals from both assets to open positions
+  - Mispricing correction in either asset triggers position closure
+  - This logic is more conservative & yields *more robust performance*
+:::
+
+::: {.v-space-small}
+:::
+
+- **Parameters**:
+  - Entry thresholds: $(D_l, D_u) = (-0.6, 0.6)$
+  - Stop-loss boundaries: $(S_l, S_u) = (-2, 2)$
+
+
+## Trading Rule {.smaller}
+Trading Rule given the current CMIs ($\mathrm{CMI}_t^R$, $\mathrm{CMI}_t^{R^*}$) and previous signal ($TR_{t-1}$):
+
+::: {.v-space-large}
+:::
+
+
+::: {.shrink}
+\begin{align*}
+&TR_t(\text{CMI}_t^R, \text{CMI}_t^{R^*}, TR_{t-1}; D_l, D_u, S_l, S_u) 
+=
+\\[0.2em]\nonumber
+&\begin{cases}
++1 & \text{if} ~  
+(\text{CMI}_t^R \leq  D_l 
+~\text{and}~ 
+\text{CMI}_t^{R^*} \geq D_u)
+\\
+-1 & \text{if} ~ 
+(\text{CMI}_t^R \geq D_u 
+~\text{and}~ 
+\text{CMI}_t^{R^*} \leq D_l)
+\\
+0 & \text{if}~
+\begin{cases}
+\biggl\{
+TR_{t-1}=1 
+~~~\text{and}~ 
+\bigl[
+(\underbrace{\text{CMI}_t^R\geq 0 ~\text{or}~ \text{CMI}_t^{R^*}\leq 0}_{\text{take profit}})
+~\text{or}~
+(\underbrace{\text{CMI}_t^R\leq S_l ~\text{or}~ \text{CMI}_t^{R^*}\geq S_u}_{\text{stop loss}})
+\bigr]
+\biggr\}
+,\text{or}
+\\
+\biggl\{
+TR_{t-1}=-1 
+~\text{and}~ 
+\bigl[
+(\underbrace{\text{CMI}_t^R\leq 0 ~\text{or}~ \text{CMI}_t^{R^*}\geq 0}_{\text{take profit}})
+~\text{or}~
+(\underbrace{\text{CMI}_t^R\geq S_u ~\text{or}~ \text{CMI}_t^{R^*}\leq S_l}_{\text{stop loss}})
+\bigr]
+\biggr\}
+\end{cases}
+\\
+TR_{t-1} & \text{otherwise}
+\end{cases}
+\end{align*}
+:::
+
+## Position Entry and Exit Conditions {.smaller}
+- **Long target/Short synthetic (+1)**: 
+  - Target *underpriced* ($\mathrm{CMI}_t^R \leq D_l$) **AND** Synthetic *overpriced* ($\mathrm{CMI}_t^{R^*} \geq D_u$)
+
+::: {.v-space-small}
+:::
+
+- **Short target/Long synthetic (-1)**: 
+  - Target *overpriced* ($\mathrm{CMI}_t^R \geq D_u$) **AND** Synthetic *underpriced* ($\mathrm{CMI}_t^{R^*} \leq D_l$)
+
+::: {.v-space-small}
+:::
+
+- **Exit position (0)**: Triggered by either:
+  - **Take profit**: Either CMI crosses zero (*price correction*)
+  - **Stop loss**: Either CMI exceeds stop-loss boundaries
+
+## Strategy Implementation {.smaller}
+1. **Daily process**:
+   - Obtain returns for target ($r_t$) and compute synthetic returns ($r_t^*$)
+   - Transform to uniform margins: $u_t = \hat{F}_R(r_t)$, $v_t = \hat{F}_{R^*}(r_t^*)$
+   - Compute MIs using fitted copula partial derivatives
+   - Update CMIs based on previous values and exit conditions
+   - Generate trading signal based on CMI thresholds
+   
+::: {.v-space-medium}
+:::
+
+2. **Position management**:
+   - Dollar-neutral portfolio (equal capital in long and short)
+   - Reset CMIs after closing positions
+   - Exit positions based on either take-profit or stop-loss
+
+# Results {background-color="#3e5c76" transition="slide"}
+
+## Basket Trading {.smaller}
+- Synthetic asset constructed through optimally weighted basket of 27 securities
+- **Key long positions**:
+  - AME (41.08%)
+  - LUV (33.31%)
+  - TFC (25.60%)
+- **Key short positions**:
+  - ADSK (-42.25%)
+  - UNP (-25.77%)
+
+## Basket Trading Advantages {.smaller}
+- **Reduced idiosyncratic risk** through sector diversity
+  - Spans financials, technology, transportation sectors
+  - Mitigates company-specific events and sector-wide shocks
+- **Implementation efficiency**
+  - Modern execution systems treat 27 components as single basket order
+  - Reduced transaction costs through optimized order routing
+
+## Operational Requirements {.smaller}
+- Access to sophisticated basket trading capabilities
+- Sufficient liquidity in all components
+  - Addressed by restricting universe to S&P 500 constituents
+- Strict dollar neutrality
+  - Equal but opposite positions in target and synthetic basket
+  - Precise execution coordination across all components
+
+## Position Sizes Over Time {.smaller}
+![](images/converted/positions_by_copula.svg){width=90% fig-align="center"}
+
+## Strategy Performance {.smaller}
+- **N14 mixed copula** generates:
+  - Highest total return (77.82%)
+  - Highest annualized return (17.26%)
+  - Moderate volatility (4.35%)
+  - Sharpe ratio of 3.97
+  - Sortino ratio of 5.75
+
+- **Frank copula** shows lowest risk:
+  - Modest returns (66.53%)
+  - Lowest volatility (3.97%)
+  - Lowest maximum drawdown (1.36%)
+
+## Performance by Copula Family {.smaller}
+- **Performance hierarchy**:
+  - **Top tier**: N14 mixed copula (~78% return)
+  - **Middle tier**: Student-t, Clayton, Gumbel (~73-75% return)
+  - **Lower tier**: Joe, Frank (~67% return)
+  - **Lagging**: Gaussian (~63% return)
+
+- Performance aligns with sophistication of tail dependence modeling
+
+## Performance Metrics by Copula {.smaller}
+
+::: {.table-container style="display: flex; justify-content: center;"}
+<table class="copula-results" style="margin: 0 auto;">
+  <thead>
+    <tr>
+      <th>Copula</th>
+      <th>Total Return (%)</th>
+      <th>Ann. Return (%)</th>
+      <th>Ann. Vol. (%)</th>
+      <th>Sharpe Ratio</th>
+      <th>Sortino Ratio</th>
+      <th>Calmar Ratio</th>
+      <th>Max DD (%)</th>
+      <th>VaR-95 (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>N14</td>
+      <td>77.82</td>
+      <td>17.26</td>
+      <td>4.35</td>
+      <td>3.97</td>
+      <td>5.75</td>
+      <td>11.25</td>
+      <td>1.53</td>
+      <td>-0.32</td>
+    </tr>
+    <tr>
+      <td>Clayton</td>
+      <td>74.67</td>
+      <td>16.56</td>
+      <td>4.18</td>
+      <td>3.97</td>
+      <td>5.30</td>
+      <td>10.89</td>
+      <td>1.52</td>
+      <td>-0.31</td>
+    </tr>
+    <tr>
+      <td>Student-t</td>
+      <td>74.63</td>
+      <td>16.55</td>
+      <td>4.60</td>
+      <td>3.60</td>
+      <td>4.64</td>
+      <td>7.70</td>
+      <td>2.15</td>
+      <td>-0.33</td>
+    </tr>
+    <tr>
+      <td>Gumbel</td>
+      <td>72.59</td>
+      <td>16.10</td>
+      <td>4.61</td>
+      <td>3.49</td>
+      <td>4.42</td>
+      <td>7.42</td>
+      <td>2.17</td>
+      <td>-0.35</td>
+    </tr>
+    <tr>
+      <td>Joe</td>
+      <td>67.45</td>
+      <td>14.96</td>
+      <td>4.62</td>
+      <td>3.24</td>
+      <td>3.85</td>
+      <td>5.83</td>
+      <td>2.57</td>
+      <td>-0.36</td>
+    </tr>
+    <tr>
+      <td>Frank</td>
+      <td>66.53</td>
+      <td>14.76</td>
+      <td>3.97</td>
+      <td>3.71</td>
+      <td>4.75</td>
+      <td>10.85</td>
+      <td>1.36</td>
+      <td>-0.30</td>
+    </tr>
+    <tr>
+      <td>Gaussian</td>
+      <td>62.70</td>
+      <td>13.91</td>
+      <td>4.43</td>
+      <td>3.14</td>
+      <td>4.10</td>
+      <td>8.12</td>
+      <td>1.71</td>
+      <td>-0.35</td>
+    </tr>
+  </tbody>
+</table>
+
+:::
+
+<div class="v-space-small" style="text-align: center;">
+<small>*All metrics computed over out-of-sample period from July 2020 to January 2025</small>
+</div>
+
+## Equity Curves Comparison {.smaller}
+![](images/converted/equity_curves_comparison.svg){width=90% fig-align="center"}
+
+
+# Results {background-color="#3e5c76" transition="slide"}
+# Conclusion {background-color="#3e5c76" transition="slide"}
+
+## Conclusion Summary {.smaller}
+- Novel pairs trading framework integrates:
+  - Sparse synthetic control methods
+  - Copula-based dependence modeling
+- Addresses limitations of traditional approaches
+- Empirical results validate effectiveness across multiple dimensions
+
+## Key Findings {.smaller}
+- **Sparse Synthetic Control**
+  - Successfully constructs parsimonious tracking portfolios (27 assets)
+  - $\ell_1$-regularization achieves computational efficiency
+  - Automatically identifies most influential assets
+  - Maintains interpretability
+
+- **Copula-Based Modeling**
+  - Student-t specification provides best fit
+  - Confirms predominantly symmetric relationships with heavy tails
+  - Captures complex dependencies missed by simpler models
+  - Validates importance of modeling tail dependence
+
+## Strategy Performance {.smaller}
+- **Robust across different copula specifications**
+  - N14 mixed copula: highest return (17.26% annualized)
+  - All specifications: positive risk-adjusted returns
+  - Sharpe ratios: 3.14-3.97
+  - Limited drawdowns: 1.36%-2.57%
+
+- **Framework benefits**
+  - Not overly dependent on specific copula choice
+  - Consistent performance across model specifications
+  - Balanced risk-return profile
+
+## Future Research Directions {.smaller}
+- **Time-varying copulas**
+  - Capture evolving dependence structures
+  - Adapt to dynamic market conditions
+
+- **Multiple target assets**
+  - Extend framework for simultaneous modeling
+  - Enhance portfolio diversification
+
+- **Implementation refinements**
+  - Incorporate transaction costs
+  - Model market impact
+  - Develop more realistic performance estimates

@@ -1,0 +1,86 @@
+---
+title: "Pairs-Trading a Sparse Synthetic Control"
+subtitle: "Jesus Villota Miranda"
+format:
+  revealjs:
+    slide-number: false
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    css: styles.css
+    title-slide-attributes:
+      data-background-color: "#ffffff"
+      data-background-image: none
+    logo: images/cemfi_logo.png
+---
+
+<!-- # Contents {.toc-slide}
+- [Introduction]{.upcoming}
+- [Literature Review]{.upcoming}
+- [Methodology]{.upcoming}
+- [Results]{.upcoming}
+- [Conclusion]{.upcoming}
+
+# Contents {.toc-slide}
+- [Introduction]{.current}
+- [Literature Review]{.upcoming}
+- [Methodology]{.upcoming}
+- [Results]{.upcoming}
+- [Conclusion]{.upcoming} -->
+
+# Introduction
+
+## Background
+[content]
+
+## Motivation
+[content]
+
+<!-- # Contents {.toc-slide}
+- [Introduction]{.covered}
+- [Literature Review]{.current}
+- [Methodology]{.upcoming}
+- [Results]{.upcoming}
+- [Conclusion]{.upcoming} -->
+
+# Literature Review
+
+## Previous Work
+[content]
+
+## Current State
+[content]
+
+<!-- # Contents {.toc-slide}
+- [Introduction]{.covered}
+- [Literature Review]{.covered}
+- [Methodology]{.current}
+- [Results]{.upcoming}
+- [Conclusion]{.upcoming} -->
+
+# Methodology
+
+<!-- # Contents {.toc-slide}
+- [Introduction]{.covered}
+- [Literature Review]{.covered}
+- [Methodology]{.covered}
+- [Results]{.current}
+- [Conclusion]{.upcoming} -->
+
+# Results
+
+<!-- # Contents {.toc-slide}
+- [Introduction]{.covered}
+- [Literature Review]{.covered}
+- [Methodology]{.covered}
+- [Results]{.covered}
+- [Conclusion]{.current} -->
+
+# Conclusion
+
+<!-- # Contents {.toc-slide}
+- [Introduction]{.covered}
+- [Literature Review]{.covered}
+- [Methodology]{.covered}
+- [Results]{.covered}
+- [Conclusion]{.covered} -->

@@ -1,0 +1,22 @@
+/* custom.scss */
+/*-- scss:defaults --*/
+@import url('https://fonts.googleapis.com/css2?family=Latin+Modern+Math&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Latin+Modern+Roman:wght@400;700&display=swap');
+
+// Font variables
+$font-family-sans-serif: "Latin Modern Roman", serif !default;
+$font-family-monospace: "Latin Modern Mono", monospace !default;
+$presentation-heading-font: $font-family-sans-serif !default;
+
+/*-- scss:rules --*/
+.reveal {
+  font-family: $font-family-sans-serif;
+  
+  .math {
+    font-family: "Latin Modern Math", serif;
+  }
+  
+  code {
+    font-family: $font-family-monospace;
+  }
+}

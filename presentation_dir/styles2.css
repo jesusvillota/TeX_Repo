@@ -1,0 +1,143 @@
+/* styles.css */
+/* Base font sizes and settings */
+.reveal {
+    font-size: 44px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Math display settings */
+  .reveal .math {
+    font-size: 1em !important;
+  }
+  
+  .reveal .math.display {
+    display: block;
+    text-align: center;
+    margin: 0.5em 0;
+    line-height: 1.2;
+  }
+  
+  .reveal .math.inline {
+    vertical-align: baseline;
+  }
+  
+  /* LaTeX-style elements */
+  .citation {
+    font-style: italic;
+  }
+  
+  .theorem {
+    font-style: italic;
+    margin: 1em 0;
+    padding: 0.5em;
+    border-left: 3px solid #1a5f7a;
+  }
+  
+  /* Title slide styling */
+  .title-slide {
+    text-align: center;
+    padding-top: 40px !important;
+  }
+  
+  .reveal h1.title {
+    font-size: 2.0em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    color: #1a5f7a;
+  }
+  
+  .reveal h1.title::after {
+    content: '';
+    display: block;
+    width: 150px;
+    height: 2px;
+    background-color: #1a5f7a;
+    margin: 0.5em auto;
+  }
+  
+  .reveal h2.subtitle {
+    font-size: 1.5em;
+    color: #666;
+    font-weight: normal;
+    margin-bottom: 1em;
+  }
+  
+  .reveal .author {
+    color: #333;
+    font-size: 1.2em;
+    margin-top: 2em;
+  }
+
+  /* Section titles */
+  .reveal .slides section.title-slide.level1 h1 {
+    color: #09073a;  
+    font-size: 2.0em;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  /* Slide titles */
+  .reveal .slide h2 {
+    font-size: 1.4em;  
+    color: #3366cc;  
+    text-align: center;
+    margin-bottom: 0.5em;
+  }
+  .reveal .slides section.slide.level2 h2 {
+    font-size: 1.4em;  
+    color: #3366cc;  
+    text-align: center;
+    margin-bottom: 0.5em;
+  }
+  
+  /* TOC slide styling */
+  .reveal .toc-slide {
+    text-align: center;
+  }
+  
+  .reveal .toc-slide ul,
+  .reveal .toc-slide ol {
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
+  
+  .reveal .toc-slide li {
+    margin: 1em 0;
+    font-size: 1.2em;
+    text-align: left;
+  }
+  
+  .reveal .toc-slide .covered {
+    color: #1a5f7a;
+    font-weight: bold;
+  }
+  
+  .reveal .toc-slide .current {
+    color: #1a5f7a;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  
+  .reveal .toc-slide .upcoming {
+    color: #999;
+  }
+  
+
+
+  /* SPACING BETWEEN LINES */
+
+  /* Add to your styles2.css */
+.v-space-small {
+  margin-top: 10px;
+}
+
+.v-space-medium {
+  margin-top: 40px;
+}
+
+.v-space-large {
+  margin-top: 80px;
+}

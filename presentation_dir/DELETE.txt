@@ -1,0 +1,44 @@
+$$
+\begin{align*}
+&TR_t(\text{CMI}_t^R, \text{CMI}_t^{R^*}, TR_{t-1}; D_l, D_u, S_l, S_u) 
+=
+\\[0.2em]\nonumber
+&\begin{cases}
++1 & \text{if} ~  
+(\text{CMI}_t^R \leq  D_l 
+~\text{and}~ 
+\text{CMI}_t^{R^*} \geq D_u)
+\\
+-1 & \text{if} ~ 
+(\text{CMI}_t^R \geq D_u 
+~\text{and}~ 
+\text{CMI}_t^{R^*} \leq D_l)
+\\
+0 & \text{if}~
+\begin{cases}
+\biggl\{
+TR_{t-1}=1 
+~~~\text{and}~ 
+\bigl[
+(\underbrace{\text{CMI}_t^R\geq 0 ~\text{or}~ \text{CMI}_t^{R^*}\leq 0}_{\text{take profit}})
+~\text{or}~
+(\underbrace{\text{CMI}_t^R\leq S_l ~\text{or}~ \text{CMI}_t^{R^*}\geq S_u}_{\text{stop loss}})
+\bigr]
+\biggr\}
+,\text{or}
+\\
+\biggl\{
+TR_{t-1}=-1 
+~\text{and}~ 
+\bigl[
+(\underbrace{\text{CMI}_t^R\leq 0 ~\text{or}~ \text{CMI}_t^{R^*}\geq 0}_{\text{take profit}})
+~\text{or}~
+(\underbrace{\text{CMI}_t^R\geq S_u ~\text{or}~ \text{CMI}_t^{R^*}\leq S_l}_{\text{stop loss}})
+\bigr]
+\biggr\}
+\end{cases}
+\\
+TR_{t-1} & \text{otherwise}
+\end{cases}
+\end{align*}
+$$
