@@ -61,7 +61,7 @@ This figure compares the cumulative returns of trading strategies based on diffe
 
 
 
-\subsection{Risk-adjusted returns}
+\paragraph{Risk-adjusted returns}
 
 For each copula model, we run the  regression
 $$
@@ -89,3 +89,119 @@ Since we consider combinations of 8 factors, we run $2^8=256$ different regressi
   \item Student-t copula returns exhibit mild sensitivity to the Profitability factor (RMW), suggesting the potential relevance of a single-factor model focused solely on RMW.
 \end{itemize}
 %----------------------------------------------------
+
+\paragraph{Orthogonal Factor Regression} We follow \cite{alexander2008market} (page 27), to retrieve factor betas in the presence of multicollinearity. 
+
+\textit{\underline{About multicollinearity:}}
+\begin{quote}
+\footnotesize 
+\qquote{
+Multicollinearity refers to the correlation between the explanatory variables in a regression model: if one or more explanatory variables are highly correlated, then it is difficult to estimate their regression coefficients. We say that a model has a high degree of multicollinearity if two or more explanatory variables are highly (positively or negatively) correlated. Then, theur regression coefficients cannot be estimated with much precision and, in technical terms, the efficiency of the OLS estimator is reduced. The multicollinearity problem becomes apparetn when the estimated coefficients change considerably when adding another (colinear) variable to the regression. There is no statistical test for multicollinearity, but a useful rule of thumb is that a model will suffer from it if the squareof the pairwise correlation between two explanatory variables is greated than the multiple $R^2$ of the regression.
+}
+\end{quote}
+
+\textit{\underline{About factor models:}}
+\begin{quote}
+\footnotesize 
+\qquote{
+A major problem with estimating fundamental factor models using time series data is that potential factors are very highly correlated. In this case, the factor betas cannot be estimated with precision. [...] Because of the problem with multicollinearity, the only reliable factor beta estimate is one where each factor is taken individually in its own single factor model. But no single factor model can explain the returns on a stock very well. A large part of the stock returns variation will be left to the residual and so the systematic risk will be low and the specific risk high.
+}
+\end{quote}
+
+\textit{\underline{About solving multicollinearity issues when using factor models:}}
+\begin{quote}
+\footnotesize 
+\qquote{
+The best solution to a multicollinearity problem is to apply principal component analysis to all the potential factors and then use the principal components as explanatory variables, instead of the original factors.
+}
+\end{quote}
+
+\textbf{Modus operandi:}
+\begin{enumerate}[noitemsep]
+  \item Apply PC to the risk factor returns covariance matrix. This delivers $PC_1,..., PC_M$. 
+  \item Compute the eigenvalues and eigenvectors of the risk factor covariance matrix. Each PC is represented by a linear combination of factors $PC_m= \sum_{k=1}^K w_{k,m} f_k$, where the weights are given by the eigenvectors.
+  \item Regress the returns onto the principal components: $r = \hat \alpha + \sum_{m=1}^M \hat \gamma_m PC_m + \epsilon $
+  \item Retrieve the betas as: 
+\begin{align*}
+r 
+&= \hat \alpha + \sum_{m=1}^M \hat \gamma_m PC_m + \epsilon 
+\\
+&= \hat \alpha + \sum_{m=1}^M \hat \gamma_m \sum_{k=1}^K w_{k,m} f_k + \epsilon 
+\\
+&= \hat \alpha +  \sum_{k=1}^K f_k \ub{\sum_{m=1}^M \hat \gamma_m w_{k,m}}{=:\beta_k}  + \epsilon 
+\\
+&= \hat \alpha +  \sum_{k=1}^K \beta_k f_k  + \epsilon 
+\end{align*}
+\end{enumerate}
+where
+$$
+\beta_k = \sum_{m=1}^M \hat \gamma_m w_{k,m}
+$$
+Important: In step 2, you should only include in the regression the PCs that have significant coefficients. That is; initially, run the full model $r = \hat \alpha + \sum_{m=1}^M \hat \gamma_m PC_m + \epsilon $ and evaluate the t-statistics of each of the $\gamma_m$'s. Then, select the $\gamma_m$'s with significant t-statistics and run a restricted regression $r = \hat \alpha + \sum_{m\in \mathcal S} \hat \gamma_m PC_m + \epsilon $, where $\mathcal S$ contains the significant PCs. Then, you use the OLS coefficients from the restricted model to retrieve the betas
+
+In my application: 
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item Obtain the correlation matrix of the factors to check for multicollinearity in the regressions.
+  \item If there is multicollinearity, run orthogonal regressions
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item Create a function that runs an orthogonal regression based on the procedure detailed above for a set of factors provided to the function.
+\end{itemize}
+
+\end{itemize}
+
+
+
+\paragraph{Barra Model} The Barra model is a fundamental multi-factor regression model where a stock return is modelled using market and industry risk factor returns and certain fundamental factors called the Barra risk indices. 
+
+The purpose of the Barra model is to analyze the relationship between a portfolio's return and the return on its benchmark. The difference between these two returns is called the relative return (also called the active return). 
+
+Consider a specific portfolio $P$ and its corresponding benchmark $B$. The multi-factor Barra
+model applied to this portfolio and its benchmark may be written
+
+\begin{align*}
+R_p &= \alpha_P + \beta_P X + \sum_{k=1}^{12} \beta_P^{F,k} R^{F,k} + \sum_{k=1}^{38} \beta_P^{I,k} R^{I,k} + \varepsilon_P,
+\\
+R_B &= \alpha_B + \beta_B X + \sum_{k=1}^{12} \beta_B^{F,k} R^{F,k} + \sum_{k=1}^{38} \beta_B^{I,k} R^{I,k} + \varepsilon_B,
+\end{align*}
+
+with the following notation:
+
+\begin{itemize}[leftmargin=*,noitemsep]
+  \item $X$ : return on the market index
+  \item $R^{F,k}$ : return on the $k$th (standardized) risk index;
+  \item $R^{I,k}$ : return on the $k$th industry index;
+  \item $\alpha_P$ : portfolio alpha;
+  \item $\alpha_B$ : benchmark alpha ($= 0$ if benchmark is market index);
+  \item $\beta_P$ : portfolio market beta;
+  \item $\beta_B$ : benchmark market beta ($= 1$ if benchmark is market index);
+  \item $\beta_P^{F,k}$ : portfolio fundamental beta on the $k$th (standardized) risk index;
+  \item $\beta_B^{F,k}$ : benchmark fundamental beta ($= 0$ if benchmark is market index);
+  \item $\beta_P^{I,i}$ : portfolio beta on the $i$th industry index;
+  \item $\beta_B^{F,i}$ : benchmark beta on the $i$th industry index ($= 0$ if benchmark is market index);
+  \item $\varepsilon_P$ : portfolio specific return;
+  \item $\alpha_B$ : benchmark specific return ($= 0$ if benchmark is market index).
+\end{itemize}
+
+In more concise matrix notation the model may be written
+\begin{align*}
+R_P &= \alpha_P + \beta_P X + (\beta_P^F)^{\prime} \mathbf{R}^F + (\beta_P^I)^{\prime} \mathbf{R}^I + \varepsilon_P,
+\\
+R_B &= \alpha_B + \beta_B X + (\beta_B^F)^{\prime} \mathbf{R}^F + (\beta_B^I)^{\prime} \mathbf{R}^I + \varepsilon_B.
+\end{align*}
+
+where $(\beta_P^F)^{\prime} = (\beta_P^{F,1}, \ldots, \beta_P^{F,12})$ and the other vector notation follows analogously.
+
+The active return on the portfolio is then defined as 
+$$
+Y = R_P - R_B = (\alpha_P - \alpha_B) + (\beta_P - \beta_B) X + (\beta_P^F - \beta_B^F)^{\prime} \mathbf{R}^F + (\beta_P^I - \beta_B^I)^{\prime} \mathbf{R}^I + (\varepsilon_P - \varepsilon_B)
+$$
+Now defining the \textit{relative alpha} as $\alpha = \alpha_P - \alpha_B$ and the \textit{relative betas} as
+$$
+\beta = \beta_P - \beta_B, \quad \beta^F = \beta_P^F - \beta_B^F \quad \text{and} \quad \beta^I = \beta_P^I - \beta_B^I
+$$
+and setting $\varepsilon = \varepsilon_P - \varepsilon_B$ we may write the model in terms of the portfolio's active return as:
+$$
+Y = \alpha + \beta X + \beta^{F\prime}\mathbf{R}^F + \beta^{I\prime}\mathbf{R}^I + \varepsilon.
+$$
+
+
