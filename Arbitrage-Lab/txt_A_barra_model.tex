@@ -1,0 +1,206 @@
+\subsection{Barra model}
+The Barra model for our target and synthetic asset may be written as
+\begin{align*}
+\2{\v{r_t \\ r_t^*}} =
+\2{\v{\alpha \\ \alpha^*}} 
++ 
+\2{\v{\b \beta\' \\ \b \beta^{*\'}}} 
+\mbf f_t
++
+\2{\v{\b \gamma\' \\ \b \gamma^{*\'}}} 
+\mbf i_t
++
+\2{\v{\eps_t \\ \eps_t^*}} 
+\end{align*}
+
+where we consider $K=8$ fundamental factors $\mbf f_t$ (i.e.: $\b \beta, \b \beta^*, \mbf f_t \in \mathbb R^K$) and $M=17$ industry factors $\mbf i_t$ (i.e.: $\b \gamma, \b \gamma^*, \mbf i_t \in \mathbb R^M$).
+%
+The \qquote{active return} between the target and synthetic asset is given by:
+$$
+\dot{r}_t := r_t - r_t^* = (\alpha - \alpha^*) + (\b \beta - \b \beta^*)\'\mbf f_t +  (\b \gamma - \b \gamma^*)\'\mbf i_t + (\eps_t - \eps_t^*)
+.
+$$
+Now defining the \textit{relative alpha, beta and gamma}, respectively, as
+$
+\dot{\alpha}:= (\alpha - \alpha^*),
+\dot{\b \beta} := (\b \beta - \b \beta^*),
+\dot{\b \gamma} := (\b \gamma - \b \gamma^*)
+$
+and setting $\dot{\eps}_t := (\eps_t - \eps_t^*)$, we may write the model in terms of the portfolio's active return
+$$
+\dot{r}_t = \dot{\alpha} + \dot{\b \beta}\' \mbf f_t + \dot{\b \gamma}\' \mbf i_t + \dot{\eps}_t
+.
+$$
+To estimate the model parameters, we employ an orthogonal regression approach based on Principal Component Analysis (PCA) to address potential multicollinearity among the factors. This procedure allows us to obtain more stable and interpretable estimates of the factor exposures. The implementation follows these steps. 
+
+%==============[	  Standardization  ]==============
+First, we standardize all factors (both fundamental and industry factors) to have zero mean and unit variance:
+$
+\tilde{\mbf{x}}_t = (\mbf{x}_t - \bar{\mbf{x}}) / \sigma_{\mbf{x}}
+$
+where $\mbf{x}_t = [\mbf{f}_t\', \mbf{i}_t\']\'\in\mathbb R^J$ represents the combined factor vector, with $J=K+M$.
+%
+%==============[	  Principal Component Analysis  ]==============
+We then compute the covariance matrix of the standardized factors $\mbf \Sigma := \text{Cov}(\tilde{\mbf{x}}_t)\in \mathbb R^{J\times J}$ and obtain its eigendecomposition
+$
+\mbf \Sigma \mbf V = \mbf \Lambda \mbf V,
+$
+where $\mbf \Lambda:=\diag(\lambda_1,...,\lambda_J)\in \mathbb R^{J\times J}$ are the eigenvalues and $\mbf{V} = [\mbf{v}_1,...,\mbf{v}_J]\in \mathbb R^{J\times J}$ are the corresponding eigenvectors, both sorted in descending order of the $\lambda$'s. 
+The principal components are then calculated as:
+$
+\mbf{p}_t = \mbf{V}\' \tilde{\mbf{x}}_t.
+$
+
+%==============[	  Regression on Principal Components  ]==============
+Second, we regress the active returns onto the principal components
+$$
+\dot{r}_t = a^{(u)} + \sum_{i=1}^J b^{(u)}_i p_{t,i} + \nu_t^{(u)}
+$$
+where $a^{(u)}$ is the \qquote{unrestricted} intercept, $\b b^{(u)}:=[b^{(u)}_1,...,b^{(u)}_J]$ are the \qquote{unrestricted} coefficients for each principal component, and $\nu_t$ is the error term.
+%
+%==============[	  Selection of Significant Components  ]==============
+We keep only the statistically significant principal components at the $0.05$ significance level:
+$
+\mathcal{S} = \{i : p\text{-value}(b_i^{(u)}) < 0.05\}.
+$
+%
+%==============[	  Restricted Model  ]==============
+Then, we estimate a restricted model using only the significant principal components
+$$
+\dot{r}_t = a^{(r)} + \sum_{i \in \mathcal{S}} b_i^{(r)} p_{t,i} + \nu_t^{(r)}.
+$$
+    
+%==============[	  Transformation to Factor Space  ]==============
+Finally, we transform the coefficients back to the original factor space. Let $\b b^{(r)}\in \mathbb R^J$ denote the vector filled with $b_i^{(r)}$ if $i\in \mathcal S$ and 0 otherwise. Then, we can write
+$
+\dot r_t 
+= a^{(r)} + \mbf p_t\' \b b^{(r)}+\nu_t^{(r)} 
+= a^{(r)} + \tilde{\mbf x}_t\' \mbf V \b b^{(r)}+\nu_t^{(r)}
+$. Thus, by setting $\dot \alpha = a^{(r)}$ and
+    \begin{align*}
+%	\dot{\beta}_k &= \sum_{i \in \mathcal{S}} b_i^{(r)} v_{k,i}	
+	\2{\v{\dot{\b \beta} \\ \dot{\b \gamma}}} = \mbf V \b b^{(r)}
+    \end{align*}
+    we recover the factor betas and gammas while avoiding the instability due to multicollinearity.
+%==============[	  HAC Standard Errors  ]==============
+Both the unrestricted and restricted models are estimated with Heteroskedasticity and Autocorrelation Consistent (HAC) standard errors using a maximum lag of 5 periods to account for potential serial correlation and heteroskedasticity in the residuals. 
+
+%==============[	  Advantages of this procedure  ]==============
+This approach offers several advantages. First, by using orthogonal principal components, we eliminate multicollinearity concerns. Second, by selecting only significant components, we reduce dimensionality and potential overfitting. Finally, the transformation back to the original factor space allows for direct interpretation of the factor exposures $\dot{\b  \beta}$ and $\dot{\b \gamma}$ in our active return decomposition model.
+
+%For robustness, we repeat this procedure with various industry factor classifications, ranging from 10 to 49 industries, to assess the sensitivity of our results to the industry granularity. If no principal components are found to be statistically significant at the 5\% level, we default to an intercept-only model, effectively attributing the entire active return to the $\dot{\alpha}$ term.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%The Barra model may be written
+%%
+%%\begin{align*}
+%%r_t &= \alpha \;+ \mathbf{f}_{t}\' \b \beta \;\;+ \mathbf{i}_{t}\' \b \gamma \;+ \varepsilon_t,
+%%\\
+%%r_t^* &= \alpha^* + \mathbf{f}_{t}\' \b \beta^{*} + \mathbf{i}_{t}\' \b \gamma^{*}   + \varepsilon_t,
+%%\end{align*}
+%%
+%\begin{align*}
+%\2{\v{r_t \\ r_t^*}} =
+%\2{\v{\alpha \\ \alpha^*}} 
+%+ 
+%\2{\v{\b \beta\' \\ \b \beta^{*\'}}} 
+%\mbf f_t
+%+
+%\2{\v{\b \gamma\' \\ \b \gamma^{*\'}}} 
+%\mbf i_t
+%+
+%\2{\v{\eps_t \\ \eps_t^*}} 
+%\end{align*}
+%
+%where we consider $K$ fundamental factors $\mbf f_t$ (i.e.: $\b \beta, \b \beta^*, \mbf f_t \in \mathbb R^K$) and $M$ industry factors $\mbf i_t$ (i.e.: $\b \gamma, \b \gamma^*, \mbf i_t \in \mathbb R^M$).
+%%
+%The \qquote{active return} between the target and synthetic asset is given by:
+%$$
+%\dot{r}_t := r_t - r_t^* = (\alpha - \alpha^*) + (\b \beta - \b \beta^*)\'\mbf f_t +  (\b \gamma - \b \gamma^*)\'\mbf i_t + (\eps_t - \eps_t^*)
+%.
+%$$
+%Now defining the \textit{relative alpha, beta and gamma}, respectively, as
+%$$
+%\dot{\alpha}:= (\alpha - \alpha^*),
+%\qquad 
+%\dot{\b \beta} := (\b \beta - \b \beta^*),
+%\qquad 
+%\dot{\b \gamma} := (\b \gamma - \b \gamma^*),
+%$$
+%and setting $\dot{\eps}_t := (\eps_t - \eps_t^*)$, we may write the model in terms of the portfolio's active return as:
+%$$
+%\dot{r}_t = \dot{\alpha} + \dot{\b \beta}\' \mbf f_t + \dot{\b \gamma}\' \mbf i_t + \dot{\eps}_t
+%.
+%$$
+%
+%Given that the industry factors exhibit a high level of correlation, we need to perform an orthogonal regression to avoid multicollinearity.
+%
+%\subsection{Orthogonal Regression Procedure}
+%
+%To estimate the model parameters, we employ an orthogonal regression approach based on Principal Component Analysis (PCA) to address potential multicollinearity among the factors. This procedure allows us to obtain more stable and interpretable estimates of the factor exposures. The implementation follows these steps:
+%
+%\begin{enumerate}
+%    \item \textbf{Data Preparation}: We compute the active returns (spreads) between the target and synthetic assets:
+%    \begin{equation}
+%    \dot{r}_t = r_t - r_t^*
+%    \end{equation}
+%    and align the factor data with these active returns.
+%    
+%    \item \textbf{Factor Standardization}: We standardize all factors (both Fama-French and industry factors) to have zero mean and unit variance:
+%    \begin{equation}
+%    \tilde{\mbf{x}}_t = \frac{\mbf{x}_t - \bar{\mbf{x}}}{\sigma_{\mbf{x}}}
+%    \end{equation}
+%    where $\mbf{x}_t = [\mbf{f}_t', \mbf{i}_t']'\in\mathbb R^J$ represents the combined factor vector, with $J=K+M$.
+%    
+%    \item \textbf{Principal Component Analysis}: We compute the covariance matrix of the standardized factors and obtain its eigendecomposition. Define $\mbf \Sigma := \text{Cov}(\tilde{\mbf{x}}_t)\in \mathbb R^{J\times J}$, then
+%    \begin{align*}
+%    \mbf \Sigma \mbf V &= \mbf \Lambda \mbf V,
+%    \end{align*}
+%    where $\mbf \Lambda:=\diag(\lambda_1,...,\lambda_J)\in \mathbb R^{J\times J}$ are the eigenvalues and $\mbf{V} = [\mbf{v}_1,...,\mbf{v}_J]\in \mathbb R^{J\times J}$ are the corresponding eigenvectors, both sorted in descending order of the $\lambda$'s. The principal components are then calculated as:
+%    \begin{equation}
+%    \mbf{p}_t = \mbf{V}\' \tilde{\mbf{x}}_t
+%    \end{equation}
+%    
+%    \item \textbf{Regression on Principal Components}: We regress the active returns on the principal components:
+%    \begin{equation}
+%    \dot{r}_t = a^{(u)} + \sum_{i=1}^J b^{(u)}_i p_{t,i} + \nu_t^{(u)}
+%    \end{equation}
+%    where $a^{(u)}$ is the \qquote{unrestricted} intercept, $\b b^{(u)}:=[b^{(u)}_1,...,b^{(u)}_J]$ are the \qquote{unrestricted} coefficients for each principal component, and $\nu_t$ is the error term.
+%    
+%    \item \textbf{Selection of Significant Components}: We select only the statistically significant principal components at the $0.05$ significance level:
+%    \begin{equation*}
+%    \mathcal{S} = \{i : p\text{-value}(b_i^{(u)}) < 0.05\}
+%    \end{equation*}
+%    
+%    \item \textbf{Restricted Model}: We estimate a restricted model using only the significant principal components:
+%    \begin{equation*}
+%    \dot{r}_t = a^{(r)} + \sum_{i \in \mathcal{S}} b_i^{(r)} p_{t,i} + \nu_t^{(r)}
+%    \end{equation*}
+%    This unrestricted and restricted models are estimated with Heteroskedasticity and Autocorrelation Consistent (HAC) standard errors using a maximum lag of 5 periods to account for potential serial correlation and heteroskedasticity in the residuals. 
+%    
+%    \item \textbf{Transformation to Factor Space}: Finally, we transform the coefficients back to the original factor space. Let $\b b^{(r)}\in \mathbb R^J$ denote the vector filled with $b_i^{(r)}$ if $i\in \mathcal S$ and 0 otherwise. Then, we can write
+%$
+%\dot r_t 
+%= a^{(r)} + \mbf p_t\' \b b^{(r)}+\nu_t^{(r)} 
+%= a^{(r)} + \tilde{\mbf x}_t\' \mbf V \b b^{(r)}+\nu_t^{(r)}
+%$. Thus, by
+% by setting $\dot \alpha = a^{(r)}$ and
+%    \begin{align*}
+%%	\dot{\beta}_k &= \sum_{i \in \mathcal{S}} b_i^{(r)} v_{k,i}	
+%	\2{\v{\dot{\b \beta} \\ \dot{\b \gamma}}} = \mbf V \b b^{(r)}
+%    \end{align*}
+%    we recover the factor betas and gammas while avoiding the instability due to multicollinearity.
+%\end{enumerate}
+%
+%This approach offers several advantages. First, by using orthogonal principal components, we eliminate multicollinearity concerns. Second, by selecting only significant components, we reduce dimensionality and potential overfitting. Finally, the transformation back to the original factor space allows for direct interpretation of the factor exposures $\dot{\beta}$ and $\dot{\gamma}$ in our active return decomposition model.
+%
+%For robustness, we repeat this procedure with various industry factor classifications, ranging from 10 to 49 industries, to assess the sensitivity of our results to the industry granularity. If no principal components are found to be statistically significant at the 5\% level, we default to an intercept-only model, effectively attributing the entire active return to the $\dot{\alpha}$ term.
+%
+%
