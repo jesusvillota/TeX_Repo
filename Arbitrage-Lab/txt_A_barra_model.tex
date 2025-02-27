@@ -27,69 +27,121 @@ $
 \dot{\b \gamma} := (\b \gamma - \b \gamma^*)
 $
 and setting $\dot{\eps}_t := (\eps_t - \eps_t^*)$, we may write the model in terms of the portfolio's active return
-$$
+\begin{equation}\label{eq:barra}
 \dot{r}_t = \dot{\alpha} + \dot{\b \beta}\' \mbf f_t + \dot{\b \gamma}\' \mbf i_t + \dot{\eps}_t
 .
+\end{equation}
+
+In \cref{fig:factor_corr_matrix} we show the factor correlation matrix $\t{Corr}(\mbf X)\in\mathbb{R}^{J\times J}$ of all the factors
 $$
-To estimate the model parameters, we employ an orthogonal regression approach based on Principal Component Analysis (PCA) to address potential multicollinearity among the factors. This procedure allows us to obtain more stable and interpretable estimates of the factor exposures. The implementation follows these steps. 
+\mbf{X} 
+= \2{\v{\mbf f_1\', \\ \vdots \\ \mbf f_T\', } 
+~
+% \c 
+\v{\mbf i_1\' \\ \vdots \\ \mbf i_T\' }}
+\in\mathbb R^{T\times J}
+,
+$$
+where $J=K+M$. 
+In our application we are using 
+[\texttt{MKT\_RF}, \texttt{SMB}, \texttt{HML}, \texttt{RMW}, \texttt{CMA}, \texttt{MOM}, \texttt{ST\_REV}, \texttt{LT\_REV}] as the fundamental factors, and [\texttt{Food}, \texttt{Mines}, \texttt{Oil}, \texttt{Clths}, \texttt{Durbl}, \texttt{Chems}, \texttt{Cnsum}, \texttt{Cnstr}, \texttt{Steel}, \texttt{FabPr}, \texttt{Machn}, \texttt{Cars}, \texttt{Trans}, \texttt{Utils}, \texttt{Rtail}, \texttt{Finan}, \texttt{Other}] as the industry factors. 
+As we can see, correlations are very high among factors, specially among industry factors, which means that regular OLS estimation of \cref{eq:barra} will deliver highly unstable coefficients due to multicollinearity.
+
+
+
+%==============[	  FACTOR CORRELATION MATRIX  ]==============
+\inserthere{fig:factor_corr_matrix}
+\begin{figure}[H]
+  \centering
+  \caption{Factor Correlation Matrix}
+  %----------------------------------------------------
+  \begin{subfigure}{\textwidth}
+  \centering	
+  \caption{Train}
+  \includegraphics[scale=0.5]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf}
+  \label{subfig:factor_corr_matrix_train}
+  \end{subfigure}
+
+	\vspace{0.5cm} % Adjust the spacing as needed
+
+  \begin{subfigure}{\textwidth}
+  \centering
+  \caption{Test}
+  \includegraphics[scale=0.5]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf}
+  \label{subfig:factor_corr_matrix_test}
+  \end{subfigure}
+%----------------------------------------------------
+\label{fig:factor_corr_matrix}
+\end{figure}
+
+
+Hence, to properly estimate the model parameters, we employ an orthogonal regression approach based on Principal Component Analysis (PCA), which will allow us to obtain more stable estimates of the factor exposures. The implementation follows these steps. 
 
 %==============[	  Standardization  ]==============
-First, we standardize all factors (both fundamental and industry factors) to have zero mean and unit variance:
-$
-\tilde{\mbf{x}}_t = (\mbf{x}_t - \bar{\mbf{x}}) / \sigma_{\mbf{x}}
-$
-where $\mbf{x}_t = [\mbf{f}_t\', \mbf{i}_t\']\'\in\mathbb R^J$ represents the combined factor vector, with $J=K+M$.
+%First, we standardize all factors (both fundamental and industry factors) to have zero mean and unit variance, which yields
+%$
+%%\tilde{\mbf{x}}_t = (\mbf{x}_t - \bar{\mbf{x}}) / \sigma_{\mbf{x}}.
+%\tilde{\mbf X}\in \mathbb{R}^{T\times J}.
+%$
 %
 %==============[	  Principal Component Analysis  ]==============
-We then compute the covariance matrix of the standardized factors $\mbf \Sigma := \text{Cov}(\tilde{\mbf{x}}_t)\in \mathbb R^{J\times J}$ and obtain its eigendecomposition
+First, we compute the covariance matrix of the factors $\mbf \Sigma := \text{Cov}({\mbf{X}})\in \mathbb R^{J\times J}$ and obtain its eigendecomposition
 $
 \mbf \Sigma \mbf V = \mbf \Lambda \mbf V,
 $
-where $\mbf \Lambda:=\diag(\lambda_1,...,\lambda_J)\in \mathbb R^{J\times J}$ are the eigenvalues and $\mbf{V} = [\mbf{v}_1,...,\mbf{v}_J]\in \mathbb R^{J\times J}$ are the corresponding eigenvectors, both sorted in descending order of the $\lambda$'s. 
-The principal components are then calculated as:
+where $\mbf \Lambda:=\diag(\lambda_1,...,\lambda_J)\in \mathbb R^{J\times J}$ are the eigenvalues and $\mbf{V} := [\mbf{v}_1,...,\mbf{v}_J]\in \mathbb R^{J\times J}$ are the corresponding eigenvectors, both sorted in descending order of the $\lambda$'s. 
+The principal components are given by:
 $
-\mbf{p}_t = \mbf{V}\' \tilde{\mbf{x}}_t.
+%\mbf{p}_t = \mbf{V}\' \tilde{\mbf{x}}_t.
+\mbf P = {\mbf X} \mbf V \in \mathbb{R}^{T\times J}.
 $
 
-%==============[	  Regression on Principal Components  ]==============
+%========[	  Principal Component Regression (Unrestricted)  ]=========
 Second, we regress the active returns onto the principal components
 $$
 \dot{r}_t = a^{(u)} + \sum_{i=1}^J b^{(u)}_i p_{t,i} + \nu_t^{(u)}
+%\dot{r}_t = a^{(u)} + \mbf p_t\' \b b^{(u)} + \nu_t^{(u)}
 $$
 where $a^{(u)}$ is the \qquote{unrestricted} intercept, $\b b^{(u)}:=[b^{(u)}_1,...,b^{(u)}_J]$ are the \qquote{unrestricted} coefficients for each principal component, and $\nu_t$ is the error term.
 %
 %==============[	  Selection of Significant Components  ]==============
 We keep only the statistically significant principal components at the $0.05$ significance level:
 $
-\mathcal{S} = \{i : p\text{-value}(b_i^{(u)}) < 0.05\}.
+\mathcal{S} := \{i : p\text{-value}(b_i^{(u)}) < 0.05\}.
 $
 %
-%==============[	  Restricted Model  ]==============
+%========[	  Principal Component Regression (Restricted)  ]=========
 Then, we estimate a restricted model using only the significant principal components
 $$
 \dot{r}_t = a^{(r)} + \sum_{i \in \mathcal{S}} b_i^{(r)} p_{t,i} + \nu_t^{(r)}.
 $$
     
 %==============[	  Transformation to Factor Space  ]==============
-Finally, we transform the coefficients back to the original factor space. Let $\b b^{(r)}\in \mathbb R^J$ denote the vector filled with $b_i^{(r)}$ if $i\in \mathcal S$ and 0 otherwise. Then, we can write
+Finally, we transform the coefficients back to original factor space. Let $\b b^{(r)}\in \mathbb R^J$ denote the vector filled with $b_i^{(r)}$ if $i\in \mathcal S$ and 0 otherwise. Then, we can write
 $
 \dot r_t 
 = a^{(r)} + \mbf p_t\' \b b^{(r)}+\nu_t^{(r)} 
-= a^{(r)} + \tilde{\mbf x}_t\' \mbf V \b b^{(r)}+\nu_t^{(r)}
-$. Thus, by setting $\dot \alpha = a^{(r)}$ and
-    \begin{align*}
-%	\dot{\beta}_k &= \sum_{i \in \mathcal{S}} b_i^{(r)} v_{k,i}	
-	\2{\v{\dot{\b \beta} \\ \dot{\b \gamma}}} = \mbf V \b b^{(r)}
-    \end{align*}
-    we recover the factor betas and gammas while avoiding the instability due to multicollinearity.
+= a^{(r)} + {\mbf x}_t\' \mbf V \b b^{(r)}+\nu_t^{(r)}
+,
+$
+where $\mbf p_t$ and $\mbf x_t$ are rows of $\mbf P$ and $\mbf X$, respectively (given as column vectors).
+Thus, by setting $\dot \alpha = a^{(r)}$ and
+$
+% 2{\v{\dot{\b \beta} \\ \dot{\b \gamma}}} = \mbf V \b b^{(r)}
+[\v{\dot{\b \beta} ~ \dot{\b \gamma}}]\' = \mbf V \b b^{(r)}
+$
+we recover alpha and the factor betas and gammas while avoiding the instability due to multicollinearity.
 %==============[	  HAC Standard Errors  ]==============
 Both the unrestricted and restricted models are estimated with Heteroskedasticity and Autocorrelation Consistent (HAC) standard errors using a maximum lag of 5 periods to account for potential serial correlation and heteroskedasticity in the residuals. 
 
 %==============[	  Advantages of this procedure  ]==============
-This approach offers several advantages. First, by using orthogonal principal components, we eliminate multicollinearity concerns. Second, by selecting only significant components, we reduce dimensionality and potential overfitting. Finally, the transformation back to the original factor space allows for direct interpretation of the factor exposures $\dot{\b  \beta}$ and $\dot{\b \gamma}$ in our active return decomposition model.
+%This approach offers several advantages. First, by using orthogonal principal components, we eliminate multicollinearity concerns. Second, by selecting only significant components, we reduce dimensionality and potential overfitting. Finally, the transformation back to the original factor space allows for direct interpretation of the factor exposures $\dot{\b  \beta}$ and $\dot{\b \gamma}$ in our active return decomposition model.
 
 %For robustness, we repeat this procedure with various industry factor classifications, ranging from 10 to 49 industries, to assess the sensitivity of our results to the industry granularity. If no principal components are found to be statistically significant at the 5\% level, we default to an intercept-only model, effectively attributing the entire active return to the $\dot{\alpha}$ term.
 
+%----------------------------------------------------
+\input{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT__/barra_table.tex}
+%----------------------------------------------------
 
 
 
@@ -204,3 +256,7 @@ This approach offers several advantages. First, by using orthogonal principal co
 %For robustness, we repeat this procedure with various industry factor classifications, ranging from 10 to 49 industries, to assess the sensitivity of our results to the industry granularity. If no principal components are found to be statistically significant at the 5\% level, we default to an intercept-only model, effectively attributing the entire active return to the $\dot{\alpha}$ term.
 %
 %
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
