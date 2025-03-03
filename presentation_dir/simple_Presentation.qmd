@@ -1,6 +1,6 @@
 ---
-title: "Pairs-Trading a Sparse Synthetic Control"
-subtitle: "Jesus Villota Miranda"
+title: "Pairs Trading a<br> Sparse Synthetic Control"
+subtitle: "Jesus Villota"
 format:
   revealjs:
     slide-number: true
@@ -22,142 +22,232 @@ format:
       url: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 ---
 
-# Introduction {background-color="#3e5c76" auto-animate=true}
+# Introduction {background-color="#3e5c76" transition="fade"}
 
-## Motivation {.smaller}
+## Pairs Trading {.smaller} 
+
+<span style="color: blue;">***Definition:***</span>
+
+- Widely recognized as a cornerstone of ***statistical arbitrage*** 
+- Exploits ***temporary divergences*** in the prices of two historically correlated or economically linked assets.
+
+::: {.v-space-medium}
+:::
+
+<span style="color: blue;">***Modus Operandi***</span>
+
+- ***Dollar-neutral*** strategy
+- Implies simultaneously going:
+  - <span style="color: green;">**LONG** in the relatively **undervalued** asset</span>
+  - <span style="color: red;">**SHORT** in the relatively **overvalued** one</span>
+- It aims to profit from the eventual ***convergence of prices*** or from ***mispricing correction***
+
+
+## Limitations {.smaller} 
+
+<span style="color: red;">***Pairs identification***</span>
+
+- ***Difficult to identify*** pairs of economically linked assets
+- ***High-dimensional asset pools*** exacerbate the problem
+
+::: {.v-space-small}
+:::
+
+<span style="color: red;">***Time-varying correlations***</span>
+
+- Even when a pair is identified, their ***relationship will change over time***
+
+::: {.v-space-small}
+:::
+
+
+<span style="color: red;">***Sensitivity to noise***</span>
+
+- Identifying mispricing in a pair is ***too sensitive to noise***
+- Difficult to separate noise from mispricing
+
+::: {.v-space-small}
+:::
+
+<span style="color: red;">***Non-linear dependencies***</span>
+
+- Traditional approaches rely on ***distance*** measures or ***cointegration***-based criteria
+
+
+
+<!-- ## Motivation {.smaller}
 - Financial markets exhibit transient price divergences between economically linked assets
 - Traditional pairs trading strategies face significant limitations:
   - Poor adaptation to structural breaks
   - Inability to model complex dependencies
-  - Limited robustness across dynamic market regimes
+  - Limited robustness across dynamic market regimes -->
 
 ## Research Gap {.smaller}
-- Need for strategies that:
-  - Systematically identify latent economic linkages
-  - Mitigate overfitting in high-dimensional asset pools
-  - Adapt to changing market conditions
-  - Capture non-linear and tail dependencies
+
+<span style="color: green;">***Need for strategies that...***</span>
+
+- Systematically identify latent economic linkages
+- Mitigate overfitting in high-dimensional asset pools
+- Robust to changing market conditions
+- Successfully separate mispricing from noise
+- Capture non-linear and tail dependencies
+
+## Research Question {.smaller}
+
+::: {.center-content style="display: flex; justify-content: center; align-items: center; height: 70vh;"}
+<div style="text-align: center;">
+Can the integration of ***sparse synthetic control*** with ***copula-based dependence modeling*** improve the performance of pairs trading strategies?
+</div>
+:::
 
 ## Our Approach {.smaller}
 - Novel framework integrating:
-  - **Sparse synthetic control methods**
-  - **Copula-based dependence modeling**
+  - <span style="font-variant: small-caps;">**Sparse synthetic control methods**</span>
+  - <span style="font-variant: small-caps;">**Copula-based dependence modeling**</span>
+
+::: {.v-space-medium}
+:::
 
 - Designed to enhance:
-  - Strategy adaptability
-  - Risk management capabilities
-  - Performance stability
+  - ***Identification*** of pairs
+  - Strategy ***adaptability***
+  - ***Risk management*** capabilities
+  - Performance ***stability***
 
-## Key Methodological Components {.smaller}
+
+## Key Methodological Components {.smaller} 
 - **Sparse Synthetic Control**
-  - Constructs parsimonious synthetic asset
-  - Employs $\ell_1$-regularized least squares optimization
-  - Automatically selects sparse subset from broad donor pool
-  - Maintains interpretability and computational efficiency
+  - Avoids reliance on a fixed or pre-specified partner asset
+  - Constructs a *synthetic pair* as a sparse linear combination from a donor pool 
+  <!-- - Employs $\ell_1$-regularized least squares optimization -->
+  <!-- - Automatically selects sparse subset  -->
+  <!-- - Maintains interpretability and computational efficiency -->
+
+::: {.v-space-small}
+:::
 
 - **Copula-Based Dependence Framework**
-  - Captures non-linear relationships between assets
-  - Models tail dependencies beyond linear correlation
-  - Adapts to complex market dynamics
+  - Captures non-linear relationships between the target & synthetic assets
+  <!-- - Models tail dependencies beyond linear correlation -->
+  - Allows us to compute mispricing probabilities
 
-## Trading Signal Generation {.smaller}
-- Based on relative mispricing between target and synthetic assets
-- Employs cumulative mispricing index that:
+::: {.v-space-small}
+:::
+
+- **Trading Signal Generation**
+  - Based on relative mispricing between target and synthetic assets
+  - Designed to filter market noise
+
+<!-- - Employs cumulative mispricing index that:
   - Accumulates signals over time
   - Resets after position closures
   - Isolates episodic trading opportunities
-- Disciplined entry rules require concurrent misalignment signals
-- Designed to filter market noise
+- Disciplined entry rules require concurrent misalignment signals -->
 
-# Literature Review {background-color="#3e5c76" auto-animate=true}
+# Literature Review {background-color="#3e5c76" transition="fade"}
 
 <!-- ## Evolution of Pairs Trading Research {.smaller}
 ![](images/timeline_placeholder.svg){width=90% fig-align="center"} -->
 
-## Foundational Approaches {.smaller}
+## Literature Review {.smaller}
 
 ::: {style="display: grid; grid-template-columns: 48% 48%; gap: 4%; font-size: 0.85em;"}
 
 <div>
-**Classical Pairs Trading**
+<span style="color: maroon;">**Classical Pairs Trading**</span>
 
-- **Gatev et al. (2006)**: First comprehensive academic study
-  - Documented 11% annual excess returns (1962-2002)
-  - Established distance-based methodology
-- **Elliott et al. (2005)**: Theoretical framework
+- **Gatev et al. (1998)**: 
+  - *First comprehensive academic study*
+  - *Documented 11% annual excess returns (1962-2002)*
+  - *Established distance-based methodology*
+
+::: {.v-space-small}
+:::
+
+- **Elliott et al. (2005)**: 
+  - *introduced a mean-reverting Gaussian Markov chain model for spread dynamics*
+  - *established analytical methods for parameter estimation using EM*
+<!-- Theoretical framework
   - Mean-reverting Gaussian Markov chain model
-  - EM algorithm for parameter estimation
+  - EM algorithm for parameter estimation -->
 </div>
 
 <div>
-**Empirical Validations**
+<span style="color: maroon;">**Empirical Validations**</span>
 
-- **Chen et al. (2019)**: Short-term reversals
-- **Do et al. (2010)**: Performance in turbulent markets
-- **Bowen et al. (2014)**: UK market analysis
-- **Krauss (2016) & Rad (2016)**: Large-scale assessments
+- **Chen et al. (2019)** *reports large abnormal returns driven by short-term reversals and pairs momentum effects*
+
+::: {.v-space-small}
+:::
+
+- **Do et al. (2010)**: *showed that pairs trading remains viable in turbulent periods*
+<!-- - **Bowen et al. (2014)**: moderate annual returns in UK market analysis -->
+
+::: {.v-space-small}
+:::
+
+- **Krauss (2016) & Rad et al. (2016)**: *confirmed that distance, cointegration, and copula-based strategies can yield significant alpha but exhibit important differences regarding convergence speed and trading frequencies.*
+<!-- Large-scale assessments
   - Performance comparisons across methodologies
-  - Trade frequency and convergence differences
+  - Trade frequency and convergence differences -->
 </div>
 
 :::
 
-## Key Methodological Streams {.smaller}
+## Literature Review {.smaller}
 
 ::: {style="display: grid; grid-template-columns: 48% 48%; gap: 4%; font-size: 0.82em;"}
 
 <div>
-**Cointegration Approach**
+<span style="color: maroon;">**Cointegration Approach**</span>
 
-- **Vidyamurthy (2004)**: Seminal application to equity markets
-- **Caldeira (2013)**: Brazilian market application
-- **Huck (2014)**: Outperformance vs. distance methods
-- **Cartea (2015)**: Dynamic investment strategies
-- **Lintilhac (2016)**: Cryptocurrency applications
+- **Vidyamurthy (2004)**: *seminal application to equity markets*
+- **Caldeira and Moura (2013)**: *Brazilian market application*
+- **Huck and Afawubo (2014)**: *cointegration outperforms distance methods*
+- **Cartea and Jaimungal (2015)**: *Optimal dynamic investment strategies*
+- **Lintilhac (2016)**: *Cryptocurrency applications*
 </div>
 
 <div>
-**Copula-Based Methods**
+<span style="color: maroon;">**Copula-Based Methods**</span>
 
-- **Min (2010)**: Bayesian inference for pair-copulas
-- **Stander (2013)**: Mispricing detection framework
-- **Liew (2013) & Xie (2016)**: Superior tail dependencies
-- **Krauss (2017) & Zhi (2017)**: Adaptive thresholds
+- **Min and Czado (2010)**: *Bayesian inference for pair-copulas*
+- **Stander et al. (2013)**: *Mispricing detection framework*
+- **Liew and Wu (2013) & Xie et al. (2016)**: *Superior tail dependencies*
+- **Krauss and Stubinger (2017) & Zhi et al. (2017)**: *Adaptive thresholds*
 - **Recent extensions**:
-  - Mixed copulas (Silva, 2023)
-  - ARMA-GARCH integration (Wang, 2023)
-  - Specialized cryptocurrency applications (Tadi, 2025)
+  - Mixed copulas (da Silva et al., 2023)
+  - ARMA-GARCH integration (Wang and Ding, 2023)
+  - Cryptocurrency applications (Tadi and Witzany, 2025)
 </div>
 
 :::
 
-## Emerging Approaches {.smaller}
+## Literature Review {.smaller}
 
 ::: {style="display: grid; grid-template-columns: 48% 48%; gap: 4%; font-size: 0.82em;"}
 
 <div>
-**Advanced Modeling Techniques**
+<span style="color: maroon;">**Advanced Modeling Techniques**</span>
 
-- **Do (2006)**: Stochastic residual spread models
-- **Zeng (2014)**: Threshold-based mean-reversion
+- **Do (2006)**: *Stochastic residual spread models*
+- **Zeng and Lee (2014)**: *Optimal threshold determination*
+- **Johansson et al. (2024)**: *Convex-concave optimization for multi-asset statistical arbitrage*
 - **Machine Learning Integration**:
-  - OPTICS clustering (Sarmento, 2020)
-  - Deep reinforcement learning (Roychoudhury, 2023)
-  - Automated pair selection (Han, 2023)
-  - Graphical matching (Qureshi, 2024)
+  - *OPTICS clustering to constrain search space* (Sarmento and Horta, 2020)
+  <!-- - Deep reinforcement learning (Roychoudhury, 2023) -->
+  - *Reinforcement Learning for automated pairs selection* (Han et al., 2023)
+  - *Graphical matching to reduce overlap among pairs* (Qureshi and Zaman, 2024)
 </div>
 
 <div>
-**Synthetic Control Methods**
+<span style="color: maroon;">**Replication Methods**</span>
 
-- **Alexander (1999, 2002)**: Cointegration for tracking
-- **Alexander (2005a, 2005b)**:
-  - Enhanced indexing strategies
-  - Market regime adaptations
-- **Recent Developments**:
-  - Sparse solutions (Shu, 2020)
-  - Machine learning for dynamic selection (Bradrania, 2021)
-  - Convex-concave optimization (Johansson, 2024)
+- **Alexander (1999), Alexander and Dimitriu (2002)**: *classical treatment connecting cointegration analysis and hedging tasks*
+- **Alexander and Dimitriu (2005a, 2005b)**: *investigate how cointegration outperforms traditional techniques in crafting robust index trackers and exploiting time-varying market regimes*
+- **Shu et al. (2020)**: *shows that sparse solutions across a large universe can reduce transaction costs*
+- **Bradrania et al. (2021)**: *dynamic selection methods for index constituents using machine learning*
+
 </div>
 
 :::
@@ -168,15 +258,17 @@ format:
 ![](images/research_position_diagram.svg){width=75% fig-align="center"}
 ::: -->
 
+
+*Our contribution...*
+
 ::: {.fragment .fade-in style="margin-top: 30px; font-size: 0.9em;"}
-**Our Contribution**
 - Integrates sparse synthetic control with copula-based dependence modeling
-- Addresses limitations of traditional approaches
+- Overcomes the cumbersome pairs identification process
 - Enhances adaptability to structural breaks and complex dependencies
 - Provides systematic framework for high-dimensional asset pools
 :::
 
-# Methodology {background-color="#3e5c76" transition="slide"}
+# Methodology {background-color="#3e5c76" transition="fade"}
 
 ## Sparse Synthetic Control {.smaller auto-animate=true}
 <!-- ::: {.incremental} -->
@@ -295,20 +387,20 @@ $$
 ![](images/converted/target_synthetic_prices_NVDA.svg){width=100% fig-align="center"}
 
 ## Copula-based Modeling {.smaller}
-- Traditional pairs-trading approaches rely on:
-  - Linear correlation
-  - Cointegration measures
-  
-- **Limitations**:
-  - Restrictive assumptions about joint distributions
-  - Poor performance during market stress
-  - Miss asymmetric tail dependencies
-  
-- **Solution**: Copula-based dependence modeling
-  - Decouples marginal distributions from joint dependence
-  - Captures non-linear interactions
-  - Models time-varying dependencies
-  - Quantifies mispricing probabilities
+- Traditional pairs-trading approaches rely on *linear correlation* and *cointegration measures*
+  - <span style="color: red;">**Limitations**</span>
+    - Restrictive assumptions about joint distributions
+    - Poor performance during market stress
+    - Miss asymmetric tail dependencies
+
+  ::: {.v-space-medium}
+  :::
+
+  - <span style="color: green;">**Solution: Copula-based dependence modeling**</span>
+    - Decouples marginal distributions from joint dependence
+    - Captures non-linear interactions
+    <!-- - Models time-varying dependencies -->
+    - Allows to quantify mispricing probabilities
 
 ## Sklar's Theorem {.smaller}
 - Let $(\Omega, \mathcal{F}, \mathbb{P})$ be a probability space.
@@ -420,15 +512,6 @@ $$c_{\rho,\nu}^{t}(u,v) = \frac{\Gamma(\frac{\nu+2}{2})\Gamma(\frac{\nu}{2})}{\s
 $$
 where $\zeta_u = t_\nu^{-1}(u)$, $\zeta_v = t_\nu^{-1}(v)$
 
-## Elliptical Copulas {.smaller}
-- Gaussian
-  - Symmetric dependence
-  - Light tails
-
-- Student-t
-  - Symmetric dependence
-  - Heavy tails
-
 ## Archimedean Copulas {.smaller}
 For generator function $\psi_\theta$,
 $$C_\theta(u,v) = \psi_\theta(\psi_\theta^{-1}(u) + \psi_\theta^{-1}(v))$$
@@ -468,23 +551,58 @@ $$C_\theta(u,v) = \psi_\theta(\psi_\theta^{-1}(u) + \psi_\theta^{-1}(v))$$
   </tbody>
 </table>
 
-## Archimedean Copulas {.smaller}
-
-- Clayton
-  - Lower tail dependence
-- Gumbel
-  - Upper tail dependence
-- Frank
-  - Symmetric, no tail dependence
-- Joe
-  - Strong upper tail dependence
-
-
 ## Mixed Copulas {.smaller}
 
 - N14: Rotated Clayton-Gumbel mixture with $\Theta \subset \mathbb{R}^2_+$
 
-## Copula Density Heatmaps {.smaller}
+
+## Characterization of Copulas {.smaller}
+
+::: {style="display: grid; grid-template-columns: 48% 48%; gap: 4%; font-size: 0.82em;"}
+
+<div>
+<span style="font-variant: small-caps;">**Elliptical Copulas**</span>
+
+- **Gaussian Copula**
+  - Symmetric dependence
+  - Light tails
+
+::: {.v-space-medium}
+:::
+
+- **Student-t Copula**
+  - Symmetric dependence
+  - Heavy tails
+
+</div>
+
+
+<div>
+<span style="font-variant: small-caps;">**Archimedean Copulas**</span>
+
+- **Clayton**
+  - Asymmetric, lower tail dependence
+
+- **Gumbel**
+  - Asymmetric, upper tail dependence
+
+- **Joe**
+  - Asymmetric, strong upper tail dependence
+
+- **Frank**
+  - Symmetric, no tail dependence
+
+::: {.v-space-medium}
+:::
+
+<span style="font-variant: small-caps;">**Mixed Copula (N14) **</span>
+
+  - Asymmetric tail dependence
+
+</div>
+:::
+
+## Calibrated Copula Density Heatmaps {.smaller}
 ![](images/converted/copula_samples_comparison.svg){width=50% fig-align="center"}
 
 ## Model Selection {.smaller}
@@ -501,10 +619,12 @@ $$
 $$
 
 **Key Findings**:
-- Student-t copula provides best fit
-- Symmetric dependence structure dominates
+
+- Student-t copula provides best fit, followed by N14, Gaussian and Frank
+- Elliptical copulas provide a better fit than Archimedean copulas
 - Heavy tails are significant
-- Asymmetric copulas perform poorly
+- Symmetric dependence structure dominates
+- Tail dependence is more relevant than symmetry (N14 > Gaussian, Frank)
 
 ## Copula Fitting Results {.smaller}
 
@@ -566,15 +686,22 @@ $$
   </tbody>
 </table>
 
-# Trading Strategy {background-color="#3e5c76" transition="slide" auto-animate=true}
+# Trading Strategy {background-color="#3e5c76" transition="fade" auto-animate=true}
 
 ## Pairs Trading via Mispricing Indices {.smaller}
-- Approach adapted from Xie et al. (2016)
-  <!-- - **Objective**: Exploit mispricing between two assets -->
-  - Uses **conditional probabilities** of daily returns as a **mispricing measure**
-- In our setting: trade ***target asset*** Vs. ***its synthetic counterpart***
-- Dollar-neutral strategy captures price divergence/convergence
-- Accounts for dynamic dependence structure through copula model
+
+- We adapt the mispricing index (MI) strategy from Xie et al. (2016) to our setting
+
+::: {.v-space-medium}
+:::
+
+- We trade a target asset (with returns $R_t$) against its synthetic counterpart (with returns $R_t^*$). 
+
+::: {.v-space-medium}
+:::
+
+- While the strategy might initially appear unconventional, it hinges on interpreting conditional probabilities of daily returns as an evolving measure of relative mispricing. 
+
 
 ## Mispricing Index (MI) {.smaller}
 - Two conditional mispricing indices
@@ -656,7 +783,7 @@ Trading Rule given the current CMIs ($\mathrm{CMI}_t^R$, $\mathrm{CMI}_t^{R^*}$)
 :::
 
 
-::: {.shrink}
+::: {style="font-size: 78%;"}
 \begin{align*}
 &TR_t(\text{CMI}_t^R, \text{CMI}_t^{R^*}, TR_{t-1}; D_l, D_u, S_l, S_u) 
 =
@@ -734,38 +861,50 @@ TR_{t-1} & \text{otherwise}
    - Reset CMIs after closing positions
    - Exit positions based on either take-profit or stop-loss
 
-# Results {background-color="#3e5c76" transition="slide"}
 
-## Basket Trading {.smaller}
-- Synthetic asset constructed through optimally weighted basket of 27 securities
-- **Key long positions**:
+## Operational Requirements {.smaller}
+
+1. Access to **basket trading** capabilities
+  - *Available to institutional investors*
+  - *Modern execution systems treat 27 components as single basket order*
+  - *Reduced transaction costs through optimized order routing*
+
+::: {.v-space-small}
+:::
+
+2. Sufficient **liquidity** in all components
+  - *donor pool is restricted to S&P 500 universe*
+
+# Results {background-color="#3e5c76" transition="fade"}
+
+<!-- ## Basket Trading {.smaller}
+- Synthetic asset constructed through optimally weighted basket of 27 securities -->
+<!-- - **Key long positions**:
   - AME (41.08%)
   - LUV (33.31%)
   - TFC (25.60%)
 - **Key short positions**:
   - ADSK (-42.25%)
-  - UNP (-25.77%)
+  - UNP (-25.77%) -->
 
-## Basket Trading Advantages {.smaller}
+<!-- ## Basket Trading Advantages {.smaller}
 - **Reduced idiosyncratic risk** through sector diversity
   - Spans financials, technology, transportation sectors
   - Mitigates company-specific events and sector-wide shocks
-- **Implementation efficiency**
-  - Modern execution systems treat 27 components as single basket order
-  - Reduced transaction costs through optimized order routing
+- **Implementation efficiency** -->
 
-## Operational Requirements {.smaller}
-- Access to sophisticated basket trading capabilities
-- Sufficient liquidity in all components
-  - Addressed by restricting universe to S&P 500 constituents
-- Strict dollar neutrality
-  - Equal but opposite positions in target and synthetic basket
-  - Precise execution coordination across all components
+
 
 ## Position Sizes Over Time {.smaller}
-![](images/converted/positions_by_copula.svg){width=90% fig-align="center"}
+![](images/converted/positions/clayton_joe.png){fig-align="center"}
 
-## Strategy Performance {.smaller}
+## Position Sizes Over Time {.smaller}
+![](images/converted/positions/gumbel_frank.png){fig-align="center"}
+
+## Position Sizes Over Time {.smaller}
+![](images/converted/positions/n14_gaussian_t.png){fig-align="center"}
+
+<!-- ## Strategy Performance {.smaller}
 - **N14 mixed copula** generates:
   - Highest total return (77.82%)
   - Highest annualized return (17.26%)
@@ -776,16 +915,15 @@ TR_{t-1} & \text{otherwise}
 - **Frank copula** shows lowest risk:
   - Modest returns (66.53%)
   - Lowest volatility (3.97%)
-  - Lowest maximum drawdown (1.36%)
+  - Lowest maximum drawdown (1.36%) -->
 
-## Performance by Copula Family {.smaller}
-- **Performance hierarchy**:
+## Performance Hierarchy {.smaller}
+
   - **Top tier**: N14 mixed copula (~78% return)
   - **Middle tier**: Student-t, Clayton, Gumbel (~73-75% return)
   - **Lower tier**: Joe, Frank (~67% return)
   - **Lagging**: Gaussian (~63% return)
 
-- Performance aligns with sophistication of tail dependence modeling
 
 ## Performance Metrics by Copula {.smaller}
 
@@ -895,10 +1033,80 @@ TR_{t-1} & \text{otherwise}
 ![](images/converted/equity_curves_comparison.svg){width=90% fig-align="center"}
 
 
-# Results {background-color="#3e5c76" transition="slide"}
-# Conclusion {background-color="#3e5c76" transition="slide"}
+## Factor analysis of Strategy Returns {.smaller}
 
-## Conclusion Summary {.smaller}
+For each copula model, we run the  regression
+$$
+\mathcal{R}_{t}^{c} = \alpha + \boldsymbol{\beta}' \mathbf{f}_t + \epsilon_t
+$$
+
+- $\mathcal{R}_{t}^{c}\equiv$ excess returns of our pairs trading strategy for copula family $c$ 
+- $\mathbf f_t \equiv$ **Fama-French Factors**:
+  - $\texttt{MKT_RF}$: Market factor
+  - $\texttt{SMB}$: Size factor
+  - $\texttt{HML}$: Value factor
+  - $\texttt{RMW}$: Profitability factor
+  - $\texttt{CMA}$: Investment factor
+  - $\texttt{MOM}$: Momentum factor
+  - $\texttt{ST_REV}$: Short-term reversal factor
+  - $\texttt{LT_REV}$: Long-term reversal factor
+
+## Factor analysis of Strategy Returns {.smaller}
+
+$$
+\mathcal{R}_{t}^{c} = \alpha + \boldsymbol{\beta}' \mathbf{f}_t + \epsilon_t
+$$
+
+- Since we consider combinations of 8 factors, we run $2^8=256$ different regressions for each copula. 
+- This delivers a positive significant $\alpha$ of  $0.0004$ -- $0.0006$ for all regressions specifications across all copula models, which is equivalent to an annualized $\alpha$ of $10.08\%$ -- $15.12\%$. 
+- The significance of risk-factors varies through copula models.
+
+## Factor analysis of Strategy Returns {.smaller}
+
+- Gumbel copula strategy returns
+  - limited factor exposure to SMB, HML and ST_REV
+  - the overall factor model reliability is questionable though
+  
+::: {.v-space-small}
+:::
+
+- Frank copula strategy returns
+  - significant exposure primarily to the Short-term Reversal (ST_REV)
+  
+::: {.v-space-small}
+:::
+
+- Clayton copula strategy returns
+  - significantly exposed to market risk, with MKT_RF being the sole statistically significant factor across all model specifications.
+  
+::: {.v-space-small}
+:::
+
+- Joe copula strategy returns
+  - mild sensitivity to market risk
+  
+## Factor analysis of Strategy Returns {.smaller}
+
+- N14 copula strategy returns
+  - significant exposure to the market factor. 
+  - The model's explanatory power improves notably when incorporating the Short-term Reversal factor.
+  
+::: {.v-space-small}
+:::
+
+- Gaussian copula strategy returns
+  - significant exposure to market risk and ST_REV (significant at the 1\% level). 
+  
+::: {.v-space-small}
+:::
+
+- Student-t copula strategy returns
+  - mild sensitivity to the Profitability factor (RMW), suggesting the potential relevance of a single-factor model focused solely on RMW.
+
+
+# Conclusion {background-color="#3e5c76" transition="fade"}
+
+<!-- ## Conclusion Summary {.smaller}
 - Novel pairs trading framework integrates:
   - Sparse synthetic control methods
   - Copula-based dependence modeling
@@ -916,30 +1124,55 @@ TR_{t-1} & \text{otherwise}
   - Student-t specification provides best fit
   - Confirms predominantly symmetric relationships with heavy tails
   - Captures complex dependencies missed by simpler models
-  - Validates importance of modeling tail dependence
+  - Validates importance of modeling tail dependence -->
 
-## Strategy Performance {.smaller}
+
+## Conclusions {.smaller}
+
+- We proposed a novel approach to detect pricing anomalies in the context of pairs trading
+- Our framework combines sparse synthetic control methods with copula-based dependence modeling
+- Our empirical application demonstrate the effectiveness of our trading strategy 
+- The strategy is robust across different copula specifications
+
+<!-- ##   {.smaller}
 - **Robust across different copula specifications**
   - N14 mixed copula: highest return (17.26% annualized)
   - All specifications: positive risk-adjusted returns
   - Sharpe ratios: 3.14-3.97
   - Limited drawdowns: 1.36%-2.57%
 
+::: {.v-space-medium}
+:::
+
 - **Framework benefits**
   - Not overly dependent on specific copula choice
   - Consistent performance across model specifications
-  - Balanced risk-return profile
+  - Balanced risk-return profile -->
 
-## Future Research Directions {.smaller}
-- **Time-varying copulas**
-  - Capture evolving dependence structures
-  - Adapt to dynamic market conditions
+## TO-DOs {.smaller}
 
-- **Multiple target assets**
-  - Extend framework for simultaneous modeling
-  - Enhance portfolio diversification
+- Robustness checks: 
+  - Run this procedure by looping the target asset through all the S&P 500 constituents
+  - Explore different train-test split percentages
+  - Run strategy on multiple paths (*Combinatorial Purged Cross-Validation*)
 
-- **Implementation refinements**
-  - Incorporate transaction costs
-  - Model market impact
-  - Develop more realistic performance estimates
+::: {.v-space-small}
+:::
+
+- Investigate the spread between the target and synthetic assets (Barra model)
+
+::: {.v-space-smal}
+:::
+
+- Is Fama-French factor analysis on the strategy returns valid in my context?
+
+::: {.v-space-smal}
+:::
+
+- Incorporate transaction costs
+
+::: {.v-space-smal}
+:::
+
+- Explore time-varying copulas(?)
+
