@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99d (TeX Live 2024)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: __main__.aux
+The style file: abbrvnat.bst
+Illegal, another \bibstyle command---line 134 of file __main__.aux
+ : \bibstyle
+ :          {plain}
+I'm skipping whatever remains of this command
+Database file #1: bib_references_DOI.bib
+Warning--empty journal in Rotondi2025
+You've used 41 entries,
+            2773 wiz_defined-function locations,
+            952 strings with 13627 characters,
+and the built_in function-call counts, 19615 in all, are:
+= -- 1898
+> -- 1013
+< -- 29
++ -- 342
+- -- 300
+* -- 1679
+:= -- 3085
+add.period$ -- 220
+call.type$ -- 41
+change.case$ -- 221
+chr.to.int$ -- 40
+cite$ -- 83
+duplicate$ -- 857
+empty$ -- 1546
+format.name$ -- 379
+if$ -- 4157
+int.to.chr$ -- 2
+int.to.str$ -- 1
+missing$ -- 40
+newline$ -- 307
+num.names$ -- 164
+pop$ -- 323
+preamble$ -- 1
+purify$ -- 182
+quote$ -- 0
+skip$ -- 641
+stack$ -- 0
+substring$ -- 642
+swap$ -- 101
+text.length$ -- 5
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 441
+warning$ -- 1
+while$ -- 154
+width$ -- 0
+write$ -- 720
+(There was 1 error message)

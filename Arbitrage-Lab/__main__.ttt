@@ -1,0 +1,167 @@
+\begin{table}[H]
+\centering
+\caption{Synthetic Control Model Weights}
+\label{tab:scm_weights}
+\begin{tabular}{llc}
+\toprule
+ Tickers & Company Name & Weights (\%) \\
+\midrule
+\textbf{AME} & Ametek & 41.08 \\
+\textbf{LUV} & Southwest Airlines & 33.31 \\
+\textbf{TFC} & Truist Financial & 25.60 \\
+\textbf{AEP} & American Electric Power & 21.69 \\
+\textbf{ADM} & Archer Daniels Midland & 20.56 \\
+\textbf{RSG} & Republic Services & 18.42 \\
+\textbf{AXP} & American Express & 18.10 \\
+\textbf{LLY} & Lilly (Eli) & 14.74 \\
+\textbf{C} & Citigroup & 9.67 \\
+\textbf{VRSN} & Verisign & 7.77 \\
+\textbf{MTB} & M\&T Bank & 7.38 \\
+\textbf{FE} & FirstEnergy & 7.16 \\
+\textbf{FIS} & Fidelity National Information Services & 5.21 \\
+\textbf{PARA} & Paramount Global & 4.48 \\
+\textbf{TXT} & Textron & 2.21 \\
+\textbf{STX} & Seagate Technology & 0.26 \\
+\textbf{BIIB} & Biogen & 0.16 \\
+\textbf{NFLX} & Netflix & -1.04 \\
+\textbf{FDX} & FedEx & -2.39 \\
+\textbf{UDR} & UDR, Inc. & -3.95 \\
+\textbf{V} & Visa Inc. & -5.43 \\
+\textbf{CNP} & CenterPoint Energy & -7.75 \\
+\textbf{MS} & Morgan Stanley & -16.21 \\
+\textbf{NI} & NiSource & -16.35 \\
+\textbf{WMT} & Walmart & -16.65 \\
+\textbf{UNP} & Union Pacific Corporation & -25.77 \\
+\textbf{ADSK} & Autodesk & -42.25 \\
+\bottomrule
+ & Total& 100.00 \\
+\bottomrule
+\end{tabular}
+
+%----------------------------------------------------
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+% Optimal weights of the sparse synthetic control portfolio for replicating the target asset's price dynamics. The table displays the percentage contribution of each donor asset from the S\&P 500 constituents, with positive weights indicating long positions and negative weights indicating short positions. The weights are derived using an $\ell_1$-regularized least squares optimization, which enforces sparsity by shrinking some weights to zero, effectively selecting the most influential assets. The weights sum to 100\% as enforced by the simplex constraint in the optimization problem.
+This table presents the optimal weights obtained from the sparse synthetic control methodology for replicating the target asset's price dynamics. The weights are expressed as percentages and represent each donor asset's contribution to the synthetic portfolio. Positive weights indicate long positions while negative weights represent short positions. The donor pool consists of S\&P 500 constituents, and the methodology yields a sparse solution where many potential donor assets receive zero weights. The sparsity is achieved through $\ell_1$-regularization, which automatically selects the most influential assets for constructing the synthetic control. The weights sum to 100\% as enforced by the simplex constraint in the optimization problem.
+}
+\end{minipage}
+%----------------------------------------------------
+\end{table}
+\efloatseparator
+ 
+\begin{table}[H]
+\centering
+\caption{Copula Fitting Results}
+\label{tab:copula_fit}
+\begin{tabular}{lrrrr}
+\toprule
+Copula & SIC & AIC & HQIC \\
+\toprule
+Joe & -671.50 & -677.39 & -675.26 \\
+Clayton & -1168.92 & -1174.80 & -1172.67 \\
+Gumbel & -1210.02 & -1215.90 & -1213.78 \\
+Frank & -1212.68 & -1218.56 & -1216.43 \\
+Gaussian & -1337.69 & -1343.57 & -1341.44 \\
+N14 & -1425.18 & -1431.06 & -1428.94 \\
+Student & -1427.05 & -1432.94 & -1430.81 \\
+\bottomrule
+\end{tabular}
+\label{tab:copula_fits}
+%----------------------------------------------------
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+This table reports goodness-of-fit measures for various copula specifications used to model the dependence structure between the target and synthetic asset returns. The evaluation metrics include the Schwarz Information Criterion (SIC), Akaike Information Criterion (AIC), and Hannan-Quinn Information Criterion (HQIC). All criteria balance model fit against complexity, with lower values indicating better models. The Student-t copula achieves the best fit across all three criteria, followed closely by the N14 mixed copula, suggesting that the dependence structure exhibits tail dependence and asymmetry.
+}
+\end{minipage}
+%----------------------------------------------------
+\end{table}
+\efloatseparator
+ 
+\begin{table}[H]
+\centering
+\caption{Barra Model coefficients retrieved from PCR}
+\makebox[\textwidth][c]{%
+\renewcommand{\arraystretch}{1.2}
+{\footnotesize
+\begin{tabular}{L{3.7cm}L{2.4cm}lc}
+\hline\hline
+ & & \textbf{Train} & \textbf{Test} \\
+\hline
+\multirow{3}{*}{\textbf{\begin{tabular}[l]{@{}l@{}}Relative\\Alpha\end{tabular}}} & $\dot{\alpha}$ & -0.0002 & 0.0009 \\
+ & $\sigma_{\dot{\alpha}}$ & 0.0004 & 0.0006 \\
+ & $p$-value($\dot{\alpha}$) & 0.6766 & 0.1419 \\
+\hline
+\multirow{8}{*}{\textbf{\begin{tabular}[l]{@{}l@{}}Relative\\Fundamental\\Factor\\Coefficients\end{tabular}}} & $\dot{\beta}_{MKT\_RF}$ & 0.0426 & 0.0281 \\
+ & $\dot{\beta}_{SMB}$ & 0.3802 & 0.0285 \\
+ & $\dot{\beta}_{HML}$ & -0.1773 & -0.4563 \\
+ & $\dot{\beta}_{RMW}$ & 0.6985 & 0.3470 \\
+ & $\dot{\beta}_{CMA}$ & 0.3291 & 0.1318 \\
+ & $\dot{\beta}_{MOM}$ & -0.0215 & -0.2389 \\
+ & $\dot{\beta}_{ST\_REV}$ & 0.1232 & 0.0714 \\
+ & $\dot{\beta}_{LT\_REV}$ & 0.1855 & 0.4929 \\
+\hline
+\multirow{17}{*}{\textbf{\begin{tabular}[l]{@{}l@{}}Relative\\Industry\\Factor\\Coefficients\end{tabular}}} & $\dot{\gamma}_{Food }$ & 0.0312 & 0.0459 \\
+ & $\dot{\gamma}_{Mines}$ & -0.0431 & 0.0071 \\
+ & $\dot{\gamma}_{Oil  }$ & -0.0291 & -0.1447 \\
+ & $\dot{\gamma}_{Clths}$ & 0.1369 & 0.0364 \\
+ & $\dot{\gamma}_{Durbl}$ & -0.2761 & -0.1056 \\
+ & $\dot{\gamma}_{Chems}$ & -0.1755 & -0.1059 \\
+ & $\dot{\gamma}_{Cnsum}$ & -0.0545 & -0.0683 \\
+ & $\dot{\gamma}_{Cnstr}$ & 0.2890 & -0.0143 \\
+ & $\dot{\gamma}_{Steel}$ & -0.3551 & -0.4512 \\
+ & $\dot{\gamma}_{FabPr}$ & -0.1014 & -0.1088 \\
+ & $\dot{\gamma}_{Machn}$ & 0.4337 & 1.0429 \\
+ & $\dot{\gamma}_{Cars }$ & 0.0899 & 0.0027 \\
+ & $\dot{\gamma}_{Trans}$ & -0.1163 & 0.2022 \\
+ & $\dot{\gamma}_{Utils}$ & 0.1995 & 0.2607 \\
+ & $\dot{\gamma}_{Rtail}$ & -0.5772 & -0.6114 \\
+ & $\dot{\gamma}_{Finan}$ & 0.3596 & 0.2546 \\
+ & $\dot{\gamma}_{Other}$ & 0.0215 & -0.1835 \\
+\hline \hline
+\multirow{3}{*}{\textbf{\begin{tabular}[l]{@{}l@{}}Model\\Statistics\end{tabular}}} & Adj. $R^2$ & 0.0687 & 0.2525 \\
+ & $F$-statistic & 10.5893 & 19.7223 \\
+ & $p$-value($F$) & 0.0000 & 0.0000 \\
+\hline
+\hline
+\end{tabular}}}
+\label{tab:barra_model}
+\vspace{6pt}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} This table reports the regression coefficients of the Barra model using Principal Component Regression (PCR) to avoid multicollinearity in the factors. The table shows the relative alpha, beta, and gamma coefficients, along with model statistics. Only The alpha $p$-values are reported (coming from PCR). The p-values for the beta and gamma coefficients are not reported, as such coefficients are retrieved from a second-pass regression on significant factors at the 0.05 confidence level. Model statistics include the adjusted $R^2$, $F$-statistic, and $p$-value of the $F$-statistic.\end{tablenotes}
+\end{table}
+\efloatseparator
+ 
+\begin{table}[H]
+\centering
+\caption{Performance Metrics by Copula}
+\label{tab:copula_performance}
+\small\begin{tabular}{lR{1.2cm}R{1.2cm}R{1.1cm}R{1.3cm}R{1.3cm}R{1.3cm}R{1.2cm}R{1.2cm}R{1.2cm}R{1.3cm}}
+\toprule
+Copula & Total Return (\%) & Ann. Return (\%) & Ann. Vol. (\%) & Sharpe Ratio & Sortino Ratio & Calmar Ratio & Max DD (\%) & Win Rate (\%) & Profit Factor & VaR-95 (\%) \\
+\midrule
+Gumbel & 72.59 & 16.10 & 4.61 & 3.49 & 4.42 & 7.42 & 2.17 & 34.86 & 2.19 & -0.35 \\
+Frank & 66.53 & 14.76 & 3.97 & 3.71 & 4.75 & 10.85 & 1.36 & 30.55 & 2.51 & -0.30 \\
+Clayton & 74.67 & 16.56 & 4.18 & 3.97 & 5.30 & 10.89 & 1.52 & 32.31 & 2.60 & -0.31 \\
+Joe & 67.45 & 14.96 & 4.62 & 3.24 & 3.85 & 5.83 & 2.57 & 36.62 & 2.02 & -0.36 \\
+N14 & 77.82 & 17.26 & 4.35 & 3.97 & 5.75 & 11.25 & 1.53 & 34.07 & 2.50 & -0.32 \\
+Gaussian & 62.70 & 13.91 & 4.43 & 3.14 & 4.10 & 8.12 & 1.71 & 32.31 & 2.07 & -0.35 \\
+Student-t & 74.63 & 16.55 & 4.60 & 3.60 & 4.64 & 7.70 & 2.15 & 35.04 & 2.30 & -0.33 \\
+\bottomrule
+\end{tabular}
+
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+This table reports various performance metrics for pairs trading strategies implemented using different copula specifications. Performance measures include total and annualized returns, annualized volatility, risk-adjusted ratios (Sharpe, Sortino, and Calmar), maximum drawdown (Max DD), win rate, profit factor, and 95\% Value-at-Risk (VaR-95). All metrics are computed over the out-of-sample period from July 2020 to January 2025.
+}
+\end{minipage}
+%.............
+
+\end{table}

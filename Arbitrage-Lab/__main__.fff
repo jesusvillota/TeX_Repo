@@ -1,0 +1,128 @@
+\begin{figure}[H]
+  \caption{Target vs Synthetic Log-Prices for NVDA}
+  \centering
+  \includegraphics[scale=0.47]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/target_synthetic_prices_NVDA.pdf}
+\label{fig:target_synthetic_prices_NVDA}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+This figure illustrates the log-price trajectories of the target asset (NVDA) and its synthetic counterpart over the training and testing periods. The solid blue line represents the synthetic log-prices derived from the sparse synthetic control methodology, while the solid red line indicates the actual log-prices of the target asset during the training phase. The dashed lines depict the log-prices for both the target and synthetic assets during the testing phase. The vertical line marks the transition point between the training and testing datasets
+}
+\end{minipage}
+%.............
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Empirical Cumulative Distribution Functions of Target and Synthetic Assets}
+  \centering
+  \includegraphics[scale=0.47]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf}
+  \label{fig:all_CDFs_comparison}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+This figure presents the linearly interpolated empirical cumulative distribution functions (ECDFs) for both log-returns and log-prices of the target (red) and synthetic (blue) assets. The panels are divided into training period (top) and test period (bottom). The left panels show the CDFs of daily log-returns, while the right panels display the CDFs of log-price levels. The y-axis represents cumulative probability from 0 to 1, and the x-axis shows the corresponding log-returns or log-prices."
+}
+\end{minipage}
+%.............
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Scatter Plots of CDF Pairs for Target and Synthetic Assets}
+  \centering
+  \includegraphics[scale=0.4]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf}
+  \label{fig:CDF_scatter_comparison}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\footnotesize\textit{Note:
+Scatter plots comparing the cumulative distribution functions (CDFs) of the target asset and the synthetic asset for both returns and prices during training and testing periods. The top row displays the CDFs for the training data, while the bottom row shows the CDFs for the testing data. The left column represents the returns series, and the right column represents the price series. Each plot compares the target CDF (x-axis) against the synthetic CDF (y-axis). Both axes represent the [0,1] probability space of the copula domain, with values extending slightly beyond this range to show boundary behavior. The close alignment of points along the diagonal line indicates a strong similarity between the target and synthetic distributions. The returns series exhibit more dispersion, reflecting the volatility in returns, while the price series show a tighter fit, suggesting that the synthetic asset effectively replicates the price dynamics of the target asset.
+}
+\end{minipage}
+%.............
+
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Copula Density Heatmaps for Different Parametric Families}
+  \centering
+  \includegraphics[scale=0.47]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf}
+  \label{fig:copula_samples_comparison}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+Contour plots of copula densities for various parametric families, illustrating the dependence structures between the target and synthetic asset returns. Each subplot represents a different copula family: Gumbel, Frank, Clayton, Joe, N14, Gaussian, and Student-t. The color intensity in the plots indicates the density of the copula, with darker regions representing higher densities. These visualizations highlight the differences in tail dependencies and overall dependence structures captured by each copula family. The Gumbel and Clayton copulas exhibit stronger upper and lower tail dependencies, respectively, while the Gaussian copula shows symmetric dependencies. The Student-t copula accounts for heavier tails, and the Frank copula displays a balanced dependence structure.
+}
+\end{minipage}
+%.............
+
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \centering
+  \caption{Factor Correlation Matrix}
+  %----------------------------------------------------
+  \begin{subfigure}{\textwidth}
+  \centering 
+  \caption{Train}
+  \includegraphics[scale=0.5]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf}
+  \label{subfig:factor_corr_matrix_train}
+  \end{subfigure}
+
+\vspace{0.5cm} % Adjust the spacing as needed
+
+  \begin{subfigure}{\textwidth}
+  \centering
+  \caption{Test}
+  \includegraphics[scale=0.5]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf}
+  \label{subfig:factor_corr_matrix_test}
+  \end{subfigure}
+%----------------------------------------------------
+\label{fig:factor_corr_matrix}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Position Sizes Over Time by Copula Family}
+  \centering
+  \includegraphics[scale=0.315]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/positions_by_copula.pdf}
+  \label{fig:positions_by_copula}
+%.............
+\vspace{0.2cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+This figure shows the evolution of position sizes (in shares) for target (red) and synthetic (blue) assets in the test sample under different copula specifications. The strategy assumes initial equity of \$1.
+}
+\end{minipage}
+%.............
+
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[H]
+  \caption{Equity Curves Comparison Across Copula Families}
+  \centering
+  \includegraphics[scale=0.47]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf}
+  \label{fig:equity_curves_comparison}
+%.............
+\vspace{0.5cm}
+\begin{minipage}{\textwidth}
+\setlength{\parindent}{0pt}
+\small\textit{Note:
+This figure compares the cumulative returns of trading strategies based on different copula specifications in the test sample. Each line represents a different copula model, with their respective Sharpe Ratios (SR) shown in parentheses. The y-axis shows cumulative returns in percentage terms, and the x-axis displays the timeline in six-month intervals.
+}
+\end{minipage}
+%.............
+
+\end{figure}

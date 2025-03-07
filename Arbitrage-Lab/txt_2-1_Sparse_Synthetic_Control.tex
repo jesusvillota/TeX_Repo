@@ -4,6 +4,9 @@
 \subsection{Sparse Synthetic Control}
 
 The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security using a sparse combination of assets from a donor pool. 
+%
+Let $\mathcal T$ denote the collection of timestamps of a time series with $T:=\card{\mathcal T}$. This sample is divided into training and test samples: $\mathcal T=\mathcal T_{tr} \cup \mathcal T_{test}$.\footnote{Throughout the text, we will indisctinctively refer to the training sample as \qquote{estimation sample} or as \qquote{in-sample}. Analogously, we will refer to the test sample as the \qquote{evaluation sample} or more succintly, \qquote{out-of-sample}}
+%
 Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. Then, we can build a synthetic asset time series ${\mbf y}^*$ as
 \begin{equation*}
 {y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
@@ -11,11 +14,11 @@ Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a t
 ,
 \end{equation*}
 
-where the weights $\mbf w^*=[w_1^*, ..., w_N^*]\'\in \R^N$ are determined via an $\ell_1$-regularized least squares optimization problem
+where the weights $\mbf w^*=[w_1^*, ..., w_N^*]\'\in \R^N$ are determined in-sample via an $\ell_1$-regularized least squares optimization problem
 %----------------------------------------------------
 \begin{equation*}
 \mathbf{w}^* 
-= \argmin_{\mathbf{w} \in \R^{N}} \left\{\sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 + \lambda\|\mathbf{w}\|_1\right\}
+= \argmin_{\mathbf{w} \in \R^{N}} \left\{\sum_{t\in\mathcal T_{tr}} \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 + \lambda\|\mathbf{w}\|_1\right\}
 \quad \text{s.t.} \quad \mathbf{1}^\top \mathbf{w} = 1
 \end{equation*}
 %----------------------------------------------------
@@ -35,7 +38,7 @@ where the weights $\mbf w^*=[w_1^*, ..., w_N^*]\'\in \R^N$ are determined via an
 %\end{equation*}
 %----------------------------------------------------
 
-where $\|\mathbf{w}\|_1 = \sum_{i=1}^N |w_i|$ denotes the $\ell_1$-norm of the weight vector and $\lambda > 0$ is a regularization parameter that controls the level of sparsity. 
+where $\|\mathbf{w}\|_1 = \sum_{i=1}^N |w_i|$ denotes the $\ell_1$-norm of the weight vector, $\lambda > 0$ is a regularization parameter that controls the level of sparsity.
 %This formulation promotes sparse solutions through the $\ell_1$ penalty term while maintaining the constraint that the weights sum to unity. 
 The $\ell_1$ regularization, also known as the lasso penalty, induces sparsity by shrinking some weights exactly to zero, effectively performing feature selection among the donor assets. This sparsity-inducing property stems from the non-differentiability of the penalty term at the origin. %\cite{tibshirani1996regression}.
 The practical implementation of this procedure is given in \cref{alg:synthetic_control}

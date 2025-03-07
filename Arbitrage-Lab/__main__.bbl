@@ -1,0 +1,307 @@
+\begin{thebibliography}{41}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Alexander(1999)]{Alexander1999}
+C.~Alexander.
+\newblock Optimal hedging using cointegration.
+\newblock \emph{Philosophical Transactions of the Royal Society of London. Series A: Mathematical, Physical and Engineering Sciences}, 357\penalty0 (1758):\penalty0 2039--2058, Aug. 1999.
+\newblock ISSN 1471-2962.
+\newblock \doi{10.1098/rsta.1999.0416}.
+\newblock URL \url{http://dx.doi.org/10.1098/rsta.1999.0416}.
+
+\bibitem[Alexander(2008)]{alexander2008market}
+C.~Alexander.
+\newblock \emph{Market risk analysis, Practical Financial Econometrics}.
+\newblock John Wiley \& Sons, 2008.
+
+\bibitem[Alexander and Dimitriu(2002)]{Alexander2002}
+C.~Alexander and A.~Dimitriu.
+\newblock The cointegration alpha: Enhanced index tracking and long-short equity market neutral strategies.
+\newblock \emph{SSRN Electronic Journal}, 2002.
+\newblock ISSN 1556-5068.
+\newblock \doi{10.2139/ssrn.315619}.
+\newblock URL \url{http://dx.doi.org/10.2139/ssrn.315619}.
+
+\bibitem[Alexander and Dimitriu(2005{\natexlab{a}})]{Alexander2005a}
+C.~Alexander and A.~Dimitriu.
+\newblock Indexing and statistical arbitrage.
+\newblock \emph{The Journal of Portfolio Management}, 31\penalty0 (2):\penalty0 50--63, Jan. 2005{\natexlab{a}}.
+\newblock ISSN 2168-8656.
+\newblock \doi{10.3905/jpm.2005.470578}.
+\newblock URL \url{http://dx.doi.org/10.3905/jpm.2005.470578}.
+
+\bibitem[Alexander and Dimitriu(2005{\natexlab{b}})]{Alexander2005b}
+C.~Alexander and A.~Dimitriu.
+\newblock Indexing, cointegration and equity market regimes.
+\newblock \emph{International Journal of Finance \& Economics}, 10\penalty0 (3):\penalty0 213--231, 2005{\natexlab{b}}.
+\newblock ISSN 1099-1158.
+\newblock \doi{10.1002/ijfe.261}.
+\newblock URL \url{http://dx.doi.org/10.1002/ijfe.261}.
+
+\bibitem[Bowen and Hutchinson(2014)]{Bowen2014}
+D.~A. Bowen and M.~C. Hutchinson.
+\newblock Pairs trading in the uk equity market: risk and return.
+\newblock \emph{The European Journal of Finance}, 22\penalty0 (14):\penalty0 1363--1387, Sept. 2014.
+\newblock ISSN 1466-4364.
+\newblock \doi{10.1080/1351847x.2014.953698}.
+\newblock URL \url{http://dx.doi.org/10.1080/1351847X.2014.953698}.
+
+\bibitem[Bradrania et~al.(2021)Bradrania, Pirayesh~Neghab, and Shafizadeh]{Bradrania2021}
+R.~Bradrania, D.~Pirayesh~Neghab, and M.~Shafizadeh.
+\newblock State-dependent stock selection in index tracking: a machine learning approach.
+\newblock \emph{Financial Markets and Portfolio Management}, 36\penalty0 (1):\penalty0 1--28, Apr. 2021.
+\newblock ISSN 2373-8529.
+\newblock \doi{10.1007/s11408-021-00391-7}.
+\newblock URL \url{http://dx.doi.org/10.1007/s11408-021-00391-7}.
+
+\bibitem[Caldeira and Moura(2013)]{Caldeira2013}
+J.~Caldeira and G.~V. Moura.
+\newblock Selection of a portfolio of pairs based on cointegration: A statistical arbitrage strategy.
+\newblock \emph{SSRN Electronic Journal}, 2013.
+\newblock ISSN 1556-5068.
+\newblock \doi{10.2139/ssrn.2196391}.
+\newblock URL \url{http://dx.doi.org/10.2139/ssrn.2196391}.
+
+\bibitem[Cartea and Jaimungal(2015)]{Cartea2015}
+A.~Cartea and S.~Jaimungal.
+\newblock Algorithmic trading of co-integrated assets.
+\newblock \emph{SSRN Electronic Journal}, 2015.
+\newblock ISSN 1556-5068.
+\newblock \doi{10.2139/ssrn.2637883}.
+\newblock URL \url{http://dx.doi.org/10.2139/ssrn.2637883}.
+
+\bibitem[Chen et~al.(2019)Chen, Chen, Chen, and Li]{Chen2019}
+H.~J. Chen, S.~J. Chen, Z.~Chen, and F.~Li.
+\newblock Empirical investigation of an equity pairs trading strategy.
+\newblock \emph{Management Science}, 65\penalty0 (1):\penalty0 370--389, Jan. 2019.
+\newblock ISSN 1526-5501.
+\newblock \doi{10.1287/mnsc.2017.2825}.
+\newblock URL \url{http://dx.doi.org/10.1287/mnsc.2017.2825}.
+
+\bibitem[Chu and Chan(2018)]{Chu2018}
+C.~C. Chu and P.~K. Chan.
+\newblock Mining profitable high frequency pairs trading forex signal using copula and deep neural network.
+\newblock In \emph{2018 19th IEEE/ACIS International Conference on Software Engineering, Artificial Intelligence, Networking and Parallel/Distributed Computing (SNPD)}, pages 312--316. IEEE, June 2018.
+\newblock \doi{10.1109/snpd.2018.8441125}.
+\newblock URL \url{http://dx.doi.org/10.1109/SNPD.2018.8441125}.
+
+\bibitem[Do and Faff(2010)]{Do2010}
+B.~Do and R.~Faff.
+\newblock Does simple pairs trading still work?
+\newblock \emph{Financial Analysts Journal}, 66\penalty0 (4):\penalty0 83--95, July 2010.
+\newblock ISSN 1938-3312.
+\newblock \doi{10.2469/faj.v66.n4.1}.
+\newblock URL \url{http://dx.doi.org/10.2469/faj.v66.n4.1}.
+
+\bibitem[Do et~al.(2006)Do, Faff, and Hamza]{do2006new}
+B.~Do, R.~Faff, and K.~Hamza.
+\newblock A new approach to modeling and estimation for pairs trading.
+\newblock In \emph{Proceedings of 2006 financial management association European conference}, volume~1, pages 87--99. Citeseer, 2006.
+
+\bibitem[Elliott et~al.(2005)Elliott, Van Der~Hoek, and Malcolm]{Elliott2005}
+R.~J. Elliott, J.~Van Der~Hoek, and W.~P. Malcolm.
+\newblock Pairs trading.
+\newblock \emph{Quantitative Finance}, 5\penalty0 (3):\penalty0 271--276, June 2005.
+\newblock ISSN 1469-7696.
+\newblock \doi{10.1080/14697680500149370}.
+\newblock URL \url{http://dx.doi.org/10.1080/14697680500149370}.
+
+\bibitem[Gatev et~al.(2006)Gatev, Goetzmann, and Rouwenhorst]{Gatev2006}
+E.~Gatev, W.~N. Goetzmann, and K.~G. Rouwenhorst.
+\newblock Pairs trading: Performance of a relative-value arbitrage rule.
+\newblock \emph{Review of Financial Studies}, 19\penalty0 (3):\penalty0 797--827, 2006.
+\newblock ISSN 1465-7368.
+\newblock \doi{10.1093/rfs/hhj020}.
+\newblock URL \url{http://dx.doi.org/10.1093/rfs/hhj020}.
+
+\bibitem[Han et~al.(2023)Han, He, and Toh]{Han2023}
+C.~Han, Z.~He, and A.~J.~W. Toh.
+\newblock Pairs trading via unsupervised learning.
+\newblock \emph{European Journal of Operational Research}, 307\penalty0 (2):\penalty0 929--947, June 2023.
+\newblock ISSN 0377-2217.
+\newblock \doi{10.1016/j.ejor.2022.09.041}.
+\newblock URL \url{http://dx.doi.org/10.1016/j.ejor.2022.09.041}.
+
+\bibitem[He et~al.(2024)He, Yarahmadi, and Soleymani]{He2024}
+F.~He, A.~Yarahmadi, and F.~Soleymani.
+\newblock Investigation of multivariate pairs trading under copula approach with mixture distribution.
+\newblock \emph{Applied Mathematics and Computation}, 472:\penalty0 128635, July 2024.
+\newblock ISSN 0096-3003.
+\newblock \doi{10.1016/j.amc.2024.128635}.
+\newblock URL \url{http://dx.doi.org/10.1016/j.amc.2024.128635}.
+
+\bibitem[Huck and Afawubo(2014)]{Huck2014}
+N.~Huck and K.~Afawubo.
+\newblock Pairs trading and selection methods: is cointegration superior?
+\newblock \emph{Applied Economics}, 47\penalty0 (6):\penalty0 599--613, Nov. 2014.
+\newblock ISSN 1466-4283.
+\newblock \doi{10.1080/00036846.2014.975417}.
+\newblock URL \url{http://dx.doi.org/10.1080/00036846.2014.975417}.
+
+\bibitem[Johansson et~al.(2024)Johansson, Schmelzer, and Boyd]{Johansson2024}
+K.~Johansson, T.~Schmelzer, and S.~Boyd.
+\newblock Finding moving-band statistical arbitrages via convex-concave optimization.
+\newblock \emph{Optimization and Engineering}, Oct. 2024.
+\newblock ISSN 1573-2924.
+\newblock \doi{10.1007/s11081-024-09933-0}.
+\newblock URL \url{http://dx.doi.org/10.1007/s11081-024-09933-0}.
+
+\bibitem[Joubert et~al.(2021)Joubert, Proskurin, Barziy, Pervushyna, Pei, and Wang]{hudsonthames2024}
+J.~Joubert, O.~Proskurin, I.~Barziy, V.~Pervushyna, H.~Pei, and Y.~Wang.
+\newblock \emph{The Definitive Guide to Pairs Trading}, 2021.
+\newblock URL \url{https://github.com/hudson-and-thames/definitive_guide_to_pairs_trading/blob/main/Definitive_Guide_to_Pairs_Trading.pdf}.
+
+\bibitem[Krauss(2016)]{Krauss2016}
+C.~Krauss.
+\newblock Statistical arbitrage pairs trading strategies: review and outlook.
+\newblock \emph{Journal of Economic Surveys}, 31\penalty0 (2):\penalty0 513--545, May 2016.
+\newblock ISSN 1467-6419.
+\newblock \doi{10.1111/joes.12153}.
+\newblock URL \url{http://dx.doi.org/10.1111/joes.12153}.
+
+\bibitem[Krauss and St\"{u}binger(2017)]{Krauss2017}
+C.~Krauss and J.~St\"{u}binger.
+\newblock Non-linear dependence modelling with bivariate copulas: statistical arbitrage pairs trading on the s\&p 100.
+\newblock \emph{Applied Economics}, 49\penalty0 (52):\penalty0 5352--5369, Apr. 2017.
+\newblock ISSN 1466-4283.
+\newblock \doi{10.1080/00036846.2017.1305097}.
+\newblock URL \url{http://dx.doi.org/10.1080/00036846.2017.1305097}.
+
+\bibitem[Lau et~al.(2016)Lau, Xie, and Wu]{lau2016multi}
+C.~Lau, W.~Xie, and Y.~Wu.
+\newblock Multi-dimensional pairs trading using copulas.
+\newblock In \emph{European Financial Management Association 2016 Annual Meetings June}, 2016.
+
+\bibitem[Liew and Wu(2013)]{Liew2013}
+R.~Q. Liew and Y.~Wu.
+\newblock Pairs trading: A copula approach.
+\newblock \emph{Journal of Derivatives \& Hedge Funds}, 19\penalty0 (1):\penalty0 12--30, Feb. 2013.
+\newblock ISSN 1753-965X.
+\newblock \doi{10.1057/jdhf.2013.1}.
+\newblock URL \url{http://dx.doi.org/10.1057/jdhf.2013.1}.
+
+\bibitem[Lintilhac and Tourin(2016)]{Lintilhac2016}
+P.~S. Lintilhac and A.~Tourin.
+\newblock Model-based pairs trading in the bitcoin markets.
+\newblock \emph{Quantitative Finance}, 17\penalty0 (5):\penalty0 703--716, Nov. 2016.
+\newblock ISSN 1469-7696.
+\newblock \doi{10.1080/14697688.2016.1231928}.
+\newblock URL \url{http://dx.doi.org/10.1080/14697688.2016.1231928}.
+
+\bibitem[Min and Czado(2010)]{Min2010}
+A.~Min and C.~Czado.
+\newblock Bayesian inference for multivariate copulas using pair-copula constructions.
+\newblock \emph{Journal of Financial Econometrics}, 8\penalty0 (4):\penalty0 511--546, May 2010.
+\newblock ISSN 1479-8417.
+\newblock \doi{10.1093/jjfinec/nbp031}.
+\newblock URL \url{http://dx.doi.org/10.1093/jjfinec/nbp031}.
+
+\bibitem[Nelsen(2006)]{Nelsen2006}
+R.~B. Nelsen.
+\newblock \emph{An introduction to copulas}.
+\newblock Springer, 2006.
+\newblock \doi{10.1007/0-387-28678-0}.
+\newblock URL \url{http://dx.doi.org/10.1007/0-387-28678-0}.
+
+\bibitem[Qureshi and Zaman(2024)]{qureshi2024pairs}
+K.~Qureshi and T.~Zaman.
+\newblock Pairs trading using a novel graphical matching approach.
+\newblock \emph{arXiv preprint arXiv:2403.07998}, 2024.
+
+\bibitem[Rad et~al.(2016)Rad, Low, and Faff]{Rad2016}
+H.~Rad, R.~K.~Y. Low, and R.~Faff.
+\newblock The profitability of pairs trading strategies: distance, cointegration and copula methods.
+\newblock \emph{Quantitative Finance}, 16\penalty0 (10):\penalty0 1541--1558, Apr. 2016.
+\newblock ISSN 1469-7696.
+\newblock \doi{10.1080/14697688.2016.1164337}.
+\newblock URL \url{http://dx.doi.org/10.1080/14697688.2016.1164337}.
+
+\bibitem[Rotondi and Russo(2025)]{Rotondi2025}
+F.~Rotondi and F.~Russo.
+\newblock Machine learning for pairs trading: a clustering-based approach.
+\newblock 2025.
+\newblock \doi{10.2139/ssrn.5080998}.
+\newblock URL \url{http://dx.doi.org/10.2139/ssrn.5080998}.
+
+\bibitem[Roychoudhury et~al.(2023)Roychoudhury, Bhagtani, and Daftari]{Roychoudhury2023}
+R.~Roychoudhury, R.~Bhagtani, and A.~Daftari.
+\newblock Pairs trading using clustering and deep reinforcement learning.
+\newblock \emph{SSRN Electronic Journal}, 2023.
+\newblock ISSN 1556-5068.
+\newblock \doi{10.2139/ssrn.4504599}.
+\newblock URL \url{http://dx.doi.org/10.2139/ssrn.4504599}.
+
+\bibitem[Sabino~da Silva et~al.(2023)Sabino~da Silva, Ziegelmann, and Caldeira]{SabinodaSilva2023}
+F.~A. Sabino~da Silva, F.~A. Ziegelmann, and J.~F. Caldeira.
+\newblock A pairs trading strategy based on mixed copulas.
+\newblock \emph{The Quarterly Review of Economics and Finance}, 87:\penalty0 16--34, Feb. 2023.
+\newblock ISSN 1062-9769.
+\newblock \doi{10.1016/j.qref.2022.10.007}.
+\newblock URL \url{http://dx.doi.org/10.1016/j.qref.2022.10.007}.
+
+\bibitem[Sarmento and Horta(2020)]{Sarmento2020}
+S.~M. Sarmento and N.~Horta.
+\newblock Enhancing a pairs trading strategy with the application of machine learning.
+\newblock \emph{Expert Systems with Applications}, 158:\penalty0 113490, Nov. 2020.
+\newblock ISSN 0957-4174.
+\newblock \doi{10.1016/j.eswa.2020.113490}.
+\newblock URL \url{http://dx.doi.org/10.1016/j.eswa.2020.113490}.
+
+\bibitem[Shu et~al.(2020)Shu, Shi, and Tian]{Shu2020}
+L.~Shu, F.~Shi, and G.~Tian.
+\newblock High-dimensional index tracking based on the adaptive elastic net.
+\newblock \emph{Quantitative Finance}, 20\penalty0 (9):\penalty0 1513--1530, Apr. 2020.
+\newblock ISSN 1469-7696.
+\newblock \doi{10.1080/14697688.2020.1737328}.
+\newblock URL \url{http://dx.doi.org/10.1080/14697688.2020.1737328}.
+
+\bibitem[Stander et~al.(2013)Stander, Marais, and Botha]{stander2013trading}
+Y.~Stander, D.~Marais, and I.~Botha.
+\newblock Trading strategies with copulas.
+\newblock \emph{Journal of Economic and Financial Sciences}, 6\penalty0 (1):\penalty0 83--107, 2013.
+
+\bibitem[Tadi and Witzany(2025)]{Tadi2025}
+M.~Tadi and J.~Witzany.
+\newblock Copula-based trading of cointegrated cryptocurrency pairs.
+\newblock \emph{Financial Innovation}, 11\penalty0 (1), Jan. 2025.
+\newblock ISSN 2199-4730.
+\newblock \doi{10.1186/s40854-024-00702-7}.
+\newblock URL \url{http://dx.doi.org/10.1186/s40854-024-00702-7}.
+
+\bibitem[Vidyamurthy(2004)]{vidyamurthy2004pairs}
+G.~Vidyamurthy.
+\newblock Pairs trading: Quantitative methods and analysis, 2004.
+
+\bibitem[Wang and Ding(2023)]{Wang2023}
+P.~Wang and X.~Ding.
+\newblock Pairs trading strategy based on copula-garch model.
+\newblock In \emph{4TH International Scientific Conference of Alkafeel University (ISCKU 2022)}, volume 2977, page 080001. AIP Publishing, 2023.
+\newblock \doi{10.1063/5.0181010}.
+\newblock URL \url{http://dx.doi.org/10.1063/5.0181010}.
+
+\bibitem[Xie et~al.(2016)Xie, Liew, Wu, and Zou]{Xie2016}
+W.~Xie, R.~Q. Liew, Y.~Wu, and X.~Zou.
+\newblock Pairs trading with copulas.
+\newblock \emph{The Journal of Trading}, 11\penalty0 (3):\penalty0 41--52, June 2016.
+\newblock ISSN 2168-8427.
+\newblock \doi{10.3905/jot.2016.11.3.041}.
+\newblock URL \url{http://dx.doi.org/10.3905/jot.2016.11.3.041}.
+
+\bibitem[Zeng and Lee(2014)]{Zeng2014}
+Z.~Zeng and C.-G. Lee.
+\newblock Pairs trading: optimal thresholds and profitability.
+\newblock \emph{Quantitative Finance}, 14\penalty0 (11):\penalty0 1881--1893, Oct. 2014.
+\newblock ISSN 1469-7696.
+\newblock \doi{10.1080/14697688.2014.917806}.
+\newblock URL \url{http://dx.doi.org/10.1080/14697688.2014.917806}.
+
+\bibitem[Zhi et~al.(2017)Zhi, Wenjun, Yuan, and Liming]{zhi2017dynamic}
+T.~Z. Zhi, X.~Wenjun, W.~Yuan, and X.~Liming.
+\newblock Dynamic copula framework for pairs trading.
+\newblock Technical report, Working Paper, 2017.
+
+\end{thebibliography}
