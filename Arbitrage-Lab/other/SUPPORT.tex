@@ -1,0 +1,262 @@
+%% LaTeX - Jesus Villota's Report Template %% 
+\documentclass[12pt,a4paper]{article}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Report}
+\Subject{3rd-year Paper Report}
+
+\begin{document}
+
+\subsection{Other sampling algorithms}
+
+\subsubsection{Conditional sampling}
+
+%==============[	  ALGORITHM  ]==============
+\begin{algorithm}[H]
+\caption{Conditional sampling}
+\begin{algorithmic}[1]
+\Require Conditional copula distribution $C_{V|U}(v|u)$
+\State Generate two independent variates $u,w\sim \mathcal U(0,1)$
+\State Keep the first variate $u$ as is
+\State Transform the second variate $w$ into $v$ using the inverse of the conditional distribution:
+$$v = C^{-1}_{V|U}(w|u)$$
+\Ensure The resulting pair $(u,v)$ will follow the desired copula distribution
+\end{algorithmic}
+\end{algorithm}
+%----------------------------------------------------
+
+%==============[	  ENUMERATE  ]==============
+%\begin{q}
+%\begin{enumerate}[label=\arabic*., % \arabic* \alph* \Alph* \roman* \Roman* (add a . at the end for dotted labels)
+%				  font=\sffamily\color{black}, % \normalfont \textbf, \textit, \textsc, \texttt \sffamily \large \small
+%				  leftmargin=0pt, % Xcm, Xpt, * (self-alignment)
+%				  align=left, % left, right
+%				  labelwidth=0cm,
+%				  labelsep=0.2cm,
+%				  itemsep=0pt,
+%				  topsep=0pt,
+%				  parsep=0pt,
+%				  partopsep=0pt]
+%    \item Generate two independent variates $u,w\sim \mathcal U(0,1)$ % uniform random variables $U, W \sim \text{Uniform}(0,1)$
+%    \item Keep the first variate $u$ as is
+%    \item Transform the second variate $w$ into $v$ using the inverse of the conditional distribution:
+%$$
+%v = C^{-1}_{V|U}(w|u)
+%$$
+%    \item The resulting pair $(u,v)$ will follow the desired copula distribution
+%\end{enumerate}
+%\end{q}
+%----------------------------------------------------
+
+We applied this method to sample from the Clayton copula, whose conditional distribution is given by:
+%----------------------------------------------------
+\begin{equation}\label{eq:clayton_cond_prob}
+	C_{V|U}(v|u)= \frac{\partial}{\partial u} (u^{-\theta}+v^{-\theta} - 1)^{-1/\theta} = u^{-(1+\theta)}(u^{-\theta}+v^{-\theta} - 1)^{-(1+\theta)/\theta},
+\end{equation}
+%----------------------------------------------------
+and thus, setting \eqref{eq:clayton_cond_prob} equal to the fixed probability $q$ and solving for $v$ delivers%, and denote by $q$ the quantile curve of the Clayton copula as
+$$v = C_{V|U}^{-1} (q|u)= \left[1+u^{-\theta}(q^{-\theta/(1+\theta)} - 1)\right]^{-1/\theta}.$$
+For more details, check p.275 in \cite{alexander2008market}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Theorem 4.3.7 in \cite{Nelsen2006}}
+From Theorem 4.3.7 in \cite{Nelsen2006} (p.129), it can be shown that \cref{alg:sampling_theorem_nelsen} generates random variates $(u,v)$ whose joint distribution function is an Archimedean copula $C$ with generator $\varphi$: %in $\Omega$:
+
+%==============[	  ALGORITHM  ]==============
+\begin{algorithm}[H]
+\caption{Sampling from Archimedean Copulas using Theorem 4.3.7 in \cite{Nelsen2006}}
+\label{alg:sampling_theorem_nelsen}
+\begin{algorithmic}[1]
+\Require Generator function $\varphi$ of the desired Archimedean $C$-copula
+\State Generate two independent variates $s,t\sim\mathcal U(0,1)$
+\State Set $w \gets K_C^{(-1)}(t)$, where 
+$\displaystyle K_C(w) = t - \frac{\varphi(w)}{\varphi'(w^+)}$
+\State Set $u \gets \varphi^{[-1]}(s\varphi(w))$ and $v \gets \varphi^{[-1]}((1-s)\varphi(w))$
+\Ensure The pair $(u,v)$ will follow the desired copula distribution
+\end{algorithmic}
+\end{algorithm}
+%----------------------------------------------------
+Note that $K_C$ is given by Theorem 4.3.4. (p.127) and it denotes the $C$-measure of the set $\{(u,v)\in [0,1]^2 \mid C(u,v)\leq w\}$
+$$
+K_C(w) := t - \frac{\varphi(w)}{\varphi'(w^+)},
+$$ 
+and ${\varphi'(w^+)}$ denotes the right-sided derivative of the generator.
+
+In our case, we use this algorithm to sample from Gumbel, Joe and N14. Their $C$-measures are given  below. Note that there is no analytical solution for their inverse, so we have to resort to numerical inversion.
+
+\vspace{0.2cm}
+%----------------------------------------------------
+{\centering
+\renewcommand{\arraystretch}{1.8}  
+\begin{tabular}{ccp{10cm}}
+%\toprule
+\textit{Gumbel} && $\displaystyle K_C(w)=w \cdot \5{1- \frac{\log (w)}{\theta}}$ 
+\\
+\textit{Joe} && $\displaystyle K_C(w) = w - \frac{1}{\theta} 
+\cdot 
+\frac{\log[1-(1-w)^{\theta}] \cdot [1-(1-w)^{\theta}]}
+{(1-w)^{\theta-1}}$ 
+\\
+\textit{N14} && $\displaystyle K_C(w) = -w \cdot (-2 + w^{1/\theta})$ 
+\\
+%\bottomrule
+\end{tabular}
+\par}
+%----------------------------------------------------
+
+%==============[	  ENUMERATE  ]==============
+%\begin{q}
+%\begin{enumerate}[label=\arabic*., % \arabic* \alph* \Alph* \roman* \Roman* (add a . at the end for dotted labels)
+%				  font=\sffamily\color{black}, % \normalfont \textbf, \textit, \textsc, \texttt \sffamily \large \small
+%				  leftmargin=0pt, % Xcm, Xpt, * (self-alignment)
+%				  align=left, % left, right
+%				  labelwidth=0cm,
+%				  labelsep=0.2cm,
+%				  itemsep=0pt,
+%				  topsep=0pt,
+%				  parsep=0pt,
+%				  partopsep=0pt]
+%\item Generate two independent variates $s,t\sim\mathcal U(0,1)$.
+%\item Set $w = K_C^{(-1)}(t)$, where $K_C$ denotes the $C$-measure of the set $\{(u,v)\in [0,1]^2 \mid C(u,v)\leq t\}$
+%and is given by Theorem 4.3.4. (p. 127):
+%%Theorem 4.3.4;
+%$$
+%K_C(w) := t - \frac{\varphi(w)}{\varphi'(w^+)}, 
+%%\qquad \t{\textit{Theorem 4.3.4. (p.127)}}
+%$$
+%where ${\varphi'(w^+)}$ denotes the right-sided derivative of the generator.
+%\item Set $u = \varphi^{[-1]}(s\varphi(w))$ and $v = \varphi^{[-1]}((1-s)\varphi(w))$.
+%\item The desired pair $(u,v)$ will follow the desired copula distribution.
+%\end{enumerate}
+%\end{q}
+%----------------------------------------------------
+
+
+
+%\textbf{Genest and MacKay 1986a.}
+%This algorithm generates random variates $(u,v)$ whose joint distribution function is an Archimedean copula $C$ with generator $\varphi$ in $\Omega$:
+%\begin{enumerate}
+%\item Generate two independent variates $u,t\sim\mathcal U(0,1)$;
+%\item Set $w = \varphi'^{(-1)}(\varphi'(u)/t)$;
+%\item Set $v = \varphi^{[-1]}(\varphi(w)-\varphi(u))$;
+%\item The desired pair is $(u,v)$.
+%\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Gaussian COPULA %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Gaussian Copula}
+
+%==============[	  Calibrating Student-t copula  ]==============
+\begin{algorithm}[H]
+\label{alg:calibrating_gaussian}
+\caption{Calibrating Gaussian Copula}
+\begin{algorithmic}[1]
+\Require Pseudo-observations from training data: $\mbf u,\mbf v\in [0,1]^{T^{tr}}$
+\State Transform $\mbf u$ and $\mbf v$ into standard normal variates $\mbf x=\Phi^{-1}(\mbf u)$ and $\mbf y=\Phi^{-1}(\mbf v)$%, where $\Phi^{-1}$ is applied element-wise.
+\State Obtain the empirical covariance matrix 
+$$
+\widehat{\mbf \Sigma} 
+:=\begin{bmatrix} 
+			\hat \sigma_{x}^2 & \hat \sigma_{yx} \\
+			\hat \sigma_{xy} & \hat \sigma_{y}^2
+		\end{bmatrix}
+= \frac{1}{T_{tr}-1}\begin{bmatrix} \mbf x^\top\mbf x & \mbf x^\top\mbf y \\ \mbf y^\top\mbf x & \mbf y^\top\mbf y \end{bmatrix}$$
+\State Set $\displaystyle \hat \rho \gets \frac{\hat \sigma_{xy}}{\hat \sigma_x \hat \sigma_y}$
+\Ensure $\hat \rho$
+\end{algorithmic}
+\end{algorithm}
+
+
+%==============[	  Sampling from Gaussian  ]==============
+\begin{algorithm}[H]
+\label{alg:sampling_gaussian}
+\caption{Sampling from Gaussian Copula}
+\begin{algorithmic}[1]
+\Require $\hat{\mbf \Sigma}$ from \cref{alg:calibrating_gaussian}
+\State Generate correlated Gaussian pairs $(x,y)\sim\mathcal N(\mbf 0, \widehat{\mbf \Sigma})$
+\State Transform the Gaussian pairs into uniform variates %using the standard normal CDF:
+$u = \Phi(x)$ and $v = \Phi(y)$.
+\Ensure The pair $(u,v)$  follows the Gaussian copula distribution.
+\end{algorithmic}
+\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% Student-t COPULA %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Student-$t$ Copula}
+
+%==============[	  Calibrating Student-t copula  ]==============
+\begin{algorithm}[H]
+\label{alg:calibrating_student-t}
+\caption{Calibrating the Student-$t$ Copula}
+\begin{algorithmic}[1]
+\Require Pseudo-observations from training data: $\mbf u,\mbf v\in [0,1]^{T^{tr}}$
+\For{each $\nu\in\mathcal V:=[1,15]$}
+	\State Transform $\mbf u$ and $\mbf v$ into Student-$t$ variates: % using the inverse Student-$t$ CDF: 
+$\mbf x_{\nu}=t_{\nu}^{-1}(\mbf u)$;~~$\mbf y_{\nu}=t_{\nu}^{-1}(\mbf v)$
+%, where $t_{\nu}^{-1}$ is the inverse CDF of a Student-$t$ distribution with $\nu$ degrees of freedom.
+	\State Obtain the empirical covariance matrix 
+		$$
+		\widehat{\mbf \Sigma}(\nu)
+		:=
+		\begin{bmatrix} 
+			\hat \sigma_{x}^2(\nu) & \hat \sigma_{yx}(\nu) \\
+			\hat \sigma_{xy}(\nu) & \hat \sigma_{y}^2(\nu)
+		\end{bmatrix}
+		= 
+		\frac{1}{T_{tr}-1}
+		\begin{bmatrix} 
+			\mbf x_{\nu}^\top\mbf x_{\nu} & \mbf x_{\nu}^\top\mbf y_{\nu} \\ 
+			\mbf y_{\nu}^\top\mbf x_{\nu} & \mbf y_{\nu}^\top\mbf y_{\nu} 
+		\end{bmatrix}
+		$$
+	\State Evalutate the log-likelihood of the $t$-copula
+$$
+\ell(\nu; \mbf u, \mbf v):= 
+\sum_{t\in\mathcal T_{tr}}  \log c(u_t, v_t; \nu, \hat \rho(\nu))
+\quad 
+\t{where}
+\quad 
+\hat \rho(\nu) = \frac{\hat \sigma_{xy}(\nu)}{\hat \sigma_x(\nu) \hat \sigma_y(\nu)}
+$$
+\EndFor
+\State Set 
+	$\displaystyle \nu^{\star} \gets \arg\max_{\nu \in \mathcal V} \ell(\nu; \mbf u, \mbf v)$, and
+	%$\widehat{\mbf \Sigma}^{\star}:=\widehat{\mbf \Sigma}(\nu^{\star})$, 
+	$\displaystyle \hat \rho^\star \gets  \hat \rho (\nu^\star)$
+	\Ensure $(\nu^\star, \hat \rho^\star)$
+\end{algorithmic}
+\end{algorithm}
+
+
+%==============[	  Sampling from Student-t copula  ]==============
+\begin{algorithm}[H]
+\label{alg:sampling_student-t}
+\caption{Sampling from the calibrated Student-$t$ Copula}
+\begin{algorithmic}[1]
+\Require $\nu^\star$ and $\hat{\mbf \Sigma}(\nu^\star)$ from \cref{alg:calibrating_student-t}
+\State Sample from a bivariate normal: $\displaystyle (x_1, x_2) \sim \mathcal{N}(\mbf 0, \widehat{\mbf \Sigma}(\nu^{\star}))$ 
+%Generate correlated bivariate normal random variables $(x_1, x_2) \sim \mathcal{N}(\mbf 0, \widehat{\mbf \Sigma}^{\star})$
+\State Sample from a chi-square distribution with $\nu^\star$ degrees of freedom: $\displaystyle \chi \sim \chi^2_{\nu^\star}$
+%Generate a random variable $\chi$ from a chi-square distribution with $\nu^\star$ degrees of freedom: $\chi \sim \chi^2_{\nu^\star}$
+\State Compute the Student-$t$ variates: $y_1 = \fraccc{x_1}{\sqrt{\chi/\nu^{\star}}}$ and $y_2 = \fraccc{x_2}{\sqrt{\chi/\nu^{\star}}}$
+\State Transform the Student-$t$ variates into uniform variates %using the Student-$t$ CDF:
+$u = t_{\nu}(y_1)$ and $v = t_{\nu}(y_2)$ 
+%with parameter $\nu^\star$ and correlation $\rho$
+\Ensure The pair $(u,v)$ follows the Student-$t$ copula distribution
+\end{algorithmic}
+\end{algorithm}
+
+
+
+\end{document}
