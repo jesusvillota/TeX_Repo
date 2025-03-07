@@ -398,6 +398,9 @@ INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmr12.tfm
+INPUT ./__main__.aux
+INPUT ./__main__.aux
+INPUT __main__.aux
 OUTPUT __main__.aux
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/caption/ltcaption.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/caption/ltcaption.sty
@@ -571,11 +574,6 @@ OUTPUT __main__.fff
 INPUT ./txt_2-2_Copulas.tex
 INPUT ./txt_2-2_Copulas.tex
 INPUT txt_2-2_Copulas.tex
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ts1-lmr12.tfm
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmbx10.tfm
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmbx7.tfm
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmbx5.tfm
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmbx10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmri8.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmri7.tfm
 INPUT ./table_1_copula_fit.tex
@@ -591,6 +589,10 @@ INPUT /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRi
 INPUT ./txt_3_TradingStrategy.tex
 INPUT ./txt_3_TradingStrategy.tex
 INPUT txt_3_TradingStrategy.tex
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmbx10.tfm
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmbx7.tfm
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmbx5.tfm
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ts1-lmr12.tfm
 INPUT ./txt_4_Results.tex
 INPUT ./txt_4_Results.tex
 INPUT txt_4_Results.tex
@@ -611,6 +613,7 @@ INPUT __main__.ttt
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmri10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/rm-lmbx10.tfm
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmbx10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmr5.tfm
 INPUT ./__main__.fff
 INPUT ./__main__.fff
@@ -665,6 +668,9 @@ INPUT txt_A_on_synthetic_controls.tex
 INPUT ./txt_A_on_cardinality_constrained_programming.tex
 INPUT ./txt_A_on_cardinality_constrained_programming.tex
 INPUT txt_A_on_cardinality_constrained_programming.tex
+INPUT ./txt_A_copula_algorithms.tex
+INPUT ./txt_A_copula_algorithms.tex
+INPUT txt_A_copula_algorithms.tex
 INPUT ./txt_A_algorithms.tex
 INPUT ./txt_A_algorithms.tex
 INPUT txt_A_algorithms.tex
@@ -688,9 +694,6 @@ INPUT ./algo_6_Main.tex
 INPUT algo_6_Main.tex
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
-INPUT ./txt_A_copula_sampling.tex
-INPUT ./txt_A_copula_sampling.tex
-INPUT txt_A_copula_sampling.tex
 INPUT __main__.aux
 INPUT ./__main__.out
 INPUT ./__main__.out
