@@ -1,3 +1,129 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% COPULA DENSITIES %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Copula Densities}\label{subsec:copula_densities}
+\begin{itemize}
+\item \textbf{Elliptical Copulas:}
+   \begin{itemize}
+   \item \textbf{Gaussian}: $\Theta = \{\rho \in (-1,1)\}$ with density
+%$$
+%c_\rho^{Gauss}(u,v) = \frac{1}{\sqrt{1-\rho^2}} \exp\left(-\frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{2(1-\rho^2)} + \frac{\zeta_u^2 + \zeta_v^2}{2}\right)
+%$$
+$$\displaystyle
+c(u, v) = \frac{1}{\sqrt{1-\rho^2}} \exp\left(-\frac{\rho^2(x^2 + y^2) - 2\rho xy}{2(1-\rho^2)}\right)
+$$
+   where $x = \Phi^{-1}(u)$, $y = \Phi^{-1}(v)$ and $\Phi$ is the standard normal CDF.
+   
+   \item \textbf{Student-$t$}: $\Theta = \{\rho \in (-1,1), \nu > 2\}$ with density
+%   \[
+%   c_{\rho,\nu}^{t}(u,v) = \frac{\Gamma\left(\frac{\nu+2}{2}\right)\Gamma\left(\frac{\nu}{2}\right)}{\sqrt{1-\rho^2}\Gamma\left(\frac{\nu+1}{2}\right)^2} 
+%   \frac{\left(1 + \frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{\nu(1-\rho^2)}\right)^{-(\nu+2)/2}}{\prod_{i\in\{u,v\}} \left(1 + \frac{\zeta_i^2}{\nu}\right)^{-(\nu+1)/2}}
+%   \]
+$$\displaystyle
+c(u,v) = \frac{1}{\sqrt{1-\rho^2}} \cdot \frac{\Gamma(\frac{\nu+2}{2})\Gamma(\frac{\nu}{2})}{\Gamma(\frac{\nu+1}{2})^2} \cdot \frac{\left(1 + \frac{x^2 + y^2 - 2\rho xy}{\nu(1-\rho^2)}\right)^{-\frac{\nu+2}{2}}}{\left(1 + \frac{x^2}{\nu}\right)^{-\frac{\nu+1}{2}} \cdot \left(1 + \frac{y^2}{\nu}\right)^{-\frac{\nu+1}{2}}}
+$$
+where $x = t_\nu^{-1}(u)$, $y = t_\nu^{-1}(v)$ and $t_\nu$ is the Student-$t$ CDF.
+   \end{itemize}	
+
+\item \textbf{Archimedean Copulas:} 
+%For generator function $\psi_\theta$, 
+%$$
+%C_\theta(u,v) = \psi^{-1}_\theta(\psi_\theta(u) + \psi_\theta(v))
+%$$
+    \begin{itemize}
+    \item \textbf{Clayton}: $\Theta = [-1, \infty)\setminus \{0\}$ with density
+%$\psi_\theta(t) = \frac{1}{\theta}(t^{-\theta}-1)$
+$$\displaystyle
+c(u,v) = (1+\theta)(uv)^{-1-\theta}(u^{-\theta} + v^{-\theta} - 1)^{-2-\frac{1}{\theta}}
+$$
+    \item \textbf{Gumbel}: $\Theta = [1, \infty)$ with density
+$$
+c(u, v) = 
+\frac{1}{u \cdot v} 
+\cdot 
+\exp(-\Upsilon) 
+\cdot 
+\frac{\varphi(u)}{-\log u} 
+\cdot 
+\frac{\varphi(v)}{-\log v} 
+\cdot 
+(\theta + \Upsilon - 1)
+\cdot 
+\Upsilon^{1-2\theta}% EQUIVALENT TO % (\varphi(u) + \varphi(v))^{\frac{1}{\theta} - 2}
+$$
+where
+$\varphi(x):=(-\log x)^{\theta}$,
+and
+$\Upsilon := [\varphi(u) + \varphi(v)]^{\frac{1}{\theta}}$
+%$\psi_\theta(t) = \exp(-t^{1/\theta})$
+    \item \textbf{Frank}: $\Theta = \mathbb{R}\setminus\{0\}$ with density
+$$\displaystyle
+c(u, v) = 
+\frac{e^{\theta} \cdot e^{u\theta} \cdot e^{v\theta} \cdot (e^{\theta} - 1) \cdot \theta}{(e^{\theta} + e^{u\theta} \cdot e^{v\theta} - e^{\theta} \cdot e^{u\theta} - e^{\theta} \cdot e^{v\theta})^2}
+$$
+%$\psi_\theta(t) = -\frac{1}{\theta}\ln\left(1 - (1 - e^{-\theta})e^{-t}\right)$
+    \item \textbf{Joe}: $\Theta = [1, \infty)$ with density
+$$\displaystyle
+c(u, v) = 
+\frac{\zeta(u)}{1-u} 
+\cdot 
+\frac{\zeta(v)}{1-v} 
+\cdot 
+[\zeta(u) + \zeta(v) - \zeta(u)\zeta(v)]^{\frac{1}{\theta} - 2} 
+\cdot 
+\{\theta - [\zeta(u) - 1] \cdot [\zeta(v) - 1]\}
+\\
+$$
+where
+$\zeta(x):=(1-x)^{\theta}$.
+%$\tilde{u} = (1-u)^{\theta}$ and $\tilde{v} = (1-v)^{\theta}$.
+%$\psi_\theta(t) = 1 - (1 - e^{-t})^{1/\theta}$
+    \end{itemize}
+
+    \begin{itemize}
+    \item \textbf{N14} \footnote{For more details about this copula family, see \cite{Nelsen2006}; p. 116.}: $\Theta = [1,\infty)$ with density
+%See 
+    
+$$\displaystyle
+c(u, v) = 
+\frac{
+	\varrho(u) 
+	\cdot 
+	\varrho(v) 
+	\cdot 
+	(\xi - 1) 
+	\cdot 
+	[-1 + \theta + 2 \theta \cdot (\xi - 1)]
+}
+{
+	[\varrho(u) + \varrho(v)]^2 
+	\cdot
+	\xi^{2 + \theta} 
+	\cdot 
+	u \cdot v 
+	\cdot 
+	\eta(u) \cdot \eta(v) \cdot \theta}
+$$
+where 
+$\eta(x) := -1 + x^{1/\theta}$,
+$\varrho(x) := (-1 + x^{-1/\theta})^{\theta}$ and 
+$\xi := 1 + [\varrho(u) + \varrho(v)]^{1/\theta}$.
+    \end{itemize}
+    
+%----------------------------------------------------
+%\item \textbf{Mixed Copulas:}
+%\begin{itemize}
+%  \item CTG
+%  \item CFG
+%\end{itemize}
+%----------------------------------------------------
+    
+\end{itemize}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5,7 +131,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Copula calibration algorithms}
+\subsection{Copula calibration algorithms} \label{subsec:copula_calibration}
 
 \begin{algorithm}[H]
 \label{alg:calibrating_archimedean}
@@ -20,18 +146,30 @@
 \end{algorithmic}
 \end{algorithm}
 
-Where we leverage the fact that, for Archimedean copulas, Kendall's tau verifies (\cite{alexander2008market}; p.280):
+Where we leverage the fact that, for any Archimedean copula $C$ with generator $\varphi$, Kendall's tau verifies (\cite{alexander2008market}; p.280):
 $$
 \tau 
 = f(\theta):=
-\1{1+4 \int_{0}^{1} \frac{\varphi(t;\theta)}{\varphi'(t;\theta)}dt}
+%\1{
+1+4 \int_{0}^{1} \frac{\varphi(t;\theta)}{\varphi'(t;\theta)}dt
+%}
 $$
-And $\theta$ is retrieved from the inversion of this relationship:
+
+And for the special case of the Frank copula, we have:
+$$
+\tau = g(\theta) := 1+\frac{4}{\theta}[D_1(\theta)-1]
+$$
+where $D_1(\theta)$ is the Debye function defined as:
+$
+%\displaystyle
+D_1(\theta)=\frac{1}{\theta}\int_{0}^{\infty} \frac{t}{e^t-1}dt
+$.
+Therefore, we can retrieve $\theta$ from the inversion of these relationships:
 
 \vspace{0.2cm}
 %----------------------------------------------------
 {\centering
-\renewcommand{\arraystretch}{1.4}  
+\renewcommand{\arraystretch}{1.2}  
 \begin{tabular}{ccll}
 %\toprule
 \textit{Clayton} && 
@@ -39,6 +177,12 @@ $\displaystyle
 \theta = {2\tau}\1{1-\tau}^{-1}
 $ 
 & Analytical inverse
+\\
+\textit{Frank} && 
+$\displaystyle 
+\theta = g^{-1}(\tau)
+$ 
+& Numerical inverse
 \\
 \textit{Gumbel} && 
 $\displaystyle 
@@ -138,38 +282,60 @@ $$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Copula sampling algorithms}
+\subsection{Copula sampling algorithms}\label{subsec:copula_sampling}
 
-\subsubsection{Conditional sampling}
+%\subsubsection{Conditional sampling}
 
 %==============[	  ALGORITHM  ]==============
 \begin{algorithm}[H]
 \caption{Conditional sampling}
+\label{alg:conditional_sampling}
 \begin{algorithmic}[1]
 \Require Conditional copula distribution $C_{V|U}(v|u)$ with calibrated $\hat \theta$
-\State Generate two independent variates $u,w\sim \mathcal U(0,1)$
+\State Generate two independent variates $u,q\sim \mathcal U(0,1)$
 \State Keep the first variate $u$ as is
-\State Transform the second variate $w$ into $v$ using the inverse of the conditional distribution:
-$$v = C^{-1}_{V|U}(w|u)$$
+\State Transform the second variate $q$ into $v$ using the inverse of the conditional distribution:
+$$v = C^{-1}_{V|U}(q|u)$$
 \Ensure The resulting pair $(u,v)$ will follow the desired copula distribution
 \end{algorithmic}
 \end{algorithm}
 %----------------------------------------------------
 
-We applied this method to sample from the Clayton copula, whose conditional distribution is given by:
+We applied \cref{alg:conditional_sampling} to sample from the Clayton and Frank copulas.
+
+%\textit{Clayton}. 
+%Its conditional distribution is given by:
+%\begin{equation}\label{eq:clayton_cond_prob}
+%	C_{V|U}(v|u)= \frac{\partial}{\partial u} (u^{-\theta}+v^{-\theta} - 1)^{-1/\theta} = u^{-(1+\theta)}(u^{-\theta}+v^{-\theta} - 1)^{-(1+\theta)/\theta},
+%\end{equation}
+%and setting \eqref{eq:clayton_cond_prob} equal to the fixed probability $q$ delivers the Clayton copula $q$-quantile curve. Solving for $v$ delivers (\cite{alexander2008market}; p.275):
+%$$v = C_{V|U}^{-1} (q|u)= \left[1+u^{-\theta}(q^{-\theta/(1+\theta)} - 1)\right]^{-1/\theta}.$$
+
+\vspace{0.2cm}
 %----------------------------------------------------
-\begin{equation}\label{eq:clayton_cond_prob}
-	C_{V|U}(v|u)= \frac{\partial}{\partial u} (u^{-\theta}+v^{-\theta} - 1)^{-1/\theta} = u^{-(1+\theta)}(u^{-\theta}+v^{-\theta} - 1)^{-(1+\theta)/\theta},
-\end{equation}
+{\centering
+\renewcommand{\arraystretch}{1.8}  
+\begin{tabular}{ccp{10cm}}
+%\toprule
+\textit{Clayton} && 
+$\displaystyle 
+C_{V|U}^{-1} (q|u)= \left[1+u^{-\theta}(q^{-\theta/(1+\theta)} - 1)\right]^{-1/\theta}
+$ 
+\\
+\textit{Frank} && 
+$\displaystyle 
+C_{V|U}^{-1} (q|u)= -\frac{1}{\theta} \ln \left( 1 + \frac{q \cdot (1 - e^{-\theta})}{q  (e^{-\theta u} - 1) - e^{-\theta u}} \right)
+$
+\\
+%\bottomrule
+\end{tabular}
+\par}
 %----------------------------------------------------
-and setting \eqref{eq:clayton_cond_prob} equal to the fixed probability $q$ delivers the Clayton copula $q$-quantile curve. Solving for $v$ delivers%, and denote by $q$ the quantile curve of the Clayton copula as
-$$v = C_{V|U}^{-1} (q|u)= \left[1+u^{-\theta}(q^{-\theta/(1+\theta)} - 1)\right]^{-1/\theta}.$$
-For more details, check p.275 in \cite{alexander2008market}.
 
 
 
-\subsubsection{Theorem 4.3.7 in \cite{Nelsen2006}}
-From Theorem 4.3.7 in \cite{Nelsen2006} (p.129), it can be shown that \cref{alg:sampling_theorem_nelsen} generates random variates $(u,v)$ whose joint distribution function is an Archimedean copula $C$ with generator $\varphi$: %in $\Omega$:
+
+%\subsubsection{Theorem 4.3.7 in \cite{Nelsen2006}}
 
 %==============[	  ALGORITHM  ]==============
 \begin{algorithm}[H]
@@ -185,6 +351,7 @@ $\displaystyle K_C(w;\hat \theta) = t - \frac{\varphi(w;\hat \theta)}{\varphi'(w
 \end{algorithmic}
 \end{algorithm}
 %----------------------------------------------------
+From Theorem 4.3.7 in \cite{Nelsen2006} (p.129), it can be shown that \cref{alg:sampling_theorem_nelsen} generates random variates $(u,v)$ whose joint distribution function is an Archimedean copula $C$ with generator $\varphi$: %in $\Omega$:
 Note that $K_C$ is given by Theorem 4.3.4. (p.127) and it denotes the $C$-measure of the set $\{(u,v)\in [0,1]^2 \mid C(u,v)\leq w\}$
 $$
 K_C(w; \theta) := t - \frac{\varphi(w; \theta)}{\varphi'(w^+; \theta)},

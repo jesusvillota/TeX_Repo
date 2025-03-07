@@ -153,147 +153,31 @@ Scatter plots comparing the cumulative distribution functions (CDFs) of the targ
 \subsubsection{Copula calibration from parametric classes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The goal of copula fitting is to find the copula that best describes the dependence structure between the returns of the target and synthetic assets. This is done by maximizing the likelihood of the observed data under different copula models. 
-%Let $(\mbf u, \mbf v)=[(u_t, v_t)]_{t=1}^T$ be the pseudo-observations obtained through the marginal transformation process, where $u_t = \hat{F}_R(r_t)$ and $v_t = \hat{F}_{R^*}(r_t^*)$. 
-We consider parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$ where each copula $C_\theta$ has density
-$
-%\begin{equation} \label{eq:copula_density_def}
-c_\theta(u,v) = \frac{\partial^2 C_\theta}{\partial u \partial v}(u,v)
+We consider parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$. Each copula $C_{\theta}$ is calibrated to the training data using the algorithms detailed in \cref{subsec:copula_calibration}.  In the class of elliptical copulas, we consider the Gaussian and Student-$t$ copulas. The Gaussian copula is calibrated by obtaining the empirical covariance matrix of the gaussianized pseudo-observations, while the Student-$t$ copula is calibrated by choosing the degrees of freedom that maximize the likelihood (and consequently obtaining the correlation parameter associated to the empirical covariance matrix fitted from the studentized pseudo-observations). In the Archimedean class, we consider the Clayton, Gumbel, Frank, Joe and N14 copula. The calibration of these copulas relies on inverting the relationship between Kendall's tau and their generators.
+
+%==============[	  OLD WRITEUP: MAXIMUM LIKELIHOOD (wrong!) ]==============
+%The goal of copula fitting is to find the copula that best describes the dependence structure between the returns of the target and synthetic assets. This is done by maximizing the likelihood of the observed data under different copula models. 
+%%Let $(\mbf u, \mbf v)=[(u_t, v_t)]_{t=1}^T$ be the pseudo-observations obtained through the marginal transformation process, where $u_t = \hat{F}_R(r_t)$ and $v_t = \hat{F}_{R^*}(r_t^*)$. 
+%We consider parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$ where each copula $C_\theta$ has density
+%$
+%%\begin{equation} \label{eq:copula_density_def}
+%c_\theta(u,v) = \frac{\partial^2 C_\theta}{\partial u \partial v}(u,v)
+%%\end{equation}
+%.
+%$
+%%\subsubsection{Maximum Likelihood Estimation}
+%For each candidate copula family, we estimate parameters via constrained maximum likelihood:
+%%
+%\begin{equation} \label{eq:mle}
+%\hat{\theta} = \argmax_{\theta \in \Theta} \ell(\theta | \mbf {u,v}) \quad \text{where} \quad 
+%\ell(\theta| \mbf {u,v}) := \sum_{t\in\mathcal T_{tr}} \log c_\theta(u_t, v_t)
+%.
 %\end{equation}
-.
-$
-%\subsubsection{Maximum Likelihood Estimation}
-For each candidate copula family, we estimate parameters via constrained maximum likelihood:
-%
-\begin{equation} \label{eq:mle}
-\hat{\theta} = \argmax_{\theta \in \Theta} \ell(\theta | \mbf {u,v}) \quad \text{where} \quad 
-\ell(\theta| \mbf {u,v}) := \sum_{t\in\mathcal T_{tr}} \log c_\theta(u_t, v_t)
-.
-\end{equation}
-%
-The optimization is subject to parameter constraints $\Theta$ specific to each copula family (a formal description of the copula fitting procedure can be found in \cref{alg:copula_fit}):
-
-\begin{itemize}
-\item \textbf{Elliptical Copulas:}
-   \begin{itemize}
-   \item \textbf{Gaussian}: $\Theta = \{\rho \in (-1,1)\}$ with density
-%$$
-%c_\rho^{Gauss}(u,v) = \frac{1}{\sqrt{1-\rho^2}} \exp\left(-\frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{2(1-\rho^2)} + \frac{\zeta_u^2 + \zeta_v^2}{2}\right)
-%$$
-$$
-c(u, v) = \frac{1}{\sqrt{1-\rho^2}} \exp\left(-\frac{\rho^2(x^2 + y^2) - 2\rho xy}{2(1-\rho^2)}\right)
-$$
-   where $x = \Phi^{-1}(u)$, $y = \Phi^{-1}(v)$ and $\Phi$ is the standard normal CDF.
-   
-   \item \textbf{Student-$t$}: $\Theta = \{\rho \in (-1,1), \nu > 2\}$ with density
-%   \[
-%   c_{\rho,\nu}^{t}(u,v) = \frac{\Gamma\left(\frac{\nu+2}{2}\right)\Gamma\left(\frac{\nu}{2}\right)}{\sqrt{1-\rho^2}\Gamma\left(\frac{\nu+1}{2}\right)^2} 
-%   \frac{\left(1 + \frac{\zeta_u^2 + \zeta_v^2 - 2\rho\zeta_u\zeta_v}{\nu(1-\rho^2)}\right)^{-(\nu+2)/2}}{\prod_{i\in\{u,v\}} \left(1 + \frac{\zeta_i^2}{\nu}\right)^{-(\nu+1)/2}}
-%   \]
-$$
-c(u,v) = \frac{1}{\sqrt{1-\rho^2}} \cdot \frac{\Gamma(\frac{\nu+2}{2})\Gamma(\frac{\nu}{2})}{\Gamma(\frac{\nu+1}{2})^2} \cdot \frac{\left(1 + \frac{x^2 + y^2 - 2\rho xy}{\nu(1-\rho^2)}\right)^{-\frac{\nu+2}{2}}}{\left(1 + \frac{x^2}{\nu}\right)^{-\frac{\nu+1}{2}} \cdot \left(1 + \frac{y^2}{\nu}\right)^{-\frac{\nu+1}{2}}}
-$$
-
-   where $x = t_\nu^{-1}(u)$, $y = t_\nu^{-1}(v)$ and $t_\nu$ is the Student-$t$ CDF.
-   \end{itemize}	
-
-\item \textbf{Archimedean Copulas:} 
-%For generator function $\psi_\theta$, 
-%$$
-%C_\theta(u,v) = \psi^{-1}_\theta(\psi_\theta(u) + \psi_\theta(v))
-%$$
-    \begin{itemize}
-    \item \textbf{Clayton}: $\Theta = [-1, \infty)\setminus \{0\}$ with density
-%$\psi_\theta(t) = \frac{1}{\theta}(t^{-\theta}-1)$
-$$
-c(u,v) = (1+\theta)(uv)^{-1-\theta}(u^{-\theta} + v^{-\theta} - 1)^{-2-\frac{1}{\theta}}
-$$
-    \item \textbf{Gumbel}: $\Theta = [1, \infty)$ with density
-$$
-c(u, v) = 
-\frac{1}{u \cdot v} 
-\cdot 
-\exp(-\Upsilon) 
-\cdot 
-\frac{\varphi(u)}{-\log u} 
-\cdot 
-\frac{\varphi(v)}{-\log v} 
-\cdot 
-(\theta + \Upsilon - 1)
-\cdot 
-\Upsilon^{1-2\theta}% EQUIVALENT TO % (\varphi(u) + \varphi(v))^{\frac{1}{\theta} - 2}
-$$
-where
-$\varphi(x):=(-\log x)^{\theta}$,
-and
-$\Upsilon := [\varphi(u) + \varphi(v)]^{\frac{1}{\theta}}$
-%$\psi_\theta(t) = \exp(-t^{1/\theta})$
-    \item \textbf{Frank}: $\Theta = \mathbb{R}\setminus\{0\}$ with density
-$$
-c(u, v) = 
-\frac{e^{\theta} \cdot e^{u\theta} \cdot e^{v\theta} \cdot (e^{\theta} - 1) \cdot \theta}{(e^{\theta} + e^{u\theta} \cdot e^{v\theta} - e^{\theta} \cdot e^{u\theta} - e^{\theta} \cdot e^{v\theta})^2}
-$$
-%$\psi_\theta(t) = -\frac{1}{\theta}\ln\left(1 - (1 - e^{-\theta})e^{-t}\right)$
-    \item \textbf{Joe}: $\Theta = [1, \infty)$ with density
-$$
-c(u, v) = 
-\frac{\zeta(u)}{1-u} 
-\cdot 
-\frac{\zeta(v)}{1-v} 
-\cdot 
-[\zeta(u) + \zeta(v) - \zeta(u)\zeta(v)]^{\frac{1}{\theta} - 2} 
-\cdot 
-\{\theta - [\zeta(u) - 1] \cdot [\zeta(v) - 1]\}
-\\
-$$
-where
-$\zeta(x):=(1-x)^{\theta}$.
-%$\tilde{u} = (1-u)^{\theta}$ and $\tilde{v} = (1-v)^{\theta}$.
-%$\psi_\theta(t) = 1 - (1 - e^{-t})^{1/\theta}$
-    \end{itemize}
-
-    \begin{itemize}
-    \item \textbf{N14} \footnote{For more details about this copula family, see \cite{Nelsen2006}; p. 116.}: $\Theta = [1,\infty)$ with density
-%See 
-    
-$$
-c(u, v) = 
-\frac{
-	\varrho(u) 
-	\cdot 
-	\varrho(v) 
-	\cdot 
-	(\xi - 1) 
-	\cdot 
-	[-1 + \theta + 2 \theta \cdot (\xi - 1)]
-}
-{
-	[\varrho(u) + \varrho(v)]^2 
-	\cdot
-	\xi^{2 + \theta} 
-	\cdot 
-	u \cdot v 
-	\cdot 
-	\eta(u) \cdot \eta(v) \cdot \theta}
-$$
-where 
-$\eta(x) := -1 + x^{1/\theta}$,
-$\varrho(x) := (-1 + x^{-1/\theta})^{\theta}$ and 
-$\xi := 1 + (\varrho(u) + \varrho(v))^{1/\theta}$.
-    \end{itemize}
-    
+%%
+%The optimization is subject to parameter constraints $\Theta$ specific to each copula family (a formal description of the copula fitting procedure can be found in \cref{alg:copula_fit}):
 %----------------------------------------------------
-%\item \textbf{Mixed Copulas:}
-%\begin{itemize}
-%  \item CTG
-%  \item CFG
-%\end{itemize}
-%----------------------------------------------------
-    
-\end{itemize}
 
-
-\cref{fig:copula_samples_comparison} visualizes the dependence structures of different parametric copula families through density heatmaps generated from samples. The Archimedean copulas each exhibit distinct characteristics: Clayton demonstrates strong lower tail dependence, Gumbel and Joe show pronounced upper tail dependence, while Frank captures dependence concentrated in both tails. Among elliptical copulas, the Gaussian shows symmetric dependence with moderate tails, while the Student-t accommodates heavier tails in both directions. The N14, as a Clayton-Gumbel mixture, combines properties of both families to achieve a more flexible dependence structure. These varying patterns underscore how each family could potentially capture different aspects of movement between the target and synthetic asset.
+\cref{fig:copula_samples_comparison} visualizes the dependence structures of different parametric copula families through density heatmaps generated from samples. The sampling procedures are detailed in \cref{subsec:copula_sampling}. The Archimedean copulas each exhibit distinct characteristics: Clayton demonstrates strong lower tail dependence, Gumbel and Joe show pronounced upper tail dependence, while Frank captures dependence concentrated in both tails. Among elliptical copulas, the Gaussian shows symmetric dependence with moderate tails, while the Student-t accommodates heavier tails in both directions. The N14, as a Clayton-Gumbel mixture, combines properties of both families to achieve a more flexible dependence structure. These varying patterns underscore how each family could potentially capture different aspects of movement between the target and synthetic asset.
 
 %==============[	  Figure 4  ]==============
 \inserthere{fig:copula_samples_comparison}
@@ -318,7 +202,9 @@ Contour plots of copula densities for various parametric families, illustrating 
 \subsubsection{Selection of an appropriate copula family}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-After estimating parameters for each candidate copula family $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$, we select the optimal model using information criteria that balance goodness-of-fit against model complexity. Let $\ell(\hat{\theta}|\mbf {u,v}) = \max_{\theta\in\Theta} \sum_{t\in\mathcal T_{tr}} \ln c_{{\theta}}(u_t, v_t)$ be the in-sample maximized log-likelihood for a copula with parameter estimate $\hat{\theta}$, where $T_{tr}:=\card{\mathcal T_{tr}}$ is the sample size and $k$ is the number of parameters. We evaluate the following information criterions:
+After estimating parameters for each candidate copula family $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$, we select the optimal model using information criteria that balance goodness-of-fit against model complexity. Let $\ell(\hat{\theta}|\mbf {u,v}) = \max_{\theta\in\Theta} \sum_{t\in\mathcal T_{tr}} \ln c_{{\theta}}(u_t, v_t)$ be the in-sample maximized log-likelihood for a copula with parameter estimate $\hat{\theta}$, where $T_{tr}:=\card{\mathcal T_{tr}}$ is the sample size and $k$ is the number of parameters. 
+The densities for each copula family are given in \cref{subsec:copula_densities}.
+We evaluate the following information criterions:
 $$
 \begin{array}{lllll}
 \text{\textit{Akaike}} &&& \text{AIC} &= [\fracc{2T_{tr}}{T_{tr}-k-1}] \cdot k - 2\ell(\hat{\theta}|\mathbf{u,v})
