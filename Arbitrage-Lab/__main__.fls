@@ -398,9 +398,6 @@ INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmr12.tfm
-INPUT ./__main__.aux
-INPUT ./__main__.aux
-INPUT __main__.aux
 OUTPUT __main__.aux
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/caption/ltcaption.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/caption/ltcaption.sty

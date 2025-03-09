@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex __main__"] 1741357456.73553 "__main__.aux" "__main__.bbl" "__main__" 1741357456.83366 2
-  "./bib_references_DOI.bib" 1741348690.60031 17810 1efaea4ed29e30e959cc49b38fa3ba0b ""
+["bibtex __main__"] 1741357653.92666 "__main__.aux" "__main__.bbl" "__main__" 1741357654.03637 2
+  "./bib_references_DOI.bib" 1741357651.51012 17810 1efaea4ed29e30e959cc49b38fa3ba0b ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/plain.bst" 1292289607 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/natbib/abbrvnat.bst" 1233624470 26532 66bed5cc59495faaa3f9ae9af9fa5e42 ""
-  "__main__.aux" 1741357456.26883 16327 46a75fd7dac47ff7550e69c59dc08708 "pdflatex"
+  "__main__.aux" 1741357653.42516 16327 46a75fd7dac47ff7550e69c59dc08708 "pdflatex"
   (generated)
   "__main__.bbl"
   "__main__.blg"
   (rewritten before read)
-["pdflatex"] 1741357454.88471 "/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/TeX_Repo/Arbitrage-Lab/__main__.tex" "__main__.pdf" "__main__" 1741357456.8338 0
+["pdflatex"] 1741357651.81328 "/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/TeX_Repo/Arbitrage-Lab/__main__.tex" "__main__.pdf" "__main__" 1741357654.03654 0
   "/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Paper.sty" 1741348698.75429 21034 364dcc776ecf5db9c50e25e38405ea56 ""
   "/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/TeX_Repo/Arbitrage-Lab/__main__.tex" 1741354060.07006 3213 33fad649614c902352a4833e249833b4 ""
   "/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/barra_table.tex" 1741348693.28371 2855 fde92ad945bab45d6afbd937e902dcb4 ""
@@ -352,12 +352,12 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1733162277.15156 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1733162274 8221430 cf4d78deaffde49bd20d9c92866832ba ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "__main__.aux" 1741357456.26883 16327 46a75fd7dac47ff7550e69c59dc08708 "pdflatex"
-  "__main__.bbl" 1741357456.83278 14572 e732e6dc370c3bb15f2ad085fc710bbf "bibtex __main__"
-  "__main__.fff" 1741357456.11756 7348 edcf60280dc5f093b19df3a58cacd4dc "pdflatex"
-  "__main__.out" 1741357456.27123 4922 30f3d3ff9eb97f6ad85c0f30892743cc "pdflatex"
+  "__main__.aux" 1741357653.42516 16327 46a75fd7dac47ff7550e69c59dc08708 "pdflatex"
+  "__main__.bbl" 1741357654.03544 14572 e732e6dc370c3bb15f2ad085fc710bbf "bibtex __main__"
+  "__main__.fff" 1741357653.24851 7348 edcf60280dc5f093b19df3a58cacd4dc "pdflatex"
+  "__main__.out" 1741357653.4279 4922 30f3d3ff9eb97f6ad85c0f30892743cc "pdflatex"
   "__main__.tex" 1741354060.07006 3213 33fad649614c902352a4833e249833b4 ""
-  "__main__.ttt" 1741357456.09525 8702 80d0383e4052bc3a1c7668d04551cda7 "pdflatex"
+  "__main__.ttt" 1741357653.22267 8702 80d0383e4052bc3a1c7668d04551cda7 "pdflatex"
   "algo_1_SyntheticControl.tex" 1741348688.55197 21372 8b79724c1c165d24bd3f3d25a0893838 ""
   "algo_2_CopulaFitting.tex" 1741348688.22696 20094 74f02c376f75ae603f664b81cc30f60f ""
   "algo_3_MI.tex" 1741348687.81835 5126 33f043bc635c34adc510ae3090056e9b ""
