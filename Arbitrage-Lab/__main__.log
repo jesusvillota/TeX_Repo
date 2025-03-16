@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.12.2)  7 MAR 2025 15:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.12.2)  10 MAR 2025 15:05
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1150,8 +1150,7 @@ Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 LaTeX Font Info:    Trying to load font information for T1+lmr on input line 50.
  (/usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-No file __main__.aux.
+) (./__main__.aux)
 \openout1 = `__main__.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 50.
@@ -1172,6 +1171,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 50.
 LaTeX Font Info:    ... okay on input line 50.
 LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 50.
 LaTeX Font Info:    ... okay on input line 50.
+
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -1237,6 +1237,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
 Package hyperref Info: Link coloring ON on input line 50.
+ (./__main__.out) (./__main__.out)
 \@outlinefile=\write6
 \openout6 = `__main__.out'.
 
@@ -1302,315 +1303,40 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has b
 <to be read again> 
                    \relax 
 l.33 F
-      inally, we adapt and extend the Mispricing Index (MI) strategy of \cit... [1]
-
-Package natbib Warning: Citation `Xie2016' on page 2 undefined on input line 33.
-
-
-Package natbib Warning: Citation `Rad2016' on page 2 undefined on input line 33.
-
-
-LaTeX Warning: Reference `sec:lierature_review' on page 1 undefined on input line 37.
-
-
-LaTeX Warning: Reference `sec:methodology' on page 1 undefined on input line 37.
-
-
-LaTeX Warning: Reference `sec:trading_strategy' on page 1 undefined on input line 37.
-
-
-LaTeX Warning: Reference `sec:results' on page 2 undefined on input line 37.
-
-
-LaTeX Warning: Reference `sec:conclusion' on page 1 undefined on input line 37.
-
-) (./txt_1-2_Literature_Review_writeup.tex
-
-Package natbib Warning: Citation `Gatev2006' on page 2 undefined on input line 5.
-
-
-Package natbib Warning: Citation `Elliott2005' on page 2 undefined on input line 5.
-
-
-Package natbib Warning: Citation `Chen2019' on page 2 undefined on input line 8.
-
-
-Package natbib Warning: Citation `Do2010' on page 2 undefined on input line 8.
-
-
-Package natbib Warning: Citation `Bowen2014' on page 2 undefined on input line 8.
-
-
-Package natbib Warning: Citation `Krauss2016' on page 2 undefined on input line 8.
-
-
-Package natbib Warning: Citation `Rad2016' on page 2 undefined on input line 8.
-
-
-Package natbib Warning: Citation `vidyamurthy2004pairs' on page 2 undefined on input line 11.
-
-
-Package natbib Warning: Citation `Caldeira2013' on page 2 undefined on input line 12.
-
-
-Package natbib Warning: Citation `Huck2014' on page 2 undefined on input line 12.
-
-
-Package natbib Warning: Citation `Cartea2015' on page 2 undefined on input line 12.
-
-
-Package natbib Warning: Citation `Lintilhac2016' on page 2 undefined on input line 12.
-
-[2]
-
-Package natbib Warning: Citation `Min2010' on page 3 undefined on input line 16.
-
-
-Package natbib Warning: Citation `stander2013trading' on page 3 undefined on input line 16.
-
-
-Package natbib Warning: Citation `Liew2013' on page 3 undefined on input line 17.
-
-
-Package natbib Warning: Citation `Xie2016' on page 3 undefined on input line 17.
-
-
-Package natbib Warning: Citation `lau2016multi' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `Krauss2017' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `zhi2017dynamic' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `Chu2018' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `SabinodaSilva2023' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `Wang2023' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `He2024' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `Tadi2025' on page 3 undefined on input line 18.
-
-
-Package natbib Warning: Citation `hudsonthames2024' on page 3 undefined on input line 22.
-
-
-Package natbib Warning: Citation `alexander2008market' on page 3 undefined on input line 22.
-
-
-Package natbib Warning: Citation `do2006new' on page 3 undefined on input line 28.
-
-
-Package natbib Warning: Citation `Zeng2014' on page 3 undefined on input line 28.
-
-
-Package natbib Warning: Citation `Sarmento2020' on page 3 undefined on input line 29.
-
-
-Package natbib Warning: Citation `Johansson2024' on page 3 undefined on input line 29.
-
-
-Package natbib Warning: Citation `Han2023' on page 3 undefined on input line 29.
-
-
-Package natbib Warning: Citation `qureshi2024pairs' on page 3 undefined on input line 29.
-
-
-Package natbib Warning: Citation `Roychoudhury2023' on page 3 undefined on input line 29.
-
-
-Package natbib Warning: Citation `Rotondi2025' on page 3 undefined on input line 29.
-
-
-Package natbib Warning: Citation `Alexander1999' on page 3 undefined on input line 34.
-
-
-Package natbib Warning: Citation `Alexander2002' on page 3 undefined on input line 34.
-
-
-Package natbib Warning: Citation `Alexander2005a' on page 3 undefined on input line 34.
-
-
-Package natbib Warning: Citation `Alexander2005b' on page 3 undefined on input line 34.
-
-
-Package natbib Warning: Citation `Shu2020' on page 3 undefined on input line 34.
-
-
-Package natbib Warning: Citation `Bradrania2021' on page 3 undefined on input line 34.
-
-)) [3] (./txt_2_Methodology.tex (./txt_2-1_Sparse_Synthetic_Control.tex
+      inally, we adapt and extend the Mispricing Index (MI) strategy of \cit... [1]) (./txt_1-2_Literature_Review_writeup.tex [2] [3])) (./txt_2_Methodology.tex (./txt_2-1_Sparse_Synthetic_Control.tex
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <12> on input line 8.
-
-
-LaTeX Warning: Reference `alg:synthetic_control' on page 1 undefined on input line 44.
-
-[4]
-
-LaTeX Warning: Reference `sec:discussion_card_constr' on page 1 undefined on input line 53.
-
-
-LaTeX Warning: Reference `sec:cointegration_meets_synthetic_controls' on page 1 undefined on input line 56.
-
-
-LaTeX Warning: Reference `tab:scm_weights' on page 1 undefined on input line 64.
-
-(./table_1_scm_weights.tex
+ [4] [5] (./table_1_scm_weights.tex
 \openout3 = `__main__.ttt'.
 
  (__main__.ttt))
-
-LaTeX Warning: Reference `fig:target_synthetic_prices_NVDA' on page 1 undefined on input line 69.
-
-
-LaTeX Warning: Reference `fig:target_synthetic_prices_NVDA' on page 1 undefined on input line 72.
-
 \openout4 = `__main__.fff'.
 
-(__main__.fff)) (./txt_2-2_Copulas.tex [5] [6]
-
-Package natbib Warning: Citation `hudsonthames2024' on page 7 undefined on input line 88.
-
-[7]
-
-LaTeX Warning: Reference `fig:all_CDFs_comparison' on page 1 undefined on input line 100.
-
-[8]
-
-LaTeX Warning: Reference `fig:all_CDFs_comparison' on page 1 undefined on input line 107.
-
-
-LaTeX Warning: Reference `fig:CDF_scatter_comparison' on page 1 undefined on input line 124.
-
-
-LaTeX Warning: Reference `fig:CDF_scatter_comparison' on page 1 undefined on input line 133.
-
-
-LaTeX Warning: Reference `subsec:copula_calibration' on page 1 undefined on input line 156.
-
-[9]
-
-LaTeX Warning: Reference `fig:copula_samples_comparison' on page 1 undefined on input line 180.
-
-
-LaTeX Warning: Reference `subsec:copula_sampling' on page 1 undefined on input line 180.
-
-
-LaTeX Warning: Reference `fig:copula_samples_comparison' on page 1 undefined on input line 183.
-
-
-LaTeX Warning: Reference `subsec:copula_densities' on page 1 undefined on input line 206.
-
-(./table_1_copula_fit.tex
-
-LaTeX Warning: Reference `tab:copula_fit' on page 1 undefined on input line 1.
-
-)
-
-LaTeX Warning: Reference `tab:copula_fit' on page 1 undefined on input line 243.
-
-[10])) (./txt_A_barra_model.tex [11]
-
-LaTeX Warning: Reference `fig:factor_corr_matrix' on page 1 undefined on input line 47.
-
-
-LaTeX Warning: Reference `eq:barra' on page 1 undefined on input line 60.
-
-
-LaTeX Warning: Reference `fig:factor_corr_matrix' on page 1 undefined on input line 65.
-
-[12] (/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/barra_table.tex
-
-LaTeX Warning: Reference `tab:barra_model' on page 1 undefined on input line 1.
-
-)
-
-LaTeX Warning: Reference `tab:barra_model' on page 1 undefined on input line 159.
-
-[13]) (./txt_3_TradingStrategy.tex
-
-Package natbib Warning: Citation `Xie2016' on page 14 undefined on input line 3.
-
-[14]
-
-LaTeX Warning: Reference `alg:mispricing_indices' on page 1 undefined on input line 82.
-
-
-LaTeX Warning: Reference `alg:cmi_update' on page 1 undefined on input line 82.
-
-
-Package natbib Warning: Citation `Xie2016' on page 15 undefined on input line 105.
-
-
-Package natbib Warning: Citation `Rad2016' on page 15 undefined on input line 105.
-
-
-Package natbib Warning: Citation `Xie2016' on page 15 undefined on input line 105.
-
-
-Package natbib Warning: Citation `Rad2016' on page 15 undefined on input line 105.
-
-[15]
+ (__main__.fff)) (./txt_2-2_Copulas.tex [6] [7] [8] [9] [10] (./table_1_copula_fit.tex))) (./txt_A_barra_model.tex [11] [12] (/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/barra_table.tex) [13]) (./txt_3_TradingStrategy.tex [14] [15]
 Overfull \hbox (28.69492pt too wide) detected at line 156
 []
  []
 
-[16]
+[16] [17]) (./txt_4_Results.tex [18] (./table_trading_metrics.tex) [19]) (./txt_5_Conclusion.tex [20]) (./__main__.bbl [21] [22] [23] [24] [25]) [26] (./__main__.ttt [27
 
-LaTeX Warning: Reference `alg:mi_pairs_trading' on page 1 undefined on input line 185.
-
-
-Package natbib Warning: Citation `Xie2016' on page 17 undefined on input line 188.
-
-) (./txt_4_Results.tex [17]
-
-LaTeX Warning: Reference `fig:positions_by_copula' on page 1 undefined on input line 13.
-
-
-LaTeX Warning: Reference `fig:positions_by_copula' on page 1 undefined on input line 16.
-
-
-LaTeX Warning: Reference `tab:copula_performance' on page 1 undefined on input line 35.
-
-(./table_trading_metrics.tex [18]
-
-LaTeX Warning: Reference `tab:copula_performance' on page 1 undefined on input line 1.
-
-)
-
-LaTeX Warning: Reference `fig:equity_curves_comparison' on page 1 undefined on input line 40.
-
-
-LaTeX Warning: Reference `fig:equity_curves_comparison' on page 1 undefined on input line 43.
-
-[19]) (./txt_5_Conclusion.tex [20]) (./__main__.bbl) [21] (./__main__.ttt [22
-
-] [23
+] [28
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 87--134
 [][] 
  []
 
-[24
+[29
 
 ]
 Overfull \hbox (26.80586pt too wide) in paragraph at lines 143--156
  [][] 
  []
 
-) [25
+) [30
 
 ] (./__main__.fff
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/target_synthetic_prices_NVDA.pdf, id=205, 1076.82304pt x 715.47299pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/target_synthetic_prices_NVDA.pdf, id=554, 1076.82304pt x 715.47299pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/target_synthetic_prices_NVDA.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/target_synthetic_prices_NVDA.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/target_synthetic_prices_NVDA.pdf  used on input line 4.
@@ -1620,11 +1346,11 @@ Overfull \hbox (5.62291pt too wide) in paragraph at lines 4--15
  [][] 
  []
 
-[26
+[31
 
 
  </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/target_synthetic_prices_NVDA.pdf>]
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf, id=233, 1076.82304pt x 715.47299pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf, id=581, 1076.82304pt x 715.47299pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf  used on input line 21.
@@ -1634,18 +1360,18 @@ Overfull \hbox (5.62291pt too wide) in paragraph at lines 21--32
  [][] 
  []
 
-[27
+[32
 
  </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/all_CDFs_comparison.pdf>]
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf, id=252, 1026.52754pt x 1152.2979pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf, id=599, 1026.52754pt x 1152.2979pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf  used on input line 38.
 (pdftex.def)             Requested size: 410.60374pt x 460.911pt.
- [28
+ [33
 
  </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf>]
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf, id=273, 1083.21191pt x 715.47299pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf, id=619, 1083.21191pt x 715.47299pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf  used on input line 56.
@@ -1655,31 +1381,31 @@ Overfull \hbox (8.62569pt too wide) in paragraph at lines 56--67
  [][] 
  []
 
-[29
+[34
 
  </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/copula_samples_comparison.pdf>]
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf, id=296, 891.0083pt x 523.09686pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf, id=640, 891.0083pt x 523.09686pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf  used on input line 78.
 (pdftex.def)             Requested size: 445.50305pt x 261.54779pt.
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf, id=297, 891.0083pt x 523.09686pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf, id=641, 891.0083pt x 523.09686pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf  used on input line 87.
 (pdftex.def)             Requested size: 445.50305pt x 261.54779pt.
- [30
+ [35
 
  </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf> </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf>]
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/positions_by_copula.pdf, id=329, 1221.36305pt x 1794.37724pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/positions_by_copula.pdf, id=672, 1221.36305pt x 1794.37724pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/positions_by_copula.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/positions_by_copula.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/positions_by_copula.pdf  used on input line 98.
 (pdftex.def)             Requested size: 384.7314pt x 565.23183pt.
- [31
+ [36
 
  </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/positions_by_copula.pdf>]
-</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf, id=349, 1076.82304pt x 617.90848pt>
+</Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf, id=692, 1076.82304pt x 617.90848pt>
 File: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf Graphic file (type pdf)
 <use /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf>
 Package pdftex.def Info: /Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf  used on input line 116.
@@ -1689,20 +1415,16 @@ Overfull \hbox (5.62291pt too wide) in paragraph at lines 116--127
  [][] 
  []
 
-) [32
+) [37
 
- </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf>] (./txt_Appendix.tex (./txt_A_on_synthetic_controls.tex
+ </Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/equity_curves_comparison.pdf>] (./txt_Appendix.tex (./txt_A_on_synthetic_controls.tex [38
 
-LaTeX Warning: Reference `def:synthetic_control' on page 1 undefined on input line 65.
-
-[33
-
-]) (./txt_A_on_cardinality_constrained_programming.tex [34]
+]) (./txt_A_on_cardinality_constrained_programming.tex [39]
 Overfull \hbox (11.2882pt too wide) in paragraph at lines 48--49
 []\T1/lmr/m/n/12 An al-ter-na-tive ap-proach is to use a two-step heuris-tic pro-ce-dure that ap-prox-i-mates the cardinality-
  []
 
-[35]
+[40]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 85.
@@ -1719,72 +1441,38 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 85.
 
-) (./txt_A_copula_algorithms.tex [36]
-
-Package natbib Warning: Citation `Nelsen2006' on page 37 undefined on input line 87.
-
+) (./txt_A_copula_algorithms.tex [41]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 138.
+ [42] [43] [44]) [45] (./txt_A_algorithms.tex (./algo_1_SyntheticControl.tex [46]) (./algo_2_CopulaFitting.tex [47]) (./algo_3_MI.tex [48]) (./algo_4_CMI.tex) (./algo_5_TradingRule.tex [49]) (./algo_6_Main.tex))) [50] AED endfloat: Processing end Figures and Tables [51]
 
-Package natbib Warning: Citation `alexander2008market' on page 37 undefined on input line 149.
+LaTeX Warning: Hook 'shipout/lastpage' executed on wrong page (51 not 52).
+               Rerun to correct this.
 
-[37] [38]
-
-LaTeX Warning: Reference `alg:conditional_sampling' on page 1 undefined on input line 304.
-
-
-Package natbib Warning: Citation `Nelsen2006' on page 39 undefined on input line 342.
-
-
-Package natbib Warning: Citation `Nelsen2006' on page 39 undefined on input line 342.
-
-[39]
-
-Package natbib Warning: Citation `Nelsen2006' on page 40 undefined on input line 354.
-
-
-LaTeX Warning: Reference `alg:sampling_theorem_nelsen' on page 1 undefined on input line 354.
-
-) [40] (./txt_A_algorithms.tex (./algo_1_SyntheticControl.tex [41]) (./algo_2_CopulaFitting.tex [42]) (./algo_3_MI.tex [43]) (./algo_4_CMI.tex) (./algo_5_TradingRule.tex [44]) (./algo_6_Main.tex))) [45] AED endfloat: Processing end Figures and Tables [46]
-
-Package natbib Warning: There were undefined citations.
-
-[47] (./__main__.aux)
+(./__main__.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-
-LaTeX Warning: Temporary extra page added at the end. Rerun to get it removed.
-
-
-Package rerunfilecheck Warning: File `__main__.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `__main__.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  30F3D3FF9EB97F6AD85C0F30892743CC;4922.
+Package rerunfilecheck Info: File `__main__.out' has not changed.
+(rerunfilecheck)             Checksum: 30F3D3FF9EB97F6AD85C0F30892743CC;4922.
  ) 
 Here is how much of TeX's memory you used:
- 37081 strings out of 474116
- 716226 string characters out of 5743682
- 1955187 words of memory out of 5000000
- 58525 multiletter control sequences out of 15000+600000
+ 37288 strings out of 474116
+ 719888 string characters out of 5743682
+ 1957187 words of memory out of 5000000
+ 58680 multiletter control sequences out of 15000+600000
  713294 words of font info for 157 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 101i,31n,131p,1211b,810s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 101i,31n,131p,1202b,810s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt12.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on __main__.pdf (48 pages, 1447354 bytes).
+Output written on __main__.pdf (52 pages, 1476272 bytes).
 PDF statistics:
- 631 PDF objects out of 1000 (max. 8388607)
- 499 compressed objects within 5 object streams
- 112 named destinations out of 1000 (max. 500000)
- 53 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 980 PDF objects out of 1000 (max. 8388607)
+ 838 compressed objects within 9 object streams
+ 158 named destinations out of 1000 (max. 500000)
+ 245 words of extra memory for PDF output out of 10000 (max. 10000000)
 

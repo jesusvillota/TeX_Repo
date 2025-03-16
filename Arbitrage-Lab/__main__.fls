@@ -398,6 +398,9 @@ INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmr12.tfm
+INPUT ./__main__.aux
+INPUT ./__main__.aux
+INPUT __main__.aux
 OUTPUT __main__.aux
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/caption/ltcaption.sty
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/caption/ltcaption.sty
@@ -409,8 +412,14 @@ INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.st
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 INPUT /usr/local/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-OUTPUT __main__.out
+INPUT ./__main__.out
+INPUT ./__main__.out
+INPUT __main__.out
+INPUT __main__.out
 OUTPUT __main__.pdf
+INPUT ./__main__.out
+INPUT ./__main__.out
+OUTPUT __main__.out
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmr17.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
@@ -537,7 +546,6 @@ INPUT ./txt_1-1_Research_Question.tex
 INPUT ./txt_1-1_Research_Question.tex
 INPUT txt_1-1_Research_Question.tex
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmri12.tfm
-INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
 INPUT ./txt_1-2_Literature_Review_writeup.tex
 INPUT ./txt_1-2_Literature_Review_writeup.tex
 INPUT txt_1-2_Literature_Review_writeup.tex
@@ -571,6 +579,7 @@ OUTPUT __main__.fff
 INPUT ./txt_2-2_Copulas.tex
 INPUT ./txt_2-2_Copulas.tex
 INPUT txt_2-2_Copulas.tex
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmri8.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/public/lm/ec-lmri7.tfm
 INPUT ./table_1_copula_fit.tex
