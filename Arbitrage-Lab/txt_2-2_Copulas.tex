@@ -65,6 +65,9 @@ This decomposition provides a framework for modeling the dependence structure be
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Marginal Distribution Estimation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\cite{Marti2016}
+
 The foundation of copula modeling lies in the accurate estimation of marginal distributions for both target and synthetic asset returns. To maintain flexibility and avoid restrictive parametric assumptions, we adopt a non-parametric approach through empirical cumulative distribution functions (ECDFs).
 
 %==============[	  Building Returns  ]==============
@@ -81,9 +84,10 @@ $
 delivering return time series $\{r_t\}_{t=2}^T$ and $\{r_t^*\}_{t=2}^T$ for the target and stationary assets respectively. 
 
 %==============[	  ECDFs  ]==============
-Next, we estimate the marginal distributions through linearly interpolated ECDFs. For any $r \in \mathbb{R}$, the empirical distribution functions are given by  
+Next, we estimate the empirical margins nonparametrically following Deheuvels (1979)'s normalized rank transform: 
+%Next, we estimate the marginal distributions through linearly interpolated ECDFs. For any $r \in \mathbb{R}$, the empirical distribution functions are given by  
 $$
-\hat{F}_{R}(r) = \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t \leq r) \quad \text{and} \quad \hat{F}_{R^*}(r^*) = \frac{1}{T-1} \sum_{t=2}^T \mathbb{I}(r_t^* \leq r^*),
+\hat{F}_{R}(r) = \frac{1}{T-1} \sum_{t=2}^T \I{r_t \leq r} \quad \text{and} \quad \hat{F}_{R^*}(r^*) = \frac{1}{T-1} \sum_{t=2}^T \I{r_t^* \leq r^*},
 $$  
 where $\mathbb{I}(\cdot)$ denotes the usual indicator function. Following \cite{hudsonthames2024}, we then enforce linear interpolation between observed returns to ensure continuity of the distribution functions across their support. Also, to mitigate numerical instabilities during subsequent copula estimation, we constrain the ECDF outputs within $[\epsilon, 1-\epsilon]$ where $\epsilon = 10^{-5}$, thereby avoiding boundary effects at the distribution tails.
 
@@ -121,6 +125,13 @@ This figure presents the linearly interpolated empirical cumulative distribution
 %.............
 \end{figure}
 
+\bblue{
+We then estimate the empirical copula: 
+$$
+C_n(u,v) = \frac{1}{T-1} \sum_{t=2}^T \I{u_t\leq u, v_t \leq v},
+$$
+for the pseudo-observations of returns and prices.}
+%
 \cref{fig:CDF_scatter_comparison} reveals several important patterns in the relationship between target and synthetic assets across different dimensions. In the returns series (left panels), we observe considerable dispersion around the 45-degree line in both training and testing periods, with points forming a cloud-like pattern that suggests a consistent dependency structure. This dispersion reflects the inherent volatility in daily returns, yet the overall symmetric pattern around the diagonal indicates that the synthetic asset effectively captures the statistical properties of the target's return distribution.
 
 The price series (right panels) exhibits markedly different behavior. During the training period, we observe a tight clustering of points along the diagonal, indicating that the synthetic asset closely tracks the price level distribution of the target. However, the testing period reveals a subtle but important deviation from this pattern, with increased dispersion and slight systematic deviations from the 45-degree line, particularly in the middle range of the distribution (0.4-0.6 probability region). This divergence suggests that while the synthetic asset maintains similar distributional properties in returns space, the accumulated price levels begin to show some drift in the out-of-sample period.
@@ -132,7 +143,8 @@ This dual perspective-stability in returns but drift in prices-provides empirica
 %==============[	  Figure 3  ]==============
 \inserthere{fig:CDF_scatter_comparison}
 \begin{figure}[H]
-  \caption{Scatter Plots of CDF Pairs for Target and Synthetic Assets}
+  \caption{Empirical copula distribution for Returns and Prices}
+%  \caption{Scatter Plots of CDF Pairs for Target and Synthetic Assets}
   \centering
   \includegraphics[scale=0.4]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/CDF_scatter_comparison.pdf}
   \label{fig:CDF_scatter_comparison}
