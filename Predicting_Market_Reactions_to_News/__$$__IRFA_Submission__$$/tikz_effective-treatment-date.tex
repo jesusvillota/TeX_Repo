@@ -1,0 +1,48 @@
+\begin{figure}[H]
+%\begin{center}
+\tikzset{every picture/.style={line width=0.8pt}} %set default line width
+\caption{Imputation of the effective treatment date ($\tilde d_0^i$)}
+\label{fig:trading-timelines}
+
+
+%==============[	  TREATMENT DATE = TODAY  ]==============
+\captionof{subfigure}*{\textbf{Case 1: Treatment date is the same as the publication date};  $\tilde d_0^i = d_0^i$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}{0.44\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 1a}: News article published in a trading date and during market hours;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i \in [\text{09:30}, \text{17:30}]$}
+\input{txt_3_tikz_case_1a_.tex}
+\end{minipage}
+\hfill
+%----------------------------------------------------
+\begin{minipage}{0.44\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 1b}: News article published in a trading date and before market opens;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i < \text{09:30}$}
+\input{txt_3_tikz_case_1b_.tex}
+\end{minipage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{0.5cm}
+
+%==============[	  TREATMENT DATE = NEXT DATE  ]==============
+\captionof{subfigure}*{\textbf{Case 2: Treatment date is the next closest trading day to publication}; $\tilde d_0^i = \Lambda(d_0^i)$}  
+
+%----------------------------------------------------  
+\begin{minipage}{0.48\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 2a}: News article published in a trading day but after the market is closed for that day; $d_0^i\in \tilde{\mathfrak d} ~\wedge~ t_0^i>\text{17:30}  $}  
+\input{txt_3_tikz_case_2a_.tex}
+\end{minipage}
+\hfill
+%---------------------------------------------------
+\begin{minipage}{0.45\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 2b}: News article  published in a non-trading day; $d_0^i\not \in \tilde{\mathfrak d}$}  
+\input{txt_3_tikz_case_2b_.tex}
+\end{minipage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\end{center}
+\end{figure}

@@ -251,4 +251,26 @@ $u = t_{\nu}(y_1)$ and $v = t_{\nu}(y_2)$
 \end{algorithmic}
 \end{algorithm}
 
+
+\begin{table}[H]
+\centering
+\caption{Performance Metrics by Copula}
+\label{tab:copula_performance}
+\small\begin{tabular}{lR{1.2cm}R{1.2cm}R{1.1cm}R{1.3cm}R{1.3cm}R{1.3cm}R{1.2cm}R{1.2cm}R{1.2cm}R{1.3cm}}
+\toprule
+Copula & Total Return (\%) & Ann. Return (\%) & Ann. Vol. (\%) & Sharpe Ratio & Sortino Ratio & Calmar Ratio & Max DD (\%) & Win Rate (\%) & Profit Factor & VaR-95 (\%) \\
+\midrule
+Gumbel & 72.39 & 16.07 & 4.56 & 3.53 & 4.32 & 7.41 & 2.17 & 79.56 & 2.26 & -0.35 \\
+Frank & 63.02 & 13.99 & 3.91 & 3.58 & 4.45 & 10.28 & 1.36 & 82.64 & 2.42 & -0.30 \\
+Clayton & 70.37 & 15.62 & 4.11 & 3.80 & 4.96 & 10.27 & 1.52 & 82.11 & 2.52 & -0.31 \\
+Joe & 77.57 & 17.22 & 4.54 & 3.79 & 5.47 & 12.01 & 1.43 & 77.00 & 2.28 & -0.35 \\
+N14 & 77.82 & 17.28 & 4.35 & 3.97 & 5.76 & 11.26 & 1.53 & 79.56 & 2.50 & -0.32 \\
+Gaussian & 62.70 & 13.92 & 4.43 & 3.14 & 4.10 & 8.13 & 1.71 & 79.30 & 2.07 & -0.35 \\
+Student-t & 66.49 & 14.76 & 4.49 & 3.29 & 4.05 & 4.88 & 3.02 & 78.77 & 2.14 & -0.34 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
 \end{document}

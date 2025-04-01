@@ -1,0 +1,143 @@
+%----------------------------------------------------
+\section{Introduction}
+%----------------------------------------------------
+In financial markets, news play a pivotal role in shaping stock prices. Every day, market participants respond to a broad spectrum of news ranging from firm-specific announcements, such as earnings releases, to macroeconomic events, such as central bank interest rate announcements, or geopolitical developments, like international trade conflicts or political elections. The Efficient Market Hypothesis (EMH), formalized by 
+\cite{fama1970efficient} %Fama (1970), 
+posits that markets efficiently incorporate new information almost instantaneously. Both theoretical perspectives and empirical observations indicate that markets do not always exhibit such efficiency, particularly when the information is complex or ambiguous. This discrepancy between theory and reality suggests significant room for improvement in understanding how news is processed by market participants and how it influences asset prices.
+%
+A substantial body of literature has tried to predict market reactions to news, yet some important gaps persist. Our review of the literature reveals three critical limitations in current approaches to analyzing financial news: a lack of economic focus in textual analysis methodology, insufficient attention to firm-specific effects, and over-reliance on headlines.
+
+\mx 
+%----------------------------------------------------
+First, we examine the lack of economic focus in current methodological approaches to analyzing financial news. This limitation is evident across three main streams of literature.
+\begin{quote}
+\hspace{0.5cm} \textit{Sentiment Analysis.} 
+Traditional approaches frequently rely on sentiment analysis, reducing the richness of news content to binary classifications of positive or negative sentiment. The seminal work of 
+\cite{tetlock2007giving} % Tetlock (2007) 
+demonstrated the predictive power of media sentiment in financial markets, showing that negative media coverage leads to downward pressure on market prices, followed by a reversion to fundamentals. This finding sparked significant interest in sentiment-based approaches, with 
+\cite{tetlock2008more} % Tetlock et al. (2008) 
+extending the analysis to firm-specific news and revealing that negative word content not only forecasts poor firm earnings but also indicates a temporary underreaction in stock prices.
+Despite these early successes, the methodology of sentiment analysis has faced important challenges. 
+%
+\cite{loughran2011liability} % Loughran and McDonald (2011) 
+highlighted a fundamental issue: general-purpose dictionaries often misclassify words in financial contexts, leading them to develop specialized financial word lists. Building on this insight, 
+\cite{jegadeesh2013word} % Jegadeesh and Wu (2013) 
+demonstrated that the weighting scheme applied to these words is as crucial as the word lists themselves, introducing a more nuanced approach to content analysis.
+The emergence of social media and machine learning has driven further methodological innovations in sentiment analysis. 
+\cite{bollen2011twitter} %  Bollen et al. (2011) 
+leveraged Twitter data to predict DJIA movements, while 
+\cite{garcia2013sentiment} % Garcia (2013) 
+revealed that sentiment's predictive power is particularly pronounced during recessions, suggesting time-varying importance of news sentiment. Recent advances in machine learning have pushed the boundaries further, with 
+\cite{ke2019predicting} % Ke et al. (2019) 
+developing a sophisticated supervised learning framework specifically designed for return prediction. The advent of transformer-based models has enabled even more sophisticated approaches, with 
+\cite{lee2020bert} % Lee et al. (2020) 
+and 
+\cite{wei2018stock} % Wei and Nguyen (2020) 
+applying BERT-based architectures to financial sentiment analysis.
+%
+However, despite their widespread adoption and continued methodological refinements, sentiment analysis approaches remain fundamentally limited. They often miss the intricacy inherent in news by focusing on linguistic patterns rather than economically relevant considerations. 
+
+%----------------------------------------------------
+\hspace{0.5cm} \textit{Topic modeling.} 
+Beyond sentiment analysis, researchers have also explored topic modeling as an alternative approach to categorize text into broader themes. The pioneering work of 
+\cite{antweiler2006us} % Antweiler and Frank (2006) 
+demonstrated that computational linguistics methods could reveal important patterns in market reactions to news, finding that stock prices do not immediately and consistently reflect news, with effects varying significantly across different types of stories and market conditions. Topic modeling approaches have since been applied across financial research domains. 
+\cite{hansen2018transparency} % Hansen et al. (2018) 
+used these techniques to analyze Federal Reserve communications, while 
+\cite{bybee2021business} % Bybee et al. (2021) 
+developed a topic model analyzing over 800,000 Wall Street Journal articles to track news attention to different economic themes. 
+\cite{bybee2023narrative} % Bybee et al. (2023) 
+further integrated topic modeling with asset pricing models to derive systematic risk factors from news.
+%
+However, these models are limited in adapting to new and evolving information and lack the specificity needed to assess the precise impact of news on individual firms or sectors. While topic models can identify broad themes, they struggle to capture the changing context of financial news, particularly when new narratives emerge, such as unexpected geopolitical events or technological disruptions.
+
+%----------------------------------------------------
+\hspace{0.5cm} \textit{Vector-based models.} 
+Vector-based models have emerged as an alternative approach to address the limitations of both sentiment analysis and topic modeling. The foundational models in this domain, Word2Vec and GloVe, established the paradigm of mapping words to continuous vector spaces based on their co-occurrence patterns, enabling mathematical operations on words and capturing semantic relationships.
+\cite{hoberg2016text} % Hoberg and Phillips (2016) 
+pioneered their application in finance by developing time-varying measures of product similarity from firms' 10-K descriptions, demonstrating how vector representations could capture nuanced competitive relationships that traditional industry classifications miss.
+%
+The advent of transformer architectures marked a significant advancement, leading to more sophisticated models such as BERT, RoBERTa, or GPT. These models process text through multiple attention layers, generating context-aware embeddings by considering relationships between all words simultaneously. 
+\cite{chen2021stock} % Chen (2021) 
+demonstrated their superior performance in predicting stock movements following financial news events, while 
+\cite{benincasa2022different} % Benincasa et al. (2022) 
+leveraged BERT to develop a novel measure of bond ``greenness'', revealing how subtle textual differences in bond documentation translate into measurable price effects.
+%
+Recent applications have further expanded the scope of these methods. 
+\cite{jha2022does} % Jha et al. (2024) 
+analyzed finance sentiment across multiple countries and centuries, while 
+\cite{zhang2023feel} % Zhang (2023) 
+integrated sentiment analysis from GPT and BERT into traditional asset pricing models. 
+\cite{gabaix2023asset} % Gabaix et al. (2023) 
+introduced \qquote{asset embeddings}, showing how these techniques can uncover latent firm characteristics from investors' holdings data. However, even when fine-tuned with domain-specific training data (e.g: \texttt{FinBERT}), these methods cannot inherently incorporate economic structure, which limits their ability to comprehend the economic implications of news articles.
+\end{quote}
+
+\mx
+%----------------------------------------------------
+Having examined the limitations of current methodological approaches, we now turn to a second critical gap in the literature: there is an insufficient focus on firm-specific analysis in existing research. Many studies examine the impact of news on broader market indices
+ such as the S\&P500 or DJIA, rather than on individual firms. 
+ %
+For example, 
+\cite{cutler1988moves} % Cutler et al. (1988) 
+and 
+\cite{mitchell1994impact} % Mitchell and Mulherin (1994) 
+analyzed comprehensive news coverage to understand aggregate market movements, while more recent work has leveraged increasingly sophisticated data sources. 
+\cite{bollen2011twitter} % Bollen et al. (2011) 
+developed novel mood tracking tools for Twitter messages to predict DJIA movements, and 
+\cite{garcia2013sentiment} % Garcia (2013) 
+examined a century of New York Times financial columns to study market-wide returns during recessions. 
+\cite{baker2016measuring}, \cite{baker2021triggers} % Baker et al. (2016, 2021) 
+and 
+\cite{manela2017news} % Manela and Moreira (2017) 
+constructed innovative news-based indices that have enhanced our understanding of market-wide uncertainty and volatility.
+While these and other similar studies provide valuable insights into market-wide reactions, they fall short in elucidating how specific firms are affected by news events. Firm-specific impacts are often masked when aggregated at the index level, leading to a loss of critical information about how particular entities are influenced by specific news. 
+For example, during the COVID-19 pandemic, market indices masked substantial heterogeneity in firm-level responses
+ with some sectors like technology and healthcare experiencing positive returns, while others, such as hospitality, travel, and retail, experiencing significant negative impacts due to widespread lockdowns and reduced consumer spending. 
+Such differences are often obscured when focusing solely on market indices. Tools like Named Entity Recognition (NER), which could help identify firms impacted by particular events, remain underutilized in financial research, further contributing to the lack of firm-level granularity.
+
+
+\mx 
+%----------------------------------------------------
+The third and final critical issue is the over-reliance on headlines as the basis for news analysis.
+Headlines are often used due to their availability and the simplicity of extracting sentiment from them, making them convenient but insufficient for comprehensive analysis. 
+\cite{chan2003stock} % Chan (2003) 
+provided early evidence of this limitation, showing distinct market reactions to headline news versus no-news events, particularly in terms of drift after bad news and reversals after extreme price movements. As natural language processing techniques evolved, researchers continued to focus primarily on headlines: 
+\cite{oncharoen2018deep} % Oncharoen and Vateekul (2018) 
+and 
+\cite{wei2018stock} %  Wei and Nguyen (2020) 
+applied increasingly sophisticated deep learning and BERT models to headline analysis, while recent work by 
+\cite{lopez2023can} % Lopez-Lira and Tang (2023) 
+and 
+\cite{chen2022expected} % Chen et al. (2022) 
+has extended this approach using large language models to extract contextualized representations from news headlines.
+While these studies have advanced our understanding of market reactions to news, headlines are designed to capture attention rather than provide comprehensive information. Consequently, relying solely on headlines can lead to overly simplistic analyses that fail to capture critical contextual details necessary for accurately predicting market reactions.
+
+
+\mx 
+%----------------------------------------------------
+This paper seeks to address these three limitations by leveraging Large Language Models (LLMs) to facilitate an economically-structured, granular and firm-specific analysis of complete news articles. 
+LLMs are particularly suited for economic interpretation due to their extensive training on human-generated text, including financial and economic discourse. This exposure enables them to ``\textit{understand}'' economic concepts, cause-and-effect relationships, and market mechanisms in ways that mirror human economic reasoning. Unlike purely statistical approaches, LLMs can recognize economic patterns and implications that would be evident to market participants, making them powerful tools for financial analysis.
+For example, LLMs could simulate human analysis of news articles, understanding the economic shocks that a news article describes upon a specific firm --such as supply chain disruptions affecting manufacturing, shifts in consumer demand impacting retail, or policy changes influencing energy sectors-- and quantifying both the magnitude and direction of these impacts on specific firms. 
+%----------------------------------------------------
+In this study, we leverage LLMs to parse a dataset of Spanish business news articles from DowJones Newswires, spanning June 2020 to September 2021, a particularly unstable period marked by economic disruptions due to the COVID-19 pandemic. 
+This period was purposefully chosen for its inherent complexity and market instability. Testing our methodology during such a challenging period allows us to rigorously evaluate its robustness and effectiveness. While many methodologies can perform adequately during stable market conditions, their true capabilities are revealed when faced with unprecedented market dynamics and rapid economic changes.
+
+%----------------------------------------------------
+\mx
+Our methodology consists of defining a schema with which we guide an LLM to detect firm-specific shocks from business news and to further classify them by their type (demand, supply, technological, policy, financial), magnitude (minor, major) and direction (positive, negative). Through their ability to categorize and comprehend the economic implications of news, LLMs generate insights that surpass traditional methodologies, revealing the underlying mechanisms driving market behavior. This allows for a more detailed assessment of how specific pieces of information influence particular firms, providing a richer and more precise picture of market dynamics.
+%
+%----------------------------------------------------
+As our benchmark, we employ a vector-based approach that represents each news article as a high-dimensional embedding vector using a sentence transformer. This benchmark choice serves two key purposes. First, it offers greater granularity and sophistication compared to traditional methods like sentiment analysis and topic modeling. Second, it provides theoretical consistency with our LLM-based approach, as vector embeddings constitute the first layer of an LLM's architecture. This parallel allows us to effectively compare the predictive power of the LLM's initial representation (vector embeddings) with its final output (economically structured news classification). Through this comparison, we can assess whether incorporating economic structure in the LLM processing step enhances our ability to predict market reactions to news.
+
+\mx 
+To evaluate the timing ability of our proposed methodology, we develop a trading strategy that builds on the traditional portfolio sorting approach. While conventional strategies sort stocks based on firm characteristics, we instead sort based on news clusters. For the benchmark (vector embeddings), we employ KMeans clustering, while our LLM methodology clusters articles by shock categories. We identify the best and worst-performing clusters by analyzing the stock price responses of affected firms, then construct a long-short portfolio strategy that takes long positions in the best-performing clusters and short positions in the worst-performing ones. The profitability of this strategy serves as a measure of each clustering methodology's ability to identify economically meaningful news patterns that translate into improved market timing abilities.
+%
+%----------------------------------------------------
+Our findings reveal that while the vector-based model successfully identifies firm- and industry-specific clusters, its trading signals lack persistence. The model's reliance on historical firm and industry performance patterns generates ephemeral signals that do not translate well to future market conditions. In contrast, our LLM-based methodology produces clusters based on economically meaningful shock classifications, resulting in more persistent trading signals. The superior out-of-sample performance of our LLM-based trading strategy demonstrates its enhanced capability to capture and interpret market reactions to news, underscoring the advantages of incorporating economic structure into news analysis.
+
+\mx 
+%----------------------------------------------------
+The objective of this paper is not to parse the largest dataset available or to develop a realistic trading strategy with commercial application. Rather, it aims to introduce a novel methodology for analyzing news articles in a granular and firm-specific manner, demonstrating its utility through a reduced dataset. By focusing on a smaller, high-quality dataset, the study emphasizes methodological rigor and interpretability. The findings are intended to contribute to a more nuanced understanding of how market participants process news, using a simple trading strategy to illustrate the potential of this approach in capturing the complexities of information processing in financial markets. This methodological contribution lays the groundwork for future research that could extend these techniques to larger datasets and more complex trading applications, ultimately enhancing our ability to understand and predict market behavior in response to news.
+
+\mx 
+The remainder of this paper is organized as follows: Section 2 presents the dataset and preprocessing steps. Section 3 provides a mathematical framework for analyzing news articles. In Section 4, we focus on clustering news articles -- first presenting the benchmark framework using KMeans clustering of vector embeddings, followed by our novel LLM-based methodology. Section 5 details the construction of a simple trading strategy, including market-beta-neutral positions for each firm-article pair, extraction of cluster-average Sharpe Ratios, and selection of optimal clusters based on two proposed algorithms. In Section 6, we perform robustness checks by examining the sensitivity of our results to hyperparameter variations. Finally, Section 7 concludes and discusses the implications of our findings

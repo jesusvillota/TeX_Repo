@@ -12,7 +12,10 @@ On each trading day $t$, let $r_t$ and $r_t^*$ respectively denote the realized 
 \begin{align*}
 %MI_t
 MI_t^{R \mid R^*} 
-&:= \mathbb{P}(R_t \leq r_t \mid R_t^* = r_t^*)
+&:= 
+\mathbb{P}\2{R \leq r_t \mid R_t^* = r_t^*}
+=
+\mathbb{P}\2{U \leq F_R(r_t) \mid U_t^* = F_{R^*}(r_t^*)}
 = 
 %\left.
 \frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_{R^*}(r_t^*)}
@@ -21,7 +24,9 @@ MI_t^{R \mid R^*}
 \\[0.4em]
 %MI_t^*
 MI_t^{R^* \mid R} 
-&:= \mathbb{P}(R_t^* \leq r_t^* \mid R_t = r_t)
+&:= \mathbb{P}\2{R^* \leq r_t^* \mid R_t = r_t}
+=
+\mathbb{P}\2{U^* \leq F_{R^*}(r_t^*) \c U_t = F_{R}(r_t)}
 = 
 %\left.
 \frac{\partial C_{\hat{\theta}}(F_R(r_t), F_{R^*}(r_t^*))}{\partial F_R(r_t)}
@@ -104,11 +109,12 @@ We formally present the procedures to compute the mispricing index and update th
 
 We implement a dollar-neutral trading strategy that capitalizes on relative mispricing signals between the target and synthetic assets. The trading rule ($TR$) we employ builds upon the frameworks of \cite{Xie2016} and \cite{Rad2016}, incorporating their key insights about signal combination logic. While \cite{Xie2016} originally proposed an \qquote{or-or} framework, where trades are initiated when either asset shows mispricing and closed when either asset exhibits correction, \cite{Rad2016} demonstrated that a more conservative \qquote{and-or} approach yields more robust performance. This latter approach requires concurrent mispricing signals from both assets to open positions while maintaining a sensitive exit strategy where correction in either asset triggers position closure.
 
-Let $D_l$ and $D_u$ denote the lower and upper thresholds for opening positions, and $S_l$ and $S_u$ the lower and upper stop-loss boundaries. Starting with $TR_0=0$, for $t=1,...,T$, the trading rule evolves as follows:
+Let $D_l$ and $D_u$ denote the lower and upper thresholds for opening positions, and $S_l$ and $S_u$ the lower and upper stop-loss boundaries. Setting $MI_0=MI_0^*=0$ and starting with $TR_0=0$, for $t=0,...,T$, the trading rule evolves as follows:
 %
 %==============[	  FORMULA  ]==============
 \begin{align*}\label{eq:trading_rule}
-&TR_t(\t{CMI}_t^R, \t{CMI}_t^{R^*}, TR_{t-1}; D_l, D_u, S_l, S_u) 
+&TR_{t+1}
+=f(\t{CMI}_t^R, \t{CMI}_t^{R^*}, TR_{t}; D_l, D_u, S_l, S_u) 
 =
 \\[0.2em]\nonumber
 &\mycases{clllll}{
@@ -151,12 +157,12 @@ TR_{t-1}=-1
 \end{cases}
 $$
 \\
-TR_{t-1} & \t{otherwise}
+TR_{t} & \t{otherwise}
 }
 \end{align*}
 
 %==============[	  Explanation of formula  ]==============
-That is, at the beginning of each trading day \(t\), observe the current values of both mispricing indicators, \(\mathrm{CMI}_t^R\) (for the target asset) and \(\mathrm{CMI}_t^{R^*}\) (for the synthetic). The trading rule \(TR_t\) can take one of three values: \(+1\), \(-1\), or \(0\), indicating a \qquote{long-short}, \qquote{short-long}, or \qquote{flat} position, respectively. When no position is open (i.e., \(TR_{t-1} = 0\)), the rule opens a position only if there is simultaneous mispricing in both assets according to the thresholds \(D_l\) and \(D_u\). 
+That is, at the end of each trading day \(t\), observe the values of both mispricing indicators, \(\mathrm{CMI}_t^R\) (for the target asset) and \(\mathrm{CMI}_t^{R^*}\) (for the synthetic). The trading rule \(TR_{t+1}\) can take one of three values: \(+1\), \(-1\), or \(0\), indicating a \qquote{long-short}, \qquote{short-long}, or \qquote{flat} position, respectively. When no position is open (i.e., \(TR_{t} = 0\)), the rule opens a position only if there is simultaneous mispricing in both assets according to the thresholds \(D_l\) and \(D_u\). 
 %----------------------------------------------------
 Specifically,
 \begin{itemize}
@@ -166,7 +172,7 @@ Specifically,
 %----------------------------------------------------
 %if \(\mathrm{CMI}_t^R\) falls below \(D_l\) at the same time that \(\mathrm{CMI}_t^{R^*}\) rises above \(D_u\), then \(TR_t\) is set to \(+1\). Conversely, if \(\mathrm{CMI}_t^R\) rises above \(D_u\) while \(\mathrm{CMI}_t^{R^*}\) falls below \(D_l\), \(TR_t\) is set to \(-1\).
 
-Once a position is open (either \(TR_{t-1} = +1\) or \(TR_{t-1} = -1\)), the logic checks each day whether the mispricing has corrected enough to trigger a take-profit condition or crossed critical boundaries that trigger a stop-loss. These checks apply to either of the two mispricing indices, so if correction or a stop-loss occurs in any one of them, the entire position is closed. Mathematically, this is captured by the \qquote{OR} clauses in the formula, which evaluate whether \(\mathrm{CMI}_t^R\) or \(\mathrm{CMI}_t^{R^*}\) has crossed the zero line (for take-profit) or moved beyond the \((S_l, S_u)\) band (for stop-loss). If one of these events occurs, then \(TR_t\) is set to \(0\), and the mispricing indices are both reset to zero for the next trading day. 
+Once a position is open (either \(TR_{t} = +1\) or \(TR_{t} = -1\)), the logic checks each day whether the mispricing has corrected enough to trigger a take-profit condition or crossed critical boundaries that trigger a stop-loss. These checks apply to either of the two mispricing indices, so if correction or a stop-loss occurs in any one of them, the entire position is closed. Mathematically, this is captured by the \qquote{OR} clauses in the formula, which evaluate whether \(\mathrm{CMI}_t^R\) or \(\mathrm{CMI}_t^{R^*}\) has crossed the zero line (for take-profit) or moved beyond the \((S_l, S_u)\) band (for stop-loss). If one of these events occurs, then \(TR_{t+1}\) is set to \(0\), and the mispricing indices are both reset to zero for the next trading day. 
 %----------------------------------------------------
 %Specifically:
 %\begin{itemize}
@@ -177,7 +183,7 @@ Once a position is open (either \(TR_{t-1} = +1\) or \(TR_{t-1} = -1\)), the log
 %\end{itemize}
 %\end{itemize}
 %----------------------------------------------------
-If neither a take-profit nor a stop-loss threshold is met, then the position remains unchanged, meaning \(TR_t\) simply inherits the previous value \(TR_{t-1}\).
+If neither a take-profit nor a stop-loss threshold is met, then the position remains unchanged, meaning \(TR_{t+1}\) simply inherits the previous value \(TR_{t}\).
 
 Intuitively, when both indicators are simultaneously misaligned (one significantly high and the other significantly low), the strategy deems it a strong signal to open a dollar-neutral position that is long the \qquote{undervalued} side and short the \qquote{overvalued} side. As soon as either index crosses back toward zero (suggesting partial correction of that asset's mispricing) or breaches a stop-loss boundary (indicating that the trade is moving unfavorably), the position is liquidated. This \qquote{and-or} logic helps filter out noise in the daily movements and more reliably captures episodes in which both assets appear to be drifting apart (opening a trade) and then swiftly catches at least one side reverting (closing the trade). 
 %
