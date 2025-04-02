@@ -46,15 +46,14 @@ The trend towards open-source models like \texttt{BLOOM}
 (\cite{le2023bloom}), % Le Scao et al., 2023), 
 \texttt{Mixtral} and Meta's \texttt{Llama} series 
 (\citep{touvron2023llama}) % Touvron et al., 2023)
-emphasizes accessibility and transparency in LLM development.  The latest models, including OpenAI's  \texttt{GPT-4o} and \texttt{GPT-o1}, Google's \texttt{Gemini} and \texttt{Mixtral} and \texttt{Gemma}, Anthropic's \texttt{Claude 3.5 Sonnet}, and Meta's \texttt{Llama-3} series
+emphasizes accessibility and transparency in LLM development.  The latest models, including OpenAI's  \texttt{GPT-4.5}, \texttt{GPT-o1} and \texttt{o3}, Google's \texttt{Gemini 2.5 Pro}, %and \texttt{Mixtral} and \texttt{Gemma},
+Anthropic's \texttt{Claude 3.7 Sonnet}, and Meta's \texttt{Llama-3} series
 % \texttt{Llama-3}, \texttt{Llama-3.1} and  \texttt{Llama-3.2} 
 continue to push boundaries with improved accuracy, multimodal capabilities, and larger context windows.
 
 \subsubsection{Function Calling with Llama-3}
 
-In our endeavor we will employ \texttt{Llama-3}, developed by Meta AI and released on April 18, 2024 %
-%
-\footnote{
+In our endeavor we will employ \texttt{Llama-3}, developed by Meta AI and released on April 18, 2024\footnote{
 \href{https://ai.meta.com/blog/meta-llama-3/}
 {\qquote{Introducing Meta Llama 3: The most capable openly available LLM to date}
 [April 18, 2024]}
@@ -66,7 +65,7 @@ In our endeavor we will employ \texttt{Llama-3}, developed by Meta AI and releas
 Moreover, we will employ a \textit{function calling} approach to streamline the process of interacting with the LLM. This implies prespecifying a set of functions to the LLM that will then be passed through our dataset of news articles to obtain a structured output in \texttt{JSON} format. The formal procedure is thoroughly described in Appendix \cref{alg:function_calling}
 
 \mx 
-Each article $i\in\D$ implies a conversation with the LLM. The structure of the conversation implies defining first a ``system message'', which provides a general context and purpose to the model. In our case:
+Each article $i\in\D$ implies a conversation with the LLM. The structure of the conversation consists of defining first a ``system message'', which provides a general context and purpose to the model. In our case:
 
 \begin{quote}
 \textit{$-$ You are a function calling LLM that analyses business news in Spanish.  \\

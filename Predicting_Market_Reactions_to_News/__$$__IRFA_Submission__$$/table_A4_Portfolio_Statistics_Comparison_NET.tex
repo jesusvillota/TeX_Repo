@@ -13,26 +13,49 @@
 \caption{Panel A: Statistics of $\mathcal{P}_{\text{KMeans}}$}
 \centering
 {\small
+%----------------------------------------------------
 \begin{tabular}{
- P{1.28cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} 
- P{0.9cm} P{1cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm}
+ P{1.28cm} % Split
+ P{0.9cm} % Algorithm
+ P{0.9cm} % Cum. Return
+ P{0.9cm} % Avg. Return
+ P{0.9cm} % St. Deviation
+ P{0.9cm} % Sharpe Ratio
+ P{0.9cm} % Sortino Ratio
+ P{0.9cm} % Max. Drawdown
+ P{1cm} % Calmar Ratio
+ P{0.9cm} % Skewness
+ P{0.9cm} % Kurtosis
+ P{0.9cm} % VaR
+ P{0.9cm} % CVaR
 }
 \Xhline{2\arrayrulewidth}
 \textbf{Split} & \textbf{Algo.} & \textbf{Cum. Ret.} & \textbf{Avg. Ret.} & \textbf{St. Dev.} & \textbf{Sharpe Ratio} & \textbf{Sortino Ratio} & \textbf{Max. DD} & \textbf{Calmar Ratio} & \textbf{Skew.} & \textbf{Exc. Kurt.} & \textbf{VaR 95\%} & \textbf{CVaR 95\%} \\
 \Xhline{2\arrayrulewidth}
-\multirow{2}{*}{All} & \textit{Greedy} & 0.780 & -17.3 & 9.6 & -2.0 & -1.7 & -24.7 & -0.7 & -0.48 & 3.90 & -14.0 & -24.2 \\
- & \textit{Stable} & 1.058 & 4.4 & 17.0 & 0.3 & 0.3 & -14.2 & 0.3 & 0.15 & 5.01 & -24.5 & -38.3 \\
-\hline
-\multirow{2}{*}{Train} & \textit{Greedy} & 0.823 & -25.6 & 11.6 & -2.5 & -2.0 & -18.2 & -1.4 & -0.51 & 2.71 & -19.4 & -29.9 \\
- & \textit{Stable} & 1.057 & 8.7 & 19.9 & 0.4 & 0.4 & -14.2 & 0.6 & -0.25 & 3.21 & -31.9 & -46.0 \\
-\hline
-\multirow{2}{*}{Validation} & \textit{Greedy} & 1.000 & -0.0 & 7.5 & -0.0 & -0.0 & -5.8 & -0.0 & -0.50 & 0.95 & -12.1 & -17.9 \\
- & \textit{Stable} & 1.050 & 14.7 & 13.4 & 1.0 & 1.0 & -5.3 & 2.8 & -0.27 & 1.99 & -20.6 & -30.9 \\
-\hline
-\multirow{2}{*}{Test} & \textit{Greedy} & 0.937 & -20.0 & 6.6 & -3.4 & -3.5 & -9.1 & -2.2 & 1.55 & 4.31 & -8.9 & -12.0 \\
- & \textit{Stable} & 0.924 & -23.6 & 14.2 & -1.9 & -2.0 & -10.0 & -2.4 & 2.48 & 14.59 & -20.6 & -28.5 \\
-\Xhline{2\arrayrulewidth}
+\multirow{2}{*}{All} & \textit{Greedy} & 0.963 & -2.9 & 9.6 & -0.3 & -0.3 & -9.5 & -0.3 & -0.46 & 4.00 & -13.7 & -23.4 \\  & \textit{Stable} & 1.329 & 24.4 & 16.8 & 1.3 & 1.5 & -8.3 & 2.9 & 0.18 & 5.08 & -23.0 & -36.8 \\  \hline \multirow{2}{*}{Train} & \textit{Greedy} & 0.911 & -13.2 & 11.6 & -1.2 & -1.1 & -9.5 & -1.4 & -0.52 & 2.72 & -18.7 & -28.9 \\  & \textit{Stable} & 1.182 & 28.9 & 19.7 & 1.3 & 1.4 & -8.3 & 3.5 & -0.23 & 3.24 & -30.6 & -44.0 \\  \hline \multirow{2}{*}{Validation} & \textit{Greedy} & 1.058 & 17.1 & 7.3 & 2.2 & 2.2 & -4.0 & 4.3 & -0.48 & 1.10 & -10.2 & -16.6 \\  & \textit{Stable} & 1.115 & 35.7 & 13.3 & 2.3 & 2.6 & -4.2 & 8.6 & -0.23 & 1.85 & -19.3 & -29.0 \\  \hline \multirow{2}{*}{Test} & \textit{Greedy} & 0.988 & -4.1 & 6.8 & -0.6 & -0.8 & -5.3 & -0.8 & 1.76 & 5.10 & -8.2 & -10.4 \\  & \textit{Stable} & 0.979 & -6.8 & 14.2 & -0.5 & -0.6 & -5.6 & -1.2 & 2.49 & 14.74 & -19.4 & -27.4 \\  \hline 
 \end{tabular}
+%----------------------------------------------------
+%\begin{tabular}{
+% P{1.28cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} 
+% P{0.9cm} P{1cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm}
+%}
+%\Xhline{2\arrayrulewidth}
+%\textbf{Split} & \textbf{Algo.} & \textbf{Cum. Ret.} & \textbf{Avg. Ret.} & \textbf{St. Dev.} & \textbf{Sharpe Ratio} & \textbf{Sortino Ratio} & \textbf{Max. DD} & \textbf{Calmar Ratio} & \textbf{Skew.} & \textbf{Exc. Kurt.} & \textbf{VaR 95\%} & \textbf{CVaR 95\%} \\
+%\Xhline{2\arrayrulewidth}
+%\multirow{2}{*}{All} & \textit{Greedy} & 0.780 & -17.3 & 9.6 & -2.0 & -1.7 & -24.7 & -0.7 & -0.48 & 3.90 & -14.0 & -24.2 \\
+% & \textit{Stable} & 1.058 & 4.4 & 17.0 & 0.3 & 0.3 & -14.2 & 0.3 & 0.15 & 5.01 & -24.5 & -38.3 \\
+%\hline
+%\multirow{2}{*}{Train} & \textit{Greedy} & 0.823 & -25.6 & 11.6 & -2.5 & -2.0 & -18.2 & -1.4 & -0.51 & 2.71 & -19.4 & -29.9 \\
+% & \textit{Stable} & 1.057 & 8.7 & 19.9 & 0.4 & 0.4 & -14.2 & 0.6 & -0.25 & 3.21 & -31.9 & -46.0 \\
+%\hline
+%\multirow{2}{*}{Validation} & \textit{Greedy} & 1.000 & -0.0 & 7.5 & -0.0 & -0.0 & -5.8 & -0.0 & -0.50 & 0.95 & -12.1 & -17.9 \\
+% & \textit{Stable} & 1.050 & 14.7 & 13.4 & 1.0 & 1.0 & -5.3 & 2.8 & -0.27 & 1.99 & -20.6 & -30.9 \\
+%\hline
+%\multirow{2}{*}{Test} & \textit{Greedy} & 0.937 & -20.0 & 6.6 & -3.4 & -3.5 & -9.1 & -2.2 & 1.55 & 4.31 & -8.9 & -12.0 \\
+% & \textit{Stable} & 0.924 & -23.6 & 14.2 & -1.9 & -2.0 & -10.0 & -2.4 & 2.48 & 14.59 & -20.6 & -28.5 \\
+%\Xhline{2\arrayrulewidth}
+%\end{tabular}
+%----------------------------------------------------
 }
 \end{subtable}
 
@@ -43,26 +66,49 @@
 \caption{Panel B: Statistics of $\mathcal{P}_{\text{LLM}}$}
 \centering
 {\small
+%----------------------------------------------------
 \begin{tabular}{
- P{1.28cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} 
- P{0.9cm} P{1cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm}
+ P{1.28cm} % Split
+ P{0.9cm} % Algorithm
+ P{0.9cm} % Cum. Return
+ P{0.9cm} % Avg. Return
+ P{0.9cm} % St. Deviation
+ P{0.9cm} % Sharpe Ratio
+ P{0.9cm} % Sortino Ratio
+ P{0.9cm} % Max. Drawdown
+ P{1cm} % Calmar Ratio
+ P{0.9cm} % Skewness
+ P{0.9cm} % Kurtosis
+ P{0.9cm} % VaR
+ P{0.9cm} % CVaR
 }
 \Xhline{2\arrayrulewidth}
 \textbf{Split} & \textbf{Algo.} & \textbf{Cum. Ret.} & \textbf{Avg. Ret.} & \textbf{St. Dev.} & \textbf{Sharpe Ratio} & \textbf{Sortino Ratio} & \textbf{Max. DD} & \textbf{Calmar Ratio} & \textbf{Skew.} & \textbf{Exc. Kurt.} & \textbf{VaR 95\%} & \textbf{CVaR 95\%} \\
 \Xhline{2\arrayrulewidth}
-\multirow{2}{*}{All} & \textit{Greedy} & 0.891 & -8.5 & 9.7 & -0.9 & -1.0 & -12.3 & -0.7 & 1.44 & 9.81 & -15.7 & -21.2 \\
- & \textit{Stable} & 0.928 & -5.6 & 8.6 & -0.7 & -0.7 & -11.7 & -0.5 & 0.31 & 2.18 & -12.9 & -18.7 \\
-\hline
-\multirow{2}{*}{Train} & \textit{Greedy} & 0.910 & -13.4 & 11.5 & -1.2 & -1.3 & -12.3 & -1.1 & 1.63 & 8.83 & -19.4 & -23.2 \\
- & \textit{Stable} & 0.964 & -5.5 & 10.0 & -0.6 & -0.6 & -9.7 & -0.6 & 0.21 & 1.60 & -14.8 & -21.6 \\
-\hline
-\multirow{2}{*}{Validation} & \textit{Greedy} & 0.985 & -4.3 & 8.1 & -0.5 & -0.6 & -4.3 & -1.0 & 0.19 & 1.17 & -11.6 & -18.0 \\
- & \textit{Stable} & 0.947 & -14.3 & 7.0 & -2.2 & -2.0 & -6.1 & -2.4 & 0.17 & 1.17 & -13.0 & -16.5 \\
-\hline
-\multirow{2}{*}{Test} & \textit{Greedy} & 0.995 & -1.5 & 6.2 & -0.2 & -0.3 & -1.9 & -0.8 & 1.02 & 6.91 & -8.2 & -12.1 \\
- & \textit{Stable} & 1.009 & 3.1 & 7.0 & 0.4 & 0.5 & -1.8 & 1.7 & 0.91 & 1.98 & -10.8 & -12.4 \\
-\Xhline{2\arrayrulewidth}
+\multirow{2}{*}{All} & \textit{Greedy} & 1.152 & 11.5 & 9.6 & 1.1 & 1.4 & -7.6 & 1.5 & 1.47 & 9.93 & -14.4 & -19.6 \\  & \textit{Stable} & 1.200 & 15.0 & 8.6 & 1.6 & 1.9 & -7.2 & 2.1 & 0.29 & 2.23 & -12.1 & -17.4 \\  \hline \multirow{2}{*}{Train} & \textit{Greedy} & 1.040 & 6.2 & 11.4 & 0.5 & 0.7 & -7.6 & 0.8 & 1.65 & 8.97 & -16.2 & -21.6 \\  & \textit{Stable} & 1.101 & 15.9 & 9.9 & 1.5 & 1.7 & -7.2 & 2.2 & 0.18 & 1.68 & -14.1 & -20.3 \\  \hline \multirow{2}{*}{Validation} & \textit{Greedy} & 1.054 & 16.2 & 8.2 & 1.8 & 2.3 & -3.3 & 4.9 & 0.16 & 1.31 & -10.9 & -17.2 \\  & \textit{Stable} & 1.013 & 3.8 & 7.0 & 0.5 & 0.6 & -2.2 & 1.7 & 0.22 & 1.31 & -11.7 & -15.3 \\  \hline \multirow{2}{*}{Test} & \textit{Greedy} & 1.054 & 19.0 & 6.2 & 2.8 & 3.5 & -1.6 & 11.9 & 1.35 & 7.85 & -7.5 & -10.6 \\  & \textit{Stable} & 1.069 & 24.7 & 7.0 & 3.1 & 4.7 & -1.3 & 18.6 & 0.86 & 1.99 & -10.1 & -11.6 \\  \hline 
 \end{tabular}
+%----------------------------------------------------
+%\begin{tabular}{
+% P{1.28cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm} 
+% P{0.9cm} P{1cm} P{0.9cm} P{0.9cm} P{0.9cm} P{0.9cm}
+%}
+%\Xhline{2\arrayrulewidth}
+%\textbf{Split} & \textbf{Algo.} & \textbf{Cum. Ret.} & \textbf{Avg. Ret.} & \textbf{St. Dev.} & \textbf{Sharpe Ratio} & \textbf{Sortino Ratio} & \textbf{Max. DD} & \textbf{Calmar Ratio} & \textbf{Skew.} & \textbf{Exc. Kurt.} & \textbf{VaR 95\%} & \textbf{CVaR 95\%} \\
+%\Xhline{2\arrayrulewidth}
+%\multirow{2}{*}{All} & \textit{Greedy} & 0.891 & -8.5 & 9.7 & -0.9 & -1.0 & -12.3 & -0.7 & 1.44 & 9.81 & -15.7 & -21.2 \\
+% & \textit{Stable} & 0.928 & -5.6 & 8.6 & -0.7 & -0.7 & -11.7 & -0.5 & 0.31 & 2.18 & -12.9 & -18.7 \\
+%\hline
+%\multirow{2}{*}{Train} & \textit{Greedy} & 0.910 & -13.4 & 11.5 & -1.2 & -1.3 & -12.3 & -1.1 & 1.63 & 8.83 & -19.4 & -23.2 \\
+% & \textit{Stable} & 0.964 & -5.5 & 10.0 & -0.6 & -0.6 & -9.7 & -0.6 & 0.21 & 1.60 & -14.8 & -21.6 \\
+%\hline
+%\multirow{2}{*}{Validation} & \textit{Greedy} & 0.985 & -4.3 & 8.1 & -0.5 & -0.6 & -4.3 & -1.0 & 0.19 & 1.17 & -11.6 & -18.0 \\
+% & \textit{Stable} & 0.947 & -14.3 & 7.0 & -2.2 & -2.0 & -6.1 & -2.4 & 0.17 & 1.17 & -13.0 & -16.5 \\
+%\hline
+%\multirow{2}{*}{Test} & \textit{Greedy} & 0.995 & -1.5 & 6.2 & -0.2 & -0.3 & -1.9 & -0.8 & 1.02 & 6.91 & -8.2 & -12.1 \\
+% & \textit{Stable} & 1.009 & 3.1 & 7.0 & 0.4 & 0.5 & -1.8 & 1.7 & 0.91 & 1.98 & -10.8 & -12.4 \\
+%\Xhline{2\arrayrulewidth}
+%\end{tabular}
+%----------------------------------------------------
 }
 \end{subtable}
 
@@ -74,7 +120,11 @@ Portfolio statistics of trading strategies based on clusters obtained from KMean
 The statistics provided include performance metrics (Cumulative Return, Average Return (\%)), risk measures (Standard Deviation (\%), Maximum Drawdown (\%), Value at Risk (\%), Conditional Value at Risk (\%)), risk-adjusted performance ratios (Sharpe Ratio, Sortino Ratio, Calmar Ratio), and return distribution characteristics (Skewness, Excess Kurtosis). These statistics are provided for both cluster-selection algorithms: Greedy and Stable.
 Except for the Cumulative Return, all returns are annualized. The Sharpe Ratio is computed using the daily returns, assuming 252 trading days in a year. The Sortino Ratio is calculated using the daily downside returns. The Maximum Drawdown is the maximum loss from a peak to a trough. The Calmar Ratio is the ratio of the annualized return to the maximum drawdown. Skewness measures the asymmetry of the return distribution, while Kurtosis quantifies the tails' thickness. The Value at Risk (VaR) and Conditional Value at Risk (CVaR) are calculated at a 95\% confidence level.
 %
-All returns are calculated net of transaction costs. We implement a conservative transaction cost estimate of 30 basis points (0.30\%) per trade, which accounts for both direct costs (commissions, fees) and indirect costs (bid-ask spreads, market impact). 
+All returns are calculated net of transaction costs. 
+We implement a %conservative 
+transaction cost estimate of 10 basis points %(0.30\%) 
+per trade,.
+%which accounts for both direct costs (commissions, fees) and indirect costs (bid-ask spreads, market impact). 
 %Transaction costs for each day are computed as the product of daily portfolio turnover and the transaction cost parameter ($TC = \text{turnover} \times 0.30\%$). Daily turnover is measured as the ratio of the absolute change in positions to the total portfolio size: $\text{Turnover} = \sum|Position_{t} - Position_{t-1}| / \sum|Position_{t}|$. This implementation follows standard practice in the literature (see, e.g., \citet{frazzini2012}) and provides a realistic assessment of strategy profitability in real market conditions.
 %
 The Greedy algorithm longs (shorts) clusters that maximize (minimize) the cluster-average-$SR$ in the validation sample subject to a positivity (negativity) constraint, while the Stable algorithm longs (shorts) clusters that minimize the rank difference between the training and validation rankings of the cluster-average-$SR$'s subject to a positivity (negativity) constraint, which is now imposed on both sample splits. In both algorithms, the cardinality of each leg is upper-bounded by a hyperparameter $\theta$.

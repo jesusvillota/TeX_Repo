@@ -566,6 +566,7 @@ The generalizability of the strategy is determined \textit{out-of-sample} in the
 %%%%%%%%%%%%%%%%%%%%%% LLM %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \mx
+
 \textbf{LLM}. 
 %In panel B of \cref{tab:portfolio_statistics_gross_comparison} we show the portfolio statistics of the LLM-based strategy.
 Panel B of \cref{tab:portfolio_statistics_gross_comparison} presents the performance metrics for our LLM-based approach.
@@ -581,4 +582,12 @@ Taken together, the strategy's ability to sustain consistent out-of-sample perfo
 
 %----------------------------------------------------
 
-While our primary focus has been on developing a methodology to anticipate market reactions to news (i.e., identifying winners and losers to assess the predictive power of our LLM-based approach), we also analyze the trading intensity and implementation costs of the resulting strategies. The detailed examination in \ref{sec:A8} reveals that, under conservative transaction costs of 30 basis points per trade, the LLM-based approach maintains its superior performance relative to KMeans, though with attenuated profitability. Specifically, while KMeans strategies generate significant losses out-of-sample (-20.0\% to -23.6\% annually), our LLM-based approach achieves near-neutral to slightly positive net returns (-1.5\% to +3.1\%) in the test period, with notably lower risk metrics. These results underscore that while our methodology successfully captures predictable market reactions to news, practitioners implementing such strategies would benefit from incorporating transaction costs into their optimization framework.
+While our primary focus has been on developing a methodology to anticipate market reactions to news (i.e., identifying winners and losers to assess the predictive power of our LLM-based approach), we also analyze the trading intensity and implementation costs of the resulting strategies. The detailed examination in \ref{sec:A8} reveals that, 
+%conservative
+after accounting for transaction costs, the LLM-based approach maintains its superior performance relative to KMeans, though with attenuated profitability. Therefore, practitioners interested in the practical implementation of this strategy would benefit from optimizing the trading strategy by incorporating transaction costs into their framework.
+
+
+%%, though with attenuated profitability. 
+% Specifically, while KMeans strategies generate consistent losses out-of-sample (Sharpe Ratios of -0.6 and -0.5), our LLM-based approach maintains a high profitability %achieves near-neutral to slightly positive net returns 
+% (Sharpe Ratios of 2.8 and 3.1) in the test period, with notably lower risk metrics. 
+% %These results underscore that while our methodology successfully captures predictable market reactions to news, practitioners implementing such strategies would benefit from incorporating transaction costs into their optimization framework.
