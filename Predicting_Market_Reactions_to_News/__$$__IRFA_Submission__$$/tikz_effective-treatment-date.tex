@@ -5,25 +5,29 @@
 \label{fig:trading-timelines}
 
 
+\rule{\linewidth}{0.4pt}
+%\vspace{0.3cm}
 %==============[	  TREATMENT DATE = TODAY  ]==============
 \captionof{subfigure}*{\textbf{Case 1: Treatment date is the same as the publication date};  $\tilde d_0^i = d_0^i$}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{minipage}{0.44\textwidth}
+\begin{minipage}{0.47\textwidth}
 \centering
-\captionof{subfigure}*{\textbf{Case 1a}: News article published in a trading date and during market hours;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i \in [\text{09:30}, \text{17:30}]$}
+\captionof{subfigure}*{\textbf{Case 1b}: News article published in a trading date and before the market opens;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i < \text{09:30}$}
 \input{txt_3_tikz_case_1a_.tex}
 \end{minipage}
 \hfill
 %----------------------------------------------------
-\begin{minipage}{0.44\textwidth}
+\begin{minipage}{0.46\textwidth}
 \centering
-\captionof{subfigure}*{\textbf{Case 1b}: News article published in a trading date and before market opens;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i < \text{09:30}$}
+\captionof{subfigure}*{\textbf{Case 1a}: News article published in a trading date and during market hours;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i \in [\text{09:30}, \text{17:30}]$}
 \input{txt_3_tikz_case_1b_.tex}
 \end{minipage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\vspace{0.5cm}
+\vspace{0.3cm}
+\rule{\linewidth}{0.4pt}
+%\vspace{0.3cm}
 
 %==============[	  TREATMENT DATE = NEXT DATE  ]==============
 \captionof{subfigure}*{\textbf{Case 2: Treatment date is the next closest trading day to publication}; $\tilde d_0^i = \Lambda(d_0^i)$}  
@@ -43,6 +47,8 @@
 \end{minipage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\vspace{0.4cm}
+\rule{\linewidth}{0.4pt}
 
 %\end{center}
 \end{figure}
