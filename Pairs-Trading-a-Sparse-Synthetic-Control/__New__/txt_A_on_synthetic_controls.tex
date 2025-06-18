@@ -1,0 +1,93 @@
+\subsection{Cointegration Meets Synthetic Controls: A Formal Equivalence}
+\label{sec:cointegration_meets_synthetic_controls}
+
+In this appendix section, we develop a formal argument showing how, under some stringent assumptions, our notion of \emph{synthetic control} can be viewed as a special case of \emph{cointegration}. This connection underlies the intuition that, when one normalizes the first variable of a cointegrated system to 1, the remaining cointegration relationships effectively produce the \emph{synthetic} version of the first variable when the cointegration vector satisfies a specific restriction. 
+%Here, we adopt a rigorous perspective aimed at bridging the econometric concept of cointegration with methodologies employed in the synthetic control literature (e.g., Abadie and Gardeazabal).
+
+%\subsection{Cointegration}
+
+Let $\{y_{i,t} \}_{t=1}^{T}$ denote the time series sequence of log-prices for each asset $i\in\{1,\ldots,N\}$.
+%
+Throughout, we assume each $y_{i,t}$ is an $I(1)$ process (integrated of order 1). 
+%
+Formally, an $I(1)$ process is one that becomes \emph{stationary} (and typically ergodic) upon differencing once:
+$\Delta y_{i,t} := y_{i,t} - y_{i,t-1} \sim I(0).$
+%
+The notion of cointegration, due to Engle and Granger, is central in analyzing potentially long-run equilibria among these variables.
+
+%----------------------------------------------------
+\begin{definition}[Engle and Granger (1987)]
+The components of $\mbf{y}_t:=[y_{1t}, ..., y_{Nt}]$ are said to be cointegrated of order $d$, $b$, denoted $\mbf{y}_t \sim CI(d,b)$, if (a) all components of $\mbf{y}_t$ are $I(d)$ and (b) a vector $\b{\beta}\neq 0$ exists so that $\b{\beta}'\mbf{y}_t \sim I(d-b)$, $b > 0$. The vector $\b{\beta}$ is called the cointegrating vector.
+\end{definition}
+%----------------------------------------------------
+%\begin{definition}[Campbell and Perron (1991)]
+%An $(n \times 1)$ vector of variables $\mbf{y}_t$ is said to be cointegrated if at least one nonzero $n$-element vector $\b{\beta}_i$ exists such that $\b{\beta}'_i\mbf{y}_t$ is trend-stationary. $\b{\beta}_i$ is called a cointegrating vector. If $r$ such linearly independent vectors $\b{\beta}_i(i = 1,\ldots,r)$ exist, we say that $\{\mbf{y}_t\}$ is cointegrated with cointegrating rank $r$. We then define the $(n \times r)$ matrix of cointegrating vectors $\b{\beta} = (\b{\beta}_1,\ldots,\b{\beta}_r)$. The $r$ elements of the vector $\b{\beta}'\mbf{y}_t$ are trend-stationary, and $\b{\beta}$ is called the cointegrating matrix.
+%\end{definition}
+%----------------------------------------------------
+
+%\subsection{Synthetic Control}
+%\begin{definition}
+%In a synthetic control problem we have a target element $y_1$ that we seek to mimick through a linear combination of elements in a donor pool $\mbf y_{2:n}=(y_2,...,y_n)$ with weigths $\mbf w=\arg\underset{w\in\W}{\min} \sum_{t=1}^T (y_1-\mbf w'\mbf y_{2:n})^2$ where $\mathcal{W} := \{\mbf{w}\in\mathbb{R}_{+}^{n-1}: \sum_{j=2}^n w_j=1\}$.
+%\end{definition}
+
+\begin{definition}[Synthetic Control]\label{def:synthetic_control}
+Let $\{y_1, y_2, \dots, y_n\}$ be a collection of random variables, where $y_1$ is the ``target'' variable and 
+$\mathbf{y}_{2:n} = (y_2,\dots,y_n)$ constitute the ``donor pool''. A \emph{synthetic control} for 
+$y_1$ is constructed by choosing weights $\mathbf{w}$ in the $(n-1)$-dimensional space
+$\mathcal{W} := \{\mbf{w}\in\mathbb{R}_{+}^{n-1}: \sum_{j=2}^n w_j=1\}$
+that satisfy
+%to minimize the sum of squared deviations over $T$ observations:
+$\mbf w=\arg\underset{w\in\W}{\min} 
+\sum_{t=1}^T 
+(y_{1,t}-\mbf w'\mbf y_{2:n,t})^2$.
+%Because $\mathcal{W}$ is precisely the convex hull of the standard basis vectors in $\mathbb{R}^{n-1}$, the resulting synthetic control $\mathbf{w}'\,\mathbf{y}_{2:n}$ is a convex combination of the donor pool elements $(y_2,\dots,y_n)$.
+\end{definition}
+
+
+%\subsection{Equivalence}
+Given that cointegration relationships prevail up to scale and sign changes, then, under suitable conditions on the cointegration vector, there exists a nontrivial constant $\kappa$ that allows us to reinterpret the cointegration relationship as one of a synthetic control. In particular,
+%----------------------------------------------------
+\begin{proposition} 
+For a cointegrated vector $\mbf y$  with rank $r$, if (at least) one of the cointegrating vectors $\b \beta$ satisfies the restriction
+$\mathcal R=
+\{
+%\begin{array}{ll}
+%\b \beta > 0, ~
+\mbf 1' \b \beta  = 0
+%\\
+%\beta_j \geq 0, j\neq i
+%\end{array}
+\}$,
+%( i.e, that its components 
+%are nonnegative and 
+%sum to 1
+%, and at least one of them is strictly positive). 
+ then we can scale the cointegration vector by $\kappa=1/\beta_i$ such that $\kappa \b \beta ' \mbf y$ is stationary and describes a \qquote{synthetic control} relationship (as per \cref{def:synthetic_control}) between $y_i$ and $\mbf y_{-i}$. 
+\end{proposition}
+%----------------------------------------------------
+
+\begin{proof}
+The proof is straightforward. For a cointegration vector $\b \beta$ where $\mathcal R$ holds, we have that $\mbf 1'\b \beta = \sum_{j=1}^n \beta_j= 0$, which trivially implies $\beta_i = -\sum_{j\neq i}\beta _j$. For the sake of the proof, set that $\beta_i$ to the first component ($\beta_1$). Then
+$\beta_1 = -\sum_{j=2}^n \beta_j$ and $\kappa = (\beta_1)^{-1} = -(\sum_{j=2}^n \beta_j)^{-1}$
+$$
+\kappa \b \beta' \mbf y 
+= 
+\frac{1}{\beta_1} [\beta_1 ~~ \b \beta_{2:n}] \mbf y_t 
+=
+\2{1 ~~ \frac{-\b \beta'_{2:n}}{\sum_{j=2}^n\beta_j}}
+\2{\v{y_1 \\ \mbf y_{2:n}}}
+=
+y_1 - \frac{\beta_2}{\sum_{j=2}^n \beta_j}y_2 - \cdots - 
+\frac{\beta_n}{\sum_{j=2}^n \beta_j} y_n
+\sim I(0)
+$$
+describes a stationary cointegration relationship in $\mbf y$, and since
+\begin{align*}
+y_1 
+&= \frac{\beta_2}{\sum_{j=2}^n \beta_j}y_2 + \cdots + 
+\frac{\beta_n}{\sum_{j=2}^n \beta_j} y_n + \eps 
+\\&= \mbf w' \mbf y_{2:n} + \eps 
+%, \t{~~where~} \eps\sim I(0)
+\end{align*}
+with $\eps\sim I(0)$ and $\mbf w:=\1{\frac{\beta_2}{\sum_{j=2}^n \beta_j}, ..., \frac{\beta_n}{\sum_{j=2}^n \beta_j}}'\in \W$, then this relationship is endowed with a synthetic control structure. A similar reasoning applies to any other $\beta_i$ different from $\beta_1$.
+\end{proof}

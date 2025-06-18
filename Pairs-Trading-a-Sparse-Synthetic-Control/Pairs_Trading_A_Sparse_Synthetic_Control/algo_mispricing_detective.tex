@@ -1,0 +1,57 @@
+\begin{algorithm}[H]
+\caption{Mispricing Detective}
+\label{alg:mispricing_detective}
+\begin{algorithmic}[1]
+%----------------------------------------------------
+\Require
+price time series of the target asset $\{p^{\t{trgt}}_{t}\}_{t \in \T}$;
+price time series of the synthetic pool $\{p^{\t{synth}}_{t}\}_{i\in\D, t \in \T}$
+
+%----------------------------------------------------
+\mx 
+\Ensure cumulative mispricing indices 
+$\{
+CMI^{\t{trgt}|\t{synth}}
+\}_{t \in \T}
+, 
+\{
+CMI^{\t{synth}|\t{trgt}}
+\}_{t \in \T}$
+%----------------------------------------------------
+\mx 
+\Function{SyntheticControlBuilder}{$\{p^{\t{trgt}}_{t}\}_{t \in \T}, \{p^{i}_{t}\}_{i\in\D, t \in \T}$}
+$$
+~~\{ \hat w^{i} \}_{i\in \D}
+\gets  \arg \min_
+% {\mbf w} 
+{\{ \hat w^i \}_{i\in\D}}
+\bigg{\{}
+\sum_{t\in \mathcal T^{tr}}
+\left(
+\log p_{t}^\t{trgt}
+- 
+\sum_{i\in \mathcal D}
+w^i \log p_{t}^i
+\right)^2
++ 
+\lambda \sum_{i\in\mathcal D} |w^i|
+\bigg{\}}
+\quad 
+\t{s.t.}
+\quad 
+\sum_{i\in\mathcal D} w^i=1
+%\\[1em]
+%\mbf w_{\t{sc}} &= \{w_i^* : w_i^* \geq 10^{-1}\}
+.
+$$
+
+$
+\{ p^{\t{synth}}_t \}_{t\in\T} \gets  
+\{\sum_{i\in \mathcal D} \hat w^i p_{t}^i \}_{t\in\T}
+$
+%----------------------------------------------------
+\mx 
+    \State \Return $\{ p^{\t{synth}}_t \}_{t\in\T}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}

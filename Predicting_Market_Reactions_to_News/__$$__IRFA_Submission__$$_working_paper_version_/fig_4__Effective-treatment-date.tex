@@ -1,0 +1,61 @@
+\inserthere{fig:trading-timelines}
+\begin{figure}[H]
+\tikzset{every picture/.style={line width=0.8pt}} %set default line width
+\caption{Imputation of the effective treatment date ($\tilde d_0^i$)}
+\label{fig:trading-timelines}
+
+
+\rule{\linewidth}{0.4pt}
+%\vspace{0.3cm}
+%==============[	  TREATMENT DATE = TODAY  ]==============
+\captionof{subfigure}*{\textbf{Case 1: Treatment date is the same as the publication date};  $\tilde d_0^i = d_0^i$}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}{0.47\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 1a}: News article published in a trading date and before the market opens;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i < \text{09:30}$}
+\input{fig_4_case_1a.tex}
+\end{minipage}
+\hfill
+%----------------------------------------------------
+\begin{minipage}{0.46\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 1b}: News article published in a trading date and during market hours;  $\tilde d_0^i \in \tilde{\mathfrak d} ~\wedge~ t_0^i \in [\text{09:30}, \text{17:30}]$}
+\input{fig_4_case_1b.tex}
+\end{minipage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{0.3cm}
+\rule{\linewidth}{0.4pt}
+%\vspace{0.3cm}
+
+%==============[	  TREATMENT DATE = NEXT DATE  ]==============
+\captionof{subfigure}*{\textbf{Case 2: Treatment date is the next closest trading day to publication}; $\tilde d_0^i = \Lambda(d_0^i)$}  
+
+%----------------------------------------------------  
+\begin{minipage}{0.48\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 2a}: News article published in a trading day but after the market is closed for that day; $d_0^i\in \tilde{\mathfrak d} ~\wedge~ t_0^i>\text{17:30}  $}  
+\input{fig_4_case_2a.tex}
+\end{minipage}
+\hfill
+%---------------------------------------------------
+\begin{minipage}{0.45\textwidth}
+\centering
+\captionof{subfigure}*{\textbf{Case 2b}: News article  published in a non-trading day; $d_0^i\not \in \tilde{\mathfrak d}$}  
+\input{fig_4_case_2b.tex}
+\end{minipage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{0.4cm}
+\rule{\linewidth}{0.4pt}
+
+\vspace{0.4cm}
+%----------------------------------------------------
+\subcaption*{\textit{Note: This figure illustrates how we determine the effective treatment date for news articles based on their publication timing relative to market hours. The Spanish stock market operates from 09:30 to 17:30 on trading days. 
+News published during a trading day during or before trading hours affects stock prices on the same day (Cases 1a and 1b), while news published after market close or on non-trading days affects prices on the next available trading day (Cases 2a and 2b). This temporal mapping ensures we correctly align news publication with the first opportunity for market reaction.
+}}
+%----------------------------------------------------
+%\subcaption*{\textit{Note: This figure illustrates how the publication datetime of each news article is mapped to its effective treatment date based on Spanish stock market trading hours. In Case 1, the article is published during a trading day and before market close, so the treatment takes effect on the same day. In Case 2, the article is either published after market close or on a non-trading day, so the treatment is imputed to the next available trading date. }}
+%----------------------------------------------------
+\end{figure}

@@ -1,0 +1,379 @@
+\section{Methodology}
+
+This paper describes the interaction of three agents: (1) a synthetic control builder, (2) a joint dependence modeller and (3) an intelligent trading agent. 
+The first two agents are \qquote{not} intelligent, in the sense that they don't get better at their jobs through interaction with their environment (a future research direction would be to make these agents intelligent by endowing them with a learning ability). The third agent is intelligent because it is \qquote{trained}. That is, the agent receives information from the current state of the environment and takes an action for the next period according to a policy function. In the next period, after the state is realized, the agent evaluates the optimzality of the action undertaken by means of a utility function. Finally, the agent reoptimizes its policy function according to the utility obtained.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%==============[	  1st Agent | synthetic Control Builder  ]==============
+\textbf{First agent: \textit{Synthetic Control Builder}.}
+
+This agent takes a time series of past prices from the target asset (\text{trgt}) and from a donor pool $\mathcal D$ (with $\mathcal D \cap \text{trgt}=\emptyset$) and derives the synthetic control weights to best replicate the log-price behavior of the target asset in sample. Formally, it solves:
+\begin{align*}
+%\widehat{\mathbf w}
+\{ \hat w^{i} \}_{i\in \D}
+ &= \arg \min_
+% {\mathbf w} 
+{\{ \hat w^i \}_{i\in\D}}
+\bigg{\{}
+\sum_{t\in \mathcal T^{tr}}
+\left(
+\log p_{t}^\text{trgt}
+- 
+\sum_{i\in \mathcal D}
+w^i \log p_{t}^i
+\right)^2
++ 
+\lambda \sum_{i\in\mathcal D} |w^i|
+\bigg{\}}
+\quad 
+\text{s.t.}
+\quad 
+\sum_{i\in\mathcal D} w^i=1
+%\\[1em]
+%\mathbf w_{\text{sc}} &= \{w_i^* : w_i^* \geq 10^{-1}\}
+.
+\end{align*}
+which then defines the price for the synthetic asset ($\text{synth}$). 
+$$
+p^{\text{synth}}_t =  
+\sum_{i\in \mathcal D}
+\hat w^i p_{t}^i
+$$
+%The result is a price series for each, target and synthetic asset: $\{p_t^{\text{trgt}}\}_{t\in\mathcal T}$, and $\{p_t^{\text{synth}}\}_{t\in\mathcal T}$.
+
+%----------------------------------------------------
+\input{algo_synthetic_control_builder.tex}
+%----------------------------------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bx 
+%==============[	  2nd AGENT | Mispricing Detective  ]==============
+\textbf{Second agent: \textit{Mispricing detective}.}
+
+This agent computes the in-sample returns from the target and synthetic assets,
+%$\{r_t^{\text{trgt}}\}_{t\in\mathcal T^{tr}}, \{r_t^{\text{synth}}\}_{t\in\mathcal T^{tr}}$, 
+maps them to the empirical quantiles and estimates their joint distribution by means of a Student-$t$ copula. 
+$$
+F({\mathsf{r}^{\text{trgt}}, \mathsf{r}^{\text{synth}}}) = C(u,v; \rho, \nu)
+$$
+
+%The $t$-subscript in the joint distribution denotes the fact that, to obtain the most accurate representation of the joint distribution, we recalibrate the copula after each return realization. 
+%For this purpose, the agent first needs to obtain the marginal CDFs of returns --$F_{\mathsf{r}^{\text{trgt}}}, F_{R^\text{synth}}$-- and from these, fit the parametric copula computed as the linearly interpolated marginal quantiles and the joint distribution of returns --$F_{\mathsf{r}^{\text{trgt}}, \mathsf{r}^{\text{synth}}}$--is computed by means of a parametric copula.
+
+The agent then uses the in-sample joint distribution of returns to compute mispricing indices ($MI$) for the pair prices. Such indices are obtained from the implied conditional densities. In particular, it is computed as the probability that the target (synthetic) return is lower than its realized value conditional on the synthetic (target) return being equal to its current value. Formally: 
+$$\begin{array}{llll}
+MI_t^{{\text{trgt}}|{\text{synth}}} &= 
+\P\2{
+\mathsf{r}^{\text{trgt}} \leq r_t^{\text{trgt}} \mid \mathsf{r}^{\text{synth}} = r_t^{\text{synth}} 
+}
+\\[0.5em]
+MI_t^{{\text{synth}}|{\text{trgt}}} &= 
+\P\2{
+\mathsf{r}^{\text{synth}} \leq r_t^{\text{synth}} \mid \mathsf{r}^{\text{trgt}} = r_t^{\text{trgt}} 
+}
+\end{array}$$
+
+Subsequently, the agent computes a cumulative mispricing index (CMI) by accumulating these mispricing indices in an autoregressive way.
+%and then trades when such CMIs exceed some parametric thresholds. 
+The accumulation of the mispricing indices (conditional probabilities) is done in excess of 0.5 (i.e. the noninformative probability level, or simply, the probability of a fair coin toss).
+$$\begin{array}{llll}
+CMI_0^{{\text{trgt}}|{\text{synth}}} =0;
+\qquad
+CMI_t^{{\text{trgt}}|{\text{synth}}} = CMI_{t-1}^{{\text{trgt}}|{\text{synth}}} + (MI_t^{{\text{trgt}}|{\text{synth}}}  - 0.5)
+\quad \text{for~} t>1
+\\[0.5em]
+CMI_0^{{\text{synth}}|{\text{trgt}}} =0;
+\qquad
+CMI_t^{{\text{synth}}|{\text{trgt}}} = CMI_{t-1}^{{\text{synth}}|{\text{trgt}}} + (MI_t^{{\text{synth}}|{\text{trgt}}}  - 0.5)
+\quad \text{for~} t>1
+\end{array}$$
+
+The CMIs are reset to 0 every time a position is closed. This means that the CMI will effectively reflect the mispricing probability accumulation at each trade. 
+\paragraph{CMI Resetting}
+
+When a position is exited (either closing to neutral or flipping direction), both CMIs are reset to zero:
+$$
+\text{If } (a_{t-1} \neq 0 \text{ and } a_t = 0) \text{ or } (a_{t-1} \neq 0 \text{ and } a_t \neq a_{t-1}):$$
+$$CMI_t^{\text{trgt}|\text{synth}} = 0, \quad CMI_t^{\text{synth}|\text{trgt}} = 0$$
+
+This reset mechanism ensures that new trades are initiated based on fresh mispricing signals rather than historical accumulation.
+
+%----------------------------------------------------
+\input{algo_student-t_calibration.tex}
+%----------------------------------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bx 
+\textbf{Third agent: \textit{Trading Agent}.} 
+
+The third agent is an intelligent trading agent that learns a policy $\pi$ to map an observed state $\mathbf s_{t-1}$ to an optimal trading action $a_t$. The goal is to maximize a cumulative reward signal over time. This learning problem is formulated as a Partially Observed Markov Decision Process (POMDP), governed by the tuple
+$
+(\mathcal S, \mathcal A, \mathcal P, \mathcal R, \gamma),
+$
+where
+ $ \mathcal S \subseteq \mathbb{R}^{2(2+w)} $ is the state space,
+ $ \mathcal A\in\{-1,0,1\} $ is the action space,
+ $ \mathcal P : \mathcal S \times \mathcal A \times \mathcal S \to [0, 1] $ is the transition kernel,
+ $ \mathcal R : \mathcal S \times \mathcal A \times \mathcal A \to \mathbb{R} $ is the reward function,
+ $ \gamma \in [0, 1] $ is the discount factor.
+We solve this MDP using a Reinforcement Learning (RL) approach, specifically, a Deep Q-Network (DQN).
+
+%==============[	  STATE SPACE  ]==============
+\paragraph{State space}
+At the beginning of each time step $t$, before an action is taken, the agent observes a state vector $\mathbf s_{t-1} \in \mathcal{S}$. This vector is constructed from information available up to the end of period $t-1$:
+%At each time step $t$, the agent observes a state vector $\mathbf s_t \in\mathbb{R}^{2(1+w)}$
+%
+$$
+\mathbf{s}_{t-1} = 
+\left[
+CMI_{t-1}^{\text{trgt}|\text{synth}}, 
+\; 
+CMI_{t-1}^{\text{synth}|\text{trgt}}, 
+\; 
+a_{t-1}, 
+\; 
+\tau_{t-1}, 
+\; 
+\mathsf{r}^{\text{trgt}}_{t-1}, 
+%\{\mathsf{r}^{\text{trgt}}_\ell\}_{\ell = t-w}^{t-1}, 
+\; 
+\mathsf{r}^{\text{synth}}_{t-1}, 
+%\{\mathsf{r}^{\text{synth}}_\ell\}_{\ell = t-w}^{t-1} 
+\right]^{\top}
+$$
+%
+where
+%$CMI_{t-1}^{{\text{trgt}}|{\text{synth}}}$ is the cumulative mispricing index for target given synthetic,
+%$CMI_t^{{\text{synth}}|{\text{trgt}}}$ is the cumulative mispricing index for synthetic given target,
+$a_{t-1}\in\mathcal A$ is the trading position taken by the agent in the previous period,
+$\tau_t \in \mathbb N$ is the normalized duration for which the position $a_{t-1}$ has been held
+$\{\mathsf{r}^{\text{trgt}}_\ell\}_{\ell=t-w}^{t-1}$ and 
+$\{\mathsf{r}^{\text{synth}}_\ell\}_{\ell=t-w}^{t-1}$
+are the sequences of the $w$ most recent returns for the target and synthetic assets, respectively.
+
+%==============[	  ACTION  ]==============
+\paragraph{Action}
+After observing $\mathbf s_{t-1}$, the agent chooses an action $a_{t} \sim \pi(\mathbf s_{t-1}) \in\{-1,0,1\}$, 
+according to some policy function $\pi: \mathcal S \to \mathcal A$, where
+$a_{t}=1$ implies going long on target and short on synthetic, 
+$a_{t}=-1$ implies going short on target and long on synthetic, and
+$a_{t}=0$ implies no position.
+
+%==============[	  REWARD  ]==============
+\paragraph{Reward}
+After taking action $a_t$, returns for that period are realized ($r_t^{\text{trgt}}, r_t^{\text{synth}}$) and the agent computes the period's reward as
+$$
+\mathcal R_{t} = \mathcal R(\mathbf s_t, a_t, a_{t-1}) = a_t (r_t^{\text{trgt}} - r_t^{\text{synth}}) - \kappa |a_{t}-a_{t-1}|
+$$
+where $\kappa |a_{t}-a_{t-1}|$ are the transaction costs and $\kappa$ is set to $3n$ bps, with $n$ being the total number of stocks traded (one stock for the target plus the number of stocks that build the synthetic control).
+
+%==============[	  OBJECTIVE  ]==============
+\paragraph{Objective}
+The agent's objective is to learn the trading policy $\pi : \mathcal{S} \to \mathcal{A}$ that maximizes the expected cumulative discounted reward:
+\begin{equation*}
+    \mathbb{E} \left[ \sum_{t=0}^\infty \gamma^t \mathcal R(\mathbf s_t, a_t, a_{t-1}) \right]
+\end{equation*}
+%where $\mathbf{s}_t \in \mathcal{S}$ is the state at time $t$, and $a_t \in \mathcal{A}$ is the action taken.
+
+%==============[	  VALUE FUNCTION  ]==============
+\paragraph{Value function}
+
+We solve the MDP using the Deep Q-Network (DQN) algorithm, 
+which approximates the optimal action-value function $Q^*(\mathbf{s}, a)$, 
+defined by the Bellman optimality equation:
+\begin{equation*}
+    Q^*(\mathbf{s}, a) = \mathbb{E} \left[ \mathcal{R} + \gamma \max_{a' \in \mathcal{A}} Q^*(\mathbf{s}', a') \right],
+\end{equation*}
+where $\mathbf{s}' = \mathbf{s}_{t+1}$ is the next state. 
+The DQN parameterizes $Q_{\boldsymbol{\theta}}(\mathbf{s}, a)$ with a multi-layer perceptron (MLP),
+ where $\boldsymbol{\theta}$ are the network parameters. 
+%The loss function minimized during training is:
+%\begin{equation*}
+%    L(\theta) = \mathbb{E} \left[ \left( \mathcal R_t + \gamma \max_{a'} Q(\mathbf{s}_{t+1}, a'; \theta^-) - Q(\mathbf{s}_t, a_t; \theta) \right)^2 \right],
+%\end{equation*}
+%where $\theta^-$ are the parameters of a target network, updated every 1000 steps to stabilize learning.
+
+
+%----------------------------------------------------
+%The trading agent utilizes a Deep Q-Network (DQN) algorithm 
+%[Minh et at., 2015] % \cite{Mnih2015HumanlevelCT} 
+%to learn the optimal trading policy. DQN aims to approximate the optimal action-value function, $Q^*(\mathbf s, a)$, which represents the maximum expected cumulative discounted future reward obtainable by taking action $a$ in state $\mathbf s$ and following the optimal policy thereafter.
+%The action-value function is defined as
+%\begin{align*}
+%Q^{\pi}(s,a) = \mathbb{E}_{\pi}\left[\sum_{k=0}^{\infty} \gamma^k \mathcal{R}_{t+k+1} \c \mathbf s_t = \mathbf s, a_t = a\right]
+%,
+%\end{align*}
+%and the optimal action-value function is therefore $Q^*(\mathbf s, a):= \arg \max_{\pi} Q^{\pi}(\mathbf s,a)$.
+%The $Q$-function is parameterized by a neural network, $Q_{\boldsymbol{\theta}}^*(\mathbf s,a)$ (a Multi-Layer Perceptron, MLP, in this case) with network parameters $\boldsymbol{\theta}$. 
+
+%----------------------------------------------------
+%The network parameters $\boldsymbol{\theta}$ are learned by minimizing the temporal difference error
+%%typically using a loss function based on the Bellman equation
+%\[
+%\mathcal L(\theta) = \mathbb{E}_{(\mathbf s_j, a_j, R_{j+1}, \mathbf s_{j+1}) \sim \mathcal{B}} \left[ \left( Y_j - Q(\mathbf s_j, a_j; \theta) \right)^2 \right]
+%\]
+
+
+%To solve this MDP, we employ the Deep Q-Network (DQN) algorithm [Minh et at., 2015], which approximates the action-value function $Q^{\pi}(s,a)$ using a neural network. The action-value function represents the expected return from taking action $a$ in state $\mathbf s$ and following policy $\pi$ thereafter:
+%\begin{align*}
+%Q^{\pi}(s,a) = \mathbb{E}_{\pi}\left[\sum_{k=0}^{\infty} \gamma^k \mathcal{R}_{t+k+1} | s_t = s, a_t = a\right]
+%\end{align*}
+
+%The optimal action-value function $Q^*(\mathbf s, a):= \arg \max_{\pi} Q^{\pi}(\mathbf s,a)$ is approximated by a neural network with parameters $\boldsymbol{\theta}$
+%\begin{align*}
+%Q_{\boldsymbol{\theta}}^*(\mathbf s,a) \approx Q^*(\mathbf s,a).
+%\end{align*}
+
+%==============[	  EXPERIENCE REPLAY  ]==============
+\paragraph{Experience Replay}
+%Transitions $(\mathbf s_j, a_j, R_{j+1}, \mathbf s_{j+1})$ are stored in a replay buffer $\mathcal{B}$ (e.g., size 50,000). Training samples are drawn randomly from this buffer, which helps to break correlations between consecutive samples and improves learning stability.
+
+To break the temporal correlation in the observation sequence and improve learning stability, we use experience replay. Transitions $(s_t, a_t, \mathcal R_t, s_{t+1})$ are stored in a replay buffer $\mathcal{D}$ of capacity $N$. During training, we sample mini-batches $\mathcal{B} \subset \mathcal{D}$ of transitions uniformly at random from the replay buffer:
+\begin{align}
+\mathcal{B} = \{(s_j, a_j, r_j, s_{j+1})\}
+_{j=1}^{|\mathcal{B}|}
+\sim \mathcal{U}(\mathcal{D})
+\end{align}
+
+%==============[	  TARGET NETWORK  ]==============
+\paragraph{Target Network}
+%A separate target network $Q(\cdot, \cdot; \theta^-)$ is used to generate the target values $y_t$. The weights $\theta^-$ of this target network are periodically updated with the weights $\theta$ of the online Q-network (e.g., every 1,000 training steps), providing a stable learning target.
+
+To further stabilize learning, we use a target network with parameters $\boldsymbol{\theta}^-$ that are periodically updated to match the main network parameters $\boldsymbol{\theta}$. The target network is used to compute the target values for the $Q$-learning update:
+\begin{align}
+y_t = \mathcal R_t + \gamma \max_{a'\in \mathcal A} Q_{\boldsymbol{\theta}^-}(\mathbf s_{t+1}, a')
+\end{align}
+
+
+%==============[	  LOSS FUCNTION  ]==============
+\paragraph{Loss Function}
+The $Q$-function is updated by minimizing the mean squared error between the predicted $Q$-values and the target values, known as temporal-difference (TD) loss.
+%The loss function minimized during training is the 
+\begin{align*}
+\mathcal{L}(\theta) 
+&= \mathbb{E}_{(\mathbf s,a,r,\mathbf s')\sim \mathcal B} [\1{y_t - Q_{\boldsymbol{\theta}}(\mathbf s_t, a_t)}^2]
+\\
+&\approx  \frac{1}{|\mathcal{B}|}\sum_{j \in \mathcal{B}}(y_j - Q(\mathbf s_j, a_j;\boldsymbol{\theta}))^2
+\end{align*}
+
+
+The parameters $\boldsymbol{\theta}$ are updated using gradient descent:
+\begin{align}
+\boldsymbol{\theta} \leftarrow \boldsymbol{\theta} - \alpha \nabla_{\boldsymbol{\theta}}\mathcal{L}(\boldsymbol{\theta})
+\end{align}
+where $\alpha$ is the learning rate.
+
+
+%==============[	  EXPLORATION STRATEGY  ]==============
+\paragraph{Exploration Strategy}
+
+To ensure adequate exploration of the state-action space, an $\epsilon$-greedy policy is employed during training. With probability $\epsilon$, a random action is selected; otherwise, the action with the highest Q-value is chosen: $a_t = \arg\max_a Q_{\boldsymbol{\theta}}(\mathbf s_{t-1}, a)$. The value of $\epsilon$ is typically annealed from an initial value (e.g., 1.0) to a final value (e.g., 0.05) over a portion of the training steps (e.g., the first 20\% of total timesteps).
+
+%We employ an $\epsilon$-greedy exploration strategy to balance exploration and exploitation. 
+The probability of selecting a random action decreases linearly from $\epsilon_0$ to $\epsilon_f$ over a fraction of the total training steps:
+\begin{align}
+\epsilon_t = 
+\begin{cases}
+\epsilon_0 - (\epsilon_0 - \epsilon_f) \cdot \frac{t}{T_{\text{explore}}} & \text{if } t < T_{\text{explore}} \\
+\epsilon_f & \text{otherwise}
+\end{cases}
+\end{align}
+where $T_{\text{explore}} = \text{exploration\_fraction} \cdot T_{\text{total}}$, $T_{\text{total}}$ is the total number of training steps, and $\text{exploration\_fraction}$ is a hyperparameter.
+
+The action selection policy during training is:
+$$
+\pi: 
+\left\{
+\begin{array}{lll}
+\textit{random action}
+& \sim \mathcal{U}(\mathcal{A}) 
+& \text{w/ prob } \epsilon_t 
+\\
+\textit{greedy action}
+& \arg\max_{a} Q_{\boldsymbol \theta}(\mathbf s_t, a_t) 
+& \text{w/ prob } 1-\epsilon_t
+\end{array}
+\right.
+$$
+
+
+
+
+%==============[	  IMPLEMENTATION DETAILS  ]==============
+\paragraph{Implementation Details}
+
+The implementation details of the RL algorithm are as follows:
+
+\begin{itemize}
+    \item \textbf{Neural Network Architecture:} The neural network used is a Multi-Layer Perceptron (MLP) with two hidden layers, each with 64 units.
+    \item \textbf{Optimizer:} The Adam optimizer is used with a learning rate of $1 \times 10^{-4}$.
+    \item \textbf{Experience Replay Buffer:} The experience replay buffer has a capacity of 50,000 experiences.
+    \item \textbf{Exploration:} The exploration strategy used is $\epsilon$-greedy, with $\epsilon$ decaying from 1.0 to 0.05 over the first 20\% of the training steps.
+    \item \textbf{Training Steps:} The agent is trained for 100,000 time steps.
+    \item \textbf{Evaluation Frequency:} The agent is evaluated every 10,000 time steps.
+\end{itemize}
+
+The trading agent is trained using the DQN algorithm, which learns an optimal policy by approximating the action-value function $Q(\mathbf{s}, a)$ with a multi-layer perceptron (MLP). Key hyperparameters include a learning rate of $10^{-4}$, a replay buffer size of 50,000, an exploration fraction of 0.2 with initial and final epsilon values of 1.0 and 0.05 respectively, a discount factor $\gamma = 0.99$, and a target network update interval of 1,000 steps. Training occurs over a total of 100,000 timesteps, with periodic checkpointing every 10,000 steps to save model progress. The environment is wrapped with a \texttt{Monitor} to track performance metrics during training, and random seeds are set to ensure reproducibility.
+
+The agent employs an $\epsilon$-greedy exploration strategy, with $\epsilon$ decaying linearly from 1.0 to 0.05 over the first 20\% of training steps (i.e., 20,000 out of 100,000 total timesteps). Key hyperparameters include:
+\begin{itemize}[leftmargin=*]
+    \item Learning rate: $1 \times 10^{-4}$,
+    \item Replay buffer size: 50,000,
+    \item Batch size: 64,
+    \item Discount factor: $\gamma = 0.99$,
+    \item Training frequency: Every 4 steps,
+    \item Learning starts: After 1000 steps.
+\end{itemize}
+The implementation uses the Stable Baselines3 library, with the "MlpPolicy" specifying a default MLP architecture suited to the state dimensionality.
+
+%==============[	  TRAINING  ]==============
+\paragraph{Training}
+The agent is trained on historical in-sample returns data for 100,000 timesteps, interacting with a custom Gym environment that simulates the pairs trading dynamics. The environment resets the state at the beginning of each episode, initializing $CMI = 0$, $a_0 = 0$, $\tau_0 = 0$, and portfolio value $V_0 = 1$. Training leverages experience replay, storing transitions $(\mathbf{s}_t, a_t, r_t, \mathbf{s}_{t+1})$ in the buffer and sampling minibatches to update $\theta$.
+
+Post-training, the agent is evaluated deterministically (i.e., $a_t = \arg\max_a Q(\mathbf{s}_t, a; \theta)$) on out-of-sample test data. 
+
+\subsubsection{Training algorithm}
+\begin{algorithm}[H]
+\caption{Deep Q--Learning for Pairs Trading}
+\label{alg:DQN}
+\begin{algorithmic}[1]
+\State Initialise replay buffer $\mathcal D\leftarrow\emptyset$
+\State Initialise networks $Q(\,\cdot\,;\theta)$ and $Q(\,\cdot\,;\theta^{-})$ with $\theta^{-}\!\leftarrow\!\theta$
+\State Reset environment, obtain $\mathbf s_w$
+\For{$t=w,w+1,\dots,T-1$}
+    \State Draw action $a_t\sim\pi_{\varepsilon_t}(\cdot\mid\mathbf s_t)$
+    \State Execute $a_t$, observe $r_t$, $\mathbf s_{t+1}$, terminal flag $d_t$
+    \State Store transition in buffer $\mathcal D$
+    \If{$|\mathcal D|>\texttt{learning\_starts}$}
+        \State Sample minibatch $\mathcal B\subset\mathcal D$
+        \State Compute targets $\{y_i\}_{i\in\mathcal B}$ and
+               update $\theta$ using $\nabla_\theta\mathcal L$
+    \EndIf
+    \If{$t\mod\tau_{\text{target}}=0$}\State $\theta^{-}\leftarrow\theta$\EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+%==============[	  RESULT  ]==============
+\paragraph{Result}
+Through iterative interaction with the trading environment and updates to its Q-network, the agent learns a policy $\pi(\mathbf s) = \arg\max_{a} Q_{\boldsymbol{\theta}}^*(\mathbf s, a)$ that aims to maximize long-term cumulative rewards.
+
+
+%----------------------------------------------------
+\Vhrulefill
+%----------------------------------------------------
+
+

@@ -1,0 +1,16 @@
+This paper defines a novel approach to pairs trading by borrowing the concept of synthetic control from the treatment literature. In this paper we select a stock (termed \qquote{target}) and construct its replica as a sparse linear combination of other assets (termed \qquote{synthetic}). Then, we perform pairs trading on the target vs. synthetic assets; for this purpose, we (nonlinearly) model their joint dependence via a Student-$t$ copula and then construct mispricing indices from the implied conditional densities. Finally, we feed the dynamics of our miscpricing indices to a reinforcement learning agent. Our findings show that our RL agent succesfully implement statistical arbitrage based on our mispricing signals with a high net profitability out of sample. 
+
+
+%Financial markets frequently exhibit transient price divergences between economically linked assets, yet traditional pairs trading strategies struggle to adapt to structural breaks and complex dependencies, limiting their robustness in dynamic regimes.
+%%
+%This paper addresses these challenges by developing a novel framework that integrates sparse synthetic control with copula-based dependence modeling to enhance adaptability and risk management.
+%%
+%Economically, our approach responds to the need for strategies that systematically identify latent linkages while mitigating overfitting in high-dimensional asset pools.
+%%
+%The sparse synthetic control methodology constructs a parsimonious synthetic asset via an $\ell_1$-regularized least squares optimization, which automatically selects a sparse subset of assets from a broad donor pool while maintaining interpretability and computational efficiency.
+%%
+%By embedding this within a copula-based dependence framework, we capture non-linear and tail dependencies between target and synthetic assets.
+%%
+%Trading signals, grounded in the relative mispricing between these assets, employ a cumulative index that resets after position closures to isolate episodic opportunities, with disciplined entry rules requiring concurrent misalignment signals to filter noise.
+%%
+%Empirical analysis demonstrates the superior performance of our approach across diverse market conditions.

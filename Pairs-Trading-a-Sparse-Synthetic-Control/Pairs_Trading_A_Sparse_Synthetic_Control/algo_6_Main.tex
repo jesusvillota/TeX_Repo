@@ -1,0 +1,36 @@
+%----------------------------------------------------
+\begin{algorithm}[H]
+\caption{Main. \qquote{Pairs-trading a Sparse Synthetic Control}}
+\label{alg:mi_pairs_trading}
+\begin{algorithmic}[1]
+\Require
+    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T$
+    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T$
+    \State Maximum number of assets $K \in \mathbb{N}$ with $K \leq N$
+    \State Entry thresholds $(D_l, D_u)$, stop-loss thresholds $(S_l, S_u)$
+    \State Parametric copula families $\mathcal{C} = \{C_\theta : \theta \in \Theta\}$
+    
+
+\Ensure Trading signals $\{TR_t\}_{t=1}^T$
+
+\Statex
+\Procedure{Main}{$\mathbf{y}, \mathbf{X}, K, D_l, D_u, S_l, S_u, \mathcal C$}
+    \State $\mathbf{w}^* \gets \Call{SyntheticControl}{\mathbf{y}, \mathbf{X}, K}$
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Construct synthetic asset}}}
+    \State $\mathbf{y}^* \gets \mathbf{X}\mathbf{w}^*$
+    \State $\mathbf{r} \gets \text{diff}(\mathbf{y})$, $\mathbf{r}^* \gets \text{diff}(\mathbf{y}^*)$  
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Compute returns}}} 
+    \State $C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*} \gets \Call{CopulaFit}{\mathbf{r}, \mathbf{r}^*}$  
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Fit copula}}} 
+    \State Initialize $TR_0 \gets 0$, $\text{CMI}_0^R \gets 0$, $\text{CMI}_0^{R^*} \gets 0$
+    \For{$t = 1$ to $T$}
+        \State $\text{MI}_t^{R|R^*}, \text{MI}_t^{R^*|R} \gets \Call{MispricingIndices}{r_t, r_t^*, C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}}$
+        \State $TR_t \gets \Call{TradingRule}{\text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}, TR_{t-1}, D_l, D_u, S_l, S_u}$
+        \State \texttt{reset} $\gets (TR_t = 0$ and $TR_{t-1} \neq 0)$  
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Reset CMI if position closed}}} 
+        \State $\text{CMI}_t^R, \text{CMI}_t^{R^*} \gets \Call{UpdateCMI}{MI_t^{R|R^*}, \text{MI}_t^{R^*|R}, \text{CMI}_{t-1}^R, \text{CMI}_{t-1}^{R^*}, \texttt{reset}}$
+    \EndFor
+    \State \Return $\{TR_t\}_{t=1}^T$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}

@@ -1,0 +1,14 @@
+* Article Title *
+Predicting Market Reactions to News: An LLM-Based Approach Using Spanish Business Articles
+
+* Author *
+Jesus Villota
+
+* Affiliation *
+CEMFI (Center for Monetary and Financial Studies)
+
+* Corresponding author *
+Jesus Villota
+
+* Present/permanent address *
+Calle de Casado del Alisal, 5, Retiro, 28014 Madrid, Spain

@@ -1,0 +1,167 @@
+\subsubsection{Mispricing Detective}
+
+%==============[	  Pseudo-observations  ]==============
+\begin{algorithm}[H]
+\label{alg:calibrating_student-t}
+\caption{Pseudo Observations}
+\begin{algorithmic}[1]
+\Require 
+Price time series of the target and synthetic assets 
+$\{(p^{\t{trgt}}_{t}, p^{\t{synth}}_{t})\}_{t \in \T}$
+
+\mx 
+\State Compute returns: 
+
+$\displaystyle
+\t{\textbf{for}}~{t\in\T}: \quad 
+r_t^{\t{trgt}} \gets \frac{p_t^{\t{trgt}}-p_{t-1}^{\t{trgt}}}{p_{t-1}^{\t{trgt}}}
+, \quad 
+r_t^{\t{synth}} \gets \frac{p_t^{\t{synth}}-p_{t-1}^{\t{synth}}}{p_{t-1}^{\t{synth}}}
+$
+
+\mx 
+\State Fit (in-sample) empirical CDFs: 
+
+$\displaystyle
+%\t{\textbf{for}}~{r\in\{r_t^{\t{trgt}}\}_{t\in\T^{tr}}}: 
+\widehat F^{\t{trgt}}(r) \gets 
+\t{LinearlyInterpolate}\1{ \frac{1}{|\T^{tr}|} \sum_{\tau\in \T^{tr}} \I{r^{\t{trgt}}_{\tau} \leq r }}
+$
+
+$\displaystyle
+%\t{\textbf{for}}~{r\in\{r_t^{\t{synth}}\}_{t\in\T^{tr}}}:  
+\widehat F^{\t{synth}}(r) \gets \t{LinearlyInterpolate}\1{ \frac{1}{|\T^{tr}|} \sum_{\tau \in \T^{tr}} \I{r^{\t{synth}}_{\tau} \leq r }}
+$
+
+\mx 
+\State Compute the pseudo-observations of the returns
+
+$\displaystyle
+\t{\textbf{for}}~{t\in\T}: \quad 
+%~~~\t{\textbf{for} each}~t\in \T^{tr}:~~
+u_t \gets \widehat F^{\t{trgt}}(r^{\t{trgt}}_t)
+,\quad 
+v_t \gets \widehat F^{\t{synth}}(r^{\t{synth}}_t)
+$
+
+\mx 
+\Ensure 
+$
+\{u_t\}_{t\in\T},
+~
+\{v_t\}_{t\in\T}
+$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+%==============[	  Calibrating Student-t copula  ]==============
+\begin{algorithm}[H]
+\label{alg:calibrating_student-t}
+\caption{Calibrate the Student-$t$ copula parameters $(\nu,\rho)$ in-sample}
+\begin{algorithmic}[1]
+\Require In-sample pseudo-observations $\{u_t\}_{t\in\T^{tr}}$, $\{v_t\}_{t\in\T^{tr}}$ 
+
+\mx 
+\For{$\nu\in\mathcal V:=[1,15]$}
+	\State Map pseudo-observations into Student-$t$ variates using the inverse CDF of a Student-$t$ distribution with $\nu$ degrees of freedom, $t_{\nu}^{-1}(\cdot)$.
+$$
+\mbf x_{\nu} \gets \3{t_{\nu}^{-1}(u_t)}_{t\in\T^{tr}}
+, \quad 
+\mbf y_{\nu} \gets \3{t_{\nu}^{-1}(v_t)}_{t\in\T^{tr}}
+$$
+	\State Obtain the empirical covariance matrix 
+		$$
+		\widehat{\mbf \Sigma}(\nu)
+		\gets
+		\begin{bmatrix} 
+			\hat \sigma_{x}^2(\nu) & \hat \sigma_{yx}(\nu) \\
+			\hat \sigma_{xy}(\nu) & \hat \sigma_{y}^2(\nu)
+		\end{bmatrix}
+		= 
+		\frac{1}{|\T_{tr}|}
+		\begin{bmatrix} 
+			\mbf x_{\nu}^\top\mbf x_{\nu} & \mbf x_{\nu}^\top\mbf y_{\nu} \\ 
+			\mbf y_{\nu}^\top\mbf x_{\nu} & \mbf y_{\nu}^\top\mbf y_{\nu} 
+		\end{bmatrix}
+		$$
+	\State Evalutate the log-likelihood of the Student-$t$ copula
+$$
+\ell(\nu) \gets
+\sum_{t\in\mathcal T_{tr}}  \log c(u_t, v_t; \nu, \hat \rho(\nu))
+\quad 
+\t{where}
+\quad 
+\hat \rho(\nu) \gets \frac{\hat \sigma_{xy}(\nu)}{\hat \sigma_x(\nu) \hat \sigma_y(\nu)}
+$$
+\EndFor
+\State Set 
+	$\displaystyle \nu_{\star} \gets \arg\max_{\nu \in \mathcal V} \ell(\nu)$, and
+	$\displaystyle \hat \rho_\star \gets  \hat \rho (\nu_\star)$
+
+\mx 
+\State Compute Student-t copula density
+
+$\displaystyle
+c(u,v; \nu_\star, \rho_\star) \gets 
+	\frac{1}{\sqrt{1-\rho_\star^2}} \cdot \frac{\Gamma(\frac{\nu_\star+2}{2})\Gamma(\frac{\nu_\star}{2})}{\Gamma(\frac{\nu_\star+1}{2})^2} \cdot \frac{\left(1 + \frac{x^2 + y^2 - 2\rho_\star xy}{\nu_\star(1-\rho^2)}\right)^{-\frac{\nu_\star+2}{2}}}{\left(1 + \frac{x^2}{\nu_\star}\right)^{-\frac{\nu_\star+1}{2}} \cdot \left(1 + \frac{y^2}{\nu_\star}\right)^{-\frac{\nu_\star+1}{2}}}
+$
+where $x \gets t_\nu^{-1}(u)$, $y \gets t_\nu^{-1}(v)$ and $t_\nu$ is the Student-$t$ CDF.
+
+
+\bx 
+\Ensure Student-$t$ copula: $C(u,v; \rho_\star, \nu_\star)\gets \int_{u}\int_v c(u,v; \nu_\star, \rho_\star) dvdu$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+%==============[	  Cumulative Mispricing Indices  ]==============
+\begin{algorithm}[H]
+\label{alg:calibrating_student-t}
+\caption{Cumulative Mispricing Indices}
+\begin{algorithmic}[1]
+\Require Out-of-sample pseudo observations 
+$\{u_t\}_{t\in\T^{test}}$, $\{v_t\}_{t\in\T^{test}}$, calibrated Student-$t$ copula $C(u,v; \nu^\star, \rho^\star)$ and sequence of actions (trades): $\{a_t\}_{t\in\T^{test}}$
+
+\State Initialize stuff: 
+%$$\displaystyle
+%MI_0^{\t{trgt}|\t{synth}} \gets 0, \quad 
+%MI_0^{\t{synth}|\t{trgt}} \gets 0
+%$$
+$$\displaystyle
+CMI_0^{\t{trgt}|\t{synth}} \gets 0, \quad 
+CMI_0^{\t{synth}|\t{trgt}} \gets 0
+$$
+
+\For{$t \in \T^{test}\setminus\{0\}$}
+    \If{$(a_{t-1}\neq 0) \wedge (a_t = 0)$}
+        \State Reset the CMIs
+        $$
+        CMI_t^{\t{trgt}} \gets 0, \quad 
+        CMI_t^{\t{synth}} \gets 0
+        $$
+    \Else
+    	\State Compute mispricing indices
+$$
+MI_t^{\t{trgt}|\t{synth}} \gets \dfrac{\partial C(u_t, v_t; \nu^\star, \rho^\star)}{\partial v_t}
+\quad 
+MI_t^{\t{synth}|\t{trgt}} \gets \dfrac{\partial C(u_t, v_t; \nu^\star, \rho^\star)}{\partial u_t}
+$$
+        \State Update cumulative mispricing indices
+        \begin{align*}
+        CMI_t^{\t{trgt}} &\gets CMI_{t-1}^{\t{trgt}} + (\text{MI}_t^{\t{trgt}|\t{synth}} - 0.5) \\ 
+        CMI_t^{\t{synth}} &\gets CMI_{t-1}^{\t{synth}} + (\text{MI}_t^{\t{synth}|\t{trgt}} - 0.5)
+        \end{align*}
+    \EndIf
+
+\EndFor
+
+\Ensure Sequence of cumulative mispricing indices: $\{CMI_t^{\t{trgt}}\}_{t\in\T^{test}}$, $\{CMI_t^{\t{synth}}\}_{t\in\T^{test}}$.
+
+\end{algorithmic}
+\end{algorithm}
+
+

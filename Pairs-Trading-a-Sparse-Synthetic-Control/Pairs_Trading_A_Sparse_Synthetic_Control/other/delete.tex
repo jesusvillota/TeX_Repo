@@ -1,0 +1,171 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SPARSE SYNTHETIC CONTROL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Sparse Synthetic Control}
+%
+%The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g., AAPL) using a combination of assets from a donor pool.
+%Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. We construct a synthetic asset ${\mbf y}^*$ through a sparse linear combination
+%\begin{equation*}
+%{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
+%.
+%\end{equation*}
+%%
+%The weights $\mbf w^*=[w_1^*, ..., w_N^*]$ are determined via an L1-regularized quadratic program
+%%
+%\begin{equation*}
+%\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 + \lambda \sum_{i=1}^N |w_i|
+%\quad \text{s.t.} \quad
+%\mbf 1\' \mbf w = 1
+%.
+%\end{equation*}
+%%
+%where $\lambda$ is a regularization parameter that controls the sparsity of the solution. The L1 penalty term $\sum_{i=1}^N |w_i|$ promotes sparsity by encouraging many of the weights to be exactly zero, thereby selecting only a limited number of assets to receive nonzero weights.
+%%
+%%
+%%
+%%
+%The L1-regularized optimization problem is solved using the following procedure:
+%\begin{enumerate}
+%\item Define the decision variable $\mbf w \in \R^N$.
+%\item Formulate the objective function as the sum of the least squares error and the L1 penalty:
+%%
+%\begin{equation*}
+%\text{Objective} = \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 + \lambda \sum_{i=1}^N |w_i|.
+%\end{equation*}
+%%
+%\item Impose the constraint that the weights sum to 1:
+%%
+%\begin{equation*}
+%\mbf 1\' \mbf w = 1.
+%\end{equation*}
+%%
+%\item Solve the optimization problem using a convex optimization solver to obtain the optimal weights $\mbf w^*$.
+%\end{enumerate}
+%%
+%The resulting weights $\mbf w^*$ are then used to construct the synthetic asset ${\mbf y}^*$ as follows:
+%\begin{equation*}
+%{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}.
+%\end{equation*}
+%%
+%This approach ensures that the synthetic asset closely replicates the target asset while maintaining sparsity in the selection of donor assets.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPARSE SYNTHETIC CONTROL VIA L1 REGULARIZATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sparse Synthetic Control via $\ell_1$-Regularization}
+
+The synthetic asset construction employs an $\ell_1$-regularized convex optimization approach to simultaneously achieve portfolio sparsity and tracking accuracy. Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price trajectory of the target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ represent the log-prices of $N$ assets in the donor pool. We construct a synthetic asset ${y}^*_t$ through a sparse linear combination:
+
+\begin{equation*}
+{y}^*_t = \sum_{i=1}^N w^*_i x_{it}
+\end{equation*}
+
+The weight vector $\mbf w^* = [w^*_1, ..., w^*_N]^\top$ is determined by solving the following convex optimization problem:
+
+\begin{equation}
+\mbf w^* = \argmin_{\mbf w \in \R^N} \left\{ \underbrace{\sum_{t=1}^T \left(y_t - \sum_{i=1}^N w_i x_{it}\right)^2}_{\text{Tracking error}} + \lambda \underbrace{\sum_{i=1}^N |w_i|}_{\ell_1\text{-penalty}} \right\} \quad \text{s.t.} \quad \mbf 1^\top \mbf w = 1
+\end{equation}
+
+where $\lambda > 0$ is a regularization parameter controlling the sparsity-accuracy trade-off. The $\ell_1$-penalty induces sparsity by shrinking small weights to zero through the non-differentiability of the penalty term at the origin \cite{tibshirani1996regression}. This convex relaxation avoids the computational complexity of cardinality constraints while maintaining desirable sparsity properties.
+
+The optimization problem possesses several key features:
+
+\begin{itemize}
+\item \textbf{Convexity}: The quadratic loss function combined with the convex $\ell_1$-penalty and affine constraint guarantees a unique solution under mild regularity conditions \cite{boyd2004convex}.
+
+\item \textbf{Sparsity Control}: The regularization parameter $\lambda$ governs the number of non-zero weights, with larger values yielding sparser solutions. Optimal $\lambda$ selection can be performed via cross-validation or information criteria.
+
+\item \textbf{Portfolio Interpretation}: The simplex constraint $\mbf 1^\top \mbf w = 1$ ensures interpretability as a weighted portfolio of donor assets, preventing leverage through short positions.
+\end{itemize}
+
+Post-optimization, the support of non-zero weights is identified through thresholding:
+
+\begin{equation*}
+\mathcal{I} = \{i \in \{1,...,N\} : |w^*_i| > \epsilon\}
+\end{equation*}
+
+where $\epsilon > 0$ is a small tolerance threshold (typically $\epsilon \approx 10^{-6}$). The final synthetic asset is then constructed using only assets in $\mathcal{I}$, effectively automating donor selection through continuous optimization rather than combinatorial search.
+
+This approach provides computational advantages over cardinality-constrained formulations while maintaining sparse exposures. The convex formulation permits efficient solution via proximal algorithms or quadratic programming techniques, making it suitable for high-dimensional donor pools \cite{beck2009fast}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPARSE SYNTHETIC CONTROL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sparse Synthetic Control}
+
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security (e.g., AAPL) using a combination of assets from a donor pool. Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price time series of a target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ denote the log-price time series of a donor pool of assets. We construct a synthetic asset ${\mbf y}^*$ through a sparse linear combination
+\begin{equation*}
+{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it},
+\end{equation*}
+where the weights $\mbf w^*=[w_1^*, ..., w_N^*]$ are determined by solving an L1-regularized optimization problem. This approach promotes sparsity in the weights, ensuring that only a limited number of assets from the donor pool contribute to the synthetic asset.
+
+Specifically, we solve the following convex optimization problem:
+\begin{equation*}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2 + \lambda \norm{\mathbf{w}}_1 
+\quad \text{s.t.} \quad 
+\mbf 1^\top \mbf w = 1,
+\end{equation*}
+where $\lambda > 0$ is a regularization parameter that controls the trade-off between sparsity and reconstruction accuracy. The term $\norm{\mathbf{w}}_1 := \sum_{i=1}^N |w_i|$ represents the L1-norm, which induces sparsity in the solution by penalizing nonzero weights.
+
+This formulation has several advantages:
+- The optimization problem is convex, ensuring computational efficiency and global optimality.
+- The L1 penalty enforces sparsity directly, eliminating the need for heuristic approximations to cardinality constraints.
+- The resulting weights are interpretable and robust, as only a subset of donor assets with significant contributions are selected.
+
+The solution is obtained using numerical solvers for convex optimization, and assets with weights below a small threshold (e.g., $10^{-6}$) are effectively treated as having zero contribution. This approach provides a principled and rigorous framework for constructing sparse synthetic controls in pairs trading applications.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SPARSE SYNTHETIC CONTROL VIA L1 REGULARIZATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Sparse Synthetic Control via \texorpdfstring{$L^1$}{L1} Regularization}
+
+The synthetic asset construction problem is formulated as a convex optimization program with sparsity-inducing regularization. Let $\mbf y = [y_{t}]_{t=1}^T\in \R^{T}$ denote the log-price trajectory of the target asset and $\mbf X = [x_{1t}, ..., x_{Nt}]_{t=1}^T\in\R^{T\times N}$ the log-price matrix of the donor assets. We construct the synthetic asset $\mbf y^*$ through:
+
+\begin{equation*}
+{y}_{t}^* = \sum_{i=1}^N w_i^* x_{it}
+\end{equation*}
+
+The weights $\mbf w^*\in \R^N$ are determined via the regularized quadratic program:
+
+\begin{equation*}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \left[ \underbrace{\sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2}_{\text{Tracking Error}} + \lambda \underbrace{\sum_{i=1}^N |w_i|}_{\text{$L^1$ Regularizer}} \right]
+\quad \text{s.t.} \quad 
+\left|
+\begin{array}{ll}
+	\mbf 1^\top \mbf w &= 1 
+\end{array}
+\right.
+\end{equation*}
+
+Where:
+\begin{itemize}
+\item $\lambda > 0$ is a hyperparameter controlling sparsity-intensity tradeoff
+\item The $L^1$ regularizer induces parsimony through the geometric properties of the 1-norm ball
+\item The simplex constraint $\mbf 1^\top \mbf w = 1$ ensures interpretable portfolio weights
+\end{itemize}
+
+This convex relaxation of the NP-hard cardinality-constrained problem provides:
+\begin{itemize}
+\item \textbf{Global optimality}: Elimination of local minima through convexity
+\item \textbf{Sparsity}: The $L^1$ term shrinks small weights to zero via exact penalization
+\item \textbf{Computational efficiency}: Enables use of convex optimization algorithms
+\end{itemize}
+
+The optimal weights $\mbf w^*$ satisfy the first-order Karush-Kuhn-Tucker conditions:
+\begin{equation*}
+\mbf X^\top(\mbf y - \mbf X\mbf w^*) = \frac{\lambda}{2}\mbf s + \mu\mbf 1
+\end{equation*}
+where $\mbf s \in \{-1,0,1\}^N$ is the subgradient of $\|\mbf w^*\|_1$ and $\mu$ is the Lagrange multiplier for the budget constraint.
+
+The sparse support set $\mathcal{I} := \{i \in [N] : w_i^* \neq 0\}$ emerges endogenously from the optimization, with cardinality controlled by $\lambda$. Larger $\lambda$ values yield sparser solutions through more aggressive weight shrinkage, as shown by the regularization path:
+
+\begin{equation*}
+|\mbf X_i^\top(\mbf y - \mbf X\mbf w^*)| \leq \frac{\lambda}{2} + \mu \quad \forall i \notin \mathcal{I}
+\end{equation*}
+
+This formulation maintains the synthetic asset's economic interpretation as a statistical arbitrage portfolio while achieving parsimony through modern regularization techniques.

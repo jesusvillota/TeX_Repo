@@ -1,0 +1,56 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Report}
+\Subject{Pairs Trading a Sparse Synthetic Control}
+%\Arg{Cemfi}
+
+\begin{document}
+
+
+
+We create a trading agent endowed with an information set based on past prices of the S\&P500 and with a set of tools to compute marginal CDFs and copula-based joint distributions and conditional probabilities. Formally, let 
+$\mathcal S:=\{i:i\t{ quotes in the S\&P500}\}$ denote the set of stocks in the S\&P500, and let 
+$\mathcal P_t := \sigma(\{p_{s,i}\}_{s\leq t, i\in \mathcal S})$ denote the information set of the agent, based on the sigma algebra of the past and contemporaneous prices of the S\&P500 stocks.
+
+The agent aims to perform pairs trading on the S\&P500. In traditional pairs trading, a trading agent would focus on finding a correlated pair (with the hope that such correlation profile would hold still over time) and trade the spread hoping for mean reversion. In this paper, we will endow the pairs trading agent with a new technology. Our agent will pairs trade a selected stock (target asset) vs. its replica (synthetic control). In particular, it will choose a \qquote{target} stock (with price denoted $ p_t^{\t{trgt}}$) and mimick it with a \qquote{synthetic} stock,  built as a sparse linear combination of other stocks from the S\&P500 universe $p_t^{\t{synth}}= \sum_{i\in\mathcal S} w_{t,i} p_{t,i}$.
+
+The technogoloy to compute the synthetic control is based on an $\ell1$-regularized least squares program where we minimize the mean squared error of the target stock price series with respect to a linear combination of other stocks in the S\&P500 on a lookback window of 252 days and imposing a constraint on the weights so that they add up to one. To avoid inflating transactions costs with excessive rebalancing, we don't recalculate the weights after each price realization, but instead, recompute the weights every 100 days. This delivers the price series $\{p_t^{\t{trgt}}\}_t, \{p_t^{\t{synth}}\}_t$.
+
+The agent then computes the returns of the the target and synthetic price series $\{r_t^{\t{trgt}}\}_t, \{r_t^{\t{synth}}\}_t$ and use the latter to compute a joint distribution of returns, $F_t({R^\t{trgt}, R^{\t{synth}}})$, by means of a parametric copula. The $t$-subscript in the joint distribution denotes the fact that, to obtain the most accurate representation of the joint distribution, we recalibrate the copula after each return realization. 
+%For this purpose, the agent first needs to obtain the marginal CDFs of returns --$F_{R^\t{trgt}}, F_{R^\t{synth}}$-- and from these, fit the parametric copula computed as the linearly interpolated marginal quantiles and the joint distribution of returns --$F_{R^\t{trgt}, R^{\t{synth}}}$--is computed by means of a parametric copula.
+
+The agent then uses the joint distribution of returns to compute a mispricing index between the pair. Such mispricing index $MI_t$ is obtained as a conditional probability; in particular, as the probability that the target (synthetic) return is lower than its realized value conditional on the synthetic (target) return being equal to its current value. Formally: 
+$$\begin{array}{llll}
+MI_t^{{\t{trgt}}|{\t{synth}}} &= 
+\P\2{
+R^{\t{trgt}} \leq r_t^{\t{trgt}} \c R^{\t{synth}} = r_t^{\t{synth}} 
+}
+\\[0.5em]
+MI_t^{{\t{synth}}|{\t{trgt}}} &= 
+\P\2{
+R^{\t{synth}} \leq r_t^{\t{synth}} \c R^{\t{trgt}} = r_t^{\t{trgt}} 
+}
+\end{array}$$
+
+Subsequently, the agent computes a cumulative mispricing index (CMI) by accumulating these mispricing indices in an autoregressive way.
+%and then trades when such CMIs exceed some parametric thresholds. 
+The accumulation of the mispricing indices (conditional probabilities) is done in excess of 0.5 (i.e. the noninformative probability level, or simply, the probability of a fair coin toss).
+$$\begin{array}{llll}
+CMI_0^{{\t{trgt}}|{\t{synth}}} =0;
+\qquad
+CMI_t^{{\t{trgt}}|{\t{synth}}} = CMI_{t-1}^{{\t{trgt}}|{\t{synth}}} + (MI_t^{{\t{trgt}}|{\t{synth}}}  - 0.5);
+\\[0.5em]
+CMI_0^{{\t{synth}}|{\t{trgt}}} =0;
+\qquad
+CMI_t^{{\t{synth}}|{\t{trgt}}} = CMI_{t-1}^{{\t{synth}}|{\t{trgt}}} + (MI_t^{{\t{synth}}|{\t{trgt}}}  - 0.5);
+\end{array}$$
+
+In the last step the trading agent launches simultanoues trades on the target-synthetic pair to trade away the accumulated mispricing when it exceeds certain thresholds. In particular, the trading rule maps the CMIs to trading positions (short, neutral, long) by means of a parametric trading rule with opening thresholds $(D_u, D_l)$ and stop loss thresholds $(S_u, S_l)$. Formally, stack the thresholds in $\b \theta = (D_u, D_l, S_u, S_l)\subseteq \Theta$, then the trading rule $f:\mathbb R_{\geq 0} \times \mathbb R_{\geq 0} \times \Theta \longrightarrow \{-1,0,1\}$ performs the contemporanoues mapping
+$
+(CMI_t^{{\t{trgt}}|{\t{synth}}} , CMI_t^{{\t{synth}}|{\t{trgt}}}, \b \theta) 
+\longmapsto 
+TR_t
+$.
+
+Alternatively, we can determine the trading rule optimally through reinforcement learning. In this case, we would interpret $s_t = (CMI_t^{{\t{trgt}}|{\t{synth}}} , CMI_t^{{\t{synth}}|{\t{trgt}}}) \in \mathbb R_{\geq 0} \times \mathbb R_{\geq 0}$ as the state, and $a_t = TR_t \in  \{-1,0,1\}$ as the action. Then the agent dynamically learns the policy function $f_t$ by maximizing a reward function, for which we will use mean variabce preferences: $\pi_t = \prod_{s_=0}^{t} \gamma^s (1+r_s) / \sigma$ (revise this utility function).
+
+\end{document}

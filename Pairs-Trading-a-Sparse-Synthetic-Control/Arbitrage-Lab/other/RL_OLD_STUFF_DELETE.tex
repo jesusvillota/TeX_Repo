@@ -1,0 +1,62 @@
+%% LaTeX - Jesus Villota's Report Template %% 
+\documentclass[12pt,a4paper]{article}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Report}
+\Subject{3rd-year Paper Report}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Vhrulefill
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+We implement a Deep Q-Network (DQN) to learn the optimal trading policy. The Q-function approximator $Q(s, a; \theta)$ is parameterized by a multilayer perceptron with parameters $\theta$. The learning objective is to minimize the loss:
+
+$$\mathcal{L}(\theta) = \mathbb{E}_{(s, a, r, s') \sim \mathcal{D}} \left[ \left( r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta) \right)^2 \right]$$
+
+where $\mathcal{D}$ is the replay buffer, $\gamma$ is the discount factor, and $\theta^-$ are the parameters of the target network.
+
+Key hyperparameters of our implementation include:
+
+%==============[	  ITEMIZE  ]==============
+\begin{itemize}[font=\normalfont\color{black}, % \normalfont \sffamily \textbf, \textit, \textsc, \texttt \large \small
+				  leftmargin=0pt, % Xcm, Xpt, * (self-alignment)
+				  align=right, % left, right
+				  labelwidth=0cm,
+				  labelsep=0.2cm,
+				  itemsep=0pt,
+				  topsep=0pt]
+%----------------------------------------------------
+  \item Learning rate: $10^{-4}$
+  \item Buffer size: 50,000 transitions
+  \item Exploration strategy: $\epsilon$-greedy with linear decay from 1.0 to 0.05
+  \item Batch size: 64
+  \item Discount factor ($\gamma$): 0.99
+  \item Target network update frequency: 1,000 steps
+%----------------------------------------------------
+\end{itemize}
+
+\paragraph{Reward Function}
+
+Our reward for period $t$ is $R_t$
+
+%We implement multiple reward formulations, with the primary one based on the Sharpe ratio:
+%
+%$$r_t = \begin{cases}
+%a_t \cdot (r_t^{\text{trgt}} - r_t^{\text{synth}}) - \mathcal{T}(a_t, a_{t-1}) & \text{for return-based rewards} \\
+%\frac{\mu_{t-99:t}}{\sigma_{t-99:t}} \cdot \sqrt{252} \cdot 0.01 & \text{for Sharpe-based rewards where } t \geq 100 \\
+%\end{cases}$$
+%
+%where $\mathcal{T}(a_t, a_{t-1}) = |a_t - a_{t-1}| \cdot c$ represents transaction costs with rate $c$, and $\mu_{t-99:t}$ and $\sigma_{t-99:t}$ are the mean and standard deviation of the most recent 100 portfolio returns.
+%
+%We also implement a drawdown-penalized reward function:
+%
+%$$r_t = a_t \cdot (r_t^{\text{trgt}} - r_t^{\text{synth}}) - \mathcal{T}(a_t, a_{t-1}) - \lambda \cdot \text{DD}_t$$
+%
+%where $\text{DD}_t = \frac{\max_{i \leq t} V_i - V_t}{\max_{i \leq t} V_i}$ is the current drawdown, $V_t$ is the portfolio value at time $t$, and $\lambda$ is the risk aversion parameter.
+
+
+\end{document}

@@ -1,0 +1,58 @@
+\begin{algorithm}[H]
+\caption{Trading Rule}
+\label{alg:MIstrategy}
+\begin{algorithmic}[1]
+\Require 
+Mispricing indices 
+$\mathrm{CMI}^{R}_{t}, \mathrm{CMI}^{R^*}_{t}$
+and thresholds $D_l, D_u$, $S_l, S_u$
+\Ensure Trading position $TR_t\in \{-1, 0, +1\}$ 
+\Statex
+\Function{TradingRule}{
+$
+\mathrm{CMI}^{R}_{t}, \mathrm{CMI}^{R^*}_{t},\ D_l,\ D_u,\ S_l,\ S_u$
+}
+    \If{$TR_{t-1} = 0$} \Comment{\scalebox{0.9}{\textcolor{Grey_color}{No existing position}}}
+       \If{$\mathrm{CMI}^{R}_{t} \leq D_l\ \mathbf{and}\ \mathrm{CMI}^{R^*}_{t} \geq D_u$}
+          \State $TR_t \gets +1$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Long target, short synthetic}}}
+       \ElsIf{$\mathrm{CMI}^{R}_{t} \geq D_u\ \mathbf{and}\ \mathrm{CMI}^{R^*}_{t} \leq D_l$}
+          \State $TR_t \gets -1$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Short target, long synthetic}}}
+       \Else
+          \State $TR_t \gets 0$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Remain flat}}}
+       \EndIf
+
+    \ElsIf{$TR_{t-1} = +1$} \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Currently long target, short synthetic}}}
+
+       \If{
+         ($\mathrm{CMI}^{R}_{t} \geq 0$ \textbf{or} $\mathrm{CMI}^{R^*}_{t} \leq 0$) 
+         \textbf{or} 
+         ($\mathrm{CMI}^{R}_{t} \leq S_l$ \textbf{or} $\mathrm{CMI}^{R^*}_{t} \geq S_u$)
+       }
+          \State $TR_t \gets 0$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Close position (take profit or stop-loss)}}}
+          \State Reset $\mathrm{CMI}^{R}_{t}\gets 0$ and $\mathrm{CMI}^{R^*}_{t}\gets 0$
+       \Else
+          \State $TR_t \gets +1$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Maintain current position}}}
+       \EndIf
+
+    \ElsIf{$TR_{t-1} = -1$} \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Currently short target, long synthetic}}}
+
+       \If{
+         ($\mathrm{CMI}^{R}_{t} \leq 0$ \textbf{or} $\mathrm{CMI}^{R^*}_{t} \geq 0$)
+         \textbf{or}
+         ($\mathrm{CMI}^{R}_{t} \geq S_u$ \textbf{or} $\mathrm{CMI}^{R^*}_{t} \leq S_l$)
+       }
+          \State $TR_t \gets 0$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Close position (take profit or stop-loss)}}}
+          \State Reset $\mathrm{CMI}^{R}_{t}\gets 0$ and $\mathrm{CMI}^{R^*}_{t}\gets 0$
+       \Else
+          \State $TR_t \gets -1$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Maintain current position}}}
+       \EndIf
+
+    \EndIf
+  \State \Return $TR_t$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+
+

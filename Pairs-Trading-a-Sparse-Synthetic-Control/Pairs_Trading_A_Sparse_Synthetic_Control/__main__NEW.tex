@@ -1,0 +1,114 @@
+%% LaTeX - Jesus Villota's Paper Template %% 
+
+\documentclass[12pt,a4paper]{article}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Paper}
+%----------------------------------------------------
+\title{
+\textsc{
+\Large 
+Pairs-Trading a Sparse Synthetic Control
+}
+}
+
+\author[1]{
+{  
+{
+%----------------------------------------------------
+\large 
+Jesus Villota Miranda}$^{\dagger}$
+\footnote{
+\scriptsize{
+I am deeply grateful to Enrique Sentana, Rafael Repullo, Anatoli Segura, Maria Teresa Gonzalez-Perez and participants at the CEMFI Banking \& Finance Seminar Series for their feedback.
+%% This paper is intended for academic purposes only and does not constitute financial advice. The strategies and methodologies discussed involve risks, including the potential loss of capital. Past performance is not indicative of future results, and the authors assume no liability for decisions made by individuals or entities based on the content of this research. 
+%%Finally, 
+I gratefully acknowledge financial support from the Santander Research Chair at CEMFI.
+%----------------------------------------------------
+}
+}
+}
+
+\bx 
+{\small
+%----------------------------------------------------
+$\big{<}$
+\noindent $^{\dagger}$CEMFI, Calle Casado del Alisal, 5, 28014 Madrid, Spain 
+$\big{>}$
+
+$\big{<}$
+Email: \href{mailto:jesus.villota@cemfi.edu.es}{\texttt{jesus.villota@cemfi.edu.es}}
+$\big{>}$
+
+\small \textbf{This version: \mydate\today}
+}
+%----------------------------------------------------
+}
+\date{}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+%----------------------------------------------------
+\begin{abstract}
+%{\footnotesize 
+\input{txt_0_Abstract.tex} 
+
+\bx 
+\noindent\textbf{JEL Codes:} C14, C32, C58, C61, G12, G14
+
+\mx 
+\noindent\textbf{Keywords:} 
+Pairs Trading, 
+Synthetic Control, 
+Mispricing, 
+Copula, 
+Basket trading, 
+Sparse Mean Reverting Portfolios, 
+Reinforcement Learning
+%\par }
+\end{abstract}
+%----------------------------------------------------
+
+\newpage
+\setcounter{page}{1}
+
+%%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%
+\input{txt_1_Introduction.tex}
+
+%%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+\input{txt_2_Methodology.tex}
+
+%%%%%%%%%%%%%%%%%% BARRA Model %%%%%%%%%%%%%%%%%%%%%%
+%\input{txt_A_barra_model.tex}
+
+%%%%%%%%%%%%%%%%%% METHODOLOGY %%%%%%%%%%%%%%%%%%%%%%
+%\input{txt_3_TradingStrategy.tex}
+
+%%%%%%%%%%%%%%% EMPRICAL APPLICATION %%%%%%%%%%%%%%%%%
+%\input{txt_4_Results.tex}
+
+%%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%
+%\input{txt_5_Conclusion.tex}
+
+%%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%%%%%%
+%\bibliography{bib_references_DOI.bib}
+\bibliographystyle{plain}
+
+%----------------------------------------------------
+\newpage
+% To make sure all the tables/figures appear before the appendix
+\processdelayedfloats 
+% Reset the numbering for appendix figures and tables
+\renewcommand{\thefigure}{A\arabic{figure}} 
+\renewcommand{\thetable}{A\arabic{table}}
+%----------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%% APPENDIX %%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\newpage
+\section{Appendix}
+\input{txt_Appendix.tex}
+
+\end{document}

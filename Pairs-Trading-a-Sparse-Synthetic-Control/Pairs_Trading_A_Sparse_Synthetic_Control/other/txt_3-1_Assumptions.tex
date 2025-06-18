@@ -1,0 +1,110 @@
+\subsection{Assumptions and Implementation Considerations}
+Our analysis operates under the following formal assumptions reflecting both theoretical requirements and practical constraints:
+
+\begin{assumption}[Cointegrated Relationship] \label{assum:coint}
+The paired assets exhibit a stable long-term equilibrium relationship verifiable through cointegration tests (Augmented Dickey-Fuller $p < 0.05$). This statistical dependency enables mean reversion trading opportunities. 
+\end{assumption}
+
+\begin{assumption}[Execution Efficiency] \label{assum:execution} \
+\begin{enumerate}
+    \item Trade execution occurs at National Best Bid/Offer (NBBO) prices with immediate fill certainty
+%    \item Maximum slippage bounded by 5 basis points of notional value
+    \item No market impact from strategy implementation
+\end{enumerate}
+
+\end{assumption}
+
+\begin{assumption}[Regulatory Framework] \label{assum:regulation} \
+\begin{itemize}
+    \item Compliance with Regulation T initial margin requirements (50\% long, 150\% short)
+    \item Maintenance of FINRA Rule 4210 minimum equity (25\% long, 30\% short)
+    \item Adherence to SEC Short Sale Rule (Reg SHO) locate requirements
+\end{itemize}
+\end{assumption}
+
+\begin{assumption}[Market Neutrality] \label{assum:neutrality}
+The strategy maintains $\beta_{market} \in [-0.1, 0.1]$ through dollar-neutral positioning, with residual returns driven purely by spread convergence rather than directional market moves.
+\end{assumption}
+
+\subsection{Implementation Considerations}
+\begin{assumption}[Operational Constraints] \label{assum:operations}
+\begin{enumerate}
+    \item Transaction costs follow $C_t = \sum_{i=1}^n (c_{fixed} + v_i \cdot c_{variable})$ where:
+    \begin{itemize}
+        \item $c_{fixed} = \$0.005$ per share
+        \item $c_{variable} = 10$ basis points of notional
+    \end{itemize}
+    
+    \item Minimum liquidity threshold of \$10M average daily volume for constituent assets
+    
+    \item Maximum position size limited to 20\% of average daily volume
+\end{enumerate}
+\end{assumption}
+
+\begin{assumption}[Risk Management Protocol] \label{assum:risk}
+\begin{itemize}
+    \item Stop-loss triggers at $3\sigma$ spread divergence
+    \item Maximum leverage ratio of 4:1 (long) and 3:1 (short)
+    \item Daily value-at-risk (VaR) capped at 2\% of capital
+    \item Automatic position unwinding at 85\% margin utilization
+\end{itemize}
+\end{assumption}
+
+\begin{assumption}[Model Stability] \label{assum:model}
+\begin{itemize}
+    \item Hedge ratio $\beta$ remains stationary over holding period
+    \item Spread volatility $\sigma_{spread} < 35\%$ annualized
+    \item Half-life of mean reversion $< 20$ trading days
+\end{itemize}
+\end{assumption}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\subsection{Assumptions}
+%To ensure transparency in our empirical analysis, we explicitly outline the critical assumptions underlying the implementation of our proposed pairs trading strategy. These assumptions reflect idealized market conditions necessary for theoretical feasibility and reproducibility of results.
+%%To be transparent about the procedures implemented in this application, we need to set forward a set of assumptions that are crucial for the feasibility of the proposed trading strategy and to obtain our results.
+%
+%
+%\begin{assumption}[Price Execution] \label{assum:execution}
+%All trades are executed at daily adjusted closing prices. This assumption requires sufficient market liquidity and depth to accommodate position entries and exits without significant price impact or execution delays.
+%\end{assumption}
+%
+%\begin{assumption}[Short Selling Access] \label{assum:shorting}
+%Unrestricted short selling is permitted for all assets, including the ability to maintain leveraged short positions. This encompasses having reliable access to securities lending facilities and the capacity to meet associated margin requirements.
+%\end{assumption}
+%
+%\begin{assumption}[Leverage Capacity] \label{assum:leverage}
+%Trading positions can employ substantial leverage on both long and short sides. This assumes access to margin facilities that permit position sizes meaningfully larger than the allocated capital base, subject to prevailing broker and regulatory requirements.
+%%Investors may employ leveraged positions up to a 200:1 leverage factor. This allows increasing exposure to mispricing opportunities but amplifies potential losses.
+%%Trading positions can be leveraged up to 4:1 on both long and short sides. This leverage constraint aligns with standard margin requirements for US equity trading while maintaining reasonable risk management practices.
+%\end{assumption}
+
+%==============[	  OLD STUFF  ]==============
+
+%\begin{assumption}
+%Trades are executed at (adjusted) closing prices (this implicitly embeds assumptions about the liquidity of the traded assets and the order of their trade book).
+%\end{assumption}
+%
+%\begin{assumption}
+%High leverage positionsa are allowed (specify leverage factor).
+%\end{assumption}
+%
+%\begin{assumption}
+%Short selling and leveraged short selling is allowed.
+%\end{assumption}
+
+
+%While these assumptions may appear restrictive, recent developments in financial technology and market structure have made such trading conditions increasingly accessible. Modern electronic trading platforms like Alpaca, Interactive Brokers, and similar services now offer retail investors sophisticated capabilities previously reserved for institutional traders. These platforms provide programmatic trading interfaces, competitive margin rates, and extensive short-selling facilities that may align with our implementation requirements.
+
+
+%==============[	  CAUTION PARAGRAPH  ]==============
+\textbf{Cautionary note.} 
+\textit{
+This paper is intended for academic %and informational 
+purposes only and does not constitute financial advice. The strategies and methodologies discussed involve significant risks, including the potential loss of capital. Past performance is not indicative of future results, and the authors assume no liability for decisions made by individuals or entities based on the content of this research. 
+%Readers are advised to consult qualified financial professionals before engaging in trading activities.
+}

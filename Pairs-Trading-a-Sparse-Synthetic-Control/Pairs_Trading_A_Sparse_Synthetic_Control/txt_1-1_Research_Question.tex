@@ -1,0 +1,44 @@
+%====================[Pairs Trading]=========================
+
+% ------[ Definition: What is it? ]-------
+
+Pairs trading is widely recognized as a cornerstone of statistical arbitrage, offering a market-neutral investment approach that exploits temporary divergences in the prices of historically correlated or economically linked assets.
+%
+% ------[ Explanation: What does it involve? ]-------
+%
+By simultaneously taking a long position in the relatively undervalued asset and a short position in the relatively overvalued one, pairs traders aim to profit from the eventual convergence of these prices. This strategy has garnered enduring prominence among quantitative researchers and practitioners, attributing its appeal to both conceptual simplicity--focusing on the relative mispricing of two assets--and the potential for stable returns independent of broader market movements.
+
+% ------[ Challenges / Limitations ]-------
+
+While pairs trading is conceptually straightforward, its effective implementation faces notable complexities in practice. Traditional approaches often rely on simple distance measures or cointegration-based criteria to identify pairs and establish entry and exit rules. However, these methods can be hampered by strict parametric assumptions, sensitivity to transient noise, and an inability to adapt to evolving market conditions. Structural breaks, non-linear dependencies, and time-varying correlation patterns often violate the assumptions of classical linear models, increasing the risk of identifying spurious relationships and making it difficult to achieve stable performance over diverse market regimes.
+
+%To address these challenges, recent research has explored more flexible frameworks that combine advanced econometric tools with statistical learning. In particular, incorporating synthetic control methodologies and copula-based dependence modeling aims to better capture the dynamic interactions between assets. By abandoning the sole reliance on fixed, potentially fragile pair relationships, such approaches promise to more robustly uncover the underlying economic or statistical linkages that drive temporary mispricings, thus laying the groundwork for improved performance and risk control in pairs trading strategies.
+
+%====================[This paper]=========================
+
+Building on the challenges and limitations outlined above, this paper proposes a novel pairs trading framework that integrates sparse synthetic control methods with copula-based dependence modeling. 
+%
+% ------[ Research Question ]-------
+%
+The primary research question we aim to answer is: \qquote{Can the integration of sparse synthetic control and copula-based dependence modeling improve the performance of pairs trading strategies?}
+%
+% ------[ How we address this question ]-------
+%
+To address this question, we design a methodology that overcomes several shortcomings of traditional pairs trading. 
+
+First, rather than relying on a fixed or pre-specified partner asset, we construct a \emph{synthetic asset} through a sparse linear combination of assets from a larger donor pool. This allows the framework to discover the most influential contributors to the target asset's behavior, effectively automating pair selection. By enforcing sparsity in the weight vector, we reduce computational complexity and enhance interpretability, while mitigating overfitting risks in thinner markets.
+
+Second, we incorporate copula-based dependence modeling to capture potentially complex, non-linear relationships and tail dependencies that can arise in financial returns. Unlike correlation- or cointegration-based strategies, which often impose strict distributional assumptions, copulas decouple the marginal distributions from the joint dependence structure, thereby offering a more nuanced view of how assets co-move. This feature is especially important in periods of market stress, when returns frequently exhibit heightened correlations and non-linearities.
+
+Finally, we adapt and extend the Mispricing Index (MI) strategy of \cite{Xie2016} by introducing a Cumulative Mispricing Index (CMI) that resets upon trade closure, ensuring that stale signals do not accumulate across different trading episodes. As in \cite{Rad2016}, we adopt an \qquote{and-or} logic for opening and closing positions, requiring persistent mispricing signals from both the target and synthetic assets to initiate a trade and closing positions promptly when either market correction or stop-loss conditions are met.
+
+%====================[Structure]=========================
+
+The remainder of this paper is structured as follows. We begin in \cref{sec:lierature_review} with a comprehensive review of the relevant literature, exploring pairs trading, synthetic control methods, and copula-based dependence modeling. \cref{sec:methodology} presents our methodological framework, detailing how we employ sparse synthetic control and copula families to construct a robust trading signal. In \cref{sec:trading_strategy}, we introduce the mispricing index (MI) strategy, adapted to incorporate copula-driven signals, and define the cumulative mispricing index (CMI) as a key component of our trading approach. Section \ref{sec:results} shows the results of our trading strategy, and we conclude in \cref{sec:conclusion} by synthesizing key insights and proposing future research directions.
+
+%The remainder of this paper proceeds as follows. 
+%In \cref{sec:lierature_review} we begin by reviewing the relevant literature on pairs trading, synthetic control methods, and copula-based dependence modeling. 
+%In \cref{sec:methodology} we present our methodological framework, detailing how sparse synthetic control and copula families are employed to construct a robust trading signal. 
+%In \cref{sec:trading_strategy} we introduce the mispricing index (MI) strategy adapted to incorporate copula-driven signals and define the cumulative mispricing index (CMI) and capitalize it in a trading strategy.
+%Subsequently, in \cref{sec:results} show the results of our trading strategy. 
+%We conclude in \cref{sec:conclusion} by summarizing key insights and outlining prospective directions for future research. 

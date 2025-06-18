@@ -1,0 +1,35 @@
+%% LaTeX - Jesus Villota's Report Template %% 
+\documentclass[12pt,a4paper]{article}
+\usepackage{/Users/jesusvillotamiranda/Documents/LaTeX/JVM_Report}
+\Subject{3rd-year Paper Report}
+%\Arg{Cemfi}
+
+\begin{document}
+\subsection*{Title} 
+\qquote{Pairs Trading a Sparse Synthetic Control}, by Jesus Villota Miranda.
+
+\subsection*{Abstract}
+
+Financial markets often exhibit transient price divergences between economically linked assets. Traditional pairs trading strategies struggle to adapt to structural breaks and complex dependencies, limiting their robustness in dynamic regimes. This paper introduces a novel framework that integrates sparse synthetic control with copula-based dependence modeling to enhance adaptability and risk management. Our approach constructs a parsimonious synthetic asset via a constrained linear combination of candidates from a broad donor pool, automating pair selection while prioritizing interpretability and computational efficiency. By embedding this within a copula-based dependence framework, we capture non-linear and tail dependencies between target and synthetic assets. Trading signals, grounded in the relative mispricing between these assets, employ a cumulative index that resets after position closures to isolate episodic opportunities, with disciplined entry rules requiring concurrent misalignment signals to filter noise. Empirical analysis demonstrates the superior performance of our approach across diverse market conditions.
+
+\subsection*{Introduction}
+
+Pairs trading is a cornerstone of statistical arbitrage, exploiting temporary divergences in the prices of historically correlated or economically linked assets. By taking a long position in the relatively undervalued asset and a short position in the relatively overvalued one, pairs traders aim to profit from the eventual convergence of these prices. However, traditional approaches often rely on simple distance measures or cointegration-based criteria, which can be hampered by strict parametric assumptions, sensitivity to transient noise, and an inability to adapt to evolving market conditions.
+
+To address these challenges, this paper proposes a novel pairs trading framework that integrates sparse synthetic control methods with copula-based dependence modeling. The primary research question is whether the integration of these methods can improve the performance of pairs trading strategies. Our methodology overcomes several shortcomings of traditional pairs trading by constructing a synthetic asset through a sparse linear combination of assets from a larger donor pool, automating pair selection and reducing computational complexity. Additionally, we incorporate copula-based dependence modeling to capture complex, non-linear relationships and tail dependencies in financial returns.
+
+\subsection*{Methodology}
+
+The core component of our pairs trading strategy involves constructing a synthetic asset that replicates the price behavior of a target security using a combination of assets from a donor pool. We determine the weights via a cardinality-constrained quadratic program to enforce sparsity, ensuring only a limited number of assets receive a nonzero weight. This synthetic asset construction is complemented by copula-based dependence modeling, which captures non-linear and tail-dependent interactions that linear correlations overlook.
+
+We define conditional mispricing indices to measure how \qquote{mispriced} the target asset appears when conditioned on the synthetic return, and vice versa. These indices are accumulated over time to gauge how much the returns have driven prices apart. We introduce a Cumulative Mispricing Index (CMI) that resets upon trade closure, ensuring that stale signals do not accumulate across different trading episodes. The trading strategy employs a dollar-neutral approach, capitalizing on relative mispricing signals between the target and synthetic assets. Positions are opened only if there is simultaneous mispricing in both assets and closed when either asset exhibits correction or stop-loss conditions are met.
+
+\subsection*{Empirical Analysis}
+
+Our empirical analysis demonstrates the superior performance of our approach across diverse market conditions. We conduct an empirical evaluation using real-world market data, illustrating the performance and practical implications of our approach. The results show that our methodology outperforms traditional pairs trading strategies, offering more robust performance and risk control.
+
+\subsection*{Conclusion}
+
+In conclusion, our novel framework integrating sparse synthetic control with copula-based dependence modeling significantly enhances the adaptability and risk management of pairs trading strategies. By automating pair selection and capturing complex dependencies, our approach provides a more robust and interpretable method for exploiting temporary price divergences in financial markets. Future research could explore further refinements and applications of this framework in different asset classes and market regimes.
+
+\end{document}

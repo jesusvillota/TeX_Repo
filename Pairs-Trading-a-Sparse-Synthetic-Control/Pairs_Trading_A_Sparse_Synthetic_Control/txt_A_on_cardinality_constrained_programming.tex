@@ -1,0 +1,143 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DISCUSSION: CARDINALITY-CONSTRAINED SYNTHETIC CONTROL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Why not use a cardinality-constrained Synthetic Control?}
+\label{sec:discussion_card_constr}
+
+While the $\ell_1$-regularized approach provides a computationally efficient and convex framework for constructing sparse synthetic controls, it is worth considering alternative methods that directly impose sparsity through cardinality constraints. A natural alternative is to solve a cardinality-constrained quadratic program, which explicitly limits the number of non-zero weights in the synthetic asset. Formally, this can be expressed as:
+\begin{equation*}
+\mathbf{w}^* = \argmin_{\mathbf{w} \in \R^{N}} \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 
+\quad \text{s.t.} \quad 
+\left|
+\begin{array}{ll}
+	\mbf 1^\top \mbf w &= 1 \\
+	\norm{\mathbf{w}}_0 &\leq K
+\end{array}
+\right.
+\end{equation*}
+
+where $\|\mathbf{w}\|_0 := \sum_{i=1}^N \mathbb{I}\{w_i \neq 0\}$ counts the number of non-zero elements in $\mathbf{w}$, and $K$ is a user-defined sparsity level. This formulation directly enforces sparsity by restricting the synthetic asset to be constructed from at most $K$ donor assets. However, the cardinality constraint introduces significant computational challenges, as the problem becomes NP-hard due to its combinatorial nature. Below, we discuss two approaches to approximate this problem and their limitations.
+
+\subsubsection{Mixed-Integer Programming Approach}
+One way to tackle the cardinality-constrained problem is to reformulate it as a mixed-integer quadratic program (MIQP). This involves introducing binary variables $z_i \in \{0, 1\}$ for $i = 1, \dots, N$, where $z_i = 1$ indicates that the $i$-th asset is included in the synthetic control, and $z_i = 0$ otherwise. The problem can then be rewritten as:
+\begin{equation*}
+\mathbf{w}^*, \mathbf{z}^* 
+= 
+\left[
+\begin{array}{rlll}
+\underset{\mathbf{w} \in \R^{N},~\mathbf{z} \in \{0, 1\}^N}{\arg\min}
+&
+\sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2
+%\norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2
+\\
+\text{s.t.}  &
+\left|
+\begin{array}{ll}
+\mathbf{1}^\top \mathbf{w} &= 1, \\
+\sum_{i=1}^N z_i &\leq K, \\
+|w_i| &\leq M z_i \quad \text{for } i = 1, \dots, N,
+\end{array}
+\right.
+\end{array}
+\right]
+\end{equation*}
+
+where $M$ is a sufficiently large constant that bounds the magnitude of the weights. The constraint $|w_i| \leq M z_i$ ensures that $w_i$ can only be non-zero if $z_i = 1$. While this formulation is exact, it is computationally intensive, especially for large donor pools, as it requires solving a mixed-integer program. The computational complexity grows exponentially with the number of assets, making it impractical for high-dimensional settings.
+
+\subsubsection{Two-Step Heuristic Procedure}
+An alternative approach is to use a two-step heuristic procedure that approximates the cardinality-constrained solution without requiring mixed-integer programming. This procedure proceeds as follows:
+
+\begin{enumerate}
+\item \textbf{Solve the full least squares problem:} First, solve the unconstrained least squares problem to obtain an initial weight vector:
+\begin{equation*}
+\mathbf{w}^{(1)} 
+= 
+\argmin_{\mathbf{w} \in \mathbb{R}^{N}} 
+\norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2
+\quad \text{s.t.} \quad \mathbf{1}^\top \mbf w = 1.
+\end{equation*}
+
+\item \textbf{Select the $K$ largest weights:} Identify the $K$ largest weights (in absolute value) from $\mathbf{w}^{(1)}$ and define the support set:
+\begin{equation*}
+\mathcal{I} := \{i : |w_i^{(1)}| \text{ is among the $K$ largest}\}.
+\end{equation*}
+
+\item \textbf{Solve the restricted program:} Solve the least squares problem restricted to the support set $\mathcal{I}$:
+\begin{equation*}
+	\mbf w^{(2)} = \arg \min_{\mbf w_{\mathcal I} \in \mathbb{R}^K} \norm{\mbf y - \mbf X_{\mathcal I}\mbf w_{\mathcal I}}_{2}^{2}
+\quad \text{s.t.} \quad 
+\mbf 1^\top \mbf w_{\mathcal I} = 1,
+\end{equation*}
+where $\mbf X_{\mathcal{I}} \in \mathbb{R}^{T \times K}$ is the restricted donor matrix and $\mbf w_{\mathcal{I}} \in \mathbb{R}^{K}$ is the restricted weight vector.
+
+\item \textbf{Construct the full weight vector:} Embed the optimized restricted weights back into the original $N$-dimensional space:
+\begin{equation*}
+	w^*_i = 
+\begin{cases}
+w^{(2)}_j & \text{if } i = \mathcal{I}_j, \\
+0 & \text{otherwise}.
+\end{cases}
+\end{equation*}
+\end{enumerate}
+
+While this heuristic is computationally efficient, it has several drawbacks. First, the initial least squares solution $\mathbf{w}^{(1)}$ may not provide a good indication of which assets are most relevant, especially in the presence of multicollinearity or noise. Second, the procedure can lead to extreme weights (both positive and negative) in the final solution, resulting in a highly leveraged portfolio that may not be practical for trading. This is because the restricted optimization step does not impose any bounds on the magnitude of the weights, allowing for large positive and negative values that cancel each other out to satisfy the unit sum constraint.
+
+\subsubsection{Comparison with $\ell_1$-Regularized Approach}
+In contrast to the cardinality-constrained approaches, the $\ell_1$-regularized method provides a more balanced trade-off between sparsity and computational efficiency. By shrinking some weights exactly to zero, the $\ell_1$ penalty achieves sparsity without requiring explicit cardinality constraints. Moreover, the convex nature of the problem ensures that it can be solved efficiently using proximal algorithms or quadratic programming techniques, even for high-dimensional donor pools. Additionally, the regularization parameter $\lambda$ provides fine-grained control over the sparsity level, allowing the user to tune the solution based on their specific requirements.
+
+In practice, we found that the $\ell_1$-regularized approach yields more stable and interpretable synthetic controls compared to the cardinality-constrained methods. The latter often produce highly leveraged portfolios with extreme weights, which are undesirable in a trading context. Furthermore, the computational advantages of the $\ell_1$-regularized approach make it more suitable for real-world applications, where scalability and robustness are critical.
+
+In conclusion, while cardinality-constrained formulations offer a conceptually appealing way to enforce sparsity, their practical limitations make them less attractive for constructing synthetic controls in pairs trading. The $\ell_1$-regularized approach strikes a better balance between sparsity, interpretability, and computational efficiency, making it the preferred choice for our application.
+
+
+
+%\subsection{Cardinality-Constrained Programming}
+%\subsubsection{Mixed Integer Quadratic Programming}
+%The cardinality-constrained problem can be reformulated as a mixed-integer quadratic program (MIQP) by introducing binary variables $z_i \in \{0,1\}$ that indicate whether asset $i$ is included in the synthetic control:
+%
+%\begin{equation*}
+%\begin{array}{ll}
+%\min_{\mathbf{w}, \mathbf{z}} & \sum_{t=1}^T \left(y_{t} - \sum_{i=1}^N w_i x_{it}\right)^2 \\
+%\text{subject to} & \mathbf{1}^\top \mathbf{w} = 1 \\
+%& -Mz_i \leq w_i \leq Mz_i, \quad i = 1,\ldots,N \\
+%& \sum_{i=1}^N z_i \leq K \\
+%& z_i \in \{0,1\}, \quad i = 1,\ldots,N
+%\end{array}
+%\end{equation*}
+%
+%where $M$ is a sufficiently large constant that bounds the absolute values of the weights. The binary constraints $z_i \in \{0,1\}$ make this problem NP-hard, requiring branch-and-bound techniques for its solution. While modern MIQP solvers (e.g., Gurobi, CPLEX) can handle problems of moderate size, the computational burden becomes prohibitive for large donor pools or when the optimization needs to be performed repeatedly, as in our rolling-window implementation of the pairs trading strategy.
+%
+%\subsubsection{Iterative Weight Thresholding}
+%An alternative approach, which we refer to as Iterative Weight Thresholding (IWT), follows a sequential procedure that approximates the cardinality-constrained solution. The method consists of solving a sequence of unconstrained problems, progressively focusing on the most relevant assets:
+%
+%\begin{enumerate}
+%\item Solve the full least squares problem
+%\begin{equation*}
+%\mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \mathbb{R}^{N}} \norm{\mathbf{y} - \mathbf{X}\mathbf{w}}_2^2
+%\quad \text{s.t.} \quad \mathbf{1}^\top \mbf w=1
+%\end{equation*}
+%
+%\item Select the $K$ largest weights (in absolute value) from $\mbf w^{(1)}$ to form the support set
+%$$\mathcal I:=\{i : |w_i^{(1)}| \text{~among~} K \text{~largest}\}$$
+%
+%\item Solve the restricted program on support $\mathcal I$
+%\begin{equation*}
+%\mbf w^{(2)} = \arg \min_{\mbf w_{\mathcal I}\in \mathbb{R}^K} \norm{\mbf y - \mbf X_{\mathcal I}\mbf w_{\mathcal I}}_{2}^{2}
+%\quad \text{s.t.} \quad 
+%\mbf 1\' \mbf w_{\mathcal I} = 1
+%\end{equation*}
+%where $\mbf X_{\mathcal{I}} \in \mathbb{R}^{T \times K}$ is the restricted donor matrix and $\mbf w_{\mathcal{I}} \in \mathbb{R}^{K}$ is the restricted weight vector.
+%
+%\item Construct the full weight vector $\mbf w^* \in \mathbb{R}^{N}$ by embedding the optimized restricted weights:
+%\begin{equation*}
+%w^*_i = 
+%\begin{cases}
+%w^{(2)}_j & \text{if}~ i = \mathcal I_j \\
+%0 & \text{otherwise}
+%\end{cases}
+%\end{equation*}
+%\end{enumerate}
+%
+%While both approaches-MIQP and IWT-can theoretically achieve the desired cardinality constraint, they present significant practical challenges in our pairs trading context. The MIQP formulation, although exact, becomes computationally intractable for large donor pools and high-frequency rebalancing. The IWT approach, while computationally efficient, tends to produce extreme weights in our empirical implementation. Specifically, when applying IWT to our dataset, we observed weights often exceeding $\pm 500\%$ of the portfolio value, resulting in highly leveraged positions that would be impractical to implement due to transaction costs and risk management constraints.
+%
+%These limitations motivate our choice of the $\ell_1$-regularized approach presented in the main text. The lasso penalty provides a convex relaxation of the cardinality constraint that is both computationally efficient and tends to produce more reasonable weight allocations. Moreover, the continuous nature of the $\ell_1$ penalty allows for smoother transitions in portfolio weights over time, reducing turnover compared to the discrete selection methods discussed above.

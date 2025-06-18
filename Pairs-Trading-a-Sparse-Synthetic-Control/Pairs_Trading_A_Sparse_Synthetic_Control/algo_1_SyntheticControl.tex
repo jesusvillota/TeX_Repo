@@ -1,0 +1,440 @@
+\begin{algorithm}[H]
+\caption{L1-Regularized Synthetic Control with TimeSeriesSplit Cross-Validation}
+\label{alg:synthetic_control}
+\begin{algorithmic}[1]
+%----------------------------------------------------
+\Require 
+    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T \in \mathbb{R}^T$
+    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T \in \mathbb{R}^{T \times N}$
+    \State Candidate regularization parameters $\Lambda = \{\lambda_1, ..., \lambda_M\}$
+    \State Number of time series splits $n\_splits$
+%----------------------------------------------------
+\mx 
+\Ensure 
+    \State Optimal sparse weight vector $\mathbf{w}^* \in \mathbb{R}^N$
+%    \State Selected donor assets $\mathcal{I}^* \subset \{1,...,N\}$
+%----------------------------------------------------
+\mx
+\Function{TimeSeriesSplit}{$T, n\_splits$}
+\Comment{\scalebox{0.9}{\textcolor{Grey_color}{Extract expanding-window train/validation sets}}}
+    \State $n \gets \lfloor T/(n\_splits + 1) \rfloor$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Length of test fold}}}
+    \For{$i = 1$ to $n\_splits$}
+        \State $train\_end \gets n \cdot (i + 1)$
+        \Comment{\scalebox{0.9}{\textcolor{Grey_color}{End index of training set}}}
+        \State $test\_end \gets n \cdot (i + 2)$
+        \Comment{\scalebox{0.9}{\textcolor{Grey_color}{End index of validation set}}}
+        \State \Return $[1:train\_end], [train\_end+1:test\_end]$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Train/test indices}}}
+    \EndFor
+\EndFunction
+%----------------------------------------------------
+\mx
+\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, \Lambda, n\_splits$}
+    \For{each $\lambda \in \Lambda$} 
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{for each $\lambda$, perform time series cross-validation}}}
+        \State $mse_{\lambda} \gets 0$
+        \For{$(train\_idx, val\_idx)$ in \Call{TimeSeriesSplit}{$T, n\_splits$}}
+            \State $\mathbf{X}_{train} \gets \mathbf{X}[train\_idx], \mathbf{y}_{train} \gets \mathbf{y}[train\_idx]$
+            \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Extract training data}}}
+            \State $\mathbf{X}_{val} \gets \mathbf{X}[val\_idx], \mathbf{y}_{val} \gets \mathbf{y}[val\_idx]$
+            \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Extract validation data}}}
+            \State $\mathbf{w}_{\lambda} = \argmin_{\mathbf{w}} \{\|\mathbf{y}_{train} - \mathbf{X}_{train}\mathbf{w}\|_2^2 + \lambda\|\mathbf{w}\|_1\}$ s.t. $\mathbf{1}^\top \mathbf{w} = 1$
+            \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Solve $\ell_1$-program}}}
+            \State $mse_{\lambda} \gets mse_{\lambda} - \|\mathbf{y}_{val} - \mathbf{X}_{val}\mathbf{w}_{\lambda}\|_2^2$
+            \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Accumulate negative MSE for scoring}}}
+        \EndFor
+        \State $score_{\lambda} \gets mse_{\lambda}/n\_splits$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Average neg. MSE}}}
+    \EndFor
+%----------------------------------------------------
+%\mx
+%    \State \textit{\# Select best $\lambda$ based on average negative MSE}
+    \State $\lambda^* \gets \argmax_{\lambda \in \Lambda} \{score_{\lambda}\}$
+%----------------------------------------------------
+%\mx
+%    \State \textit{\# Fit final model with optimal $\lambda$}
+    \State $\mathbf{w}^* = \argmin_{\mathbf{w}} \{\|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2 + \lambda^*\|\mathbf{w}\|_1\}$ s.t. $\mathbf{1}^\top \mathbf{w} = 1$
+%----------------------------------------------------
+%\mx
+%    \State \textit{\# Identify significant weights}
+%    \State $\mathcal{I}^* = \{i \in \{1,...,N\} : |w_i^*| > 10^{-6}\}$
+%----------------------------------------------------
+%\mx
+    \State \Return $\mathbf{w}^*, \mathcal{I}^*$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}[H]
+%\caption{L1-Regularized Synthetic Control with Cross-Validation}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%%----------------------------------------------------
+%\Require 
+%    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T \in \mathbb{R}^T$
+%    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T \in \mathbb{R}^{T \times N}$
+%    \State Candidate regularization parameters $\Lambda = \{\lambda_1, ..., \lambda_M\}$
+%    \State Number of cross-validation folds $K$
+%%----------------------------------------------------
+%\mx 
+%\Ensure 
+%    \State Optimal sparse weight vector $\mathbf{w}^* \in \mathbb{R}^N$
+%%    \State Selected donor assets $\mathcal{I}^* \subset \{1,...,N\}$
+%%----------------------------------------------------
+%\mx
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, \Lambda, K$}
+%    \State \textit{\# Perform time series cross-validation}
+%    \For{$k = 1$ to $K$}
+%        \State Split data into train/validation sets: $(\mathbf{X}_k^{train}, \mathbf{y}_k^{train})$, $(\mathbf{X}_k^{val}, \mathbf{y}_k^{val})$
+%        \For{each $\lambda \in \Lambda$}
+%            \State \textit{\# Solve L1-regularized optimization on training set}
+%            \State $\mathbf{w}_{k,\lambda} = \argmin_{\mathbf{w}} \{\|\mathbf{y}_k^{train} - \mathbf{X}_k^{train}\mathbf{w}\|_2^2 + \lambda\|\mathbf{w}\|_1\}$ 
+%            \State s.t. $\mathbf{1}^\top \mathbf{w} = 1$
+%            \State \textit{\# Compute validation error}
+%            \State $\text{MSE}_{k,\lambda} = \|\mathbf{y}_k^{val} - \mathbf{X}_k^{val}\mathbf{w}_{k,\lambda}\|_2^2$
+%        \EndFor
+%    \EndFor
+%%----------------------------------------------------
+%\mx
+%    \State \textit{\# Select optimal regularization parameter}
+%    \State $\lambda^* = \argmin_{\lambda \in \Lambda} \frac{1}{K}\sum_{k=1}^K \text{MSE}_{k,\lambda}$
+%%----------------------------------------------------
+%\mx
+%    \State \textit{\# Solve final optimization with optimal $\lambda$}
+%    \State $\mathbf{w}^* = \argmin_{\mathbf{w}} \{\|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2 + \lambda^*\|\mathbf{w}\|_1\}$ s.t. $\mathbf{1}^\top \mathbf{w} = 1$
+%%----------------------------------------------------
+%%\mx
+%%    \State \textit{\# Identify significant weights}
+%%    \State $\mathcal{I}^* = \{i \in \{1,...,N\} : |w_i^*| > 10^{-6}\}$
+%%----------------------------------------------------
+%\mx
+%    \State \Return $\mathbf{w}^*$ %, $\mathcal{I}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}[H]
+%\caption{Sparse Synthetic Control via $\ell_1$-Regularization}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%%----------------------------------------------------
+%\Require 
+%    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T \in \mathbb{R}^T$
+%    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T \in \mathbb{R}^{T \times N}$
+%    \State Regularization parameter $\lambda > 0$
+%    \State Threshold $\epsilon = 10^{-5}$ (e.g.)
+%%----------------------------------------------------
+%\mx 
+%\Ensure Sparse weight vector $\mathbf{w}^* \in \mathbb{R}^N$
+%%----------------------------------------------------
+%\mx %\Statex
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, \lambda$}
+%%----------------------------------------------------
+%    \State \textit{\# Solve $\ell_1$-regularized optimization}
+%    \State $\mathbf{w}^* \gets \argmin_{\mathbf{w}\in\mathbb{R}^N} \left\{\|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2 + \lambda\|\mathbf{w}\|_1\right\}$ 
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{L1-regularized least squares}}}
+%    \State \hspace{2.7cm} subject to $\mathbf{1}^\top \mathbf{w} = 1$
+%    
+%    \Statex
+%    \State \textit{\# Apply sparsity threshold} 
+%    \For{each $i \in \{1,\ldots,N\}$}
+%        \If{$|w_i^*| < \epsilon$}
+%            \State $w_i^* \gets 0$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Prune small weights}}}
+%        \EndIf
+%    \EndFor
+%%----------------------------------------------------
+%\mx
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+
+%\begin{algorithm}[H]
+%\caption{L1-Regularized Synthetic Control}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%%----------------------------------------------------
+%\Require 
+%    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T \in \mathbb{R}^T$
+%    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T \in \mathbb{R}^{T \times N}$
+%    \State Regularization parameter $\lambda > 0$
+%    \State Tolerance threshold $\epsilon > 0$
+%%----------------------------------------------------
+%\mx 
+%\Ensure Sparse weight vector $\mathbf{w}^* \in \mathbb{R}^N$
+%%----------------------------------------------------
+%\mx
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, \lambda, \epsilon$}
+%%----------------------------------------------------
+%    \State \textit{\# Solve L1-regularized least squares}
+%    \State $\mathbf{w}^* = \argmin_{\mathbf{w}\in\mathbb{R}^N} \left\{\|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2 + \lambda\|\mathbf{w}\|_1\right\}$ s.t. $\mathbf{1}^\top \mathbf{w}=1$
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Convex optimization with L1 penalty}}} 
+%%----------------------------------------------------
+%\mx
+%    \State \textit{\# Identify support set via thresholding}
+%    \State $\mathcal{I} \gets \{i \in \{1,...,N\} : |w_i^*| > \epsilon\}$
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Select significant weights}}} 
+%%----------------------------------------------------
+%\mx
+%    \State \textit{\# Zero out negligible weights} 
+%    \For{each $i \in \{1,\ldots,N\}$}
+%        \If{$i \notin \mathcal{I}$}
+%            \State $w_i^* \gets 0$
+%        \EndIf
+%    \EndFor
+%%----------------------------------------------------
+%\mx
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{algorithm}[H]
+%\caption{Sparse Synthetic Control}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%%----------------------------------------------------
+%\Require 
+%    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T \in \mathbb{R}^T$
+%    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T \in \mathbb{R}^{T \times N}$
+%    \State Maximum number of assets $K \in \mathbb{N}$ with $K \leq N$
+%%----------------------------------------------------
+%\mx 
+%\Ensure Sparse weight vector $\mathbf{w}^* \in \mathbb{R}^N$
+%%----------------------------------------------------
+%\mx %\Statex
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, K$}
+%%----------------------------------------------------
+%%	\Statex
+%    \State \textit{\# Stage 1: Unrestricted optimization}
+%    \State $\mathbf{w}^{(1)} = \arg\min_{\mathbf{w}\in\mathbb{R}^N} \|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2$ s.t. $\mathbf{1}^\top \mathbf{w}=1$
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Solve full least squares problem}}} 
+%%----------------------------------------------------
+%\mx % \Statex
+%    \State \textit{\# Stage 2: Support selection}
+%    \State $\mathcal{I} \gets \{i : |w_i^{(1)}| \text{ among } K \text{ largest}\}$
+%\Comment{\scalebox{0.9}{\textcolor{Grey_color}{Select $K$ largest weights}}} 
+%	\State $\mathbf{X}_{\mathcal{I}} \gets [\mathbf{x}_{\mathcal{I}_1}, \ldots, \mathbf{x}_{\mathcal{I}_K}]$ \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Restricted donor matrix}}}
+%%----------------------------------------------------
+%\mx % Statex
+%    \State \textit{\# Stage 3: Restricted optimization} 	
+%    \State $\mathbf{w}^{(2)} = \arg\min_{\mathbf{w}_{\mathcal{I}}\in\mathbb{R}^K} \|\mathbf{y} - \mathbf{X}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}}\|_2^2$ s.t. $\mathbf{1}^\top \mathbf{w}_{\mathcal{I}}=1$ 
+%\Comment{\scalebox{0.9}{\textcolor{Grey_color}{Solve restricted program}}}
+%    \For{each \(i \in \{1,\ldots,N\}\)}
+%    \State $w_i^* \gets w_j^{(2)}$ if $i = \mathcal{I}_j$, else $0$
+%\Comment{\scalebox{0.9}{\textcolor{Grey_color}{Construct full weights}}}
+%    \EndFor
+%%----------------------------------------------------
+%\mx
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{algorithm}
+%\caption{Synthetic Control}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%\Require 
+%    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T \in \mathbb{R}^T$
+%    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T \in \mathbb{R}^{T \times N}$
+%    \State Maximum number of assets $K \in \mathbb{N}$ with $K \leq N$
+%\Ensure Sparse weight vector $\mathbf{w}^* \in \mathbb{R}^N$
+%\Statex
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, K$}
+%    \State \textbf{Stage 1:} Full least squares with sum-to-one constraint
+%    \State $\mathbf{w}^{(1)} \gets \argmin_{\mathbf{w}} \|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2$ subject to $\mathbf{1}^\top \mathbf{w}=1$
+%    \Statex
+%    \State \textbf{Stage 2:} Support selection
+%    \State Sort $|w_i^{(1)}|$ in descending order to get ordered indices $\pi(1),\ldots,\pi(N)$
+%    \State $\mathcal{I} \gets \{\pi(1),\ldots,\pi(K)\}$ \Comment{Select K largest weights}
+%    \Statex
+%    \State \textbf{Stage 3:} Restricted optimization
+%    \State $\mathbf{X}_{\mathcal{I}} \gets [\mathbf{x}_{\mathcal{I}_1}, \ldots, \mathbf{x}_{\mathcal{I}_K}]$ \Comment{Restricted donor matrix}
+%    \State $\mathbf{w}_{\mathcal{I}}^{(2)} \gets \argmin_{\mathbf{w}_{\mathcal{I}}} \|\mathbf{y} - \mathbf{X}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}}\|_2^2$ subject to $\mathbf{1}^\top \mathbf{w}_{\mathcal{I}}=1$
+%    \Statex
+%    \State \textbf{Stage 4:} Weight vector construction
+%    \For{$i = 1$ to $N$}
+%        \If{$i \in \mathcal{I}$}
+%            \State $j \gets$ index where $\mathcal{I}_j = i$
+%            \State $w_i^* \gets w_j^{(2)}$
+%        \Else
+%            \State $w_i^* \gets 0$
+%        \EndIf
+%    \EndFor
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}
+%\caption{SyntheticControl: Construct Sparse Synthetic Asset}
+%\label{alg:SyntheticControl}
+%\begin{algorithmic}[1]
+%\Require Target log-prices $\mathbf{y}=[y_1,\ldots,y_T]$, donor pool log-prices $\mathbf{X}=[x_{1t},\ldots,x_{Nt}]$, sparsity level $K$
+%\Ensure Sparse weight vector $\mathbf{w}^*\in\R^N$
+%\Statex
+%\Function{SyntheticControl}{$\mathbf{y},\mathbf{X},K$}
+%    \State Solve the full least squares problem:
+%    \[
+%       \mathbf{w}^{(1)} = \argmin_{\mathbf{w}\in \R^N} \| \mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2 
+%       \quad \text{subject to} \quad \mathbf{1}^\top \mathbf{w} = 1.
+%    \]
+%    \State Identify the index set 
+%    \[
+%      \mathcal{I} \gets \{i:\ |w_i^{(1)}| \text{ among the largest } K\}.
+%    \]
+%    \State Solve the restricted least squares problem:
+%    \[
+%       \mathbf{w}^{(2)} = \argmin_{\mathbf{w}_{\mathcal{I}}\in \R^K} \| \mathbf{y} - \mathbf{X}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}} \|_2^2 
+%       \quad \text{subject to} \quad \mathbf{1}^\top \mathbf{w}_{\mathcal{I}}=1.
+%    \]
+%    \State Construct the full weight vector:
+%    \[
+%       w^*_i = 
+%       \begin{cases}
+%         w^{(2)}_j, & \text{if } i=\mathcal{I}_j,\\[0.5em]
+%         0, & \text{otherwise.}
+%       \end{cases}
+%    \]
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{algorithm}
+%\caption{SyntheticControl: Construct Sparse Synthetic Asset}
+%\label{alg:SyntheticControl}
+%\begin{algorithmic}[1]
+%\Require Target log-prices $\mathbf{y}=[y_1,\ldots,y_T]$, donor pool log-prices $\mathbf{X}=[x_{1t},\ldots,x_{Nt}]$, sparsity level $K$
+%\Ensure Sparse weight vector $\mathbf{w}^*\in\R^N$
+%\Statex
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, K$}
+%    \State Solve full least squares problem $\mathbf{w}^{(1)} = \argmin_{\mathbf{w}} \|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2$ s.t. $\mathbf{1}^\top \mathbf{w}=1$
+%    \State Select $K$ largest weights: $\mathcal{I} \gets \{i : |w_i^{(1)}| \text{ among } K \text{ largest}\}$
+%    \State Solve restricted program: $\mathbf{w}_{\mathcal{I}}^{(2)} = \argmin_{\mathbf{w}_{\mathcal{I}}} \|\mathbf{y} - \mathbf{X}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}}\|_2^2$ s.t. $\mathbf{1}^\top \mathbf{w}_{\mathcal{I}}=1$
+%    \State Construct full weights: $w_i^* \gets w_j^{(2)}$ if $i = \mathcal{I}_j$, else $0$
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%----------------------------------------------------
+%\begin{algorithm}
+%\caption{SyntheticControl}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, K$}
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Inputs: target log-prices $\mathbf{y}$, donor log-prices $\mathbf{X}$, sparsity $K$}}}
+%    \State \(\mathbf{w}^{(1)} \gets \displaystyle \argmin_{\mathbf{w}} \|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2\) 
+%           s.t. \(\mathbf{1}^\top \mathbf{w}=1\)
+%    \State \(\mathcal{I} \gets \{\, i : |w_i^{(1)}| \text{ is among the $K$ largest in } \mathbf{w}^{(1)}\}\)
+%    \State \(\mathbf{w}_{\mathcal{I}}^{(2)} \gets \displaystyle \argmin_{\mathbf{w}_{\mathcal{I}}} \|\mathbf{y} - \mathbf{X}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}}\|_2^2\) 
+%           s.t. \(\mathbf{1}^\top \mathbf{w}_{\mathcal{I}}=1\)
+%    \For{each \(i \in \{1,\ldots,N\}\)}
+%        \State \(w_i^* \gets 
+%        \begin{cases}
+%          w_j^{(2)}, & \text{if } i = \mathcal I_j \\
+%          0,         & \text{otherwise}
+%        \end{cases}\)
+%    \EndFor
+%    \State \Return \(\mathbf{w}^*\)
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{algorithm}
+%\caption{Synthetic Control Construction}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%\Require
+%    \State Target log-prices $\mathbf{y} = [y_t]_{t=1}^T$
+%    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T$
+%    \State Sparsity parameter $K$
+%\Ensure Sparse weight vector $\mathbf{w}^* \in \mathbb{R}^N$
+%
+%\Statex
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, K$}
+%    \State Solve full least squares problem:
+%    \State $\mathbf{w}^{(1)} \gets \argmin_{\mathbf{w} \in \mathbb{R}^N} \|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2$ s.t. $\mathbf{1}^\top \mathbf{w} = 1$
+%    
+%    \State Select $K$ largest weights (in absolute value):
+%    \State $\mathcal{I} \gets \{i : |w_i^{(1)}| \text{ among } K \text{ largest}\}$
+%    
+%    \State Solve restricted program on support $\mathcal{I}$:
+%    \State $\mathbf{w}_{\mathcal{I}}^{(2)} \gets \argmin_{\mathbf{w}_{\mathcal{I}} \in \mathbb{R}^K} \|\mathbf{y} - \mathbf{X}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}}\|_2^2$ s.t. $\mathbf{1}^\top \mathbf{w}_{\mathcal{I}} = 1$
+%    
+%    \State Construct full weight vector $\mathbf{w}^*$:
+%    \For{$i = 1$ to $N$}
+%        \If{$i \in \mathcal{I}$}
+%            \State $w_i^* \gets w_j^{(2)}$ where $j$ is the index of $i$ in $\mathcal{I}$
+%        \Else
+%            \State $w_i^* \gets 0$
+%        \EndIf
+%    \EndFor
+%    
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{algorithm}
+%\caption{Synthetic Control Construction}
+%\label{alg:synthetic_control}
+%\begin{algorithmic}[1]
+%\Require
+%    \State Target asset log-prices $\mathbf{y} = [y_t]_{t=1}^T$
+%    \State Donor pool log-prices $\mathbf{X} = [x_{1t}, ..., x_{Nt}]_{t=1}^T$
+%    \State Cardinality constraint $K$
+%
+%\Ensure Synthetic asset weights $\mathbf{w}^*$
+%
+%\Function{SyntheticControl}{$\mathbf{y}, \mathbf{X}, K$}
+%    \State Solve full least squares problem:
+%    \[
+%    \mathbf{w}^{(1)} = \argmin_{\mathbf{w} \in \mathbb{R}^{N}} \|\mathbf{y} - \mathbf{X}\mathbf{w}\|_2^2 \quad \text{s.t.} \quad \mathbf{1}^\top \mathbf{w}=1
+%    \]
+%    \State Select $K$ largest weights:
+%    \[
+%    \mathcal{I} \gets \{i : |w_i^{(1)}| \text{ among } K \text{ largest}\}
+%    \]
+%    \State Solve restricted program:
+%    \[
+%    \mathbf{w}_{\mathcal{I}}^{(2)} = \argmin_{\mathbf{w}_{\mathcal{I}} \in \mathbb{R}^K} \|\mathbf{y} - \mathbf{X}_{\mathcal{I}}\mathbf{w}_{\mathcal{I}}\|_2^2 \quad \text{s.t.} \quad \mathbf{1}^\top \mathbf{w}_{\mathcal{I}}=1
+%    \]
+%    \State Construct full weights:
+%    \[
+%    w_i^* \gets
+%    \begin{cases}
+%    w_j^{(2)} & \text{if } i = \mathcal{I}_j \\
+%    0 & \text{otherwise}
+%    \end{cases}
+%    \]
+%    \State \Return $\mathbf{w}^*$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}

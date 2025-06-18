@@ -1,0 +1,171 @@
+\subsection{Barra model}
+
+
+Before proceeding with the formulation of our pairs trading approach, it is essential to understand the economic drivers behind the relative performance between our target and synthetic assets. While our sparse synthetic control methodology creates a close replicating portfolio, any pairs trading strategy fundamentally relies on exploiting temporary divergences in pricing relationships. Therefore, a rigorous factor-based analysis provides critical insights into the structural sources of these divergences.
+
+To this end, we employ the Barra factor model framework, which decomposes the returns of both target and synthetic assets into systematic components (fundamental and industry factors) and idiosyncratic components. This decomposition serves multiple purposes in our research:
+
+First, it provides economic interpretation of the spread returns by quantifying how much of the relative performance is driven by different factor exposures versus pure alpha. Second, it validates the quality of our synthetic control construction by measuring how closely the factor exposures match between target and synthetic assets. Third, it identifies specific factor tilts that persist even after optimization, potentially representing structural drivers of spread returns that our trading strategy can exploit.
+
+By understanding these factor relationships before developing trading signals, we can distinguish between transient mispricings (which represent opportunities) and permanent structural differences (which represent risks). This factor-based foundation also helps explain why certain statistical relationships identified by our copula models may exist, providing theoretical underpinning to the empirical patterns we observe in subsequent sections.
+
+%The Barra model thus serves as a critical bridge between our synthetic asset construction and trading signal generation, ensuring that our overall approach is grounded in economic intuition rather than relying solely on statistical patterns.
+
+The Barra model for our target and synthetic asset may be written as
+\begin{align*}
+\2{\v{r_t \\ r_t^*}} =
+\2{\v{\alpha \\ \alpha^*}} 
++ 
+\2{\v{\b \beta\' \\ \b \beta^{*\'}}} 
+\mbf f_t
++
+\2{\v{\b \gamma\' \\ \b \gamma^{*\'}}} 
+\mbf i_t
++
+\2{\v{\eps_t \\ \eps_t^*}} 
+\end{align*}
+
+where we consider $K=8$ fundamental factors $\mbf f_t$ (i.e.: $\b \beta, \b \beta^*, \mbf f_t \in \mathbb R^K$) and $M=17$ industry factors $\mbf i_t$ (i.e.: $\b \gamma, \b \gamma^*, \mbf i_t \in \mathbb R^M$).
+%
+The \qquote{active return} between the target and synthetic asset is given by:
+$$
+\dot{r}_t := r_t - r_t^* = (\alpha - \alpha^*) + (\b \beta - \b \beta^*)\'\mbf f_t +  (\b \gamma - \b \gamma^*)\'\mbf i_t + (\eps_t - \eps_t^*)
+.
+$$
+Now defining the \textit{relative alpha, beta and gamma}, respectively, as
+$
+\dot{\alpha}:= (\alpha - \alpha^*),
+\dot{\b \beta} := (\b \beta - \b \beta^*),
+\dot{\b \gamma} := (\b \gamma - \b \gamma^*)
+$
+and setting $\dot{\eps}_t := (\eps_t - \eps_t^*)$, we may write the model in terms of the portfolio's active return
+\begin{equation}\label{eq:barra}
+\dot{r}_t = \dot{\alpha} + \dot{\b \beta}\' \mbf f_t + \dot{\b \gamma}\' \mbf i_t + \dot{\eps}_t
+.
+\end{equation}
+
+In \cref{fig:factor_corr_matrix} we show the factor correlation matrix $\t{Corr}(\mbf X)\in\mathbb{R}^{J\times J}$ of all the factors
+$$
+\mbf{X} 
+= \2{\v{\mbf f_1\', \\ \vdots \\ \mbf f_T\', } 
+~
+% \c 
+\v{\mbf i_1\' \\ \vdots \\ \mbf i_T\' }}
+\in\mathbb R^{T\times J}
+,
+$$
+where $J=K+M$. 
+In our application we are using 
+[\texttt{MKT\_RF}, \texttt{SMB}, \texttt{HML}, \texttt{RMW}, \texttt{CMA}, \texttt{MOM}, \texttt{ST\_REV}, \texttt{LT\_REV}] as the fundamental factors, and [\texttt{Food}, \texttt{Mines}, \texttt{Oil}, \texttt{Clths}, \texttt{Durbl}, \texttt{Chems}, \texttt{Cnsum}, \texttt{Cnstr}, \texttt{Steel}, \texttt{FabPr}, \texttt{Machn}, \texttt{Cars}, \texttt{Trans}, \texttt{Utils}, \texttt{Rtail}, \texttt{Finan}, \texttt{Other}] as the industry factors. 
+As we can see, correlations are very high among factors, specially among industry factors, which means that regular OLS estimation of \cref{eq:barra} will deliver highly unstable coefficients due to multicollinearity.
+
+
+
+%==============[	  FACTOR CORRELATION MATRIX  ]==============
+\inserthere{fig:factor_corr_matrix}
+\begin{figure}[H]
+  \centering
+  \caption{Factor Correlation Matrix}
+  %----------------------------------------------------
+  \begin{subfigure}{\textwidth}
+  \centering	
+  \caption{Train}
+  \includegraphics[scale=0.5]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Train.pdf}
+  \label{subfig:factor_corr_matrix_train}
+  \end{subfigure}
+
+	\vspace{0.5cm} % Adjust the spacing as needed
+
+  \begin{subfigure}{\textwidth}
+  \centering
+  \caption{Test}
+  \includegraphics[scale=0.5]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/figures/Factor_Correlation_Matrix_(17_Ind)_Test.pdf}
+  \label{subfig:factor_corr_matrix_test}
+  \end{subfigure}
+%----------------------------------------------------
+\label{fig:factor_corr_matrix}
+\end{figure}
+
+
+Hence, to properly estimate the model parameters, we employ an orthogonal regression approach based on Principal Component Analysis (PCA), which will allow us to obtain more stable estimates of the factor exposures. The implementation follows these steps. 
+
+%==============[	  Standardization  ]==============
+%First, we standardize all factors (both fundamental and industry factors) to have zero mean and unit variance, which yields
+%$
+%%\tilde{\mbf{x}}_t = (\mbf{x}_t - \bar{\mbf{x}}) / \sigma_{\mbf{x}}.
+%\tilde{\mbf X}\in \mathbb{R}^{T\times J}.
+%$
+%
+%==============[	  Principal Component Analysis  ]==============
+First, we compute the covariance matrix of the factors $\mbf \Sigma := \text{Cov}({\mbf{X}})\in \mathbb R^{J\times J}$ and obtain its eigendecomposition
+$
+\mbf \Sigma \mbf V = \mbf \Lambda \mbf V,
+$
+where $\mbf \Lambda:=\diag(\lambda_1,...,\lambda_J)\in \mathbb R^{J\times J}$ are the eigenvalues and $\mbf{V} := [\mbf{v}_1,...,\mbf{v}_J]\in \mathbb R^{J\times J}$ are the corresponding eigenvectors, both sorted in descending order of the $\lambda$'s. 
+The principal components are given by:
+$
+%\mbf{p}_t = \mbf{V}\' \tilde{\mbf{x}}_t.
+\mbf P = {\mbf X} \mbf V \in \mathbb{R}^{T\times J}.
+$
+
+%========[	  Principal Component Regression (Unrestricted)  ]=========
+Second, we regress the active returns onto the principal components
+$$
+\dot{r}_t = a^{(u)} + \sum_{i=1}^J b^{(u)}_i p_{t,i} + \nu_t^{(u)}
+%\dot{r}_t = a^{(u)} + \mbf p_t\' \b b^{(u)} + \nu_t^{(u)}
+$$
+where $a^{(u)}$ is the \qquote{unrestricted} intercept, $\b b^{(u)}:=[b^{(u)}_1,...,b^{(u)}_J]$ are the \qquote{unrestricted} coefficients for each principal component, and $\nu_t$ is the error term.
+%
+%==============[	  Selection of Significant Components  ]==============
+We keep only the statistically significant principal components at the $0.05$ significance level:
+$
+\mathcal{S} := \{i : p\text{-value}(b_i^{(u)}) < 0.05\}.
+$
+%
+%========[	  Principal Component Regression (Restricted)  ]=========
+Then, we estimate a restricted model using only the significant principal components
+$$
+\dot{r}_t = a^{(r)} + \sum_{i \in \mathcal{S}} b_i^{(r)} p_{t,i} + \nu_t^{(r)}.
+$$
+    
+%==============[	  Transformation to Factor Space  ]==============
+Finally, we transform the coefficients back to original factor space. Let $\b b^{(r)}\in \mathbb R^J$ denote the vector filled with $b_i^{(r)}$ if $i\in \mathcal S$ and 0 otherwise. Then, we can write
+$
+\dot r_t 
+= a^{(r)} + \mbf p_t\' \b b^{(r)}+\nu_t^{(r)} 
+= a^{(r)} + {\mbf x}_t\' \mbf V \b b^{(r)}+\nu_t^{(r)}
+,
+$
+where $\mbf p_t$ and $\mbf x_t$ are rows of $\mbf P$ and $\mbf X$, respectively (given as column vectors).
+Thus, by setting $\dot \alpha = a^{(r)}$ and
+$
+% 2{\v{\dot{\b \beta} \\ \dot{\b \gamma}}} = \mbf V \b b^{(r)}
+[\v{\dot{\b \beta} ~ \dot{\b \gamma}}]\' = \mbf V \b b^{(r)}
+$
+we recover alpha and the factor betas and gammas while avoiding the instability due to multicollinearity.
+%==============[	  HAC Standard Errors  ]==============
+Both the unrestricted and restricted models are estimated with Heteroskedasticity and Autocorrelation Consistent (HAC) standard errors using a maximum lag of 5 periods to account for potential serial correlation and heteroskedasticity in the residuals. 
+
+%==============[	  Advantages of this procedure  ]==============
+%This approach offers several advantages. First, by using orthogonal principal components, we eliminate multicollinearity concerns. Second, by selecting only significant components, we reduce dimensionality and potential overfitting. Finally, the transformation back to the original factor space allows for direct interpretation of the factor exposures $\dot{\b  \beta}$ and $\dot{\b \gamma}$ in our active return decomposition model.
+
+%For robustness, we repeat this procedure with various industry factor classifications, ranging from 10 to 49 industries, to assess the sensitivity of our results to the industry granularity. If no principal components are found to be statistically significant at the 5\% level, we default to an intercept-only model, effectively attributing the entire active return to the $\dot{\alpha}$ term.
+
+%----------------------------------------------------
+\input{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/arbitragelab-master/__OUTPUT_TeX__/barra_table.tex}
+%----------------------------------------------------
+
+
+\cref{tab:barra_model} presents the results of our Barra model decomposition using the Principal Component Regression (PCR) approach described above. This table provides insights into the factor exposures that drive the relative performance between our target and synthetic assets.
+
+The relative alpha ($\dot \alpha$) represents the portion of active returns not explained by factor exposures. In both the training and testing periods, the relative alpha is not statistically significant ($p$-values of 0.6766 and 0.1419, respectively), suggesting that factor exposures, rather than idiosyncratic effects, are the primary drivers of the spread between target and synthetic assets. The alpha changes from -0.0002 in the training period to 0.0009 in the testing period, though this difference remains statistically insignificant.
+
+Among the fundamental factors, several notable patterns emerge. The profitability factor (\texttt{RMW}) exhibits the largest positive exposure in the training period (0.6985), indicating that the target asset tends to outperform the synthetic asset when profitability is rewarded in the market. In the testing period, the most substantial exposure shifts to the long-term reversal factor (\texttt{LT\_REV}) with a coefficient of 0.4929. Interestingly, the value factor (\texttt{HML}) shows a consistent negative exposure across both periods, becoming more pronounced in the testing period (-0.4563). This suggests that the target asset tends to underperform the synthetic asset during periods when value stocks outperform growth stocks.
+
+The industry factor exposures reveal significant sector-based drivers of the spread returns. The machinery sector (\texttt{Machn}) shows the strongest positive exposure in both periods, dramatically increasing from 0.4337 in training to 1.0429 in testing. This indicates that the target asset has significantly higher exposure to the machinery sector compared to the synthetic asset. Conversely, the retail sector (\texttt{Rtail}) demonstrates the most substantial negative exposure in both periods (-0.5772 and -0.6114), suggesting that the synthetic asset has greater retail exposure than the target. Other sectors with notable negative exposures include \texttt{Steel} (-0.3551 and -0.4512) and \texttt{Durables} (-0.2761 and -0.1056).
+
+%Some industry exposures exhibit interesting shifts between periods. The transportation sector (\texttt{Trans}) reverses from -0.1163 in training to 0.2022 in testing, while the construction sector (\texttt{Cnstr}) shifts from a substantial positive exposure (0.2890) to a slight negative one (-0.0143). These changes reflect the dynamic nature of sector relationships between the target and synthetic assets over time.
+
+The model's explanatory power improves markedly from the training to testing period, with the adjusted $R^2$ increasing from 0.0687 to 0.2525. Both models are statistically significant based on their $F$-statistics (10.5893 and 19.7223) with $p$-values below 0.0001. This improvement in fit suggests that the factor structure identified during the training period becomes more pronounced during the testing period, potentially enhancing the strategy's effectiveness.
+
+These results demonstrate that while our synthetic control methodology successfully creates a close match to the target asset, systematic differences in factor exposures remain that can be exploited by our trading strategy. In particular, the significant exposures to fundamental factors like profitability and long-term reversal, alongside pronounced industry tilts, represent potential sources of alpha that our pairs trading approach can capitalize on.

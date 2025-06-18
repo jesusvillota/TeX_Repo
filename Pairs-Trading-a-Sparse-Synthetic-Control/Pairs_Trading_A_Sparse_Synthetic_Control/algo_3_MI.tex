@@ -1,0 +1,130 @@
+\begin{algorithm}[H]
+\caption{Mispricing Indices Calculation}
+\label{alg:mispricing_indices}
+\begin{algorithmic}[1]
+%----------------------------------------------------
+\mx 
+\Require
+    \State Target return $r_t$, synthetic return $r_t^*$
+    \State Optimal copula $C_{\hat{\theta}}$
+    \State Marginal ECDFs $\hat{F}_R, \hat{F}_{R^*}$
+
+%----------------------------------------------------
+\mx 
+\Ensure Mispricing indices $MI_t^{R|R^*}, MI_t^{R^*|R}$
+
+%----------------------------------------------------
+\mx 
+\Function{MispricingIndices}{$r_t, r_t^*, C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$}
+    \State $u_t \gets \hat{F}_R(r_t)$, $v_t \gets \hat{F}_{R^*}(r_t^*)$
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Compute uniform marginals (pseudo-observations)}}}     
+
+    \mx 
+    \State $MI_t^{R|R^*} \gets \dfrac{\partial C_{\hat{\theta}}(u_t, v_t)}{\partial v_t}$
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Compute target-synthetic MI}}}     
+    
+    \mx
+    \State $MI_t^{R^*|R} \gets \dfrac{\partial C_{\hat{\theta}}(u_t, v_t)}{\partial u_t}$
+    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Compute synthetic-target MI}}} 
+%----------------------------------------------------
+    \mx 
+    \State \Return $MI_t^{R|R^*}, MI_t^{R^*|R}$
+    
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{algorithm}
+%\caption{Mispricing Indices}
+%\label{alg:mispricing_indices}
+%\begin{algorithmic}[1]
+%\Require 
+%    \State Current returns $r_t, r_t^* \in \mathbb{R}$
+%    \State Fitted copula $C_{\hat{\theta}}$
+%    \State Empirical CDFs $\hat{F}_R, \hat{F}_{R^*}$
+%\Ensure 
+%    \State Mispricing indices $MI_t^{R|R^*}, MI_t^{R^*|R} \in [0,1]$
+%\Statex
+%\Function{MispricingIndices}{$r_t, r_t^*, C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$}
+%    \State \textbf{Stage 1:} Transform to copula scale
+%    \State $u_t \gets \hat{F}_R(r_t)$ \Comment{Probability integral transform}
+%    \State $v_t \gets \hat{F}_{R^*}(r_t^*)$
+%    \Statex
+%    \State \textbf{Stage 2:} Compute conditional probabilities
+%    \State $MI_t^{R|R^*} \gets \frac{\partial C_{\hat{\theta}}(u_t, v_t)}{\partial v_t}$ \Comment{Target|Synthetic}
+%    \State $MI_t^{R^*|R} \gets \frac{\partial C_{\hat{\theta}}(u_t, v_t)}{\partial u_t}$ \Comment{Synthetic|Target}
+%    \State \Return $MI_t^{R|R^*}, MI_t^{R^*|R}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{algorithm}
+%\caption{MispricingIndices: Compute Daily Mispricing Signals}
+%\label{alg:MispricingIndices}
+%\begin{algorithmic}[1]
+%\Require Daily returns $r_t$ and $r^*_t$, calibrated copula $C_{\hat{\theta}}$, marginal ECDFs $\hat{F}_R$, $\hat{F}_{R^*}$
+%\Ensure Mispricing indices $MI_t^{R\mid R^*}$ and $MI_t^{R^*\mid R}$
+%\Statex
+%\Function{MispricingIndices}{$r_t, r^*_t, C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$}
+%    \State Compute pseudo-observations:
+%    \[
+%       u_t = \hat{F}_R(r_t),\quad v_t = \hat{F}_{R^*}(r^*_t).
+%    \]
+%    \State Calculate the conditional mispricing index for the target:
+%    \[
+%       MI_t^{R\mid R^*} = \frac{\partial C_{\hat{\theta}}(u_t,v_t)}{\partial v_t}.
+%    \]
+%    \State Calculate the conditional mispricing index for the synthetic:
+%    \[
+%       MI_t^{R^*\mid R} = \frac{\partial C_{\hat{\theta}}(u_t,v_t)}{\partial u_t}.
+%    \]
+%    \State \Return $MI_t^{R\mid R^*},\ MI_t^{R^*\mid R}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{algorithm}
+%\caption{MispricingIndices}
+%\label{alg:mispricing_indices}
+%\begin{algorithmic}[1]
+%\Function{MispricingIndices}{$r_t, r_t^*, C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$}
+%    \Comment{\scalebox{0.9}{\textcolor{Grey_color}{Compute instantaneous mispricing indices at time $t$}}}
+%    \State \(u_t \gets \hat{F}_R(r_t), \quad v_t \gets \hat{F}_{R^*}(r_t^*)\)
+%    \State \(MI_t^{R \mid R^*} \gets \dfrac{\partial}{\partial v} C_{\hat{\theta}}(u_t, v_t)\)
+%    \State \(MI_t^{R^* \mid R} \gets \dfrac{\partial}{\partial u} C_{\hat{\theta}}(u_t, v_t)\)
+%    \State \Return \(MI_t^{R \mid R^*},\, MI_t^{R^* \mid R}\)
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{algorithm}
+%\caption{Mispricing Indices Calculation}
+%\label{alg:mispricing_indices}
+%\begin{algorithmic}[1]
+%\Require
+%    \State Returns $r_t, r_t^*$
+%    \State Fitted copula $C_{\hat{\theta}}$
+%    \State Marginal CDFs $\hat{F}_R, \hat{F}_{R^*}$
+%
+%\Ensure Mispricing indices $MI_t^{R|R^*}, MI_t^{R^*|R}$
+%
+%\Function{MispricingIndices}{$r_t, r_t^*, C_{\hat{\theta}}, \hat{F}_R, \hat{F}_{R^*}$}
+%    \State Compute pseudo-observations:
+%    \[
+%    u_t \gets \hat{F}_R(r_t), \quad v_t \gets \hat{F}_{R^*}(r_t^*)
+%    \]
+%    \State Compute mispricing indices:
+%    \[
+%    MI_t^{R|R^*} \gets \frac{\partial C_{\hat{\theta}}(u_t, v_t)}{\partial v_t}, \quad MI_t^{R^*|R} \gets \frac{\partial C_{\hat{\theta}}(u_t, v_t)}{\partial u_t}
+%    \]
+%    \State \Return $MI_t^{R|R^*}, MI_t^{R^*|R}$
+%\EndFunction
+%\end{algorithmic}
+%\end{algorithm}

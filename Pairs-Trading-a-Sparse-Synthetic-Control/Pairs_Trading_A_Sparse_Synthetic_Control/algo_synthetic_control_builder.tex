@@ -1,0 +1,52 @@
+\begin{algorithm}[H]
+\caption{Synthetic Control Builder}
+\label{alg:synth_control_builder}
+\begin{algorithmic}[1]
+%----------------------------------------------------
+\Require
+price time series of a target asset $\{p^{\t{trgt}}_{t}\}_{t \in \T}$;
+price time series of a donor pool $\{p^{i}_{t}\}_{i\in\D, t \in \T}$
+
+\mx
+\State Compute synthetic control weights in-sample
+
+$\displaystyle
+~~\{ \hat w^{i} \}_{i\in \D}
+\gets  \arg \min_
+% {\mbf w} 
+{\{ \hat w^i \}_{i\in\D}}
+\bigg{\{}
+\sum_{t\in \mathcal T^{tr}}
+\left(
+\log p_{t}^\t{trgt}
+- 
+\sum_{i\in \mathcal D}
+w^i \log p_{t}^i
+\right)^2
++ 
+\lambda \sum_{i\in\mathcal D} |w^i|
+\bigg{\}}
+\quad 
+\t{s.t.}
+\quad 
+\sum_{i\in\mathcal D} w^i=1
+%\\[1em]
+%\mbf w_{\t{sc}} &= \{w_i^* : w_i^* \geq 10^{-1}\}
+.
+$
+
+
+\bx
+\State Compute price time series of the synthetic asset
+
+$\displaystyle
+\t{\textbf{for}}~{t\in\T}: \quad 
+p^{\t{synth}}_t \gets  
+\sum_{i\in \mathcal D} \hat w^i p_{t}^i 
+$
+    
+\mx 
+\Ensure price time series of the synthetic asset 
+$\{ p^{\t{synth}}_t \}_{t\in\T}$
+\end{algorithmic}
+\end{algorithm}
