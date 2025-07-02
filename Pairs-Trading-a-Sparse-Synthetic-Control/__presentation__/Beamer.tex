@@ -935,7 +935,17 @@ To generate a continuous time series of returns, we initiate this entire process
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Monthly excess returns (60 month rolling average)}
+\begin{frame}{Monthly Excess Return Distribution [no watiting]}
+\input{Table1_w0d.tex}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Monthly Excess Return Distribution [1 day watiting]}
+\input{Table1_w1d.tex}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Monthly excess returns [1 day waiting rule] (60 month rolling average)}
 \begin{figure}[H]
 %  \caption{\textbf{60-month rolling monthly excess returns}}
   \centering
@@ -945,17 +955,19 @@ To generate a continuous time series of returns, we initiate this entire process
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Monthly Excess Return Distribution (no watiting)}
-\input{Table1_w0d.tex}
+\begin{frame}{Robustness to $\lambda$}
+\textcolor{blue}{Blue: Replicating Portfolios for different $\lambda$ values} \\
+\textcolor{red}{Red: Traditional Pairs Trading}
+\begin{figure}[H]
+%  \caption{Equity curve since 1990}
+  \centering
+  \includegraphics[scale=0.35]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/pairs_trading_sparse_synthetic_replica/__OUTPUT__/figures/robustness.pdf}
+  \label{fig:}
+\end{figure}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Monthly Excess Return Distribution (1 day watiting)}
-\input{Table1_w1d.tex}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Systematic Risk decomposition: Fama French 5 + Reversals}
+\begin{frame}{Systematic Risk decomposition: FF5 + Reversals [1 day waiting]}
 %\input{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/pairs_trading_sparse_synthetic_replica/__OUTPUT__/tables/Table4.tex}
 \input{Table4_.tex}
 \end{frame}
@@ -970,6 +982,31 @@ To generate a continuous time series of returns, we initiate this entire process
   \label{fig:}
 \end{figure}
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[label=equity90]{Equity curve since 1990}
+%\hyperlink{equity00}{\beamergotobutton{Back}}
+\begin{figure}[H]
+%  \caption{Equity curve since 1990}
+  \centering
+  \includegraphics[scale=0.35]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/pairs_trading_sparse_synthetic_replica/__OUTPUT__/figures/equity_curve_1990.pdf}
+  \label{fig:}
+\end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[label=equity90]{Equity curve since 1963}
+%\hyperlink{equity00}{\beamergotobutton{Back}}
+%Had I invested 1\$ in Jan. 163... how much would I have in Dec. 2024?
+\begin{figure}[H]
+%  \caption{Equity curve since 1990}
+  \centering
+  \includegraphics[scale=0.35]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/pairs_trading_sparse_synthetic_replica/__OUTPUT__/figures/equity_curve_1963.pdf}
+  \label{fig:}
+\end{figure}
+\end{frame}
+
 
 \section{Conclusions}
 
@@ -1084,41 +1121,9 @@ To generate a continuous time series of returns, we initiate this entire process
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %----------------------------------------------------
 
-\appendix
-\section{Appendix}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[label=equity90]{Equity curve since 1990}
-%\hyperlink{equity00}{\beamergotobutton{Back}}
-\begin{figure}[H]
-%  \caption{Equity curve since 1990}
-  \centering
-  \includegraphics[scale=0.35]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/pairs_trading_sparse_synthetic_replica/__OUTPUT__/figures/equity_curve_1990.pdf}
-  \label{fig:}
-\end{figure}
-\end{frame}
+%\appendix
+%\section{Appendix}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}[label=equity90]{Equity curve since 1963}
-%\hyperlink{equity00}{\beamergotobutton{Back}}
-%Had I invested 1\$ in Jan. 163... how much would I have in Dec. 2024?
-\begin{figure}[H]
-%  \caption{Equity curve since 1990}
-  \centering
-  \includegraphics[scale=0.35]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/pairs_trading_sparse_synthetic_replica/__OUTPUT__/figures/equity_curve_1963.pdf}
-  \label{fig:}
-\end{figure}
-\end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Robustness to $\lambda$}
-\textcolor{blue}{Blue: Replicating Portfolios for different $\lambda$ values} \\
-\textcolor{red}{Red: Traditional Pairs Trading}
-\begin{figure}[H]
-%  \caption{Equity curve since 1990}
-  \centering
-  \includegraphics[scale=0.35]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/TeX_Repo/Pairs-Trading-a-Sparse-Synthetic-Control/__presentation__/robustness.png}
-  \label{fig:}
-\end{figure}
-\end{frame}
 
 \end{document}
