@@ -1,0 +1,321 @@
+\paragraph{
+Formulation of \textsf{Pairs Trading} as a \textsf{Replicating Portfolio} problem.
+}
+
+The economic intuition behind pairs trading--exploit temporary mispricing between two close substitutes--can be cast more generally as a problem of \emph{relative valuation}.  Rather than forcing the substitute for a target stock $i$ to be a \emph{single} partner, we allow it to be a \emph{synthetic replica}: a linear combination of securities whose joint price path mimics that of $i$.
+In this sense, for a target asset we can estimate a replicating portfolio from a simple regression
+%----------------------------------------------------
+\begin{align}
+\label{eq:regression}
+p_{i,t} = \sum_{j \in \mathcal{D}} \beta_j p_{j,t} + \epsilon_{i,t}
+\end{align}
+%----------------------------------------------------
+where $p_{i,t}$ represents the normalized price of the target asset\footnote{
+The normalized price time series of a stock $i$ is built from a position where 1 dollar is invested at the beginning of the estimation window. Formally, letting $r_{i,0}=0$, the normalized price time series at time $t$ is:
+$$
+p_{i,t} = \prod_{\tau=0}^t (1+r_{i,\tau} )
+$$
+}, $\mathcal{D}$ denotes the donor pool of potential replicating assets, and $\epsilon_{i,t}$ captures the spread between the target and its synthetic replica. 
+
+
+Note that traditional pairs trading is a special case where the regression coefficient vector is restricted to the canonical basis. In this case, the only nonzero element of the coefficient vector will correspond to that of the stock whose normalized price time series minimizes the euclidean distance with respect to the target stock's normalized price time series.
+
+We avoid imposing such restrictive assumption, and allow for a denser regression coefficient vector. However, we deliberately promote sparsity to avoid excessive transaction costs. To promote sparsity while avoiding hard cardinality constraints, we employ LASSO regularization. 
+%----------------------------------------------------
+\begin{align}
+\label{eq:lasso}
+\min_{\boldsymbol \beta} 
+\left\{ 
+\sum_{t\in\mathcal T} \left( 
+p_{i,t} - \sum_{j \in \mathcal{D}} \beta_j p_{j,t} 
+\right)^2 
++ 
+\lambda \sum_{j \in \mathcal{D}} |\beta_j| 
+\right\}
+\end{align}
+%----------------------------------------------------
+Note that, for $\lambda$ close to 0, the lasso penalization is very small, so our replicating portfolio will be composed of a large amount of assets. In the limit, $\lambda=0$ and we recover \cref{eq:regression}; in this case, the average number of stocks in the replicating portfolio averages 200 stocks, which becomes too unwieldy and costly to trade (transaction costs rapidly explode). On the other hand, for large $\lambda$ we recover sparser solutions. In our applications we experiment with a grid of $\lambda$ values and report all of them to show that results are robust to the choice of this hyperparameter. The best level of penalization is $\lambda=0.001$, which delivers replicating portfolios composed of 20 stocks on average. 
+ 
+
+ The following section details our empirical implementation and assess whether this generalized approach can restore profitability to spread-based pairs trading strategies.
+
+%
+%%==============[	  o3 Pro  ]==============
+%%----------------------------------------------------
+%\paragraph{From Pairs to Sparse Synthetic Spreads}
+%
+%Classic pairs trading insists on finding a \emph{single} security that serves as a near-perfect substitute for a target stock.  Conceptually, this is an extreme--and often unnecessary--cardinality restriction.  Asset-pricing theory suggests a broader perspective: if two assets are close substitutes, then \emph{any} linear combination of sufficiently similar assets should proxy for the target's fundamental value.  We therefore recast the problem as one of constructing a \emph{synthetic replica}.  Let $P_{i,t}$ denote the (normalised) price of a focal stock $i$ at time $t$ and let $\mathbf{P}_{-i,t}$ collect the same-period prices of all candidate donor stocks.  Over a rolling formation window we estimate
+%
+%\[
+%P_{i,t}= \alpha_{i} + \mathbf{P}_{-i,t}^\top \boldsymbol{\beta}_{i} + \varepsilon_{i,t},
+%\]
+%
+%where the residual $\varepsilon_{i,t}$ represents the instantaneous spread between the target and its replica.  By construction, $\mathbb{E}[\varepsilon_{i,t}]=0$ in-sample; if the linear relationship is sufficiently stable, out-of-sample residuals should exhibit mean reversion that can be exploited exactly as in traditional pairs trading.
+%
+%Trading the full donor universe, however, would be prohibitively expensive.  Instead of imposing the hard constraint $\|\boldsymbol{\beta}_{i}\|_{0}=1$ (the classic ``pair''), we promote \emph{sparsity} through an $\ell_{1}$ (lasso) penalty:
+%
+%\[
+%\min_{\alpha_{i},\boldsymbol{\beta}_{i}}\;
+%\sum_{t\in\mathcal{F}} \bigl(P_{i,t}-\alpha_{i}-\mathbf{P}_{-i,t}^\top\boldsymbol{\beta}_{i}\bigr)^{2} 
+%\;+\;\lambda\|\boldsymbol{\beta}_{i}\|_{1},
+%\]
+%
+%where $\mathcal{F}$ is the formation window and $\lambda$ controls the trade-off between tracking precision and turnover.  The lasso retains only the most informative donors, delivering a replica that is both parsimonious and cheap to implement while avoiding the curse of dimensionality.
+%
+%\paragraph{Contribution}
+%
+%Our study extends the canonical framework of \cite{Gatev2006} in two directions.  First, we relax the 1-for-1 matching rule and allow the data to choose a small but flexible basket of substitutes.  Second, by embedding this choice in a penalised regression we obtain closed-form trading weights and an automatically mean-reverting spread.  Empirically, we show that the resulting sparse synthetic trades (i) dominate traditional pairs on risk-adjusted performance, (ii) remain profitable in the post-2010 environment where classic pairs have largely decayed, and (iii) exhibit markedly lower execution costs thanks to built-in hedge-ratio scaling.  In short, widening the search from ``a partner'' to ``a minimal ensemble'' revives the economic appeal of relative-value convergence trades without sacrificing their celebrated market-neutral profile.
+
+%Formally, let $p_{i}(t)$ denote the (normalized) price of asset $i$ and let $\mathcal D$ denote the donor pool. On a formation window $\mathcal T_\text{train}$ we estimate
+%
+%\[
+%\min_{w}\;
+%\sum_{t\in\mathcal T_\text{train}}
+%\bigl(P_{i,t}-w^\top P_{-i,t}\bigr)^2
+%\;+\;\lambda\lVert w\rVert_1,
+%\]
+%
+%where the $\ell_1$ penalty $\lambda\lVert w\rVert_1$ (i) shrinks dispensable weights toward zero, (ii) delivers a \emph{sparse} replicating portfolio, and (iii) nests the classic pairs trade as the limiting case in which exactly one weight is non-zero.  The resulting residual
+%$
+%e_{i,t}=P_{i,t}-\hat w^\top P_{-i,t}
+%$
+%has mean zero in sample by construction and, if the replication remains adequate out of sample, should display mean reversion around zero--precisely the property required for spread trading.
+%
+%%----------------------------------------------------
+%
+%Note that pairs trading can be cast as a particular case where
+%$$
+%w = 
+%\arg \min_{w\in \mathcal W} 
+%\left\{
+%\sum_{t\in\mathcal T_{train}} 
+%\left[
+%p_i(t) - \mbf w\' \mbf p(t)
+%\right]^2 
+%~~\mathrm{s.t.}~~
+%\mbf w \in \mathcal W
+%\right\}
+%$$
+%where $\mathcal W$ is the space of pairs trading weights
+%
+%$$
+%RP(i) :=
+%\{
+%\mbf w \in \mathbb{E}^{\abs{\mathcal D}} : j \text{ minimizes}
+%\sum_{t\in\mathcal T_{train}} 
+%\left[
+%p_i(t) - \mbf e_j \' \mbf p(t)
+%\right]^2 
+%\}
+%$$
+%% Option 1
+%$$
+%RP(i) :=
+%\mbf w \in \mathbb{E}^{\abs{\mathcal D}}:
+%~ \mbf w ~ \text{minimizes}
+%\left\{
+%\sum_{t\in\mathcal T_{train}} 
+%\left[
+%p_i(t) - \mbf w \' \mbf p(t)
+%\right]^2 
+%\right\}
+%$$
+%% Option 2
+%$$
+%RP(i) :=
+%\arg \min_{\mbf w \in \mathbb{E}^{\abs{\mathcal D}}}
+%\left\{
+%\sum_{t\in\mathcal T_{train}} 
+%\left[
+%p_i(t) - \mbf w \' \mbf p(t)
+%\right]^2 
+%\right\}
+%$$
+%where $\mathbb{E}\subset \mathbb{R}$ is the space of canonical vectors.
+%In other words, stock $j$ is paired with $j$ if the latter is the asset in the donor pool whose normalized price time series minimizes some distance metric with respect to the target stock's normalized price time series 
+%$$RP(i)=\mbf e_j
+%~~\text{if}~~
+%j =\arg \min_{j\in \mathcal D} \{ \norm{\mbf p_i - \mbf p_j}_2^2 \}
+%$$ 
+%
+%
+%In our case, we eliminate the cardinality constraint that $\mbf w\in \mathbb{E}^{\abs{D}}$ and instead allow $\mbf w\in \mathbb{R}^{\abs{D}}$, however, we do impose an $\ell_1$ penalty in the regression so that the weight vector is sparse. 
+%%replicate $i$ with a sparse linear combination of stocks in the donor pool
+%$$
+%RP(i) :=
+%\arg \min_{\mbf w \in \mathbb{R}^{\abs{\mathcal D}}}
+%\left\{
+%\sum_{t\in\mathcal T_{train}} 
+%\left[
+%p_i(t) - \mbf w \' \mbf p(t)
+%\right]^2 
+%-\lambda \norm{\mbf w}_1
+%\right\}
+%$$
+%%----------------------------------------------------
+%
+%The appeal of this framework is threefold.  
+%1. \textbf{Flexibility.}  By relaxing the hard cardinality constraint, we can capture substitutes that no single stock can provide, yet still avoid an unwieldy, high-turnover hedge.  
+%2. \textbf{Cost control.}  The $\ell_1$ penalty automatically limits the number of positions, sidestepping the transaction-cost explosion that would plague a dense factor-replication scheme.  
+%3. \textbf{Theoretical continuity.}  The approach sits comfortably within the relative-pricing view of asset pricing: two portfolios with nearly identical risk exposures should, absent frictions, command nearly identical prices.
+%
+%In what follows we adapt Gatev et al.'s empirical protocol to this sparse-synthetic setting, document how the choice of $\lambda$ shapes the trade-off between tracking error and implementability, and evaluate whether any residual profitability survives in the 2010-2024 sample.
+%
+%%==============[	  Sonnet 4  ]==============
+%
+%\section{A Sparse Synthetic Approach to Pairs Trading}
+%
+%The decline of traditional pairs trading profitability raises a fundamental question: can the core insight behind the strategy be preserved while adapting to modern market conditions? This paper proposes that the answer lies in generalizing the pairs trading framework beyond its restrictive one-to-one matching constraint.
+%
+%\subsection{From Pairs to Synthetic Replicas}
+%
+%Traditional pairs trading imposes a severe cardinality constraint by limiting the replication of a target asset to a single substitute security. This restriction, while conceptually elegant, may be unnecessarily limiting in practice. Consider General Motors: rather than searching for a single stock whose normalized price series closely tracks GM's movements, we could construct a synthetic replica using a linear combination of multiple securities. This approach maintains the fundamental economic intuition of pairs trading--exploiting temporary deviations between economically related assets--while providing greater flexibility in replica construction.
+%
+%The theoretical foundation remains rooted in relative pricing theory, where securities serving as close economic substitutes should exhibit similar price dynamics. However, our framework relaxes the stringent requirement that such substitution be achieved through a single asset. Instead, we allow for the construction of synthetic substitutes through sparse linear combinations, potentially capturing more nuanced economic relationships that span multiple securities.
+%
+%\subsection{Methodology: Sparse Synthetic Replica Construction}
+%
+%Our approach centers on constructing synthetic replicas through regularized regression. For a target asset, we estimate:
+%
+%$$r_{i,t} = \alpha + \sum_{j \in \mathcal{D}} \beta_j r_{j,t} + \epsilon_{i,t}$$
+%
+%where $r_{i,t}$ represents the return on the target asset, $\mathcal{D}$ denotes the donor pool of potential replicating assets, and $\epsilon_{i,t}$ captures the residual spread between the target and its synthetic replica.
+%
+%To promote sparsity while avoiding hard cardinality constraints, we employ LASSO regularization:
+%
+%$$\min_{\beta} \left\{ \sum_{t=1}^{T} \left( r_{i,t} - \sum_{j \in \mathcal{D}} \beta_j r_{j,t} \right)^2 + \lambda \sum_{j \in \mathcal{D}} |\beta_j| \right\}$$
+%
+%The LASSO penalty serves dual purposes: it automatically selects the most relevant securities for replication while maintaining computational tractability. This approach naturally balances replication quality against implementation complexity, addressing the practical constraint that trading numerous positions becomes prohibitively costly.
+%
+%\subsection{Economic Intuition and Trading Strategy}
+%
+%The trading strategy exploits the mean-reverting properties of regression residuals. By construction, the residual $\epsilon_{i,t}$ has zero mean over the formation period. Our strategy assumes this property persists out-of-sample over shorter horizons, allowing us to profit from temporary deviations by betting on mean reversion toward zero.
+%
+%When the residual becomes significantly positive (negative), indicating the target asset is overvalued (undervalued) relative to its synthetic replica, we short (long) the target while taking offsetting long (short) positions in the replica components. This maintains the market-neutral characteristic that made traditional pairs trading attractive while potentially improving replication quality through the use of multiple securities.
+%
+%\subsection{Advantages Over Traditional Pairs Trading}
+%
+%Our framework offers several potential advantages over traditional pairs trading:
+%
+%\textbf{Enhanced Flexibility:} By relaxing cardinality constraints, we can capture complex economic relationships that may not be adequately represented by single-stock pairs.
+%
+%\textbf{Improved Replication Quality:} Multiple securities may provide superior replication of target asset dynamics compared to single-stock matches, potentially leading to more reliable mean reversion patterns.
+%
+%\textbf{Automatic Selection:} LASSO regularization provides principled asset selection without requiring ad-hoc similarity metrics or arbitrary cutoff rules.
+%
+%\textbf{Scalability:} The framework naturally extends to different asset classes and can accommodate varying degrees of sparsity through the regularization parameter.
+%
+%This methodology represents a natural evolution of the pairs trading concept, maintaining its core economic intuition while adapting to the realities of modern, increasingly efficient markets. The following sections detail our empirical implementation and assess whether this generalized approach can restore profitability to spread-based trading strategies.
+
+%
+%
+%
+%%==============[	  Sonnet 4 Thinking  ]==============
+%\section{A Sparse Synthetic Replica Approach}
+%
+%The documented decline of traditional pairs trading profitability raises a fundamental question: can we revitalize this market-neutral strategy by relaxing its inherent constraints? While the classical approach of pairing individual securities may no longer yield sustainable returns, the underlying economic intuition--that relative mispricings between fundamentally related assets create profit opportunities--remains compelling.
+%
+%Traditional pairs trading imposes a severe cardinality constraint by requiring that each target asset be paired with exactly one substitute. This restriction, while elegant in its simplicity, may be unnecessarily limiting in modern markets where complex interdependencies exist among securities. We propose a natural generalization that relaxes this constraint: instead of seeking a single stock that mimics the behavior of our target asset, we construct a \textit{synthetic replica} using a sparse linear combination of multiple securities.
+%
+%\subsection{Theoretical Foundation}
+%
+%Our approach builds on the relative pricing framework that underlies traditional pairs trading. In classical pairs trading, the fundamental assumption is that two securities serve as close economic substitutes, and temporary deviations from their equilibrium relationship create arbitrage opportunities. We extend this logic by recognizing that a target security's price dynamics can often be more accurately replicated through a portfolio of multiple assets rather than a single substitute.
+%
+%Formally, consider a target asset $i$ with normalized price series $P_i(t)$. Rather than identifying a single asset $j$ such that $P_i(t) \approx P_j(t)$, we seek to construct a synthetic replica:
+%
+%$$P_i(t) \approx \sum_{j \in \mathcal{D}} \beta_j P_j(t) + \epsilon_i(t)$$
+%
+%where $\mathcal{D}$ represents our donor pool of potential replicating assets, $\beta_j$ are the replication weights, and $\epsilon_i(t)$ is the tracking error between the target and its synthetic replica.
+%
+%The economic intuition mirrors that of traditional pairs trading: if our synthetic replica accurately captures the fundamental value drivers of the target asset, then deviations $\epsilon_i(t)$ should exhibit mean-reverting properties, creating opportunities for profitable arbitrage.
+%
+%\subsection{Sparse Replication via LASSO}
+%
+%The key innovation lies in our approach to constructing the synthetic replica. While we could theoretically use all available assets as potential donors, doing so would create several practical challenges: high transaction costs, portfolio complexity, and potential overfitting to in-sample relationships. Moreover, economic theory suggests that most securities are driven by a relatively small number of fundamental factors, implying that a sparse representation should be both feasible and economically meaningful.
+%
+%We address these challenges by employing LASSO (Least Absolute Shrinkage and Selection Operator) regularization when estimating the replication weights $\beta_j$. This approach offers several advantages over traditional methods:
+%
+%\begin{enumerate}
+%    \item \textbf{Automatic variable selection}: LASSO naturally selects the most relevant donor assets while setting coefficients for irrelevant securities to zero
+%    \item \textbf{Sparsity without hard constraints}: Unlike imposing arbitrary cardinality limits, LASSO allows the data to determine the optimal number of replicating assets
+%    \item \textbf{Regularization}: The penalty term helps prevent overfitting to in-sample relationships
+%    \item \textbf{Computational efficiency}: Modern optimization algorithms make LASSO estimation feasible even with large donor pools
+%\end{enumerate}
+%
+%\subsection{Trading Strategy Implementation}
+%
+%Our trading strategy operates on the premise that the regression residual $\epsilon_i(t)$ from our sparse synthetic replica should exhibit mean-reverting properties. During the formation period, we estimate the LASSO regression:
+%
+%$$\min_{\boldsymbol{\beta}} \left\{ \frac{1}{2} \left\| P_i - \mathbf{P}_{\mathcal{D}} \boldsymbol{\beta} \right\|_2^2 + \lambda \left\| \boldsymbol{\beta} \right\|_1 \right\}$$
+%
+%where $\mathbf{P}_{\mathcal{D}}$ is the matrix of normalized prices for our donor assets, and $\lambda$ controls the degree of sparsity. By construction, the estimated residuals have zero mean during the formation period.
+%
+%During the subsequent trading period, we monitor the out-of-sample tracking error between the target asset and its synthetic replica. When this error deviates significantly from zero, we establish positions betting on mean reversion: going long the target asset and short the synthetic replica when the target appears undervalued relative to its replica, and vice versa.
+%
+%This framework represents a natural evolution of the pairs trading concept, where the classical approach with cardinality constraint equal to one becomes a special case of our more general sparse replication methodology. By allowing the data to determine the optimal degree of sparsity, we aim to capture more complex relationships while maintaining the market-neutral characteristics that made pairs trading attractive to practitioners.
+%
+%The following sections detail our empirical implementation, examine the performance of this approach using the same dataset as \cite{Gatev2006}, and assess whether this generalization can restore profitability to the pairs trading framework in contemporary markets.
+%
+%
+%
+%%----------------------------------------------------
+%\paragraph{Data snooping and market response}
+%As in Gatev, we also have abstracted away from searching over the full strategy space to identify successful trading rules. Instead, we have adapted the same parameterization and rules proposed by Gatev. In their paper, Gatev et al argue that their rules follow the feneral outline:
+%
+%\begin{itemize}
+%\item First. \qquote{\bblue{Find stocks that move together}}. In traditional pairs trading this is done by finding two ``real'' pairs. In our case, this is done by constructing a synthetic replica of a target asset.
+%\item Second. \qquote{\bblue{Take a long-short position when they diverge and unwind on convergence}}. In our case, this is equivalent to betting on the mean reversion of the regression residual. That is, we go short when the regression error is positive, and long otherwise.
+%\end{itemize}
+%
+%
+%
+%Similar to Gatev et al, we account for transaction costs indirectly by waiting one day after the signal from the pairs trade is derived. 
+%
+%
+%
+%%----------------------------------------------------
+%\paragraph{Relative pricing}
+%% Rooting the idea in Asset Pricing theory
+%Asset pricing can be viewed in absolute and relative terms. 
+%
+%\begin{itemize}
+%\item \bblue{Absolute pricing values securities from fundamentals such as discounted future cash flow. This is a notoriously diffucult process with a wide margin for error.}
+%\item \bblue{Relative pricing is only slightly easier. Relative pricing means that two securities that are close substitutes for each other should sell for the same price --it does not say what that price will be. Thus, relative pricing allows for bubbles in the economy, but not necessarily arbitrage or profitable speculation. The Law of One Price [LOP] and a ``near-LOP'' are applicable to relative pricing, even if that price is wrong.}
+%\begin{itemize}
+%\item \bblue{Ingersoll (1987) defines the LOP as the ``proposition ... that two investments with the same payoff in every state of nature must have the same current value.'' In other words, two securities with the same prices in all states of the world should sell for the same amount.}
+%\item \bblue{Chen and Knez (1995) extend this to argue that ``closely integrated markets should assign to similar payoffs prices that are close''. They argue that two securities with similar, but not necessarily, matching payoffs across states should have similar prices. This is of course a weaker condition and subject to bounds on prices for unusual states; however, it allows the examination of ``near-efficient'' economies, or in Chen and Knez' case, near integrated
+%markets. Notice that this theory corresponds to the desire to find two
+%stocks whose prices move together as long as we can define states of
+%nature as the time series of observed historical trading days.} In traditional pairs trading, we need to find two stocks with near-matching payoffs, which is of a complicated nature due to the fact that we are restricted to exclusively one. On the other hand, finding a matching payoff from a combination of assets is much easier. In a near efficient economy (i.e.: if markets are integrated), the price of the target asset should match that of its synthetic replica.
+%\end{itemize}
+%\end{itemize}
+%
+%From a relative pricing framework, pairs trading can be thought of as fixing one stock and finding the associated replicating portfolio (i.e: a portfolio constructed in a way such that it delivers the same payoffs as the target stock). Then, the idea is to trade against pricing deviations between the target and replicating portfolio, since, by the LOP, both assets' price should evolve in the same way. In traditional pairs trading, for a target stock, we aim to find the associated replicating portfolio in another stock. Ideally, the best type of pair would be the same stock traded in different exchanges, then, the payoffs are exactly the same, and arbitrageurs can trade profitably to enforce the LOP. In a more general way, a pair is found by looking in normalized cum-dividend price space and matching a target stock to a another stock whose price time series is very close to that of the target stock (i.e: find the stock whose price time series minimizes some distance metric with respect to the target price time series). However, nothing prevents us from finding more sophisticated replicating portfolio, that do not rely on a single asset to replicate the target stock price dynamics. Instead, one can find a replicating stock in a linear combination from a set of donor stocks. In particular, by running a regression in which we regress the target stock price dynamics onto the price span of the donor pool, we can find the linear combination of assets that best replicates the price dynamics of the target asset. Besides, such linear regression will have some desirable properties such as a 0--mean in the residual error or spread in-sample, which is the object of trading in a pairs trading strategy. In other words, we have the desirable mean-reversion in the spread.
+%
+%
+%\paragraph{Co-integrated prices}
+%
+%As mentioned in Gatev et al, \bblue{the pairs trading strategy may be justified within an equilibrium asset-pricing framework with nonstationary common factors like Bossaerts and Green (1989) and Jagannathan and Viswanathan (1988).}
+%
+%% WORK IN UNDERSTANDING THIS
+%\bblue{If the long and short components fluctuate with common nonstationary factors, then the prices of the component portfolios would be co-integrated and the pairs trading strategy would be expected to work. Evidence of exposures to common nonstationary factors would support a nonstationary factor pricing framework.
+%
+%The space of normalized, cum-dividend prices, that is, cumulative total returns with dividends reinvested, is the basic space for the pairs trading strategies in this article. The main observation about our motivating models of the CAPM-APT variety is that they are known to imply perfect collinearity of prices, which is readily rejected by the data. On the other hand, Bossaerts (1988) finds evidence of price co-integration for the U.S. stock market. We would like to keep the notion of the empirically observed co-movement of prices, without unnecessarily restrictive assumptions, hence we proceed in the spirit of the co-integrated prices literature.
+%
+%
+%More specifically, our matching in price space can be interpreted as follows. Suppose that prices obey a statistical model of the form
+%$$
+%p_{i t}=\sum \beta_{i l} p_{l t}+\varepsilon_{i t},
+%k<n
+%$$
+%where $\varepsilon_{i t}$ denotes a weakly dependent error in the sense of Bossaerts (1988). Assume also that $p_{i t}$ is weakly dependent after differencing once. Under these assumptions, the price vector $\boldsymbol{p}_{\boldsymbol{t}}$ is co-integrated of order 1 with cointegrating rank $r=n-k$, in the sense of Engle and Granger (1987) and Bossaerts (1988). Thus, there exist $r$ linearly independent vectors $\left\{\boldsymbol{\alpha}_q\right\}_{q=1, \ldots, r}$ such that $z_q=\boldsymbol{\alpha}_q{ }^{\prime} \boldsymbol{p}_t$ are weakly dependent. In other words, $r$ linear combinations of prices will not be driven by the $k$ common nonstationary components $p_l$. Note that this interpretation does not imply that the market is inefficient, rather it says that certain assets are weakly redundant, so that any deviation of their price from a linear combination of the prices of other assets is expected to be temporary and reverting.
+%
+%To interpret the pairs as co-integrated prices, we need to assume that for $n \gg k$, there are co-integrating vectors that have only two nonzero coordinates. In that case, the sum or difference of scaled prices will be reverting to zero and a trading rule could be constructed to exploit the expected temporary deviations. Our strategy relies on exactly this conclusion. In principle one could construct trading strategies with trios, quadruples, and so on of stocks, which would presumably capture more co-integrated prices and would yield better profits.
+%}
+%
+%This paper constitutes an extension of pairs trading and an empirical investigation of this last statement in Gatev et al. If prices are really cointegrated, as found in Bossaerts (1988), then, any deviation of the prices from this cointegration relationship should allow us to trade profitably by betting against that deviation.
+%
+%
+%In pairs trading, the cointegration vector in the universe of assets takes the form of a vector of zeros with two elements taking the value 1 and -1.  For a target asset $i$, its associated cointegration vector is $\boldsymbol \alpha_{i} = \mbf e_i-\mbf e_j$, where $j$ is its best maching stock in normalized price space and $\mbf e_{\ell}$ is the canonical vector which takes the value 1 at position $\ell$ and zeros elsewhere. Imposing this structure in the cointegration vector is too restrictive. Indeed, it should be simpler to find cointegration in a more general framework such as the one proposed in this paper. In our case, the cointegration vector corresponds to $\boldsymbol \alpha = \mbf e_i + \boldsymbol \beta_i$, where $\boldsymbol \beta_i$ is the regression coefficient vector in the regression of normalized target prices onto normalized donor prices:
+%$p_{it} = \sum_{l\neq i}\beta_i p_{\ell t} + \veps_{it}$. 
+%

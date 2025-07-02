@@ -1,0 +1,101 @@
+The economic intuition behind pairs trading--exploit temporary mispricing between two close substitutes--can be cast more generally as a problem of \emph{relative valuation}.  Rather than forcing the substitute for a target stock $i$ to be a \emph{single} partner, we allow it to be a \emph{replicating portfolio}: a linear combination of securities whose joint price path mimics that of $i$.
+%In this sense, for a target asset we can estimate a replicating portfolio from a simple regression
+%----------------------------------------------------
+\begin{equation} \label{eq:regression}
+p_{i,t}= \sum_{j\in\mathcal D} \beta_j\,p_{j,t}+ \varepsilon_{i,t},
+\qquad t=0,\dots,T ,
+\end{equation}
+%----------------------------------------------------
+where $p_{i,t}$ represents the normalized price of the target asset\footnote{
+The normalized price time series of a stock $i$ is built from a position where 1 dollar is invested at the beginning of the estimation window. Formally, letting $r_{i,0}=0$, the normalized price time series at time $t$ is:
+$$
+p_{i,t} = \prod_{\tau=0}^t (1+r_{i,\tau} )
+$$
+}, $\mathcal{D}$ denotes the donor pool of potential replicating assets, and $\varepsilon_{i,t}$ captures the spread between the target and its synthetic replica. 
+
+Traders should then be interested in trading the spread between the target stock and the replicating portfolio, which is simply the residual error $\varepsilon_{i,t}$, by betting on its mean-reversion. 
+
+While \cref{eq:general_reg} describes the unrestricted case, where no structure is imposed in the replicating portfolio, we can show that a restricted version from this general framework delivers the classical pairs trading methodology. 
+
+%==============[	  Pairs Trading as a special case  ]==============
+
+ 
+\paragraph{Recasting \cite{Gatev2006}'s Pairs Trading as a Replicating Portfolio problem}
+Note that traditional pairs trading, as described in Gatev et al, is a special case where the regression coefficient vector is restricted to the canonical basis. In this case, the only nonzero element of the coefficient vector will correspond to that of the stock whose normalized price time series minimizes the euclidean distance with respect to the target stock's normalized price time series.
+
+%==============[	  Additional formulation, this could go in the appendix in the future  ]==============
+
+Let $\mathcal B:=\{\mbf e_1,\mbf e_2,\dots,\mbf e_{|\mathcal D|}\}$, denote the canonical basis of $\mathbb R^{\abs{\mathcal D}}$. ``Traditional'' pairs trading fixes a target stock $i$ and selects a single-asset replicating portfolio in a one-to-one relationship by imposing the restriction $\boldsymbol \beta \in \mathcal B$.
+%------------------------------------------
+\begin{align}\label{eq:choose_pair}
+%&
+%\underset{\boldsymbol \beta\in\mathcal B}{\min}
+\min_{\boldsymbol \beta\in\mathcal B}{~
+        \sum_{t=0}^{T}
+        \Bigl(p_{i,t}-\sum_{j\in\mathcal D}\beta_j p_{j,t}\Bigr)^2
+        }
+\end{align} 
+%----------------------------------------------------
+which is equivalent to selecting the stock whose price series minimizes the least-squares distance (or equivalently, the euclidean distance) with respect to that of the target stock. \footnote{
+Note that pairs trading with a hedge ratio is equivalent to restricting only the cardinality of the coefficient vector. Or equivalently, to restricting the coefficient vector to lie in
+$\mathcal B^+:=\{
+\alpha \mbf e_j : j\in \mathcal D, \alpha\in\mathbb R
+\}$. 
+In this case, the replicating portfolio program is: 
+$$
+\left[
+\begin{array}{rl}
+\underset{\boldsymbol \beta\in\mathbb R^{\abs{\mathcal D}}}{\min}
+& \sum_{t=0}^{T} \Bigl(p_{i,t}-\sum_{j\in\mathcal D}\beta_j p_{j,t}\Bigr)^2
+\\
+\mathrm{s.t.} & \norm{\boldsymbol{\beta}}_0 = 1
+\end{array}
+\right]
+\equiv
+%\left[
+\begin{array}{l}
+\underset{\boldsymbol \beta\in\mathcal B^+}{\min}
+        \sum_{t=0}^{T}
+        \Bigl(p_{i,t}-\sum_{j\in\mathcal D}\beta_j p_{j,t}\Bigr)^2
+\end{array}
+%\right]
+$$
+}
+%----------------------------------------------------
+\begin{align}
+j^*
+= 
+\arg \min_{j\in\mathcal D}{~
+        \sum_{t=0}^{T}
+        \bigl(p_{i,t}-p_{j,t}\bigr)^2
+        } 
+\end{align}
+%----------------------------------------------------
+%The trading object is the spread between the pair (i.e.: the regression error), which classical pairs traders think of as a stationary object with zero mean. 
+%$$
+%\varepsilon_{i,t}=p_{i,t}-p_{j^*,t},
+%\qquad t=0,\dots,T .
+%$$
+%Gatev et al. employ a parametric rule such that a position is taken when the observed spread exceeds two standard deviations. 
+
+%==============[	  Pairs Trading a Sparse Synthetic Replica  ]==============
+\paragraph{Pairs Trading a Sparse Replicating Portfolio} We avoid imposing such restrictive cardinality restrictions, and allow for a denser regression coefficient vector. However, we deliberately promote sparsity to avoid excessive transaction costs. To promote sparsity while avoiding hard cardinality constraints, we employ LASSO regularization. 
+%----------------------------------------------------
+\begin{align}
+\label{eq:lasso}
+\min_{\boldsymbol \beta \in \mathbb R^{\abs{\D}}} 
+\left\{ 
+\sum_{t=0}^T 
+\left( 
+p_{i,t} - \sum_{j \in \mathcal{D}} \beta_j p_{j,t} 
+\right)^2 
++ 
+\lambda \sum_{j \in \mathcal{D}} |\beta_j| 
+\right\}
+\end{align}
+%----------------------------------------------------
+Note that, for $\lambda$ close to 0, the lasso penalization is very small, so our replicating portfolio will be composed of a large amount of assets. In the limit, $\lambda=0$ and we recover \cref{eq:regression}; in this case, the average number of stocks in the replicating portfolio averages 200 stocks, which becomes too unwieldy and costly to trade (transaction costs rapidly explode). On the other hand, for large $\lambda$ we recover sparser solutions. In our applications we experiment with a grid of $\lambda$ values and report all of them to show that results are robust to the choice of this hyperparameter. The best level of penalization is $\lambda=0.001$, which delivers replicating portfolios composed of 20 stocks on average. 
+ 
+
+ The following section details our empirical implementation and assess whether this generalized approach can restore profitability to spread-based pairs trading strategies.
+

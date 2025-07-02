@@ -1,0 +1,82 @@
+\paragraph{Revisiting pairs trading 20 years after \cite{Gatev2006}}
+
+Pairs trading first took shape in the mid-1980s when Nunzio Tartaglia's quantitative desk began systematically scanning U.S. equities for temporary deviations in the relative prices of stocks that had historically moved in tandem.  The recipe is intuitive: locate two securities whose past price paths exhibit a tight long-run relationship, short the one that has recently run ahead, go long the laggard, and close the position as soon as the spread mean-reverts.  \cite{Gatev2006} famously showed that this seemingly naïve contrarian rule delivered annualised abnormal returns of roughly 11 percent between 1962 and 2002--even after conservative trading-cost assumptions--prompting an explosion of interest among hedge funds and proprietary ``market-neutral'' desks.  Yet the very popularity that followed appears to have eroded the opportunity: these same authors already noted shrinking profits in the late 1990s, and the follow-up study by \cite{Do2010} documented a further decline.  Extending the evidence through 2024, \cref{fig:pairs_decay} shows that the canonical implementation of the strategy has failed to generate significant positive excess returns since 2010, a decay reminiscent of what befell momentum once it, too, became widely traded.  
+%----------------------------------------------------
+\inserthere{fig:pairs_decay}
+\begin{figure}[H]
+	\centering
+	\caption{Decay of pairs trading excess returns}
+	\includegraphics[scale=0.6]{/Users/jesusvillotamiranda/Library/CloudStorage/OneDrive-UniversidaddeLaRioja/GitHub/Repository/pairs_trading_sparse_synthetic_replica/__OUTPUT__/figures/pairs_trading_decay.pdf}
+  \label{fig:pairs_decay}
+  \subcaption*{\textit{Note:} This figure plots the monthly returns to pairs trading along with its 12-month moving average. The strategy is implemented as in \cite{Gatev2006} and the figure is displayed as in \cite{Do2010}, but extending the sample to the end of 2024. We thank Binh Do and Alexander Rubesam for facilitating the code to replicate this figure.
+  }
+\end{figure}
+%----------------------------------------------------
+
+%==============[	  PROMPT  ]==============
+% Your task is to use the bullet points below to craft a paragraph that introduces my paper. This paragraph should introduce the topic of pairs trading, and review it in the context of the paper by Gatev. It should sound like a reexamination of the idea of pairs trading two decades after the publication of the seminal paper by Gatev. Note that text enclosed in \bblue{} are literally extracted from the original paper, so using them literally constitutes plagiarism: instead, either you should aim to rephrase the ideas inferred from the \bblue{} text and rephrase them / apply them in a differnt style, or you could cite them literally between quotes.
+
+% Also, replace mentions to references by citations: 
+% Gatev et al: \cite{Gatev2006}
+% Do and Faff: \cite{Do2010}
+
+%\paragraph{Revisiting pairs trading 20 years after Gatev et al.}
+%\begin{itemize}
+%\item As documented in Gatev et al 
+%\begin{itemize}
+%\item \bblue{Pairs trading was developed in the mid-1980s by Nunzio Tartaglia to uncover arbitrage opportunities in the equity markets. }
+%\item \bblue{Since then, pairs trading became an increasingly popular \qquote{market neutral} investment strategy used by individual and institutional trades as well as hedge funds.}
+%\item \bblue{pairs trading was a poopular short-term speculation strategy with long years of history in Wall Street, belonging to the propietary \qquote{statistical arbitrage} tools used by hedge funds and investment banks}
+%\end{itemize}
+%
+%\item \bblue{The concept of pairs trading is disarmingly simple. Find two stocks whose prices have moved together historically. When the spread between them widens, short the winner and buy the loser. If history repeats itself, prices will converge and the arbitrageur will profit}. In other words, if Stock $A$ and $B$ historically trade at a 1:1 ratio but temporarily diverge to 1:1.05, arbitrageurs short the overvalued stock and buy the undervalued one. The tiny profit margin (e.g., 0.05\% gain) justifies the trade, restoring the 1:1 ratio.
+%
+%\item \bblue{It is hard to believe that such a simple strategy, based solely on past price dynamics and simple contrarian principles, could possibly make money. If the U.S. equity market were efficient at all times, risk-adjusted returns from pairs trading should not be positive.} Yet Gatev et al find average annualized excess returns of about 11\% for top pairs portfolios. 
+%
+%\item Gatev already documented that \bblue{the increased popularity of quantitative-based statistical arbitrage strategies has also apparently affected profits.}
+%
+%\begin{itemize}
+%\item 20 years after the publication of Gatev's paper, we can substantiate this: ever since the publication of the seminal paper by Gatev et al. and a later reexamination by Do and Faff, this practice has been completely arbitraged away, and pairs trading is no longer profitable. Finding those pairs has become increasingly difficult in the past decade. The Figure below shows the evolution of monthly excess returns to pairs trading from 1962 to 2025, evidencing that, in the last decade, pairs trading is no longer profitable.
+%\item This is similar to what happened with the momentum strategy: ever since the seminal paper was published, the strategy got popularized, and markets became much more efficient.
+%\end{itemize}
+%
+%%(as we see in the graph, making money in pairs trading has become more and more difficult in the past years, perhaps because the market for pairs trading has become too known and hadge funds have depleted the arbitrage opportunities, or perhaps is a new tendency of stocks to become more unique (and less directly substitutable) in the last decade
+%\end{itemize}
+%----------------------------------------------------
+
+% Additional text that we can use to inspire the introduction
+
+%==============[	  HUDSON \& THAMES  ]==============
+%First, we need to start with a definition of statistical arbitrage and pairs trading. Often people will use these two terms interchangeably, however, pairs trading is a subset of statistical arbitrage and so we can say that all pairs trading is statistical arbitrage but not all statistical arbitrage is pairs trading.Statistical arbitrage is typically broken down into factor investing and the mean-reverting portfolios of pairs trading. We should add that in its simplest form pairs trading refers to trading only 2 assets but it can be extended to an n-dimensional mean reverting portfolio.There is no single agreed-upon definition in the literature with each author bringing their own take, so we took it upon ourselves to formalize it as follows: ``Pairs trading is an approach that takes advantage of the mispricing between two (or more) co-moving assets, by taking a long position in one(many) and shorting the other(s), betting that the relationship will hold and that prices will converge back to an equilibrium level''
+%
+%The intuition behind pairs trading goes back to the fundamental principle of investing: ``buy undervalued - and sell overvalued''. However, to determine if the asset is truly over or undervalued, we need to know the intrinsic value, which is at best an approximation and largely what value investing sets out to do. Statistical arbitrage and pairs trading tries to solve this problem using price relativity. If two assets share the same characteristics and risk exposures, then we can assume that their behavior would be similar as well. This has the benefit of not having to estimate the intrinsic value of an asset but rather just if it is under or overvalued relative to a peer(s). We only have to focus on the relationship between the two, and if the spread happens to widen, it could be that one of the securities is overpriced, the other is underpriced, or the mispricing is a combination of both. In this case, we are able to take advantage by selling the higher-priced security and buying the lower-priced one, expecting the mispricing to naturally correct itself in the future as prices converge to the equilibrium level.
+%
+%The mutual mispricing between the two assets is represented by the value of the spread. The greater the price difference from 0 and hence the spread, the greater the profit potential. One of the best qualities of pairs trading is market-neutrality, as by adjusting the hedge ratio of the spread it can be constructed to have a beta that is negligible, and therefore minimise the exposure to the market. 
+%
+%
+%It is hard to overestimate the influence that pairs trading has had on the industry. The initial members of the team consisted of mathematicians and physicists under Nunzio Tartaglia, who later branched off to establish such renowned independent practitioners as D.E. Shaw and PDT Partners, just to name a few. Many stories from the golden era of statistical arbitrage, about the business and its practitioners, have been mythologized by the industry. For example how the SEC came to use algorithms from Morgan Stanley's Black Box to detect atypical price patterns or the gradual embrace of the technique by the independent specialists and later the practice of ``bandwagoning'' of the weak stock accumulation by the ``big house''. 
+%
+%	
+%As the information spread to a broader audience and the power of low-cost personal computers started to rise rapidly, the number of pairs trading practitioners rose as well. After two decades of prosperity, the swift evolution of the market called for an upgrade in approaches. It caused a significant diminish in returns for pairs trading when compared to the early days. Managers were struggling to adapt the strategies to the new reality and as a result, gradually started to withdraw investments. In his book ``Statistical Arbitrage: Algorithmic Trading Insights and Techniques'', Andrew Pole called this the ``ice age'' of statistical arbitrage. Similar to the actual ``ice age'', it didn't last forever. Time was exactly what was needed for the ice to melt and give pairs trading its long-awaited new beginning. Ten years later the interest of the research community sparked yet again turning into the bright fire of technological advancement and continuous research in the field. As research in pairs trading continued to accumulate, it evolved into a truly versatile approach with a variety of frameworks with different complexity and empirical applications across various asset classes.
+
+
+
+% Here I provide you some texts that have been crafted by different LLMs: Gemini 2.5. Pro, Sonnet 4, and o3.
+
+%%==============[	  Gemini 2.5 Pro  ]==============
+%\paragraph{Revisiting Pairs Trading Two Decades After Gatev et al.}
+%Nearly two decades have passed since the seminal work of Gatev, Goetzmann, and Rouwenhorst \cite{Gatev2006} provided a rigorous academic framework for pairs trading, a strategy with roots in the proprietary "statistical arbitrage" toolkits of investment banks from the mid-1980s. The core idea, as they described it, is "disarmingly simple. Find two stocks whose prices have moved together historically. When the spread between them widens, short the winner and buy the loser. If history repeats itself, prices will converge and the arbitrageur will profit" \cite{Gatev2006}. The existence of such a straightforward, contrarian strategy seemingly contradicted the principles of market efficiency. Yet, their study documented significant average annualized excess returns of approximately 11\% for portfolios constructed from top-performing pairs, presenting a substantial challenge to the efficient market hypothesis at the time. Intriguingly, \cite{Gatev2006} themselves presciently noted that the increasing popularity of such quantitative strategies was likely to erode these very profits. Two decades later, this paper revisits their findings and argues that this prediction has fully materialized. Following a subsequent reexamination by Do and Faff \cite{Do2010}, the arbitrage opportunities central to pairs trading appear to have been largely exhausted, making profitable pairs increasingly difficult to identify in the last decade. This decay mirrors the well-documented trajectory of other market anomalies, such as momentum, where initial academic publication and subsequent popularization led to a significant reduction in attainable returns as markets adapted. The figure below illustrates this trend, plotting the monthly excess returns to pairs trading from 1962 to 2025 and providing visual evidence that the strategy's profitability has effectively vanished in recent years.
+
+%%==============[	  o3 Pro  ]==============
+%\paragraph{Revisiting pairs trading 20 years after Gatev et al.}
+%Pairs trading traces its roots to the quantitative desk led by Nunzio Tartaglia in the mid-1980s, and it soon became a flagship ``market-neutral'' tactic for proprietary desks, hedge funds, and sophisticated individual investors alike. The basic recipe is deceptively simple: locate two equities that have historically moved in lock-step, short the temporary ``winner,'' go long the temporary ``loser,'' and wait for the spread to close. Skeptics of market efficiency once dismissed the idea as too naïve to be lucrative, yet the pioneering study of Gatev et al.\,\cite{Gatev2006} reported annualized abnormal returns of roughly 11\% from a rules-based implementation, propelling the strategy into the mainstream arsenal of statistical-arbitrage traders. Two decades of capital inflows, faster data, and fiercer competition now raise a natural question: has the edge survived? Building on the post-publication analysis of Do and Faff \cite{Do2010}, our updated sample through 2025 reveals a pronounced decay in profitability--indeed, excess returns have hovered around zero or turned negative since the mid-2010s (see Figure \ref{fig:pairs_trading_decay}). Much like the fate of momentum once its mechanics became common knowledge, the classic pairs trade appears to have been largely arbitraged away. This paper re-examines the strategy's lifecycle, documents the timing and magnitude of the decline, and explores whether refined pairing algorithms or sparse, synthetic counterparts can restore its appeal.
+
+
+%%==============[	  Sonnet 4 Thinking  ]==============
+%\paragraph{Revisiting pairs trading 20 years after Gatev et al.}
+%
+%Two decades have passed since \cite{Gatev2006} documented the profitability of pairs trading, a strategy with roots tracing back to Nunzio Tartaglia's work in the mid-1980s aimed at identifying arbitrage opportunities in equity markets. This market-neutral investment approach, which gained widespread adoption among individual investors, institutional traders, and hedge funds, operates on a deceptively straightforward premise: identify historically correlated stock pairs and capitalize on temporary price divergences by shorting the outperforming security while purchasing the underperforming one. For instance, when two stocks that typically maintain a 1:1 price ratio temporarily diverge to 1:1.05, arbitrageurs can profit from the modest 0.05\% spread by betting on mean reversion. The counterintuitive profitability of this simple contrarian strategy--which relies purely on historical price patterns--challenges market efficiency assumptions, as \cite{Gatev2006} demonstrated with average annualized excess returns of approximately 11\% for top-performing pairs portfolios. However, the authors presciently noted that the growing prevalence of quantitative statistical arbitrage strategies would likely erode these profits over time. Our analysis, spanning the two decades following their seminal work and the subsequent reexamination by \cite{Do2010}, confirms this prediction: pairs trading has been largely arbitraged away, with the strategy no longer generating meaningful profits in recent years. This decline mirrors the trajectory observed in momentum strategies, where academic publication and subsequent popularization led to market efficiency improvements that eliminated the original profit opportunities. The figure below illustrates the evolution of monthly excess returns to pairs trading from 1962 to 2025, clearly demonstrating the strategy's diminishing profitability in the last decade.
+
+%\input{txt_revisiting_pairs_trading.txt}
+
+%==============[	  o3 High  ]==============

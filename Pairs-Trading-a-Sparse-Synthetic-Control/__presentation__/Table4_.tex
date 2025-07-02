@@ -1,0 +1,31 @@
+\begin{table}[H]
+\centering
+%\caption{\textbf{Systematic risk of pairs trading strategies (1 day waiting)}}
+\label{tab:systematic_risk}
+\footnotesize
+\begin{tabular}{lcccc}
+\toprule
+ & Top 5 & Top 20 & 20 after top 100 & All \\
+\midrule
+Mean excess return & 0.0085 & 0.0088 & 0.0085 & 0.0074 \\
+Standard deviation & 0.0371 & 0.0249 & 0.0273 & 0.0183 \\
+Sharpe Ratio & 0.80 & 1.23 & 1.08 & 1.41 \\
+%Monthly serial corr. & -0.03 & 0.02 & 0.02 & 0.02 \\
+\\ \textit{FF5+Reversals} &&&& \\ \midrule
+\rowcolor{yellow!20}
+Intercept & 0.0062 (4.31) & 0.0055 (5.55) & 0.0052 (4.46) & 0.0041 (6.19) \\
+Market & -0.1537 (-3.68) & -0.0768 (-3.12) & -0.0602 (-2.21) & -0.0149 (-0.76) \\
+SMB & -0.0628 (-1.27) & -0.1379 (-2.97) & -0.2189 (-3.13) & -0.0816 (-1.51) \\
+HML & -0.1332 (-1.75) & 0.0377 (0.77) & 0.0024 (0.04) & -0.0172 (-0.41) \\
+\rowcolor{yellow!20}
+Momentum & -0.0930 (-2.43) & -0.0691 (-2.19) & -0.1452 (-4.82) & -0.1755 (-8.36) \\
+\rowcolor{yellow!20}
+Short-Term Reversal & 0.1525 (2.67) & 0.1803 (4.37) & 0.2389 (4.83) & 0.2320 (6.26) \\
+Long-Term Reversal & -0.0113 (-0.16) & -0.0716 (-1.26) & 0.0501 (0.84) & -0.0163 (-0.42) \\ \midrule
+$R^2$ & 0.05 & 0.11 & 0.19 & 0.41 \\
+\bottomrule
+\end{tabular}
+
+\medskip 
+\textit{Period:} January 1963 to December 2024
+\end{table}

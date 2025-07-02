@@ -1,0 +1,60 @@
+\begin{tikzpicture}[remember picture, overlay]
+
+% We'll define a style for the paper titles. This makes the code
+% much cleaner and easier to modify later.
+\tikzset{paper/.style={
+    fill=white,           % Add a white background to each title.
+    draw=black!20,        % Add a very light gray border.
+    rounded corners=3pt,  % Make the corners of the "paper" slightly rounded.
+    align=center,         % Center the text inside the node.
+    font=\small,          % You can adjust font size here, e.g., \footnotesize, \normalsize.
+    text width=4.5cm,     % Set a max width to control line breaking for long titles.
+    inner sep=5pt,        % Add some padding between the text and the border.
+    fill opacity=0.9,     % Make the background mostly opaque to hide text underneath.
+    text opacity=1,       % Ensure the text itself is fully opaque.
+    drop shadow,          % Add a subtle shadow for a 3D/depth effect.
+}}
+
+\pgfmathsetseed{44444444}
+
+\foreach \i/\title in {
+  1/{Pairs Trading via Unsupervised Learning},
+  2/{Structural Break-Aware Pairs Trading via Deep Reinforcement Learning},
+%  3/{Statistical Arbitrage in Multi-Pair Trading using Graph Clustering Algorithms},
+  4/{Pairs Trading Optimization using Reinforcement Learning and Cointegration},
+  5/{Cryptocurrency Pair Forecasting with Machine and Deep Learning},
+  6/{Pairs Trading: A Copula Approach},
+  7/{A Pairs Trading Strategy Based on Mixed Copulas},
+  8/{Profitability of Pairs Trading: Distance, Cointegration \& Copula Methods},
+  9/{Black-Litterman Bayesian Application in Statistical Arbitrage},
+% 10/{Novel NSGA-II Based Pairs Trading in Crypto Markets},
+ 11/{Walk-Forward Optimized Forex Cointegration Strategy},
+ 12/{Hidden Markov Model for Statistical Arbitrage in Oil Futures},
+ 13/{Pair Trading Based on Quantile Forecasting of Smooth Transition GARCH Models},
+% 14/{A Singular Stochastic Control Approach for Optimal Pairs Trading with Proportional Transaction Costs},
+ 15/{An Intelligent Model for Pairs Trading Using Genetic Algorithms},
+ 16/{Pairs Trading with Wavelet Transform},
+ 17/{Dynamic Copula Framework for Pairs Trading},
+ 18/{Cointegration Approach for the Pair Trading Based on the Kalman Filter},
+ 19/{Pairs Trading with a Mean-Reverting Jump-Diffusion Model on High-Frequency Data},
+ 20/{Review of Stochastic Differential Equations in Statistical Arbitrage Pairs Trading},
+% 21/{A Singular Stochastic Control Approach for Optimal Pairs Trading with Proportional Transaction Costs},
+ 22/{Pairs Trading with Markov Regime-Switching Model},
+ 23/{Research on High-Frequency Stock Pair Trading Strategy Based on MS-GARCH Model}
+}{
+  % Use page dimensions for better random placement across the whole slide.
+  % 'rnd' is a random number between 0 and 1.
+  \pgfmathsetmacro\x{rnd * 0.8 * \paperwidth - 0.4 * \paperwidth}
+  \pgfmathsetmacro\y{rnd * 0.7 * \paperheight - 0.35 * \paperheight}
+
+  % Use a more subtle rotation to improve readability.
+  \pgfmathsetmacro\r{rnd * 12 - 6} % Rotates between -6 and +6 degrees.
+
+  % Apply the 'paper' style to the node.
+  \node[paper, rotate=\r] at ([xshift=\x, yshift=\y]current page.center) {\title};
+}
+
+% Optional: You could add a main title in the center so it stands out.
+\node[font=\Huge\bfseries, text=black!60] at (current page.center) {Pairs Trading};
+
+\end{tikzpicture}
