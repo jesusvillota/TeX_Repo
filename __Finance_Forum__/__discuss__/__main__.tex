@@ -1,0 +1,97 @@
+\documentclass{beamer}
+\usepackage{geometry}
+\geometry{paperwidth=16cm, paperheight=9cm} % Adjust dimensions as needed
+\usepackage{eurosym}
+
+\newcommand{\sx}{\smallskip}
+\newcommand{\mx}{\medskip}
+\newcommand{\bx}{\bigskip}
+\newcommand{\blue}[1]{%
+  \ifmmode
+    \textcolor{blue}{#1}%
+  \else
+    {\color{blue}#1}%
+  \fi
+}
+\newcommand{\red}[1]{%
+  \ifmmode
+    \textcolor{red}{#1}%
+  \else
+    {\color{red}#1}%
+  \fi
+}
+\usepackage{colortbl}
+
+\mode<presentation>
+{
+  \usetheme{Madrid}       % or try default, Darmstadt, Warsaw, ...
+  \usecolortheme{default} % or try albatross, beaver, crane, ...
+  \usefonttheme{serif}    % or try default, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+
+
+\AtBeginSection[]{
+\begin{frame}{Outline}
+\tableofcontents[currentsection]
+\end{frame}
+}
+
+
+% On Overleaf, these lines give you sharper preview images.
+% You might want to `comment them out before you export, though.
+% \usepackage{pgfpages}
+% \pgfpagesuselayout{resize to}[%
+%   physical paper width=8in, physical paper height=6in]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title[Discussion]{}
+\author[Jesus Villota]{}
+\institute[cemfi]{}
+\date[July 4, 2024]{}
+
+\begin{document}
+%------------------------------------
+\begin{frame}[plain]
+  \centering
+  {\LARGE \textbf{\textcolor{blue}{How selective access to financial information affects how investors learn}}
+  \par}
+
+  \vspace{1.2cm}
+  \begin{tabular}{l|ll}
+    \textit{Author}: ~~&~ \textcolor{blue}{\textbf{Josep Gisbert}} & \textcolor{blue}{(\textsc{ie})} \\[1em]
+    \textit{Discussant}: ~~&~ \textbf{Jesus Villota} &(\textsc{cemfi})
+  \end{tabular}
+
+  \vspace{1.2cm}
+  \small{
+  32nd Finance Forum. Session 10: News and Investor Learning
+  \\ \medskip 
+  Pamplona, 03/07/2025
+  }
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{frame}{Outline}
+%  \tableofcontents
+%\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{Introduction.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{Comments.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \input{Conclusions.tex}
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliographystyle{apalike} % or another style you prefer
+  \bibliography{bib_file}
+\end{frame}
+
+\end{document}

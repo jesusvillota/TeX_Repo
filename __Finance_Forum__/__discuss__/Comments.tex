@@ -1,0 +1,196 @@
+\section{Comments}
+
+\begin{frame}
+\begin{itemize}
+	\item The papers is already quite polished
+	\item The experiment design is clear and well-executed
+	\item My comments will be related to avenues for extension
+\end{itemize}
+\end{frame}
+
+%%%%
+\begin{frame}{How would results compare to... LLMs?}
+    \begin{alertblock}{Key Insight}
+        LLMs are shown to \textbf{inherit human biases} from training on human data!
+    \end{alertblock}
+    
+	\bigskip 
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Advantages:}
+            \begin{itemize}
+                \item \blue{Cost-effective} scaling
+                \item \blue{Consistent} participation
+                \item \blue{Reproducible} results
+                \item Large sample sizes
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{e.g.: \cite{bowen2024measuring}} 
+            \begin{itemize}
+                \item \textbf{Setup:} Ask LLMs to propose an interest rate for loan applicants
+                \item \textbf{Result:} Show that LLM presents the same biases as humans, giving better rates to white males while penalizing females, Latinos, and Blacks
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    \bigskip
+    \begin{block}{Proposed Implementation}
+        Run your experimental design across multiple LLM models and average results to obtain \textbf{model-averaged bias estimates} that mirror human behavior.
+    \end{block}
+\end{frame}
+
+%%%%
+\begin{frame}{How would results compare to... rational, utility-maximizing agents?}
+    % \begin{alertblock}{Research Question}
+    %     How do biased human decisions compare to rational, utility-maximizing agents?
+    % \end{alertblock}
+    
+	Reinforcement Learning (RL) provides a benchmark for comparing human biases with rational decision-making.
+
+
+	\bigskip 
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+			\textbf{Explanation:} They are agents with a utility function, that, given a observed state at each point in time, take an action within an action space
+
+			\bigskip
+            \textbf{Benefits:}
+            \begin{itemize}
+                \item \blue{Controlled environment}
+                \item \blue{Purely rational} decision-making
+                \item \blue{No behavioral biases}
+                \item \blue{Utility maximization} focus
+            \end{itemize}
+        \end{column}
+
+        \begin{column}{0.45\textwidth}
+			\textbf{Natural Parallel:} Same type of "conflict" applies to RL agents, who need to balance exploration and exploitation effectively
+            \begin{exampleblock}{$\epsilon$-Greedy Strategy}
+                Control exploration through randomized actions
+                \[\text{Action} = \begin{cases} 
+                \text{Random} & \text{w.p. } \epsilon \\
+                \text{Greedy} & \text{w.p. } 1-\epsilon
+                \end{cases}\]
+            \end{exampleblock}
+        \end{column}
+    \end{columns}
+    
+    \bigskip
+    \textbf{Expected Outcome:} Clean baseline showing optimal learning without human biases
+\end{frame}
+
+%%%%
+\begin{frame}{Can awareness of biases improve human decision-making?}
+    % \begin{alertblock}{}
+    %    {\centering Can awareness of biases improve human decision-making?\par}
+    % \end{alertblock}
+    
+    \begin{block}{\textbf{Bias-Aware Experimental Design}}
+		Before the experiment, explicitly explain:
+        \begin{itemize}
+            \item The specific behavioral biases that affect belief formation
+            \item How these biases deviate from Bayesian updating
+            \item The importance of rational information processing
+        \end{itemize}
+    \end{block}
+    
+	\bigskip 
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \textbf{Expected Results:}
+            \begin{itemize}
+                \item \blue{Closer} to Bayesian benchmark
+                \item \blue{Reduced} behavioral biases
+                \item \blue{Improved} learning outcomes
+            \end{itemize}
+        \end{column}
+
+		\medskip 
+        \begin{column}{0.5\textwidth}
+            \textbf{Precedent:}
+            \begin{itemize}
+                \item \cite{bowen2024measuring}: Instructing LLMs to avoid biases \textbf{works}
+                \item Similar principle applies in humans
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    
+    % \bigskip
+    % \begin{exampleblock}{Policy Implication}
+    %     Simple awareness interventions could improve real-world financial decision-making
+    % \end{exampleblock}
+\end{frame}
+
+%%%%
+\begin{frame}{Summary of Extensions}
+These extensions would provide a comprehensive view of learning across the \textbf{rationality spectrum}, from purely rational (RL) to naturally biased (humans/LLMs) to bias-aware (humans/LLMs).
+
+\bigskip
+    \begin{center}
+        \begin{tabular}{|l|c|c|c|}
+            \hline
+			% \rowcolor{gray!20}
+            \textbf{Approach} & \textbf{Bias Level} & \textbf{\$ Cost} & \textbf{Sample Size} \\
+            \hline \hline
+            \rowcolor{red!20}
+            Human & Human & High & Limited \\
+            \hline
+            \rowcolor{red!20}
+            LLM & Human-inherited & Low-Medium & Large \\
+            \hline \hline 
+            \rowcolor{orange!20}
+            Bias-Aware Human & Reduced & High  & Limited \\
+            \hline
+            \rowcolor{orange!20}
+			Bias-Aware LLM & Reduced & Low-Medium  & Large \\
+			\hline \hline 
+            \rowcolor{green!20}
+            RL  & None & None-Low & Large \\
+            \hline
+        \end{tabular}
+    \end{center}
+
+\end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}{1) Bias-loaden experiment (but cheaper) w/ Large Language Models}
+% \begin{itemize}
+% 	\item Humans are expensive, and... they don't really care about your research
+% 	\item On the contrary, LLMs are cheaper and... they are happy to help
+% 	\item It's been proven in the literature that LLM's (unsurprisingly) inherit human biases
+% 	\item Why? Because they are trained on human data!
+% 	\item Some papers: 
+% \begin{itemize}
+% 	\item Bowen, Stein, ask LLMs to give mortgage loan rates to applicants based on their race and gender
+% 	\item They show that LLMs inherit the exact same type of bias as humans, giving better rates to white males (and penalizing females and latinos and blacks) 
+% \end{itemize}
+% 	\item In the context of your experiment, this is relevant because it means that you could describe the setup of your experiment to an LLM and extract structured output for a large number of observations. 
+% 	\item In line with what's been shown in the literature, the answers of the LLM to your experiment design should be similar to those of humans
+% 	\item If you do this for a large number of iterations and different LLM models, you will "average out" idysincracies in the training data and LLM-specific hyperparameter configurations, and will obtain a "model-averaged" estimates that should very cleanly inherit the same biases we humans have. 
+% \end{itemize}
+% \end{frame}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}{2) Bias-free experiment w/ Reinforcement Learning}
+% \begin{itemize}
+% 	\item You can conduct the same experiment in a reinforcement learning setting
+% 	\item Reinforcement Learning is a more controlled framework where, at each point in time, you feed the agent with the observation of the state, and the agent acts in consequence to maximize its utility function. 
+% 	\item I would love to see a comparison of the "biased" results from humans (or LLMs) with a rational reinforcement learning algorithm.
+% 	\item In RL algorithms, the same type of trade-off occurs: exploration-exploitation. You can control this with what is known as an $\epsilon$-greedy strategy, where the algorithm takes a random action to explore the action space.
+% 	\item RL will not exhibit human biases, it is entirely rational and utility-drive. It will act solely to maximize its discounted total utility.
+% \end{itemize}
+% \end{frame}
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}{Bias-free(?) experiment w/... humans?}
+% \begin{itemize}
+% 	\item It would also be interesting to see whether humans (or LLMs) wxhibit behavioral biases when you specifically make them aware of the existence of the bias.
+% 	\item That is, before making them play the game, you carefully explain to them the human bias that tends to make us humans deviate from Bayesian beliefs. 
+% 	\item The cool thing is that, once humans (or LLMs) are made aware of this fact, we become more prone to act in a rational way
+% 	\item Hence, the results you should get will probably be more in line with Bayesian beliefs
+% 	\item This simple exercise can show how, when aware, humans are better at overcoming behavioral biases.
+% 	\item In the Bowen Stein paper on Racial Discrimination in the Housign Market they do precisely this! They tell the LLM "please, avoid discriminating people by race or gender", and the LLM stops doing it!
+% \end{itemize}
+% \end{frame}

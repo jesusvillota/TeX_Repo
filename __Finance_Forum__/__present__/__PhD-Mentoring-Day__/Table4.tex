@@ -1,0 +1,41 @@
+\begin{table}[H]
+\centering
+\caption{Systematic risk of pairs trading strategies}
+\label{tab:systematic_risk}
+\footnotesize 
+\begin{tabular}{lcccc}
+\toprule
+ & Top 5 & Top 20 & 20 after top 100 & All \\
+\midrule
+%\textit{``Wait one day'' portfolio performance} & & & & \\
+%Mean excess return & 0.00853 & 0.00883 & 0.00854 & 0.00745 \\
+%Standard deviation & 0.03714 & 0.02494 & 0.02726 & 0.01828 \\
+%Sharpe Ratio & 0.80 & 1.23 & 1.08 & 1.41 \\
+%Monthly serial correlation & -0.03 & 0.02 & 0.02 & 0.02 \\
+%\\
+%\textit{FF5 + Reversals} & & & & \\ \midrule
+Intercept & 0.00618 & 0.00551 & 0.00525 & 0.00409 \\
+ & \tiny(4.31) & \tiny(5.55) & \tiny(4.46) & \tiny(6.19) \\
+\\[-0.5em]
+Market & -0.15365 & -0.07676 & -0.06021 & -0.01491 \\
+ & \tiny(-3.68) & \tiny(-3.12) & \tiny(-2.21) & \tiny(-0.76) \\
+\\[-0.5em]
+SMB & -0.06277 & -0.13786 & -0.21888 & -0.08163 \\
+ & \tiny(-1.27) & \tiny(-2.97) & \tiny(-3.13) & \tiny(-1.51) \\
+\\[-0.5em]
+HML & -0.13321 & 0.03773 & 0.00239 & -0.01717 \\
+ & \tiny(-1.75) & \tiny(0.77) & \tiny(0.04) & \tiny(-0.41) \\
+\\[-0.5em]
+Momentum & -0.09301 & -0.06905 & -0.14525 & -0.17550 \\
+ & \tiny(-2.43) & \tiny(-2.19) & \tiny(-4.82) & \tiny(-8.36) \\
+\\[-0.5em]
+Short-Term Reversal & 0.15247 & 0.18033 & 0.23888 & 0.23198 \\
+ & \tiny(2.67) & \tiny(4.37) & \tiny(4.83) & \tiny(6.26) \\
+\\[-0.5em]
+Long-Term Reversal & -0.01133 & -0.07164 & 0.05008 & -0.01632 \\
+ & \tiny(-0.16) & \tiny(-1.26) & \tiny(0.84) & \tiny(-0.42) \\
+\\[-0.5em]
+$R^2$ & 0.05 & 0.11 & 0.19 & 0.41 \\
+\bottomrule
+\end{tabular}
+\end{table}

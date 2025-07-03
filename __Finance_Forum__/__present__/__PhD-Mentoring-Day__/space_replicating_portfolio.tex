@@ -1,0 +1,34 @@
+\centering
+\begin{tikzpicture}[scale=1.5,tdplot_main_coords,>=stealth]
+
+% axes
+\draw[->,thin] (-1.7,0,0) -- (2.3,0,0) node[anchor=north east] {$x_1$};
+\draw[->,thin] (0,-1.7,0) -- (0,1.7,0) node[anchor=north west] {$x_2$};
+\draw[->,thin] (0,0,-1.7) -- (0,0,1.7) node[anchor=south]     {$x_3$};
+
+% "cloud" of vectors (sampled directions)
+\foreach \theta in {0,30,...,330}{
+  \foreach \phi in {20,50,80,110,140,170}{
+    \pgfmathsetmacro{\x}{1.2*cos(\theta)*sin(\phi)}
+    \pgfmathsetmacro{\y}{1.2*sin(\theta)*sin(\phi)}
+    \pgfmathsetmacro{\z}{1.2*cos(\phi)}
+    \draw[thick,gray!60,->] (0,0,0) -- (\x,\y,\z);
+  }
+}
+
+% canonical basis vectors for reference
+\draw[very thick,Crimson,->]        (0,0,0) -- (1.8,0,0);
+\draw[very thick,DartmouthGreen,->] (0,0,0) -- (0,1.4,0);
+\draw[very thick,blue,->]           (0,0,0) -- (0,0,1.4);
+
+% e_1 label, offset to avoid overlap
+\node[Crimson, font=\small, anchor=south west] at (1.5,-0.3,0) {$\mathbf{e}_1$};
+\node[DartmouthGreen, font=\small, anchor=south east] at (0,1.5,0) {$\mathbf{e}_2$};
+\node[blue, font=\small, anchor=south west] at (0,0,1.5) {$\mathbf{e}_3$};
+
+\end{tikzpicture}
+
+\vspace{0.5em}
+{\footnotesize
+$\mathbb{R}^3 = \mathrm{span}(\mathcal B) $
+}
